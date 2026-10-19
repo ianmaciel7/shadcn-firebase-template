@@ -113,12 +113,12 @@ The root layout keeps the async `IntlProvider` inside `Suspense`, followed by
 `ThemeProvider` and `TooltipProvider`. The component libraries under
 `src/components/ui` and `src/components/ai-elements` are locally owned source;
 custom providers under `ui/extensions` remain subject to application checks.
-`src/components/firebase` is a read-only vendored reference layer for the Firebase UI
-registry: never edit it by hand, never put application code in it, and change it only
-through the update procedure in [ADR 0008](docs/adr/0008-install-firebase-ui-registry.md).
-The root `tsconfig.json` includes this layer for editor diagnostics;
-`tsconfig.build.json` excludes it from the application typecheck unless an
-application file imports it. The Next.js configuration uses the build config.
+`src/components/firebase` contains Firebase UI registry source used by the app.
+Treat copied components as locally owned shadcn source and review any registry
+update as a source diff; see [ADR 0010](docs/adr/0010-use-firebase-registry-source.md).
+TypeScript checks the full directory with the application build config. Bulk
+formatting and other broad checks retain targeted exclusions for untouched
+registry source.
 Ladle (`.ladle/`) isolates and documents UI components without requiring the
 Next.js runtime.
 
@@ -126,7 +126,7 @@ Next.js runtime.
 `src/app`, and imports from `src/lib` into routes, components, hooks, or i18n.
 It does not ban all third-party React dependencies in `src/lib`.
 
-No database, authentication provider, or deployment integration is configured.
+Firebase Authentication provides browser authentication on the public auth routes; see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md). It does not authorize server resources. No database or deployment integration is configured.
 Keep [DER.md](DER.md) and [GLOSSARY.md](GLOSSARY.md) pending until the respective
 persistence and product decisions exist.
 

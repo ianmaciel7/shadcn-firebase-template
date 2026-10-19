@@ -20,5 +20,9 @@
     "light": "Claro",
     "dark": "Escuro",
     "system": "Sistema"
+  },
+  "Auth": {
+    "loading": "Carregando autenticação…",
+    "configurationError": "A autenticação do Firebase não está configurada. Verifique a configuração da aplicação."
   }
 }

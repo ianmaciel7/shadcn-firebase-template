@@ -34,7 +34,6 @@ browser, including its loading, error, and localized states where applicable.
 | End-to-end | `tests/*.spec.ts` | Playwright | `pnpm test:e2e` | User journeys against a production build. |
 | Accessibility | `tests/a11y.spec.ts`, titled `@a11y` | Playwright and axe-core | `pnpm test:a11y` | Automated WCAG 2.0, 2.1, and 2.2 A/AA scans (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) in light and dark mode. |
 | Visual regression | `tests/visual.spec.ts`, titled `@visual` | Playwright screenshots (CI only) | `pnpm test:visual` | Layout and theme changes in rendered pages. |
-| Reference integrity | `tests/unit/firebase-reference.test.ts` and `tests/unit/firebase-reference.manifest.sha256` | Vitest `unit` project | `pnpm test` | Every file in `src/components/firebase` matches the approved SHA-256 manifest; fails on a modified, deleted, or unexpected file. Only the update procedure in ADR 0008 regenerates the manifest. |
 | Mutation | `stryker.config.json` | Stryker | `pnpm test:mutation` | Command-runner mutation testing. Manual CI run until a hosted-run success is confirmed; see [TOOLING.md](TOOLING.md#known-limitations). |
 
 Choose the lightest layer that can fail for the right reason. Keep a behavior
@@ -217,6 +216,16 @@ not yet on a hosted runner; check the first scheduled run.
   with code 2 on an output encoding error.
 
 ## First-time setup
+
+For browser authentication journeys, install the Firebase CLI and Chromium,
+then run `pnpm test:auth`. This starts the Auth Emulator on `127.0.0.1:9099`
+with the isolated `demo-auth-e2e` project and a development server on port 3100.
+Both ports must be free. The test configuration supplies non-production Web
+SDK values; no Firebase account or production credentials are needed. This
+suite is separate from the production-build Playwright suite and requires the
+Firebase CLI on PATH. It tests the emulator, not actual Google consent or email
+delivery. The production build's existing registry type errors remain a separate
+validation failure.
 
 Install the browser binaries once per environment:
 

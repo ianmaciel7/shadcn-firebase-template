@@ -16,8 +16,7 @@
   "ignoreFiles": ["src/i18n/navigation.ts"],
   "ignoreIssues": {
     "src/i18n/routing.ts": ["exports"],
-    // Vendored Firebase UI reference layer (ADR 0008): never edited here, so an
-    // import that upstream wrote against a different layout stays unresolved.
+    // Firebase shadcn registry imports assume their upstream flat layout.
     "src/components/firebase/**": ["unresolved"]
   },
   "ignoreDependencies": [
@@ -31,5 +30,5 @@
     "@stryker-mutator/command-runner"
   ],
   // Host tools installed outside pnpm (see TOOLING.md).
-  "ignoreBinaries": ["semgrep", "gitleaks", "actionlint", "zizmor"]
+  "ignoreBinaries": ["semgrep", "gitleaks", "actionlint", "zizmor", "firebase"]
 }

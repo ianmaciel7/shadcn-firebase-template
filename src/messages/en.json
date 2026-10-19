@@ -20,5 +20,9 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "Auth": {
+    "loading": "Loading authentication…",
+    "configurationError": "Firebase authentication is not configured. Check the application configuration."
   }
 }
