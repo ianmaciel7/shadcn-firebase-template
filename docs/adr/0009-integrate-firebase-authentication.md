@@ -12,11 +12,11 @@ server resource requiring authorization.
 
 ## Decision
 
-Use the Firebase Web SDK and the `@firebase-oss/ui-react` screens for sign-in
-and registration, plus the existing FirebaseUI password recovery screen, under
-the `(public)` route group. The package screens have the same public API and
-avoid importing the registry screen implementations, whose upstream form types
-currently fail this project's strict TypeScript check. Initialize
+Use the Firebase Web SDK and the `@firebase-oss/ui-react` screens and buttons
+for sign-in, registration, and password recovery under the `(public)` route
+group. Importing the published package avoids bringing the immutable registry
+implementations into the application's TypeScript program; the registry form
+types currently fail this project's strict check. Initialize
 one default Firebase app, Auth instance, and FirebaseUI store in the browser;
 `src/lib/firebase.ts` reuses the app and the UI store across development reloads;
 the global store's type declaration lives in `src/types/global.d.ts`.
@@ -55,8 +55,7 @@ It runs against a development server and is not part of the standard Playwright
 or CI suite. It does not validate real Google consent, email delivery, or MFA;
 see [TESTING.md](../../TESTING.md#first-time-setup).
 
-The registry sign-in and sign-up screen files remain an immutable reference and
-have known upstream TypeScript errors. Application routes import the equivalent
-screens from `@firebase-oss/ui-react`, so those files are not brought into the
-application's TypeScript program. Other registry components remain usable where
-their implementations type-check.
+The Firebase UI registry files remain an immutable reference and include known
+upstream TypeScript errors. Application routes import the screens and buttons
+from `@firebase-oss/ui-react`, so no registry implementation is pulled into the
+application's TypeScript program.

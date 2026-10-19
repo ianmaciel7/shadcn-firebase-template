@@ -1,8 +1,7 @@
 ﻿"use client";
 
-import { SignInAuthScreen } from "@firebase-oss/ui-react";
+import { GoogleSignInButton, SignInAuthScreen } from "@firebase-oss/ui-react";
 import { useRouter } from "next/navigation";
-import { GoogleSignInButton } from "@/components/firebase/google-sign-in-button";
 
 export default function SignInPage() {
   const router = useRouter();
