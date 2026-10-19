@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { FirebaseUIProvider } from "@firebase-oss/ui-react";
 import { enUs, esEs, ptBr } from "@firebase-oss/ui-translations";
@@ -31,7 +31,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return onAuthStateChanged(store.get().auth, (user) => {
       if (user) {
         setReady(false);
-        router.replace("/");
+        router.replace("/profile");
       } else setReady(true);
     });
   }, [router]);

@@ -13,7 +13,9 @@
     "learning": "Aprendizado",
     "instructionsSuffix": ".",
     "deployNow": "Deploy Now",
-    "documentation": "Documentation"
+    "documentation": "Documentation",
+    "signIn": "Entrar",
+    "openApp": "Abrir app"
   },
   "Theme": {
     "toggle": "Alternar tema",
@@ -23,6 +25,43 @@
   },
   "Auth": {
     "loading": "Carregando autenticação…",
-    "configurationError": "A autenticação do Firebase não está configurada. Verifique a configuração da aplicação."
+    "configurationError": "A autenticação do Firebase não está configurada. Verifique a configuração da aplicação.",
+    "profileTitle": "Perfil do Usuário",
+    "profileDescription": "Gerencie sua sessão e detalhes da conta.",
+    "emailLabel": "E-mail",
+    "uidLabel": "ID do Usuário",
+    "displayNameLabel": "Nome",
+    "notSet": "Não informado",
+    "signOut": "Sair",
+    "backToHome": "Voltar para o início",
+    "personalInfoTitle": "Informações pessoais",
+    "personalInfoDescription": "Personalize como você aparece no aplicativo.",
+    "profilePhotoTitle": "Foto de perfil",
+    "profilePhotoDescription": "Sua imagem de exibição.",
+    "profilePhotoChange": "Alterar foto",
+    "profilePhotoUploading": "Enviando...",
+    "profilePhotoSaved": "Foto atualizada.",
+    "profilePhotoInvalid": "Escolha uma imagem de até 2 MB.",
+    "profilePhotoError": "Não foi possível atualizar a foto.",
+    "displayNameDescription": "Exibido no seu perfil.",
+    "emailChangeDescription": "A alteração do e-mail exige confirmação no novo endereço.",
+    "uidDescription": "Gerenciado pelo Firebase e não pode ser alterado.",
+    "preferencesTitle": "Preferências",
+    "preferencesDescription": "Escolha a aparência do aplicativo e o idioma usado.",
+    "languageLabel": "Idioma",
+    "themeLabel": "Tema",
+    "languageOptions": {
+      "en": "English",
+      "pt-BR": "Português (Brasil)",
+      "es": "Español"
+    },
+    "themeOptions": { "light": "Claro", "dark": "Escuro", "system": "Sistema" },
+    "savingPreferences": "Salvando preferências…",
+    "preferencesSaved": "Preferências salvas",
+    "saveProfile": "Salvar perfil",
+    "savingProfile": "Salvando perfil…",
+    "profileSaved": "Perfil salvo",
+    "emailVerificationSent": "Verifique seu novo e-mail para confirmar a alteração.",
+    "profileSaveError": "Não foi possível salvar o perfil. Tente novamente."
   }
 }

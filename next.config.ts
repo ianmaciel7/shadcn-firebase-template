@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   env: {
     FIREBASE_AUTH_EMULATOR_HOST: process.env.FIREBASE_AUTH_EMULATOR_HOST,
+    FIRESTORE_EMULATOR_HOST: process.env.FIRESTORE_EMULATOR_HOST,
   },
   partialPrefetching: true,
   reactCompiler: true,

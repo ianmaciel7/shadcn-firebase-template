@@ -11,6 +11,8 @@ const mocks = vi.hoisted(() => ({
   initializeApp: vi.fn(),
   initializeUI: vi.fn(),
   connectAuthEmulator: vi.fn(),
+  connectStorageEmulator: vi.fn(),
+  getStorage: vi.fn(),
 }));
 
 vi.mock("firebase/app", () => ({
@@ -23,6 +25,10 @@ vi.mock("firebase/auth", () => ({
   getAuth: mocks.getAuth,
 }));
 vi.mock("@firebase-oss/ui-core", () => ({ initializeUI: mocks.initializeUI }));
+vi.mock("firebase/storage", () => ({
+  connectStorageEmulator: mocks.connectStorageEmulator,
+  getStorage: mocks.getStorage,
+}));
 
 describe("getFirebaseUI", () => {
   beforeEach(() => {
@@ -34,6 +40,8 @@ describe("getFirebaseUI", () => {
     vi.stubEnv("NEXT_PUBLIC_FIREBASE_APP_ID", "app-id");
     delete process.env.FIREBASE_AUTH_EMULATOR_HOST;
     delete process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
+    delete process.env.FIREBASE_STORAGE_EMULATOR_HOST;
+    delete process.env.NEXT_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST;
     mocks.apps = [];
     mocks.getApps.mockImplementation(() => mocks.apps);
     mocks.getApp.mockReturnValue(mocks.app);
@@ -41,11 +49,13 @@ describe("getFirebaseUI", () => {
     mocks.initializeApp.mockReturnValue(mocks.app);
     mocks.initializeUI.mockReturnValue(mocks.store);
     globalThis.firebaseUIStore = undefined;
+    globalThis.firebaseStorageEmulatorConnected = false;
   });
 
   afterEach(() => {
     vi.unstubAllEnvs();
     globalThis.firebaseUIStore = undefined;
+    globalThis.firebaseStorageEmulatorConnected = false;
   });
 
   it("reports missing public configuration", async () => {
@@ -59,18 +69,17 @@ describe("getFirebaseUI", () => {
     expect(mocks.initializeApp).not.toHaveBeenCalled();
   });
 
-  it("rejects emulator use outside development or with non-demo project", async () => {
+  it("rejects emulator use outside development", async () => {
     vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9099");
 
     const { getFirebaseUI } = await import("./firebase");
     expect(() => getFirebaseUI()).toThrow(
-      "The Auth emulator requires development mode and a demo project (e.g. demo-*). See .env.example.",
+      "The Auth emulator requires development mode. See .env.example.",
     );
   });
 
-  it("initializes Firebase and connects the emulator in the demo project", async () => {
+  it("initializes Firebase and connects the emulator in development", async () => {
     vi.stubEnv("NODE_ENV", "development");
-    vi.stubEnv("NEXT_PUBLIC_FIREBASE_PROJECT_ID", "demo-test");
     vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9098");
 
     const { getFirebaseUI } = await import("./firebase");
@@ -78,8 +87,9 @@ describe("getFirebaseUI", () => {
     expect(mocks.initializeApp).toHaveBeenCalledWith({
       apiKey: "api-key",
       authDomain: "example.firebaseapp.com",
-      projectId: "demo-test",
+      projectId: "example",
       appId: "app-id",
+      storageBucket: "example.appspot.com",
     });
     expect(mocks.connectAuthEmulator).toHaveBeenCalledWith(
       mocks.auth,
@@ -100,5 +110,19 @@ describe("getFirebaseUI", () => {
     expect(mocks.getApp).toHaveBeenCalledOnce();
     expect(mocks.initializeApp).not.toHaveBeenCalled();
     expect(mocks.initializeUI).not.toHaveBeenCalled();
+  });
+
+  it("connects browser Storage to the local emulator using public configuration", async () => {
+    vi.stubEnv("NEXT_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST", "127.0.0.1:9199");
+    const storage = { app: mocks.app };
+    mocks.getStorage.mockReturnValue(storage);
+
+    const { getFirebaseStorage } = await import("./firebase");
+    expect(getFirebaseStorage()).toBe(storage);
+    expect(mocks.connectStorageEmulator).toHaveBeenCalledWith(
+      storage,
+      "127.0.0.1",
+      9199,
+    );
   });
 });

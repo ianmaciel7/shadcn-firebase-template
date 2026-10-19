@@ -497,6 +497,11 @@ cases. The country selector also handles Base UI's optional selection value.
 - The generated components remain excluded from broad style and coverage jobs;
   typechecking covers them all.
 
+Firebase project configuration and Auth Emulator behavior are maintained
+separately in [ADR 0009](0009-integrate-firebase-authentication.md). The
+registry package does not impose a project ID naming convention; local emulator
+use is controlled by the application's development-only runtime guard.
+
 ## Alternatives considered
 
 - **`shadcn add @firebase --all`**: not confirmed by the official documentation

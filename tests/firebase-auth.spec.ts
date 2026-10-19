@@ -45,9 +45,9 @@ test("registration and persisted authentication redirect", async ({ page }) => {
   await page.getByLabel("Email Address").fill(email);
   await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Create Account" }).click();
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(/\/profile$/);
   await page.goto("/sign-in");
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(/\/profile$/);
 });
 
 test("invalid credentials and successful sign-in", async ({
@@ -67,7 +67,7 @@ test("invalid credentials and successful sign-in", async ({
   await expect(page.getByText(/invalid|incorrect/i)).toBeVisible();
   await page.locator("#password").fill(password);
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(/\/profile$/);
 });
 
 test("password recovery sends an emulator reset code and displays failures", async ({
@@ -132,5 +132,25 @@ test("Google popup signs in with the emulator", async ({ page }) => {
     .getByLabel(/email/i)
     .fill(`google-${crypto.randomUUID()}@example.test`);
   await popup.getByRole("button", { name: /sign in/i }).click();
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(/\/profile$/);
+});
+
+test("profile displays user email and signs out successfully", async ({
+  page,
+  request,
+}) => {
+  const email = `profile-${crypto.randomUUID()}@example.test`;
+  const created = await request.post(
+    `${emulator}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=emulator-only`,
+    { data: { email, password, returnSecureToken: true } },
+  );
+  expect(created.ok()).toBeTruthy();
+  await page.goto("/sign-in");
+  await page.getByLabel("Email Address").fill(email);
+  await page.locator("#password").fill(password);
+  await page.getByRole("button", { name: "Sign In", exact: true }).click();
+  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page.getByText(email)).toBeVisible();
+  await page.getByRole("button", { name: "Sign Out" }).click();
+  await expect(page).toHaveURL(/\/sign-in$/);
 });

@@ -23,6 +23,9 @@ configuration and repository documentation.
 ├── scripts/                 # Operational and developer tooling scripts (e.g. emulator seed/clear)
 ├── src/
 │   ├── app/                 # App Router routes, layouts, and global styles
+│   │   ├── (protected)/     # Authenticated route group with client auth guard layout (e.g. /profile)
+│   │   ├── (public)/        # Public authentication routes (sign-in, register, forgot-password)
+│   │   └── _components/     # Route-private components and auth providers
 │   ├── components/          # Reusable application and UI components
 │   ├── hooks/               # Reusable React hooks
 │   ├── i18n/                # Locale routing, navigation, and request config
@@ -56,8 +59,14 @@ files, and `public/` remain at the repository root, as required by the Next.js
 - Route-specific implementation details may be colocated with a route. Use an
   underscore-prefixed folder such as `_components` or `_lib` when explicitly
   marking it as non-routable is useful.
-- Use App Router route groups, for example `(marketing)`, to organize related
-  routes or layouts without changing their URLs.
+- Use App Router route groups to organize related routes or layouts without
+  changing their URLs:
+  - `(public)` groups unauthenticated identity flows (`/sign-in`, `/register`,
+    `/forgot-password`) under a shared layout and redirects authenticated visitors
+    to `/profile`.
+  - `(protected)` isolates authenticated routes (e.g. `/profile`) behind a
+    client-side layout guard that observes `onAuthStateChanged` and redirects
+    unauthenticated visitors to `/sign-in`.
 
 ## Test boundaries
 
@@ -127,7 +136,7 @@ Next.js runtime.
 `src/app`, and imports from `src/lib` into routes, components, hooks, or i18n.
 It does not ban all third-party React dependencies in `src/lib`.
 
-Firebase Authentication provides browser authentication on the public auth routes; see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md). It does not authorize server resources. No database or deployment integration is configured.
+Firebase Authentication provides browser authentication on public auth routes and client-guarded protected routes (`(protected)/profile`); see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md). The profile preference document uses Firestore at `users/{uid}` with UID-matching rules. Route groups provide client UI navigation guarding, not zero-trust server authorization. No deployment integration is configured.
 Keep [DER.md](DER.md) and [GLOSSARY.md](GLOSSARY.md) pending until the respective
 persistence and product decisions exist.
 
