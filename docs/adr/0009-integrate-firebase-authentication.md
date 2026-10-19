@@ -12,8 +12,11 @@ server resource requiring authorization.
 
 ## Decision
 
-Use the Firebase Web SDK and the existing FirebaseUI screens for sign-in,
-registration, and password recovery under the `(public)` route group. Initialize
+Use the Firebase Web SDK and the `@firebase-oss/ui-react` screens for sign-in
+and registration, plus the existing FirebaseUI password recovery screen, under
+the `(public)` route group. The package screens have the same public API and
+avoid importing the registry screen implementations, whose upstream form types
+currently fail this project's strict TypeScript check. Initialize
 one default Firebase app, Auth instance, and FirebaseUI store in the browser;
 `src/lib/firebase.ts` reuses the app and the UI store across development reloads;
 the global store's type declaration lives in `src/types/global.d.ts`.
@@ -25,7 +28,7 @@ The UI store follows the next-intl locale using the installed FirebaseUI
 translations. Existing next-intl, theme, and tooltip providers remain in place.
 
 The public layout supplies the shared `main` landmark. The route pages compose
-the registry screens directly. They do not add forms,
+the package screens directly. They do not add forms,
 authentication context, or optional FirebaseUI behaviors. Missing public Web SDK
 configuration produces a configuration error on the authentication routes.
 
@@ -52,8 +55,8 @@ It runs against a development server and is not part of the standard Playwright
 or CI suite. It does not validate real Google consent, email delivery, or MFA;
 see [TESTING.md](../../TESTING.md#first-time-setup).
 
-The current build and typecheck fail because the immutable registry sign-in and
-sign-up forms pass a `void | UserCredential` action result to callbacks requiring
-`UserCredential`.
-The integration is not buildable until that incompatibility is resolved through
-the registry maintenance process or a compatible upstream package change.
+The registry sign-in and sign-up screen files remain an immutable reference and
+have known upstream TypeScript errors. Application routes import the equivalent
+screens from `@firebase-oss/ui-react`, so those files are not brought into the
+application's TypeScript program. Other registry components remain usable where
+their implementations type-check.

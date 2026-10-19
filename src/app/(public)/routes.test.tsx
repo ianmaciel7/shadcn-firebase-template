@@ -9,7 +9,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 vi.mock("@/components/firebase/google-sign-in-button", () => ({
   GoogleSignInButton: () => null,
 }));
-vi.mock("@/components/firebase/sign-in-auth-screen", () => ({
+vi.mock("@firebase-oss/ui-react", () => ({
   SignInAuthScreen: (props: {
     onSignUpClick: () => void;
     onForgotPasswordClick: () => void;
@@ -23,8 +23,6 @@ vi.mock("@/components/firebase/sign-in-auth-screen", () => ({
       </button>
     </>
   ),
-}));
-vi.mock("@/components/firebase/sign-up-auth-screen", () => ({
   SignUpAuthScreen: (props: { onSignInClick: () => void }) => (
     <button type="button" onClick={props.onSignInClick}>
       {"sign in"}
