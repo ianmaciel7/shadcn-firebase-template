@@ -6,13 +6,10 @@ import SignInPage from "./sign-in/page";
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
-vi.mock("@firebase-oss/ui-react", () => ({
-  ForgotPasswordAuthScreen: (props: { onBackToSignInClick: () => void }) => (
-    <button type="button" onClick={props.onBackToSignInClick}>
-      {"back"}
-    </button>
-  ),
+vi.mock("@/components/firebase/google-sign-in-button", () => ({
   GoogleSignInButton: () => null,
+}));
+vi.mock("@/components/firebase/sign-in-auth-screen", () => ({
   SignInAuthScreen: (props: {
     onSignUpClick: () => void;
     onForgotPasswordClick: () => void;
@@ -26,9 +23,18 @@ vi.mock("@firebase-oss/ui-react", () => ({
       </button>
     </>
   ),
+}));
+vi.mock("@/components/firebase/sign-up-auth-screen", () => ({
   SignUpAuthScreen: (props: { onSignInClick: () => void }) => (
     <button type="button" onClick={props.onSignInClick}>
       {"sign in"}
+    </button>
+  ),
+}));
+vi.mock("@/components/firebase/forgot-password-auth-screen", () => ({
+  ForgotPasswordAuthScreen: (props: { onBackToSignInClick: () => void }) => (
+    <button type="button" onClick={props.onBackToSignInClick}>
+      {"back"}
     </button>
   ),
 }));

@@ -254,13 +254,12 @@ Recheck current documentation before adding a replacement rule.
 
 ## Known limitations
 
-- **The Firebase UI reference layer `src/components/firebase` is excluded from automated
-  tooling.** Biome (so `lint-staged` never rewrites it), TypeScript, CSpell, jscpd,
-  coverage, Fallow health, and React Doctor skip it, and Knip ignores its unresolved
-  imports. Dependency-cruiser and ast-grep still scan it; ast-grep reports one
-  `no-hardcoded-ui-attribute` warning there that is left unfixed on purpose. The
-  SHA-256 guard in `tests/unit/` protects it instead; see
-  [ADR 0008](docs/adr/0008-install-firebase-ui-registry.md).
+- **Firebase registry source has targeted tooling exclusions.** Biome (so
+  `lint-staged` does not rewrite the full generated set), CSpell, jscpd, coverage,
+  Fallow health, and React Doctor skip `src/components/firebase`; Knip ignores its
+  unresolved imports. TypeScript includes the directory and checks all its files.
+  See
+  [ADR 0010](docs/adr/0010-use-firebase-registry-source.md).
 - **Vendored components are excluded from coverage, Fallow health, React Doctor,
   and relaxed in Biome.** Formatting and import organization are disabled for the
   distributed shadcn/ui and AI Elements files; the existing targeted lint

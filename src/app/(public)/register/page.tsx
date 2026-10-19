@@ -1,7 +1,8 @@
 ﻿"use client";
 
-import { GoogleSignInButton, SignUpAuthScreen } from "@firebase-oss/ui-react";
 import { useRouter } from "next/navigation";
+import { GoogleSignInButton } from "@/components/firebase/google-sign-in-button";
+import { SignUpAuthScreen } from "@/components/firebase/sign-up-auth-screen";
 
 export default function RegisterPage() {
   const router = useRouter();

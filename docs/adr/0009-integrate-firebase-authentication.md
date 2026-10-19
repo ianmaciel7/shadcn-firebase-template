@@ -12,11 +12,10 @@ server resource requiring authorization.
 
 ## Decision
 
-Use the Firebase Web SDK and the `@firebase-oss/ui-react` screens and buttons
+Use the Firebase Web SDK and the copied Firebase registry screens and buttons
 for sign-in, registration, and password recovery under the `(public)` route
-group. Importing the published package avoids bringing the immutable registry
-implementations into the application's TypeScript program; the registry form
-types currently fail this project's strict check. Initialize
+group. They are shadcn source owned by this project and use `@firebase-oss/ui-react`
+for shared runtime behavior. Initialize
 one default Firebase app, Auth instance, and FirebaseUI store in the browser;
 `src/lib/firebase.ts` reuses the app and the UI store across development reloads;
 the global store's type declaration lives in `src/types/global.d.ts`.
@@ -28,7 +27,7 @@ The UI store follows the next-intl locale using the installed FirebaseUI
 translations. Existing next-intl, theme, and tooltip providers remain in place.
 
 The public layout supplies the shared `main` landmark. The route pages compose
-the package screens directly. They do not add forms,
+the local registry screens directly. They do not add forms,
 authentication context, or optional FirebaseUI behaviors. Missing public Web SDK
 configuration produces a configuration error on the authentication routes.
 
@@ -47,6 +46,10 @@ and authorization when introduced. No Admin SDK, server session, protected route
 or logout UI is needed yet. Firebase Console setup and testing expectations are
 in [TOOLING.md](../../TOOLING.md#firebase-authentication).
 
+The auth SDK and screens increase the measured client JavaScript bundle to about
+467 kB gzip. The client budget is 500 kB gzip to allow for this required auth
+runtime while retaining a finite regression limit.
+
 The mocked unit tests cover the initial Auth state and route navigation. The
 separate Playwright Auth Emulator suite, configured in `playwright.config.ts`,
 exercises email registration and sign-in, persistence, password recovery, locale
@@ -55,7 +58,7 @@ It runs against a development server and is not part of the standard Playwright
 or CI suite. It does not validate real Google consent, email delivery, or MFA;
 see [TESTING.md](../../TESTING.md#first-time-setup).
 
-The Firebase UI registry files remain an immutable reference and include known
-upstream TypeScript errors. Application routes import the screens and buttons
-from `@firebase-oss/ui-react`, so no registry implementation is pulled into the
-application's TypeScript program.
+The registry source had upstream type mismatches for optional auth credentials
+and optional Base UI selection values. Local forms and the country selector now
+handle those API results explicitly. ADR 0010 records the project's shadcn
+source-ownership policy.
