@@ -17,7 +17,7 @@ original date. Read current operational details in the
 | [0006](0006-configure-testing.md) | Accepted | Colocated Vitest tests, Vitest Browser Mode, Playwright suites, coverage thresholds, mutation testing |
 | [0007](0007-configure-ci.md) | Accepted | Continuous integration, quality tooling, custom rules catalog, layered verification, and Git hooks |
 | [0008](0008-install-firebase-ui-registry.md) | Accepted (amended) | Dynamic cross-platform installer and locally owned source model for `@firebase` registry |
-| [0009](0009-integrate-firebase-authentication.md) | Accepted | Browser Firebase Authentication and shared FirebaseUI routes |
+| [0009](0009-integrate-firebase-authentication.md) | Accepted (amended) | Browser Firebase Authentication, environment-driven configuration, and root emulator setup |
 
 ## Current operational clarifications
 
@@ -76,6 +76,15 @@ original date. Read current operational details in the
     resolve a locale from an explicit value or cookie; the application has no
     locale route segment or request proxy. See
     [Architecture](../../ARCHITECTURE.md#internationalization).
+
+- **ADR 0009: Firebase Authentication and emulator configuration**:
+  - The Auth Emulator connects using the official `FIREBASE_AUTH_EMULATOR_HOST`
+    variable and demo project convention (`demo-*`, such as `demo-test`).
+  - Canonical root `firebase.json` and `.firebaserc` files configure the emulators
+    and default project alias natively for the Firebase CLI, including the Emulator
+    Suite UI at `http://127.0.0.1:4000`.
+  - In-code default fallback values are removed; environment configuration is
+    strictly driven by `.env`.
 
 These clarifications describe the checked-in configuration. They do not claim
 that a hosted run succeeded or that all tooling is installed on a contributor's

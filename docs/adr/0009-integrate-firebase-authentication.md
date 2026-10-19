@@ -1,6 +1,6 @@
 # ADR 0009: Integrate Firebase Authentication
 
-- **Status**: Accepted
+- **Status**: Accepted (amended: environment-driven configuration and canonical root emulator setup)
 - **Date**: 2026-10-19
 - **Deciders**: ianmaciel7
 
@@ -31,17 +31,24 @@ the local registry screens directly. They do not add forms,
 authentication context, or optional FirebaseUI behaviors. Missing public Web SDK
 configuration produces a configuration error on the authentication routes.
 
-For local development and browser tests, opt in to the Auth Emulator only in
-development with a demo project starting with `demo-` (such as `demo-auth-e2e`,
-configured via `NEXT_PUBLIC_FIREBASE_PROJECT_ID` in `.env.local`). The client
-connects to the configured emulator host (`NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST`,
-defaulting to `http://127.0.0.1:9099`) before initializing FirebaseUI and rejects
-incompatible emulator configuration or non-demo project IDs. Production uses
-the Web SDK configuration with the emulator disabled. Default project configuration
-for Firebase CLI commands is maintained in `.firebaserc`. Operational commands for
-the Firebase Auth Emulator:
+For local development and browser tests, opt in to the Auth Emulator by setting
+the official Firebase environment variable `FIREBASE_AUTH_EMULATOR_HOST` (e.g.
+`127.0.0.1:9099`) alongside a demo project ID starting with `demo-` (such as
+`demo-test`, configured via `NEXT_PUBLIC_FIREBASE_PROJECT_ID` or `GCLOUD_PROJECT`
+in `.env`). The client connects to the emulator endpoint before initializing
+FirebaseUI and rejects non-demo project IDs. In-code default fallback values are
+strictly avoided: configuration is read from `.env` and missing variables raise
+explicit errors. Production uses the Web SDK configuration with
+`FIREBASE_AUTH_EMULATOR_HOST` omitted. Canonical Firebase emulator configuration
+resides at the repository root in `firebase.json`, and the default project alias
+is maintained in `.firebaserc`, eliminating custom `--config` and `--project` CLI flags.
+The configuration enables the Firebase Emulator Suite UI on port 4000 for visual
+inspection and interactive debugging of auth accounts during development.
+Operational commands for the Firebase Auth Emulator:
 
-- `pnpm emulator`: starts the local Auth Emulator.
+- `pnpm emulator`: starts the local Auth Emulator (`firebase emulators:start --only auth`),
+  serving the Auth service on port 9099 and the Emulator Suite UI at
+  `http://127.0.0.1:4000`.
 - `pnpm emulator:seed`: sends seed test accounts to the running emulator for
   local development and testing (`node scripts/emulator/seed.mjs`).
 - `pnpm emulator:clear`: clears all accounts in the emulator (`node scripts/emulator/clear.mjs`).
@@ -75,7 +82,11 @@ handle those API results explicitly. [ADR 0008](0008-install-firebase-ui-registr
 records the project's shadcn source-ownership policy.
 
 Firebase Web SDK and emulator parameters are externalized to environment
-variables (`.env.example` / `.env.local`), avoiding hardcoded values in project
-source or test runners. Local emulator usage requires the standard `demo-*`
-project naming prefix to prevent unintended requests to live Firebase services,
-while the default project alias is maintained in `.firebaserc`.
+variables (`.env.example` / `.env`), completely removing in-code default fallback
+values across project source, scripts, and test runners. Local emulator usage
+relies on the official `FIREBASE_AUTH_EMULATOR_HOST` variable and the `demo-*`
+project naming convention to prevent unintended requests to live Firebase services.
+Canonical root configuration files (`firebase.json` and `.firebaserc`) enable
+the Firebase CLI and test suites to discover emulator bindings and project aliases
+natively, eliminating non-standard file paths and custom CLI flags, while enabling
+the local Emulator Suite UI for visual user inspection.

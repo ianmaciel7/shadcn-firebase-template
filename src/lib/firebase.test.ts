@@ -32,7 +32,8 @@ describe("getFirebaseUI", () => {
     vi.stubEnv("NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN", "example.firebaseapp.com");
     vi.stubEnv("NEXT_PUBLIC_FIREBASE_PROJECT_ID", "example");
     vi.stubEnv("NEXT_PUBLIC_FIREBASE_APP_ID", "app-id");
-    vi.stubEnv("NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR", "false");
+    delete process.env.FIREBASE_AUTH_EMULATOR_HOST;
+    delete process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
     mocks.apps = [];
     mocks.getApps.mockImplementation(() => mocks.apps);
     mocks.getApp.mockReturnValue(mocks.app);
@@ -59,7 +60,7 @@ describe("getFirebaseUI", () => {
   });
 
   it("rejects emulator use outside development or with non-demo project", async () => {
-    vi.stubEnv("NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR", "true");
+    vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9099");
 
     const { getFirebaseUI } = await import("./firebase");
     expect(() => getFirebaseUI()).toThrow(
@@ -69,19 +70,15 @@ describe("getFirebaseUI", () => {
 
   it("initializes Firebase and connects the emulator in the demo project", async () => {
     vi.stubEnv("NODE_ENV", "development");
-    vi.stubEnv("NEXT_PUBLIC_FIREBASE_PROJECT_ID", "demo-auth-e2e");
-    vi.stubEnv("NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR", "true");
-    vi.stubEnv(
-      "NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST",
-      "http://127.0.0.1:9098",
-    );
+    vi.stubEnv("NEXT_PUBLIC_FIREBASE_PROJECT_ID", "demo-test");
+    vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9098");
 
     const { getFirebaseUI } = await import("./firebase");
     expect(getFirebaseUI()).toBe(mocks.store);
     expect(mocks.initializeApp).toHaveBeenCalledWith({
       apiKey: "api-key",
       authDomain: "example.firebaseapp.com",
-      projectId: "demo-auth-e2e",
+      projectId: "demo-test",
       appId: "app-id",
     });
     expect(mocks.connectAuthEmulator).toHaveBeenCalledWith(

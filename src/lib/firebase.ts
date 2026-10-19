@@ -18,9 +18,11 @@ export function getFirebaseUI() {
       `Missing Firebase configuration: ${missing.join(", ")}. See .env.example.`,
     );
   }
-  const useEmulator = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR === "true";
+  const emulatorHost =
+    process.env.FIREBASE_AUTH_EMULATOR_HOST ||
+    process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
   if (
-    useEmulator &&
+    emulatorHost &&
     (process.env.NODE_ENV !== "development" ||
       !config.projectId?.startsWith("demo-"))
   ) {
@@ -32,16 +34,12 @@ export function getFirebaseUI() {
     ? getApp()
     : initializeApp(config);
   const auth = getAuth(app);
-  if (!globalThis.firebaseUIStore && useEmulator) {
-    const rawHost =
-      process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST ||
-      process.env.FIREBASE_AUTH_EMULATOR_HOST ||
-      "http://127.0.0.1:9099";
-    const emulatorHost =
-      rawHost.startsWith("http://") || rawHost.startsWith("https://")
-        ? rawHost
-        : `http://${rawHost}`;
-    connectAuthEmulator(auth, emulatorHost);
+  if (!globalThis.firebaseUIStore && emulatorHost) {
+    const url =
+      emulatorHost.startsWith("http://") || emulatorHost.startsWith("https://")
+        ? emulatorHost
+        : `http://${emulatorHost}`;
+    connectAuthEmulator(auth, url);
   }
   globalThis.firebaseUIStore ??= initializeUI({ app, auth });
   return globalThis.firebaseUIStore;

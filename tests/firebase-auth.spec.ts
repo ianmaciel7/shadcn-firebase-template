@@ -1,15 +1,41 @@
+import fs from "node:fs";
 import { expect, test } from "@playwright/test";
 
+for (const envFile of [".env.local", ".env"]) {
+  if (fs.existsSync(envFile)) {
+    process.loadEnvFile(envFile);
+    break;
+  }
+}
+
 const rawHost =
-  process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST ||
   process.env.FIREBASE_AUTH_EMULATOR_HOST ||
-  "http://127.0.0.1:9099";
+  process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
+if (!rawHost) {
+  throw new Error(
+    "Missing FIREBASE_AUTH_EMULATOR_HOST in environment. Define it in .env (e.g. 127.0.0.1:9099).",
+  );
+}
+
 const emulator =
   rawHost.startsWith("http://") || rawHost.startsWith("https://")
     ? rawHost.replace(/\/$/, "")
     : `http://${rawHost}`.replace(/\/$/, "");
-const project = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "demo-auth-e2e";
-const password = process.env.TEST_USER_PASSWORD || "Test-password-123";
+
+const project =
+  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.GCLOUD_PROJECT;
+if (!project) {
+  throw new Error(
+    "Missing NEXT_PUBLIC_FIREBASE_PROJECT_ID in environment. Define it in .env (e.g. demo-test).",
+  );
+}
+
+const password = process.env.TEST_USER_PASSWORD;
+if (!password) {
+  throw new Error(
+    "Missing TEST_USER_PASSWORD in environment. Define it in .env.",
+  );
+}
 
 test("registration and persisted authentication redirect", async ({ page }) => {
   const email = `register-${crypto.randomUUID()}@example.test`;
