@@ -10,8 +10,7 @@ const emulatorHost =
 const projectId =
   process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "demo-auth-e2e";
 
-const defaultPassword =
-  process.env.TEST_USER_PASSWORD || "Test-password-123";
+const defaultPassword = process.env.TEST_USER_PASSWORD || "Test-password-123";
 
 const DEFAULT_USERS = [
   {
