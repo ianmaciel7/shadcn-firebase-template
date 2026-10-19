@@ -315,3 +315,44 @@ that an external executable is installed or a server is running.
 Use Context7 when current library documentation is needed. The project-local
 `context7-cli` skill documents its two-step library lookup and documentation
 query flow.
+
+## Firebase Authentication
+
+Create a Firebase project and register a Web app in the Firebase Console. Copy
+its Web SDK values into `.env.local` using `.env.example`; these public values
+are included in the browser build. Never place Admin SDK credentials or private
+keys in these variables. Restart the development server after changing them.
+
+In Authentication, enable Email/Password. Enable Google and set
+`NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED=true` only if Google sign-in is desired;
+configure the project support email and OAuth consent screen as required by the
+Console. Add each development and deployment hostname to Authentication's
+authorized domains, including `localhost` if needed. Google popup sign-in uses
+Firebase's configured `authDomain`; review Firebase's OAuth domain guidance if
+using a custom domain. Redirect sign-in is not enabled.
+
+Review the password-reset and email-verification email templates and authorized
+continue URLs in the Console. Firebase sends password-reset emails through the
+registry form. This template does not send verification emails automatically or
+require verified email; add that policy only when the product requires it. The
+Web SDK's default browser persistence retains sign-in across browser restarts
+where supported. Test shared-device requirements before changing persistence.
+
+The auth routes use the shared browser Auth instance and return authenticated
+users to `/`. They do not protect server resources or establish a server session.
+Add independent server-side token verification and authorization for any future
+protected data or actions. The `(public)` group is organization only. Unit tests
+must mock Firebase or use the Auth Emulator; CI must not need production keys.
+Real provider configuration, OAuth popup behavior, email delivery, and MFA need
+verification against a configured Firebase project or emulator as appropriate.
+For local emulator development, use `NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR=true`
+with `NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-auth-e2e` and the Auth Emulator on
+`127.0.0.1:9099`; supply nonempty local-only values for the other Web SDK fields.
+This mode is limited to development and rejects other project IDs. For production,
+leave the emulator flag false and configure the real Web app values at build time.
+See [TESTING.md](TESTING.md#first-time-setup) for the isolated browser suite.
+For interactive local development, start the emulator with
+`firebase emulators:start --project demo-auth-e2e --only auth --config tests/firebase.emulator.json`
+and run `pnpm dev` separately with the emulator variables in `.env.local`.
+See [Firebase setup](https://firebase.google.com/docs/auth/web/start) and
+[OAuth domain guidance](https://firebase.google.com/docs/auth/web/redirect-best-practices).

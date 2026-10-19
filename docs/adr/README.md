@@ -17,6 +17,7 @@ original date. Read current operational details in the
 | [0006](0006-configure-testing.md) | Accepted | Colocated Vitest tests, Vitest Browser Mode, Playwright suites, coverage thresholds, mutation testing |
 | [0007](0007-configure-ci.md) | Accepted | Continuous integration, quality tooling, custom rules catalog, layered verification, and Git hooks |
 | [0008](0008-install-firebase-ui-registry.md) | Accepted | Dynamic cross-platform `node -e` command that installs every `@firebase` registry component into `src/components/firebase/` |
+| [0009](0009-integrate-firebase-authentication.md) | Accepted | Browser Firebase Authentication and shared FirebaseUI routes |
 
 ## Current operational clarifications
 

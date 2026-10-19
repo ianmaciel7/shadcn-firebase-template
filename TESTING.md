@@ -218,6 +218,16 @@ not yet on a hosted runner; check the first scheduled run.
 
 ## First-time setup
 
+For browser authentication journeys, install the Firebase CLI and Chromium,
+then run `pnpm test:auth`. This starts the Auth Emulator on `127.0.0.1:9099`
+with the isolated `demo-auth-e2e` project and a development server on port 3100.
+Both ports must be free. The test configuration supplies non-production Web
+SDK values; no Firebase account or production credentials are needed. This
+suite is separate from the production-build Playwright suite and requires the
+Firebase CLI on PATH. It tests the emulator, not actual Google consent or email
+delivery. The production build's existing registry type errors remain a separate
+validation failure.
+
 Install the browser binaries once per environment:
 
 ```bash

@@ -126,7 +126,7 @@ Next.js runtime.
 `src/app`, and imports from `src/lib` into routes, components, hooks, or i18n.
 It does not ban all third-party React dependencies in `src/lib`.
 
-No database, authentication provider, or deployment integration is configured.
+Firebase Authentication provides browser authentication on the public auth routes; see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md). It does not authorize server resources. No database or deployment integration is configured.
 Keep [DER.md](DER.md) and [GLOSSARY.md](GLOSSARY.md) pending until the respective
 persistence and product decisions exist.
 
