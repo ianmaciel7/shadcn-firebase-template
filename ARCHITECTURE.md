@@ -20,6 +20,7 @@ configuration and repository documentation.
 │   ├── adr/                 # Accepted architecture decisions
 │   └── agents/              # Instructions for automated contributors
 ├── public/                  # Static assets served by Next.js
+├── scripts/                 # Operational and developer tooling scripts (e.g. emulator seed/clear)
 ├── src/
 │   ├── app/                 # App Router routes, layouts, and global styles
 │   ├── components/          # Reusable application and UI components
@@ -115,7 +116,7 @@ The root layout keeps the async `IntlProvider` inside `Suspense`, followed by
 custom providers under `ui/extensions` remain subject to application checks.
 `src/components/firebase` contains Firebase UI registry source used by the app.
 Treat copied components as locally owned shadcn source and review any registry
-update as a source diff; see [ADR 0010](docs/adr/0010-use-firebase-registry-source.md).
+update as a source diff; see [ADR 0008](docs/adr/0008-install-firebase-ui-registry.md).
 TypeScript checks the full directory with the application build config. Bulk
 formatting and other broad checks retain targeted exclusions for untouched
 registry source.

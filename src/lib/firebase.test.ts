@@ -58,12 +58,12 @@ describe("getFirebaseUI", () => {
     expect(mocks.initializeApp).not.toHaveBeenCalled();
   });
 
-  it("rejects emulator use outside development", async () => {
+  it("rejects emulator use outside development or with non-demo project", async () => {
     vi.stubEnv("NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR", "true");
 
     const { getFirebaseUI } = await import("./firebase");
     expect(() => getFirebaseUI()).toThrow(
-      "The Auth emulator requires development mode and project demo-auth-e2e.",
+      "The Auth emulator requires development mode and a demo project (e.g. demo-*). See .env.example.",
     );
   });
 
@@ -71,6 +71,10 @@ describe("getFirebaseUI", () => {
     vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("NEXT_PUBLIC_FIREBASE_PROJECT_ID", "demo-auth-e2e");
     vi.stubEnv("NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR", "true");
+    vi.stubEnv(
+      "NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST",
+      "http://127.0.0.1:9098",
+    );
 
     const { getFirebaseUI } = await import("./firebase");
     expect(getFirebaseUI()).toBe(mocks.store);
@@ -82,7 +86,7 @@ describe("getFirebaseUI", () => {
     });
     expect(mocks.connectAuthEmulator).toHaveBeenCalledWith(
       mocks.auth,
-      "http://127.0.0.1:9099",
+      "http://127.0.0.1:9098",
     );
     expect(mocks.initializeUI).toHaveBeenCalledWith({
       app: mocks.app,

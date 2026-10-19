@@ -1,6 +1,6 @@
 # ADR 0008: Install Firebase UI registry
 
-- **Status**: Accepted
+- **Status**: Accepted (amended: adopted local source-ownership model)
 - **Date**: 2026-10-19
 - **Deciders**: ianmaciel7
 
@@ -37,8 +37,7 @@ files and package-manager state, adds no package scripts, and keeps no component
 list. The integrity test and tool configuration are separate setup steps.
 
 All Firebase UI components live under `src/components/firebase/`, never
-directly under `src/components/` or `src/components/ui/`. That directory is an
-immutable, read-only upstream reference layer:
+directly under `src/components/` or `src/components/ui/`. That directory was initially configured as an immutable, read-only upstream reference layer (subsequently amended to follow shadcn's local source-ownership model; see Amendment below):
 
 - No one edits the vendored files by hand, and no application-owned component
   goes in the directory. shadcn/ui primitives stay in `src/components/ui/`.
@@ -169,6 +168,9 @@ Run `update` once to install and approve the first baseline:
 ```bash
 node -e "const fs=require('fs'),cp=require('child_process'),cr=require('crypto'),os=require('os'),P='npx --yes shadcn@latest ',D='src/components/firebase',M='tests/unit/firebase-reference.manifest.sha256',LF=String.fromCharCode(10),CR=String.fromCharCode(13),Q=[34,39].map(x=>String.fromCharCode(x)),ex=fs.existsSync,J=f=>JSON.parse(fs.readFileSync(f,'utf8')),die=m=>{console.error('ERROR: '+m);process.exit(1)},U=process.argv[1]==='update';if(process.argv.length>2||(process.argv[1]&&!U))die('usage: node -e <command> [update]');let c;try{c=J('components.json')}catch(e){die('cannot read components.json in '+process.cwd()+' ('+e.message+')')}const r=c.registries&&c.registries['@firebase'];if(typeof r!=='string'||r.indexOf('{name}')<0)die('components.json needs registries[@firebase] = https://firebaseopensource.com/r/{name}.json (add it manually; it is not modified here)');const UI=((c.aliases&&c.aliases.ui)||'@/components/ui').replace('@/','src/'),CSS=c.tailwind&&c.tailwind.css,W=(d,p)=>fs.readdirSync(d,{withFileTypes:true}).flatMap(e=>e.isDirectory()?W(d+'/'+e.name,p+e.name+'/'):[p+e.name]),H=f=>cr.createHash('sha256').update(fs.readFileSync(f,'utf8').split(CR+LF).join(LF)).digest('hex'),S=()=>{const m={};if(ex(D))for(const f of W(D,'').sort())m[f]=H(D+'/'+f);return m},R=()=>{const m={};if(ex(M))for(const l of fs.readFileSync(M,'utf8').split(CR+LF).join(LF).split(LF)){const i=l.indexOf('  ');if(i>0)m[l.slice(i+2)]=l.slice(0,i)}return m},C=(a,b)=>({added:Object.keys(b).filter(k=>!(k in a)),removed:Object.keys(a).filter(k=>!(k in b)),modified:Object.keys(a).filter(k=>k in b&&a[k]!==b[k])}),Z=d=>!d.added.length&&!d.removed.length&&!d.modified.length,run=s=>cp.execSync(s,{encoding:'utf8',stdio:['ignore','pipe','inherit'],maxBuffer:50000000}),O=()=>ex('src/components')?W('src/components','').filter(f=>f.indexOf('firebase/')!==0):[];(async()=>{const found=new Set();let off=0;console.log('shadcn CLI '+run(P+'--version').trim());for(;;){let o;try{o=JSON.parse(run(P+'list @firebase --json --limit 100 --offset '+off))}catch(e){die('listing failed at offset '+off+': '+e.message)}if(!o||!Array.isArray(o.items))die('unexpected list response at offset '+off);for(const i of o.items){const a=i&&i.addCommandArgument;if(i.registry==='@firebase'&&typeof a==='string'&&/^@firebase\/[a-z0-9][a-z0-9._-]*$/.test(a))found.add(a);else console.warn('skipping unrecognised item: '+JSON.stringify(i&&i.name))}off+=o.items.length;if(!o.items.length||!(o.pagination&&o.pagination.hasMore))break}const all=[...found];if(!all.length)die('no @firebase components discovered');console.log('Discovered '+all.length+' @firebase components'+(U?' (update mode)':''));const EXP=new Set,PRIM=new Set,DEP=new Set;for(const s of all){let j;try{const x=await fetch(r.replace('{name}',s.slice(10)));if(!x.ok)throw new Error('HTTP '+x.status);j=await x.json()}catch(e){die('metadata for '+s+' failed: '+e.message)}if(j.name!==s.slice(10)||!Array.isArray(j.files)||!j.files.length)die('unexpected metadata for '+s);j.files.forEach(f=>EXP.add(f.path.split('/').pop()));(j.dependencies||[]).forEach(d=>DEP.add(d));(j.registryDependencies||[]).forEach(d=>{if(d.indexOf('http')!==0)PRIM.add(d);else if(!found.has('@firebase/'+d.split('/').pop().replace('.json','')))die('unexpected registry dependency '+d+' in '+s)})}const PF=new Set,sn=new Set;for(;;){const b=[...PRIM].filter(n=>!sn.has(n));if(!b.length)break;b.forEach(n=>sn.add(n));let v;try{v=JSON.parse(run(P+'view '+b.join(' ')))}catch(e){die('shadcn view failed for '+b.join(' ')+': '+e.message)}if(!Array.isArray(v))die('unexpected shadcn view response');v.forEach(i=>{(i.files||[]).forEach(f=>PF.add(f.path.split('/').pop()));(i.registryDependencies||[]).forEach(d=>{if(d.indexOf('http')!==0)PRIM.add(d)})})}const T=()=>ex(D)?W(D,'').filter(f=>f.slice(-4)==='.tsx'):[],F=f=>fs.readFileSync(D+'/'+f,'utf8'),B=new Set(O()),K=CSS&&ex(CSS)?H(CSS):'',bak=os.tmpdir()+'/firebase-ui-backup-'+Date.now(),rm=[],fix=[];const back=()=>{if(U&&ex(bak)){fs.rmSync(D,{recursive:true,force:true});fs.cpSync(bak,D,{recursive:true});console.error('previous reference layer restored')}};const fail=m=>{back();die(m)};const inst=U||!ex(D);if(U&&ex(D)){fs.cpSync(D,bak,{recursive:true});fs.rmSync(D,{recursive:true,force:true})}if(inst){for(let n=0;n<all.length;n+=10){const b=all.slice(n,n+10);console.log('Installing '+(n+1)+'-'+(n+b.length)+' of '+all.length+': '+b.join(' '));try{cp.execSync(P+'add '+b.join(' ')+' --path '+D+' --yes',{stdio:'inherit'})}catch(e){fail('shadcn add failed for batch starting at '+(n+1))}}for(const f of T()){const t=F(f),n=t.replace(new RegExp('from (.)@/components/([a-z0-9-]+)(.)','g'),(m,a,b,d)=>Q.includes(a)&&a===d&&EXP.has(b+'.tsx')?'from '+a+'@/components/firebase/'+b+a:m);if(n!==t){fs.writeFileSync(D+'/'+f,n);fix.push(f)}}const kept=[];for(const f of fs.readdirSync(D)){if(EXP.has(f))continue;const n=f.slice(0,f.lastIndexOf('.'));if(PF.has(f)&&ex(UI+'/'+f)&&!T().some(g=>Q.some(q=>F(g).indexOf('@/components/firebase/'+n+q)>=0))){fs.unlinkSync(D+'/'+f);rm.push(f)}else kept.push(f)}if(kept.length)fail('cannot determine the owner of '+kept.join(', ')+'; nothing else was deleted');const mis=O().filter(f=>!B.has(f));if(mis.length)fail('files outside '+D+': '+mis.join(', '))}const miss=[...EXP].filter(f=>!ex(D+'/'+f)),bad=[],pk=new Set(DEP);for(const f of T())for(const ch of F(f).split('from ').slice(1)){const q=ch[0];if(!Q.includes(q))continue;const s=ch.slice(1,ch.indexOf(q,1));if(s.indexOf('@/components/')===0){const p='src/'+s.slice(2);if(!(ex(p+'.tsx')||ex(p+'.ts')||ex(p+'/index.tsx')))bad.push(f+' -> '+s)}else if(s[0]!=='.'&&s.indexOf('@/')!==0&&s.indexOf('node:')!==0){const g=s.split('/');pk.add(s[0]==='@'?g[0]+'/'+g[1]:g[0])}}console.log('Firebase files present: '+(EXP.size-miss.length)+'/'+EXP.size+(rm.length?'; shadcn primitive copies removed: '+rm.join(', '):'')+(fix.length?'; imports normalized in: '+fix.join(', '):''));if(miss.length)fail('missing expected files: '+miss.join(', '));if(bad.length)fail('unresolved imports: '+bad.join('; '));const pj=J('package.json'),have=Object.assign({},pj.dependencies,pj.devDependencies),need=[...pk].filter(n=>!have[n]&&!require('module').builtinModules.includes(n));if(need.length){if(!inst)die('undeclared dependencies: '+need.join(', '));const up=ex('node_modules/@firebase-oss/ui-react/package.json')?J('node_modules/@firebase-oss/ui-react/package.json'):{},v=n=>{const x=(up.peerDependencies||{})[n],y=(up.dependencies||{})[n];return n+(x?'@'+x.split('||').pop().trim().replace('^','').replace('~',''):y?'@'+y.replace('^','').replace('~',''):'')},pm=ex('pnpm-lock.yaml')?'pnpm add ':ex('yarn.lock')?'yarn add ':ex('bun.lock')||ex('bun.lockb')?'bun add ':'npm install ';console.log('Adding direct dependencies: '+need.map(v).join(' '));try{cp.execSync(pm+need.map(v).join(' '),{stdio:'inherit'})}catch(e){fail('dependency install failed')}}if(CSS&&ex(CSS)&&H(CSS)!==K)console.log('NOTICE: '+CSS+' was modified by the registry installer (CSS merge); review its diff');const now=S(),n2=Object.keys(now).length;if(U){const d=C(R(),now);console.log('Changes against the previous manifest:');if(Z(d))console.log('  (none)');else{d.added.forEach(k=>console.log('  + '+k));d.removed.forEach(k=>console.log('  - '+k));d.modified.forEach(k=>console.log('  ~ '+k))}fs.mkdirSync('tests/unit',{recursive:true});fs.writeFileSync(M,Object.keys(now).sort().map(k=>now[k]+'  '+k).join(LF)+LF);if(!Z(C(R(),S())))fail('integrity check failed after update');fs.rmSync(bak,{recursive:true,force:true});console.log('Manifest regenerated for '+n2+' files; integrity verified')}else{const d=C(R(),now);if(!ex(M))die('no baseline manifest; run the command with the update argument to approve it');if(!Z(d))die('reference layer differs from the manifest (+'+d.added+' -'+d.removed+' ~'+d.modified+'); run with the update argument to accept');console.log('Integrity verified: '+n2+' reference files match the manifest')}})().catch(e=>die(e.message))" update
 ```
+
+> [!NOTE]
+> The SHA-256 manifest and integrity test described in this section were subsequently retired when adopting the local source-ownership model (see Amendment below). Registry updates are managed via source diffs rather than automated hash manifests.
 
 `tests/unit/firebase-reference.test.ts` and
 `tests/unit/firebase-reference.manifest.sha256` protect the layer:
@@ -448,6 +450,52 @@ by appending a `@layer components` block and a `@variant dark` block of 66 lines
   - ast-grep reports one warning in the layer that cannot be fixed in place.
   - `update` is not transactional and can leave changes after a failure; an
     independent backup and review of the complete worktree diff are required.
+
+## Amendment: Adoption of locally owned source model
+
+### Context of amendment
+
+The authentication routes need FirebaseUI screens that match this shadcn
+project. The official Firebase registry distributes shadcn components as source
+files, while `@firebase-oss/ui-react` supplies the shared runtime and hooks.
+The installed registry source has upstream type mismatches in sign-in and
+sign-up action callbacks. TypeScript includes excluded files again when routes
+import them, so the build cannot ignore those errors through `tsconfig.exclude`.
+
+Treating the entire registry directory as an immutable upstream mirror conflicted
+with shadcn's source-ownership model and prevented the local fixes needed by
+the application.
+
+### Decision of amendment
+
+Use the copied Firebase registry components directly from
+`src/components/firebase` in application routes. Treat registry files as
+project source that may be adapted to the app and its installed APIs. Keep
+`@firebase-oss/ui-react` as a runtime dependency; registry components use its
+hooks, types, and shared UI behavior.
+
+Supersede the initial immutable/read-only rule and SHA-256 integrity guard for
+this directory. Keep the generated registry components grouped under
+`src/components/firebase`. Continue excluding untouched registry source from
+bulk formatting, lint, spelling, and coverage jobs. Include the full directory
+in application typechecking. When changing a component, run the relevant
+typecheck and behavior checks.
+
+Sign-in, sign-up, and phone verification forms call success callbacks only when
+the action returns a `UserCredential`. A `void` result is a supported FirebaseUI
+outcome, so screen-level auth-state handling remains responsible for those
+cases. The country selector also handles Base UI's optional selection value.
+
+### Consequences of amendment
+
+- Auth routes use the source form of FirebaseUI recommended for shadcn apps.
+- Local UI and type compatibility fixes are reviewable in the project source.
+- The Firebase registry source is no longer protected by an upstream hash
+  manifest; registry updates require reviewing and merging source diffs.
+- The package remains required for FirebaseUI runtime APIs even when screens
+  are imported from the local registry directory.
+- The generated components remain excluded from broad style and coverage jobs;
+  typechecking covers them all.
 
 ## Alternatives considered
 

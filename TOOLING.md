@@ -259,7 +259,7 @@ Recheck current documentation before adding a replacement rule.
   Fallow health, and React Doctor skip `src/components/firebase`; Knip ignores its
   unresolved imports. TypeScript includes the directory and checks all its files.
   See
-  [ADR 0010](docs/adr/0010-use-firebase-registry-source.md).
+  [ADR 0008](docs/adr/0008-install-firebase-ui-registry.md).
 - **Vendored components are excluded from coverage, Fallow health, React Doctor,
   and relaxed in Biome.** Formatting and import organization are disabled for the
   distributed shadcn/ui and AI Elements files; the existing targeted lint
@@ -344,14 +344,22 @@ protected data or actions. The `(public)` group is organization only. Unit tests
 must mock Firebase or use the Auth Emulator; CI must not need production keys.
 Real provider configuration, OAuth popup behavior, email delivery, and MFA need
 verification against a configured Firebase project or emulator as appropriate.
-For local emulator development, use `NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR=true`
-with `NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-auth-e2e` and the Auth Emulator on
-`127.0.0.1:9099`; supply nonempty local-only values for the other Web SDK fields.
-This mode is limited to development and rejects other project IDs. For production,
-leave the emulator flag false and configure the real Web app values at build time.
+For local emulator development, set `NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR=true`
+in `.env.local` with a project ID starting with `demo-` (such as
+`NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-auth-e2e`) and the emulator host on
+`NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST` (defaults to `http://127.0.0.1:9099`);
+supply nonempty local-only values for the other Web SDK fields. This mode is
+limited to development and rejects non-demo project IDs. For production, leave
+the emulator flag false and configure the real Web app values at build time.
 See [TESTING.md](TESTING.md#first-time-setup) for the isolated browser suite.
-For interactive local development, start the emulator with
-`firebase emulators:start --project demo-auth-e2e --only auth --config tests/firebase.emulator.json`
-and run `pnpm dev` separately with the emulator variables in `.env.local`.
+For interactive local development, run `pnpm dev` separately with the emulator
+variables in `.env.local`. The operational commands for the Firebase Auth
+Emulator are:
+
+- `pnpm emulator`: starts the local Auth Emulator.
+- `pnpm emulator:seed` (`node scripts/emulator/seed.mjs`): sends seed test accounts to the running emulator for
+  local development and testing.
+- `pnpm emulator:clear` (`node scripts/emulator/clear.mjs`): clears all accounts in the emulator.
+
 See [Firebase setup](https://firebase.google.com/docs/auth/web/start) and
 [OAuth domain guidance](https://firebase.google.com/docs/auth/web/redirect-best-practices).

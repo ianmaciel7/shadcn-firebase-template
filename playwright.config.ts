@@ -43,12 +43,23 @@ export default defineConfig({
         reuseExistingServer: false,
         timeout: 120_000,
         env: {
-          NEXT_PUBLIC_FIREBASE_API_KEY: "emulator-only",
-          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "demo-auth-e2e.firebaseapp.com",
-          NEXT_PUBLIC_FIREBASE_PROJECT_ID: "demo-auth-e2e",
-          NEXT_PUBLIC_FIREBASE_APP_ID: "emulator-only",
-          NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR: "true",
-          NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED: "true",
+          NEXT_PUBLIC_FIREBASE_API_KEY:
+            process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "emulator-only",
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:
+            process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ||
+            `${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "demo-auth-e2e"}.firebaseapp.com`,
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID:
+            process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "demo-auth-e2e",
+          NEXT_PUBLIC_FIREBASE_APP_ID:
+            process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "emulator-only",
+          NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR:
+            process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR || "true",
+          NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST:
+            process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST ||
+            process.env.FIREBASE_AUTH_EMULATOR_HOST ||
+            "http://127.0.0.1:9099",
+          NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED:
+            process.env.NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED || "true",
         },
       }
     : {

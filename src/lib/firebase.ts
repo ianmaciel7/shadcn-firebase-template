@@ -1,4 +1,4 @@
-﻿import { initializeUI } from "@firebase-oss/ui-core";
+import { initializeUI } from "@firebase-oss/ui-core";
 import { getApp, getApps, initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 
@@ -22,10 +22,10 @@ export function getFirebaseUI() {
   if (
     useEmulator &&
     (process.env.NODE_ENV !== "development" ||
-      config.projectId !== "demo-auth-e2e")
+      !config.projectId?.startsWith("demo-"))
   ) {
     throw new Error(
-      "The Auth emulator requires development mode and project demo-auth-e2e.",
+      "The Auth emulator requires development mode and a demo project (e.g. demo-*). See .env.example.",
     );
   }
   const app = getApps().some((item) => item.name === "[DEFAULT]")
@@ -33,7 +33,15 @@ export function getFirebaseUI() {
     : initializeApp(config);
   const auth = getAuth(app);
   if (!globalThis.firebaseUIStore && useEmulator) {
-    connectAuthEmulator(auth, "http://127.0.0.1:9099");
+    const rawHost =
+      process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST ||
+      process.env.FIREBASE_AUTH_EMULATOR_HOST ||
+      "http://127.0.0.1:9099";
+    const emulatorHost =
+      rawHost.startsWith("http://") || rawHost.startsWith("https://")
+        ? rawHost
+        : `http://${rawHost}`;
+    connectAuthEmulator(auth, emulatorHost);
   }
   globalThis.firebaseUIStore ??= initializeUI({ app, auth });
   return globalThis.firebaseUIStore;

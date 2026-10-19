@@ -1,0 +1,5 @@
+{
+  "projects": {
+    "default": "demo-auth-e2e"
+  }
+}

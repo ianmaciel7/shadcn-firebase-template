@@ -1,8 +1,15 @@
-﻿import { expect, test } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
-const emulator = "http://127.0.0.1:9099";
-const project = "demo-auth-e2e";
-const password = "Test-password-123";
+const rawHost =
+  process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST ||
+  process.env.FIREBASE_AUTH_EMULATOR_HOST ||
+  "http://127.0.0.1:9099";
+const emulator =
+  rawHost.startsWith("http://") || rawHost.startsWith("https://")
+    ? rawHost.replace(/\/$/, "")
+    : `http://${rawHost}`.replace(/\/$/, "");
+const project = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "demo-auth-e2e";
+const password = process.env.TEST_USER_PASSWORD || "Test-password-123";
 
 test("registration and persisted authentication redirect", async ({ page }) => {
   const email = `register-${crypto.randomUUID()}@example.test`;

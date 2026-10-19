@@ -32,10 +32,21 @@ authentication context, or optional FirebaseUI behaviors. Missing public Web SDK
 configuration produces a configuration error on the authentication routes.
 
 For local development and browser tests, opt in to the Auth Emulator only in
-development with the `demo-auth-e2e` project. The client connects to the local
-emulator before initializing FirebaseUI and rejects incompatible emulator
-configuration. Production uses the Web SDK configuration with the emulator
-disabled. Operational setup is documented in
+development with a demo project starting with `demo-` (such as `demo-auth-e2e`,
+configured via `NEXT_PUBLIC_FIREBASE_PROJECT_ID` in `.env.local`). The client
+connects to the configured emulator host (`NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST`,
+defaulting to `http://127.0.0.1:9099`) before initializing FirebaseUI and rejects
+incompatible emulator configuration or non-demo project IDs. Production uses
+the Web SDK configuration with the emulator disabled. Default project configuration
+for Firebase CLI commands is maintained in `.firebaserc`. Operational commands for
+the Firebase Auth Emulator:
+
+- `pnpm emulator`: starts the local Auth Emulator.
+- `pnpm emulator:seed`: sends seed test accounts to the running emulator for
+  local development and testing (`node scripts/emulator/seed.mjs`).
+- `pnpm emulator:clear`: clears all accounts in the emulator (`node scripts/emulator/clear.mjs`).
+
+Operational setup is documented in
 [TOOLING.md](../../TOOLING.md#firebase-authentication).
 
 ## Consequences
@@ -60,5 +71,11 @@ see [TESTING.md](../../TESTING.md#first-time-setup).
 
 The registry source had upstream type mismatches for optional auth credentials
 and optional Base UI selection values. Local forms and the country selector now
-handle those API results explicitly. ADR 0010 records the project's shadcn
-source-ownership policy.
+handle those API results explicitly. [ADR 0008](0008-install-firebase-ui-registry.md)
+records the project's shadcn source-ownership policy.
+
+Firebase Web SDK and emulator parameters are externalized to environment
+variables (`.env.example` / `.env.local`), avoiding hardcoded values in project
+source or test runners. Local emulator usage requires the standard `demo-*`
+project naming prefix to prevent unintended requests to live Firebase services,
+while the default project alias is maintained in `.firebaserc`.
