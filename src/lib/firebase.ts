@@ -85,7 +85,10 @@ export function getFirebaseFirestore() {
 
 export function getFirebaseStorage() {
   const storage = getStorage(getFirebaseApp());
-  const host = process.env.FIREBASE_STORAGE_EMULATOR_HOST?.trim();
+  const host = (
+    process.env.NEXT_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST ||
+    process.env.FIREBASE_STORAGE_EMULATOR_HOST
+  )?.trim();
 
   if (!globalThis.firebaseStorageEmulatorConnected && host) {
     const url = new URL(host.includes("://") ? host : `http://${host}`);
