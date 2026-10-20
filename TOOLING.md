@@ -88,7 +88,7 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | --- | --- |
 | `pnpm dev` / `pnpm build` / `pnpm start` | Develop, build, and serve the Next.js application. |
 | `pnpm lint` / `pnpm lint:ci` / `pnpm format` | Biome check, CI check, and formatting. |
-| `pnpm typecheck` | Generate route types and run `tsc --noEmit -p tsconfig.build.json`. |
+| `pnpm typecheck` | Runs `tsc --noEmit -p tsconfig.build.json` before and after generating route types. This surfaces source TypeScript/TSX errors even if route-type generation fails. |
 | `pnpm test` | Fast `unit` Vitest project in `jsdom`. |
 | `pnpm test:watch` / `pnpm test:coverage` | Watch mode / coverage (writes `coverage/`). |
 | `pnpm test:browser` | `browser` Vitest project in Chromium. |
