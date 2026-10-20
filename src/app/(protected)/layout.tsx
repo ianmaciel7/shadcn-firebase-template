@@ -4,7 +4,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { getFirebaseUI } from "@/lib/firebase";
+import { getFirebaseUI } from "@/lib/firebase/client";
 
 export default function ProtectedLayout({ children }: LayoutProps<"/">) {
   const t = useTranslations("Auth");

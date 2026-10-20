@@ -40,7 +40,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { toast } from "@/components/ui/toast";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { defaultLocale, isLocale, type Locale, locales } from "@/i18n/routing";
-import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase";
+import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase/client";
 import {
   isThemePreference,
   readUserPreferences,

@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { isLocale, type Locale } from "@/i18n/routing";
-import { getFirebaseFirestore } from "../../../../lib/firebase";
+import { getFirebaseFirestore } from "../../../../lib/firebase/client";
 
 export const themePreferences = ["light", "dark", "system"] as const;
 export type ThemePreference = (typeof themePreferences)[number];

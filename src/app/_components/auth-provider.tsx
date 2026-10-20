@@ -6,7 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { type PropsWithChildren, useEffect, useState } from "react";
-import { getFirebaseUI } from "@/lib/firebase";
+import { getFirebaseUI } from "@/lib/firebase/client";
 
 interface AuthProviderProps extends PropsWithChildren {}
 
