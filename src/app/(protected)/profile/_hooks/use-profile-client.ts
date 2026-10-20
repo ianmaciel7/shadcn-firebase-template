@@ -61,3 +61,5 @@ export function useProfileClient() {
     onSubmit: actions.onSubmit,
   };
 }
+
+export type ProfileClientState = ReturnType<typeof useProfileClient>;
