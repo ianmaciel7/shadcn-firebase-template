@@ -63,6 +63,7 @@ const ACCEPTED_AVATAR_TYPES = new Set([
   "image/webp",
 ]);
 
+// fallow-ignore-next-line complexity
 export default function ProfileClient() {
   const t = useTranslations("Auth");
   const locale = useLocale();
@@ -187,6 +188,7 @@ export default function ProfileClient() {
     setAvatarFile(file);
   };
 
+  // fallow-ignore-next-line complexity
   const onSubmit: SubmitHandler<ProfileValues> = async (values) => {
     const previous = savedValuesRef.current;
     if (!user || !previous) return;

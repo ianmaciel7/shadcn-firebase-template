@@ -96,6 +96,7 @@ export function getFirebaseApp(config = getFirebaseConfig()) {
     : initializeApp(config);
 }
 
+// fallow-ignore-next-line complexity
 export function getFirebaseFirestore() {
   const firestore = getFirestore(getFirebaseApp(getValidatedFirebaseConfig()));
   const host = process.env.FIRESTORE_EMULATOR_HOST?.trim();

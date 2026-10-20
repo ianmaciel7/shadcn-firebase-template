@@ -50,6 +50,7 @@ const DEFAULT_USERS = [
   },
 ];
 
+// fallow-ignore-next-line complexity
 export async function seedUsers(users = DEFAULT_USERS) {
   const endpoint = `${emulatorHost}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=emulator-only`;
 

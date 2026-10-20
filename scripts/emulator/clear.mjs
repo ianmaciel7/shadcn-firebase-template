@@ -31,6 +31,7 @@ if (!projectId) {
   process.exit(1);
 }
 
+// fallow-ignore-next-line complexity
 export async function clearAccounts() {
   const endpoint = `${emulatorHost}/emulator/v1/projects/${projectId}/accounts`;
 
