@@ -83,8 +83,8 @@ group, no Admin SDK or server-side session management is required at this stage.
 Firebase Console setup and testing expectations are
 in [TOOLING.md](../../TOOLING.md#firebase-authentication).
 
-The auth SDK and screens increase the measured client JavaScript bundle to about
-467 kB gzip. The client budget is 500 kB gzip to allow for this required auth
+The auth SDK and registry screens increase the measured client JavaScript bundle to
+about 732 kB gzip. The client budget is 750 kB gzip to accommodate the required
 runtime while retaining a finite regression limit.
 
 The mocked unit tests cover the initial Auth state, route navigation, and protected
