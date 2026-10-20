@@ -8,7 +8,7 @@ export type ProfileTextFieldsProps = ComponentProps<"div"> & {
   profile: ProfileClientState;
 };
 
-export function ProfileTextFields({
+function ProfileTextFields({
   className,
   profile,
   ...props
@@ -45,3 +45,5 @@ export function ProfileTextFields({
     </div>
   );
 }
+
+export { ProfileTextFields };

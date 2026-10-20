@@ -36,6 +36,11 @@ When standards conflict, apply them in this order:
 ## Next.js App Router
 
 - Keep route entrypoints and Next.js special files in `src/app`.
+- **Server and Client boundary separation**: Route entrypoints (`page.tsx`, `layout.tsx`) cannot be simultaneously Server and Client Components. In the React Server Components model:
+  - Adding `"use client"` transforms the entire module into a Client Component boundary, rendering it and all its imports in the client bundle.
+  - Server-only exports such as `metadata`, `generateMetadata`, and server-side data fetching functions cannot be exported from files marked with `"use client"`.
+  - Conversely, server components cannot use React hooks (`useState`, `useEffect`, `useRouter`) or event handlers (`onClick`).
+  - Therefore, keep route entrypoint files (`page.tsx`) as Server Components by default. Whenever interactivity or client hooks are required, never create a generic `*-page-client.tsx` at the route root. Instead, extract the client logic into a semantically named UI component in a private `_components/` directory (e.g., `_components/<domain>-<role>-client.tsx` such as `_components/register-card-client.tsx` or `_components/sign-in-card-client.tsx`) and render it from the server `page.tsx`.
 - Use the generated `PageProps`, `LayoutProps`, and `RouteContext` helpers for
   route parameters rather than hand-written equivalents.
 - Colocate route-specific code when it improves locality. Use `_components`,
@@ -47,14 +52,21 @@ When standards conflict, apply them in this order:
 
 - Consult [DESIGN.md](DESIGN.md) for tokens and component conventions. Update
   that reference when changing fonts, theme tokens, or `components.json`.
+- Follow the component taxonomy and file naming conventions in
+  [.agents/rules/component-naming.md](.agents/rules/component-naming.md) for UI
+  and feature components (such as `*-field.tsx`, `*-fields.tsx`, `*-form.tsx`,
+  `*-card.tsx`, `*-dialog.tsx`, and `*-header.tsx`).
 - Biome disables formatting and import organization for vendored UI and AI
   Elements files, with targeted lint exceptions. `ui/extensions` remains
   application code; do not extend vendor exceptions to it.
 
 - Reuse `src/components/ui` primitives before creating new ones.
-- Follow the existing shadcn component convention: declare a named function
-  and export it explicitly (for example, `function Button()` then
-  `export { Button }`).
+- Follow the existing shadcn component convention across UI primitives and
+  private `_components/`: declare a named function and export it explicitly via
+  named export (for example, `function Button()` then `export { Button }`).
+  Never use inline `export function ComponentName()` or `export default function`
+  in `_components/` or `src/components/`; reserve `export default function` solely
+  for Next.js route entry points (`page.tsx`, `layout.tsx`, `error.tsx`, `not-found.tsx`).
 - Component prop types should extend the corresponding HTML element or base component
   primitive (for example, button components extend `ComponentProps<typeof Button>` or `ComponentProps<"button">`,
   and form components extend `ComponentProps<"form">`) so they inherit standard attributes,

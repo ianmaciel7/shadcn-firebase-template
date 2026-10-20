@@ -4,17 +4,17 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { ProfileClientState } from "../_hooks/use-profile-client";
 
-export type ProfileIdentityProps = ComponentProps<"div"> & {
+export type ProfileAvatarFieldProps = ComponentProps<"div"> & {
   profile: ProfileClientState;
   user: NonNullable<ProfileClientState["user"]>;
 };
 
-export function ProfileIdentity({
+function ProfileAvatarField({
   className,
   profile,
   user,
   ...props
-}: ProfileIdentityProps) {
+}: ProfileAvatarFieldProps) {
   const {
     avatarPreview,
     avatarVersion,
@@ -87,3 +87,5 @@ function getFallbackInitial(user: NonNullable<ProfileClientState["user"]>) {
     "U"
   ).toUpperCase();
 }
+
+export { ProfileAvatarField };

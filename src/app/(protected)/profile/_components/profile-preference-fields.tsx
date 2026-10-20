@@ -17,7 +17,7 @@ export type ProfilePreferenceFieldsProps = ComponentProps<"div"> & {
   profile: ProfileClientState;
 };
 
-export function ProfilePreferenceFields({
+function ProfilePreferenceFields({
   className,
   profile,
   ...props
@@ -87,3 +87,5 @@ export function ProfilePreferenceFields({
     </div>
   );
 }
+
+export { ProfilePreferenceFields };

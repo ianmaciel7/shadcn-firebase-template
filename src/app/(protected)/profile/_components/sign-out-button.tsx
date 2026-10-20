@@ -9,7 +9,7 @@ export type SignOutButtonProps = ComponentProps<typeof Button> & {
   profile: ProfileClientState;
 };
 
-export function SignOutButton({
+function SignOutButton({
   profile,
   className,
   disabled,
@@ -39,3 +39,5 @@ export function SignOutButton({
     </Button>
   );
 }
+
+export { SignOutButton };

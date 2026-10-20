@@ -4,7 +4,7 @@ import { FieldGroup } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import type { ProfileClientState } from "../_hooks/use-profile-client";
-import { ProfileIdentity } from "./profile-identity";
+import { ProfileAvatarField } from "./profile-avatar-field";
 import { ProfilePreferenceFields } from "./profile-preference-fields";
 import { ProfileTextFields } from "./profile-text-fields";
 
@@ -13,7 +13,7 @@ export type ProfileFormProps = ComponentProps<"form"> & {
   user: NonNullable<ProfileClientState["user"]>;
 };
 
-export default function ProfileForm({
+function ProfileForm({
   className,
   onSubmit: onSubmitProp,
   profile,
@@ -29,7 +29,7 @@ export default function ProfileForm({
       {...props}
     >
       <FieldGroup className="gap-5">
-        <ProfileIdentity profile={profile} user={user} />
+        <ProfileAvatarField profile={profile} user={user} />
         <ProfileTextFields profile={profile} />
         <ProfilePreferenceFields profile={profile} />
       </FieldGroup>
@@ -46,3 +46,5 @@ export default function ProfileForm({
     </form>
   );
 }
+
+export { ProfileForm };
