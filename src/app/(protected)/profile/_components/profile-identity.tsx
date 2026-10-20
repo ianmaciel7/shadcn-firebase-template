@@ -1,13 +1,20 @@
+import type { ComponentProps } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import type { ProfileClientState } from "../_hooks/use-profile-client";
 
-type ProfileIdentityProps = {
+export type ProfileIdentityProps = ComponentProps<"div"> & {
   profile: ProfileClientState;
   user: NonNullable<ProfileClientState["user"]>;
 };
 
-export function ProfileIdentity({ profile, user }: ProfileIdentityProps) {
+export function ProfileIdentity({
+  className,
+  profile,
+  user,
+  ...props
+}: ProfileIdentityProps) {
   const {
     avatarPreview,
     avatarVersion,
@@ -21,7 +28,7 @@ export function ProfileIdentity({ profile, user }: ProfileIdentityProps) {
   const fallbackInitial = getFallbackInitial(user);
 
   return (
-    <div className="flex items-center gap-4">
+    <div className={cn("flex items-center gap-4", className)} {...props}>
       <Avatar className="size-16">
         {avatarSrc ? (
           <AvatarImage

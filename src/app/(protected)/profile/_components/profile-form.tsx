@@ -1,21 +1,33 @@
+import type { ComponentProps } from "react";
 import { Button } from "@/components/ui/button";
 import { FieldGroup } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
 import type { ProfileClientState } from "../_hooks/use-profile-client";
 import { ProfileIdentity } from "./profile-identity";
 import { ProfilePreferenceFields } from "./profile-preference-fields";
 import { ProfileTextFields } from "./profile-text-fields";
 
-type ProfileFormProps = {
+export type ProfileFormProps = ComponentProps<"form"> & {
   profile: ProfileClientState;
   user: NonNullable<ProfileClientState["user"]>;
 };
 
-export default function ProfileForm({ profile, user }: ProfileFormProps) {
+export default function ProfileForm({
+  className,
+  onSubmit: onSubmitProp,
+  profile,
+  user,
+  ...props
+}: ProfileFormProps) {
   const { handleSubmit, isBusy, isSubmitting, onSubmit, t } = profile;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form
+      onSubmit={onSubmitProp ?? handleSubmit(onSubmit)}
+      className={cn("space-y-5", className)}
+      {...props}
+    >
       <FieldGroup className="gap-5">
         <ProfileIdentity profile={profile} user={user} />
         <ProfileTextFields profile={profile} />

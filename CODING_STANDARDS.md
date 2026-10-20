@@ -55,6 +55,10 @@ When standards conflict, apply them in this order:
 - Follow the existing shadcn component convention: declare a named function
   and export it explicitly (for example, `function Button()` then
   `export { Button }`).
+- Component prop types should extend the corresponding HTML element or base component
+  primitive (for example, button components extend `ComponentProps<typeof Button>` or `ComponentProps<"button">`,
+  and form components extend `ComponentProps<"form">`) so they inherit standard attributes,
+  support `className` pass-through, and remain composable.
 - Maintain single-responsibility module separation: keep domain types, constants,
   and type guards (such as `theme.ts` and `locale.ts`) in dedicated modules under
   `src/lib/`, decoupled from persistence and database clients (e.g. `src/lib/firebase/firestore/`).
