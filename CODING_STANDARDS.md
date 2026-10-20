@@ -40,9 +40,17 @@ When standards conflict, apply them in this order:
   - Adding `"use client"` transforms the entire module into a Client Component boundary, rendering it and all its imports in the client bundle.
   - Server-only exports such as `metadata`, `generateMetadata`, and server-side data fetching functions cannot be exported from files marked with `"use client"`.
   - Conversely, server components cannot use React hooks (`useState`, `useEffect`, `useRouter`) or event handlers (`onClick`).
-  - Therefore, keep route entrypoint files (`page.tsx`) as Server Components by default. Whenever interactivity or client hooks are required, never create a generic `*-page-client.tsx` at the route root. Instead, extract the client logic into a semantically named UI component in a private `_components/` directory (e.g., `_components/<domain>-<role>-client.tsx` such as `_components/register-card-client.tsx` or `_components/sign-in-card-client.tsx`) and render it from the server `page.tsx`.
+  - Therefore, keep route entrypoint files (`page.tsx`) as Server Components by default. Whenever interactivity or client hooks are required, never create a generic `*-page-client.tsx` at the route root. Instead, extract the client logic into a semantically named UI component in a private `_components/` directory (e.g., following shadcn conventions such as `_components/register-form.tsx`, `_components/sign-in-form.tsx`, or `_components/forgot-password-form.tsx`) and render it from the server `page.tsx`.
 - Use the generated `PageProps`, `LayoutProps`, and `RouteContext` helpers for
-  route parameters rather than hand-written equivalents.
+  route parameters rather than hand-written equivalents:
+  - **Route entrypoint parameters (`page.tsx`)**: When a page does not consume `params`
+    or `searchParams`, declare the component with empty parentheses (e.g., `export default function ProfilePage()`).
+    Do not add unused `_props: PageProps<Route>` signatures to pages that do not take parameters; doing so forces
+    required `params` and `searchParams` properties in JSX, breaking component unit tests (e.g., `<ProfilePage />`).
+  - **Layout entrypoints (`layout.tsx`)**: Layouts must always receive `{ children }: LayoutProps<Route>`
+    (or `{ children }: { children: ReactNode }`) so nested routes render properly; layouts must never have empty `()`.
+  - **Route error & feedback boundaries**: `not-found.tsx` and `loading.tsx` use empty `()`, while `error.tsx`
+    receives `{ error, reset }`.
 - Colocate route-specific code when it improves locality. Use `_components`,
   `_hooks`, or `_lib` when marking the folder as a private implementation detail
   is useful, following [Next.js private-folder guidance](https://nextjs.org/docs/app/getting-started/project-structure#private-folders).

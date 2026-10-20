@@ -1,7 +1,7 @@
-import { RegisterCardClient } from "./_components/register-card-client";
+import { RegisterForm } from "./_components/register-form";
 
 export const instant = false;
 
 export default function RegisterPage() {
-  return <RegisterCardClient />;
+  return <RegisterForm />;
 }
