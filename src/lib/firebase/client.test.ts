@@ -191,4 +191,23 @@ describe("getFirebaseUI", () => {
       5001,
     );
   });
+
+  it("provides get for Hosting, PubSub, and Extensions", async () => {
+    vi.stubEnv("NEXT_PUBLIC_FIREBASE_PROJECT_ID", "example-proj");
+    vi.stubEnv("NEXT_PUBLIC_FIREBASE_HOSTING_EMULATOR_HOST", "127.0.0.1:5000");
+    vi.stubEnv(
+      "NEXT_PUBLIC_FIREBASE_EXTENSIONS_EMULATOR_HOST",
+      "127.0.0.1:5003",
+    );
+
+    const { getFirebaseHosting, getFirebasePubSub, getFirebaseExtensions } =
+      await import("./client");
+
+    expect(getFirebaseHosting().url).toBe("http://127.0.0.1:5000");
+    expect(getFirebaseExtensions()).toEqual({
+      emulatorUrl: "http://127.0.0.1:5003",
+    });
+    expect(getFirebasePubSub()).toBeDefined();
+    expect(typeof getFirebasePubSub().publish).toBe("function");
+  });
 });

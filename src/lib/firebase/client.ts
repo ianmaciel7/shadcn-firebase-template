@@ -166,3 +166,52 @@ export function getFirebaseStorage() {
 
   return storage;
 }
+
+export function getFirebaseHosting() {
+  const emulatorHost = (
+    process.env.NEXT_PUBLIC_FIREBASE_HOSTING_EMULATOR_HOST ||
+    process.env.FIREBASE_HOSTING_EMULATOR_HOST
+  )?.trim();
+
+  const url = emulatorHost
+    ? emulatorHost.includes("://")
+      ? emulatorHost
+      : `http://${emulatorHost}`
+    : `https://${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "localhost"}.web.app`;
+
+  return { url };
+}
+
+export function getFirebasePubSub() {
+  const functions = getFirebaseFunctions();
+  return {
+    async publish(
+      topic: string,
+      data: unknown,
+      attributes?: Record<string, string>,
+    ) {
+      const { httpsCallable } = await import("firebase/functions");
+      const publishFn = httpsCallable<
+        { topic: string; data: unknown; attributes?: Record<string, string> },
+        { success: boolean; messageId: string }
+      >(functions, "publishPubSubMessage");
+      const response = await publishFn({ topic, data, attributes });
+      return response.data;
+    },
+  };
+}
+
+export function getFirebaseExtensions() {
+  const host = (
+    process.env.NEXT_PUBLIC_FIREBASE_EXTENSIONS_EMULATOR_HOST ||
+    process.env.FIREBASE_EXTENSIONS_EMULATOR_HOST
+  )?.trim();
+
+  return {
+    emulatorUrl: host
+      ? host.includes("://")
+        ? host
+        : `http://${host}`
+      : undefined,
+  };
+}

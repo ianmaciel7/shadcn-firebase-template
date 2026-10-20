@@ -1,21 +1,18 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { getFirebaseFirestore } from "@/lib/firebase/client";
 import { isLocale, type Locale } from "@/lib/locale";
+import {
+  isThemePreference,
+  type ThemePreference,
+  themePreferences,
+} from "@/lib/theme";
 
-export const themePreferences = ["light", "dark", "system"] as const;
-export type ThemePreference = (typeof themePreferences)[number];
+export { isThemePreference, type ThemePreference, themePreferences };
 
 export type UserPreferences = {
   locale: Locale;
   theme: ThemePreference;
 };
-
-export function isThemePreference(value: unknown): value is ThemePreference {
-  return (
-    typeof value === "string" &&
-    (themePreferences as readonly string[]).includes(value)
-  );
-}
 
 export async function readUserPreferences(
   uid: string,

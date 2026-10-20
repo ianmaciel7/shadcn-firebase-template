@@ -55,6 +55,9 @@ When standards conflict, apply them in this order:
 - Follow the existing shadcn component convention: declare a named function
   and export it explicitly (for example, `function Button()` then
   `export { Button }`).
+- Maintain single-responsibility module separation: keep domain types, constants,
+  and type guards (such as `theme.ts` and `locale.ts`) in dedicated modules under
+  `src/lib/`, decoupled from persistence and database clients (e.g. `src/lib/firebase/firestore/`).
 - Use the configured `@/*` path aliases instead of deep relative imports when
   crossing module boundaries.
 - Use Tailwind CSS and the existing design tokens. Avoid inline styles unless a
