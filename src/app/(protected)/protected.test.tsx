@@ -71,7 +71,7 @@ vi.mock("firebase/storage", () => ({
   uploadBytes: mocks.uploadBytes,
 }));
 
-vi.mock("@/lib/firebase", () => ({
+vi.mock("@/lib/firebase/client", () => ({
   getFirebaseStorage: mocks.getStorage,
   getFirebaseUI: mocks.getUI,
 }));
@@ -82,7 +82,7 @@ vi.mock("@/components/ui/toast", () => ({
   },
 }));
 
-vi.mock("@/app/(protected)/profile/_lib/user-preferences", () => ({
+vi.mock("@/lib/firebase/firestore/user-preferences", () => ({
   isThemePreference: (value: unknown) =>
     value === "light" || value === "dark" || value === "system",
   readUserPreferences: mocks.readPreferences,

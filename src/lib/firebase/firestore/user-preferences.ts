@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { isLocale, type Locale } from "@/i18n/routing";
-import { getFirebaseFirestore } from "../../../../lib/firebase";
+import { getFirebaseFirestore } from "@/lib/firebase/client";
+import { isLocale, type Locale } from "@/lib/locale";
 
 export const themePreferences = ["light", "dark", "system"] as const;
 export type ThemePreference = (typeof themePreferences)[number];
@@ -32,7 +32,7 @@ export async function readUserPreferences(
 export async function writeUserPreferences(
   uid: string,
   preferences: Partial<UserPreferences>,
-) {
+): Promise<void> {
   await setDoc(doc(getFirebaseFirestore(), "users", uid), preferences, {
     merge: true,
   });

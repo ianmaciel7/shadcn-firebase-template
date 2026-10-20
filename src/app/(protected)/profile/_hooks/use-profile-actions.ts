@@ -4,8 +4,8 @@ import { useState } from "react";
 import type { SubmitHandler } from "react-hook-form";
 import { toast } from "@/components/ui/toast";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { getFirebaseUI } from "@/lib/firebase";
-import { saveProfile } from "../_lib/profile-submit";
+import { getFirebaseUI } from "@/lib/firebase/client";
+import { saveProfile } from "../_lib/save-profile";
 import type { ProfileValues } from "../_lib/types";
 
 type UseProfileActionsOptions = {

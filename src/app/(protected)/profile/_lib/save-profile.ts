@@ -4,9 +4,9 @@ import {
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase";
+import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase/client";
+import { writeUserPreferences } from "@/lib/firebase/firestore/user-preferences";
 import type { ProfileValues } from "./types";
-import { writeUserPreferences } from "./user-preferences";
 
 type SaveProfileArgs = {
   user: User;

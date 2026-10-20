@@ -17,7 +17,7 @@ for sign-in, registration, and password recovery under the `(public)` route
 group. They are shadcn source owned by this project and use `@firebase-oss/ui-react`
 for shared runtime behavior. Initialize
 one default Firebase app, Auth instance, and FirebaseUI store in the browser;
-`src/lib/firebase.ts` reuses the app and the UI store across development reloads;
+`src/lib/firebase/client.ts` reuses the app and the UI store across development reloads;
 the global store's type declaration lives in `src/types/global.d.ts`.
 The shared route-group provider in `src/app/_components` observes Auth state
 before rendering a screen. Authenticated users are redirected to `/profile`.
@@ -41,12 +41,17 @@ Authenticated user interaction is structured under the `(protected)` route group
   `uid`) and provides sign-out controls that trigger Firebase `signOut(auth)` and redirect
   to `/sign-in` upon completion, and exposes language and theme preferences.
 - User preferences are stored in the Firestore document `users/{uid}` using the modular
-  Web SDK. The locale is also written to the existing `NEXT_LOCALE` cookie and the theme
-  is applied through `next-themes`, so both changes take effect immediately. Firestore
-  rules restrict reads and writes to the authenticated user whose UID matches the document
-  ID, following Firebase's per-user document pattern. Preference synchronization is
-  best-effort so an unavailable Firestore instance does not prevent the local controls
-  from working.
+  Web SDK. Firebase initialization lives in `src/lib/firebase/client.ts`; preference
+  operations and Firestore data validation live in
+  `src/lib/firebase/firestore/user-preferences.ts`. The locale is also written to the
+  existing `NEXT_LOCALE` cookie and the theme is applied through `next-themes`, so both
+  changes take effect immediately. Firestore rules restrict reads and writes to the
+  authenticated user whose UID matches the document ID and validate supported preference
+  fields and values. Preference synchronization is best-effort so an unavailable
+  Firestore instance does not prevent the local controls from working.
+- Profile avatars are stored at `users/{uid}/avatar`. Storage rules restrict access to
+  the matching authenticated UID and limit uploads to JPEG, PNG, or WebP images no larger
+  than 2 MiB, matching client-side validation.
 
 For local development and browser tests, opt in to the Auth Emulator by setting
 the official Firebase environment variable `FIREBASE_AUTH_EMULATOR_HOST` (e.g.

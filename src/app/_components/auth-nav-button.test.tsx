@@ -18,7 +18,7 @@ vi.mock("firebase/auth", () => ({
   onAuthStateChanged: mocks.subscribe,
 }));
 
-vi.mock("@/lib/firebase", () => ({
+vi.mock("@/lib/firebase/client", () => ({
   getFirebaseUI: mocks.getUI,
 }));
 

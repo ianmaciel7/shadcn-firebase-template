@@ -1,16 +1,11 @@
-import { hasLocale } from "next-intl";
 import { defineRouting } from "next-intl/routing";
+import { defaultLocale, isLocale, type Locale, locales } from "@/lib/locale";
 
 export const routing = defineRouting({
-  locales: ["en", "pt-BR", "es"],
-  defaultLocale: "en",
+  locales,
+  defaultLocale,
 });
 
-export const { locales, defaultLocale } = routing;
-export type Locale = (typeof routing.locales)[number];
-
-export function isLocale(value: unknown): value is Locale {
-  return typeof value === "string" && hasLocale(locales, value);
-}
+export { defaultLocale, isLocale, type Locale, locales };
 
 export const localeCookie = "NEXT_LOCALE";

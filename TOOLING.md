@@ -355,7 +355,7 @@ Functions must use `NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_HOST` and
 `NEXT_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST`, respectively. Configure
 `NEXT_PUBLIC_FIREBASE_DATABASE_URL` when using Realtime Database outside the emulator.
 Task queues, Pub/Sub, Extensions, and Admin SDK operations are server-side services:
-implement them in `functions/`, never in `src/lib/firebase.ts`. See
+implement them in `functions/`, never in `src/lib/firebase/client.ts`. See
 [TESTING.md](TESTING.md#first-time-setup) for the isolated browser suite. For
 interactive local development, run `pnpm dev` with the emulator variables in `.env`.
 The operational commands for the Firebase Auth Emulator are:

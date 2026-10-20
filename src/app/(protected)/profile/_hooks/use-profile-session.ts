@@ -5,9 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import type { UseFormReset } from "react-hook-form";
 import { useRouter } from "@/i18n/navigation";
 import { defaultLocale, isLocale } from "@/i18n/routing";
-import { getFirebaseUI } from "@/lib/firebase";
+import { getFirebaseUI } from "@/lib/firebase/client";
+import { readUserPreferences } from "@/lib/firebase/firestore/user-preferences";
 import type { ProfileValues } from "../_lib/types";
-import { readUserPreferences } from "../_lib/user-preferences";
 
 export function useProfileSession(reset: UseFormReset<ProfileValues>) {
   const t = useTranslations("Auth");

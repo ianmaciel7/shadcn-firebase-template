@@ -3,7 +3,25 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+      function isOwner() {
+        return request.auth != null && request.auth.uid == uid;
+      }
+
+      function hasValidPreferences() {
+        return request.resource.data.keys().hasOnly(['locale', 'theme'])
+          && (!('locale' in request.resource.data)
+            || request.resource.data.locale in ['en', 'pt-BR', 'es'])
+          && (!('theme' in request.resource.data)
+            || request.resource.data.theme in ['light', 'dark', 'system']);
+      }
+
+      allow read: if isOwner();
+      allow create: if isOwner() && hasValidPreferences();
+      allow update: if isOwner()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['locale', 'theme'])
+        && hasValidPreferences();
+      allow delete: if isOwner();
     }
   }
 }

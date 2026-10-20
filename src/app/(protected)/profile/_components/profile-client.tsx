@@ -27,8 +27,11 @@ import {
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { isLocale, locales } from "@/i18n/routing";
+import {
+  isThemePreference,
+  themePreferences,
+} from "@/lib/firebase/firestore/user-preferences";
 import { useProfileClient } from "../_hooks/use-profile-client";
-import { isThemePreference, themePreferences } from "../_lib/user-preferences";
 
 export default function ProfileClient() {
   const {
