@@ -29,7 +29,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Architecture boundaries | dependency-cruiser | 18.6.0 | Enforces layering rules and forbids dependency cycles. | `.dependency-cruiser.cjs` |
 | Structural rules | ast-grep | 0.51.0 | Enforces project conventions that need syntax awareness (currently a warning-level hint about manual memoization, per `CODING_STANDARDS.md`). Rules have snapshot tests. | `sgconfig.yml`, `.ast-grep/` |
 | Duplication | jscpd | 5.4.1 | Reports meaningful duplicated code. | `.jscpd.json` |
-| Complexity and health | Fallow | 3.33.1 | Reports complexity, CRAP score (from real coverage), and hotspots. `.ladle/` is excluded on purpose: it is tooling glue that Ladle loads by convention. Vendored `src/components/ui/*.tsx` and `ai-elements` are excluded; custom code under `ui/extensions/` is analyzed. Dead-code, duplication, and architecture analysis stay with Knip, jscpd, and dependency-cruiser. | `.fallowrc.json` |
+| Complexity and health | Fallow | 3.33.1 | Reports complexity, CRAP score (from real coverage), and hotspots. Route-private hooks under `src/app/**/_hooks/` are included. `.ladle/` is excluded on purpose: it is tooling glue that Ladle loads by convention. Vendored `src/components/ui/*.tsx` and `ai-elements` are excluded; custom code under `ui/extensions/` is analyzed. Dead-code, duplication, and architecture analysis stay with Knip, jscpd, and dependency-cruiser. | `.fallowrc.json` |
 | React diagnostics | React Doctor | 0.9.18 | Scans application React code for correctness, performance, and security issues. | `doctor.config.json` |
 | Bundle budgets | Size Limit + `@size-limit/file` | 14.2.0 | Fails when generated client JavaScript or CSS exceeds its gzip budget. | `.size-limit.json` |
 | Performance audit | Lighthouse | 13.5.0 | On-demand performance and accessibility report. | `package.json` |
@@ -185,6 +185,8 @@ valid and invalid tests, before registering a new custom rule.
 | `prefer-layout-props` | Grit (Biome plugin) | error | `export default function Layout({ children }: { children: ReactNode })` | Same reasoning for `LayoutProps<"/route">`. `Readonly<{ children: ReactNode }>` is not matched. |
 | `prefer-route-context` | Grit (Biome plugin) | error | Route Handlers `GET`/`POST`/`PUT`/`PATCH`/`DELETE` with a hand-written `{ params }` | Same reasoning for `RouteContext<"/route">`. |
 | `no-document-write` | Grit (Biome plugin) | error | `document.write`, `document.writeln`, `window.document.write`, `window.document.writeln` | Deprecated DOM APIs degrade HTML parser performance and introduce XSS risks. TypeScript only flags them as editor suggestions (`TS6387`), which `tsc --noEmit` omits in CI. |
+| `review-effect-custom-hook` | ast-grep | warning | `useEffect` and `React.useEffect` in app-owned TSX under `src/` | Prompts review of whether the Effect would be clearer inside a descriptive custom Hook, following [React's guidance](https://react.dev/learn/reusing-logic-with-custom-hooks#when-to-use-custom-hooks). This is a judgment call, so it warns without blocking commits or CI. |
+| `review-stateful-component-hook` | ast-grep | warning | A component function combining `useState` and `useEffect` in app-owned TSX under `src/` | Prompts review of extracting related component state and Effects into a component-specific custom Hook, while allowing independent Hooks to remain. React permits custom Hooks to compose other Hooks ([Rules of Hooks](https://react.dev/reference/rules/rules-of-hooks#only-call-hooks-at-the-top-level)); Next.js supports colocating route code in [private folders](https://nextjs.org/docs/app/getting-started/project-structure#private-folders). This project heuristic warns without blocking commits or CI. |
 | `no-manual-memoization-ts` / `-tsx` | ast-grep | warning | `useMemo`, `useCallback`, `memo` in `src/app`, `src/hooks`, `src/i18n`, `src/lib` | No native Biome rule. React Compiler makes most of these redundant but [React still documents them as escape hatches](https://react.dev/learn/react-compiler/introduction), so this is a hint, not an error. Keep the call and comment the reason when it is intentional. |
 | `no-dynamic-tailwind-class` | ast-grep | error | `className` values and `cn`/`clsx`/`cva` calls in app code (vendored files excluded) | Template literals such as `bg-${color}-500` are never generated because [Tailwind scans for complete class names](https://tailwindcss.com/docs/detecting-classes-in-source-files). Functional, not stylistic; no native Biome rule. |
 | `no-hardcoded-ui-attribute` | ast-grep | warning | `aria-label`, `aria-description`, `title`, `placeholder`, `alt` with a literal containing letters | `noJsxLiterals` runs with `ignoreProps`, so attributes are unchecked. A warning because brand names and similar values need judgment; `alt=""` is allowed. |
@@ -254,12 +256,11 @@ Recheck current documentation before adding a replacement rule.
 
 ## Known limitations
 
-- **The Firebase UI reference layer `src/components/firebase` is excluded from automated
-  tooling.** Biome (so `lint-staged` never rewrites it), TypeScript, CSpell, jscpd,
-  coverage, Fallow health, and React Doctor skip it, and Knip ignores its unresolved
-  imports. Dependency-cruiser and ast-grep still scan it; ast-grep reports one
-  `no-hardcoded-ui-attribute` warning there that is left unfixed on purpose. The
-  SHA-256 guard in `tests/unit/` protects it instead; see
+- **Firebase registry source has targeted tooling exclusions.** Biome (so
+  `lint-staged` does not rewrite the full generated set), CSpell, jscpd, coverage,
+  Fallow health, and React Doctor skip `src/components/firebase`; Knip ignores its
+  unresolved imports. TypeScript includes the directory and checks all its files.
+  See
   [ADR 0008](docs/adr/0008-install-firebase-ui-registry.md).
 - **Vendored components are excluded from coverage, Fallow health, React Doctor,
   and relaxed in Biome.** Formatting and import organization are disabled for the
@@ -315,3 +316,55 @@ that an external executable is installed or a server is running.
 Use Context7 when current library documentation is needed. The project-local
 `context7-cli` skill documents its two-step library lookup and documentation
 query flow.
+
+## Firebase Web SDK and Authentication
+
+Create a Firebase project and register a Web app in the Firebase Console. Copy
+its Web SDK values into `.env.local` using `.env.example`; these public values
+are included in the browser build. Never place Admin SDK credentials or private
+keys in these variables. Restart the development server after changing them.
+
+In Authentication, enable Email/Password. Enable Google and set
+`NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED=true` only if Google sign-in is desired;
+configure the project support email and OAuth consent screen as required by the
+Console. Add each development and deployment hostname to Authentication's
+authorized domains, including `localhost` if needed. Google popup sign-in uses
+Firebase's configured `authDomain`; review Firebase's OAuth domain guidance if
+using a custom domain. Redirect sign-in is not enabled.
+
+Review the password-reset and email-verification email templates and authorized
+continue URLs in the Console. Firebase sends password-reset emails through the
+registry form. This template does not send verification emails automatically or
+require verified email; add that policy only when the product requires it. The
+Web SDK's default browser persistence retains sign-in across browser restarts
+where supported. Test shared-device requirements before changing persistence.
+
+The auth routes use the shared browser Auth instance and return authenticated
+users to `/`. They do not protect server resources or establish a server session.
+Add independent server-side token verification and authorization for any future
+protected data or actions. The `(public)` group is organization only. Unit tests
+must mock Firebase or use the Auth Emulator; CI must not need production keys.
+Real provider configuration, OAuth popup behavior, email delivery, and MFA need
+verification against a configured Firebase project or emulator as appropriate.
+For local emulator development, define `FIREBASE_AUTH_EMULATOR_HOST` (for example,
+`127.0.0.1:9099`) in `.env` with a local project ID. Auth emulator use is limited to
+development. In-code default fallback values are removed; environment configuration in
+`.env` is required. For production, omit emulator variables and configure the real Web
+app values at build time. Browser code that uses Realtime Database or callable Cloud
+Functions must use `NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_HOST` and
+`NEXT_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST`, respectively. Configure
+`NEXT_PUBLIC_FIREBASE_DATABASE_URL` when using Realtime Database outside the emulator.
+Task queues, Pub/Sub, Extensions, and Admin SDK operations are server-side services:
+implement them in `functions/`, never in `src/lib/firebase/client.ts`. See
+[TESTING.md](TESTING.md#first-time-setup) for the isolated browser suite. For
+interactive local development, run `pnpm dev` with the emulator variables in `.env`.
+The operational commands for the Firebase Auth Emulator are:
+
+- `pnpm emulator`: starts the local Auth Emulator. The Emulator Suite UI is
+  accessible at `http://127.0.0.1:4000/auth`.
+- `pnpm emulator:seed` (`node scripts/emulator/seed.mjs`): sends seed test accounts to the running emulator for
+  local development and testing.
+- `pnpm emulator:clear` (`node scripts/emulator/clear.mjs`): clears all accounts in the emulator.
+
+See [Firebase setup](https://firebase.google.com/docs/auth/web/start) and
+[OAuth domain guidance](https://firebase.google.com/docs/auth/web/redirect-best-practices).

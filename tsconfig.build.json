@@ -1,4 +1,4 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["node_modules", "tests/semgrep", "src/components/firebase"]
+  "exclude": ["node_modules", "tests/semgrep"]
 }

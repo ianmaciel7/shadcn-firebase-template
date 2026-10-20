@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -33,9 +33,16 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+firebase-debug.log*
+firestore-debug.log*
+database-debug.log*
+pubsub-debug.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+.firebase/
 
 # vercel
 .vercel
@@ -73,4 +80,3 @@ opencode.json
 
 # mutation testing
 /.stryker-tmp/
-

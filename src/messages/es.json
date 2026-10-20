@@ -13,12 +13,55 @@
     "learning": "Aprendizaje",
     "instructionsSuffix": ".",
     "deployNow": "Deploy Now",
-    "documentation": "Documentation"
+    "documentation": "Documentation",
+    "signIn": "Iniciar sesión",
+    "openApp": "Abrir aplicación"
   },
   "Theme": {
     "toggle": "Alternar tema",
     "light": "Claro",
     "dark": "Oscuro",
     "system": "Sistema"
+  },
+  "Auth": {
+    "loading": "Cargando autenticación…",
+    "configurationError": "La autenticación de Firebase no está configurada. Revisa la configuración de la aplicación.",
+    "profileTitle": "Perfil de usuario",
+    "profileDescription": "Administra tu sesión y detalles de cuenta.",
+    "emailLabel": "Correo electrónico",
+    "uidLabel": "ID de usuario",
+    "displayNameLabel": "Nombre",
+    "notSet": "No establecido",
+    "signOut": "Cerrar sesión",
+    "backToHome": "Volver al inicio",
+    "personalInfoTitle": "Información personal",
+    "personalInfoDescription": "Personaliza cómo apareces en la aplicación.",
+    "profilePhotoTitle": "Foto de perfil",
+    "profilePhotoDescription": "Tu imagen de visualización.",
+    "profilePhotoChange": "Cambiar foto",
+    "profilePhotoUploading": "Subiendo...",
+    "profilePhotoSaved": "Foto actualizada.",
+    "profilePhotoInvalid": "Elige una imagen de hasta 2 MB.",
+    "profilePhotoError": "No se pudo actualizar la foto.",
+    "displayNameDescription": "Se muestra en tu perfil.",
+    "emailChangeDescription": "Cambiar el correo requiere confirmación desde la nueva dirección.",
+    "uidDescription": "Firebase lo administra y no se puede cambiar.",
+    "preferencesTitle": "Preferencias",
+    "preferencesDescription": "Elige el aspecto de la aplicación y el idioma que utiliza.",
+    "languageLabel": "Idioma",
+    "themeLabel": "Tema",
+    "languageOptions": {
+      "en": "English",
+      "pt-BR": "Português (Brasil)",
+      "es": "Español"
+    },
+    "themeOptions": { "light": "Claro", "dark": "Oscuro", "system": "Sistema" },
+    "savingPreferences": "Guardando preferencias…",
+    "preferencesSaved": "Preferencias guardadas",
+    "saveProfile": "Guardar perfil",
+    "savingProfile": "Guardando perfil…",
+    "profileSaved": "Perfil guardado",
+    "emailVerificationSent": "Revisa tu nuevo correo para confirmar el cambio.",
+    "profileSaveError": "No se pudo guardar el perfil. Inténtalo de nuevo."
   }
 }

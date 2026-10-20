@@ -16,7 +16,8 @@ original date. Read current operational details in the
 | [0005](0005-document-project-standards.md) | Accepted; testing detail superseded by 0006 | Documentation ownership and repository standards |
 | [0006](0006-configure-testing.md) | Accepted | Colocated Vitest tests, Vitest Browser Mode, Playwright suites, coverage thresholds, mutation testing |
 | [0007](0007-configure-ci.md) | Accepted | Continuous integration, quality tooling, custom rules catalog, layered verification, and Git hooks |
-| [0008](0008-install-firebase-ui-registry.md) | Accepted | Dynamic cross-platform `node -e` command that installs every `@firebase` registry component into `src/components/firebase/` |
+| [0008](0008-install-firebase-ui-registry.md) | Accepted (amended) | Dynamic cross-platform installer and locally owned source model for `@firebase` registry |
+| [0009](0009-integrate-firebase-authentication.md) | Accepted (amended) | Browser Firebase Authentication, emulator configuration, protected profile route, and dynamic navigation |
 
 ## Current operational clarifications
 
@@ -75,6 +76,29 @@ original date. Read current operational details in the
     resolve a locale from an explicit value or cookie; the application has no
     locale route segment or request proxy. See
     [Architecture](../../ARCHITECTURE.md#internationalization).
+
+- **ADR 0009: Firebase Authentication, emulator configuration, and protected routes**:
+  - The Auth Emulator connects using the official `FIREBASE_AUTH_EMULATOR_HOST`
+    variable and demo project convention (`demo-*`, such as `demo-test`).
+  - Canonical root `firebase.json` and `.firebaserc` files configure the emulators
+    and default project alias natively for the Firebase CLI, including the Emulator
+    Suite UI at `http://127.0.0.1:4000`.
+  - In-code default fallback values are removed; environment configuration is
+    strictly driven by `.env`.
+  - The home page (`src/app/page.tsx`) incorporates a dynamic client navigation control
+    (`src/app/_components/auth-nav-button.tsx`) observing auth state via `onAuthStateChanged`,
+    presenting an accessible "Sign In" link to `/sign-in` when unauthenticated and dynamically
+    switching to "Open App" leading to `/profile` when authenticated.
+  - The `(protected)` route group guards client-rendered UI via `layout.tsx` observing
+    `onAuthStateChanged`, redirecting unauthenticated visitors to `/sign-in`.
+  - The `/profile` landing page presents authenticated user details (`email`, `displayName`,
+    `uid`) and provides sign-out controls invoking `signOut(auth)`.
+  - Public `AuthProvider` redirects authenticated users from public authentication pages to
+    `/profile`.
+  - Client-side route groups provide UI navigation guarding and UX routing, not zero-trust
+    server authorization.
+  - Vitest unit/component coverage must satisfy the strict `>= 70%` threshold, and end-to-end
+    authentication flows run against the Playwright Firebase Auth Emulator suite.
 
 These clarifications describe the checked-in configuration. They do not claim
 that a hosted run succeeded or that all tooling is installed on a contributor's
