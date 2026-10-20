@@ -1,13 +1,7 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { getFirebaseFirestore } from "@/lib/firebase/client";
 import { isLocale, type Locale } from "@/lib/locale";
-import {
-  isThemePreference,
-  type ThemePreference,
-  themePreferences,
-} from "@/lib/theme";
-
-export { isThemePreference, type ThemePreference, themePreferences };
+import { isThemePreference, type ThemePreference } from "@/lib/theme";
 
 export type UserPreferences = {
   locale: Locale;
