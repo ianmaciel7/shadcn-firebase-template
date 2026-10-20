@@ -5,7 +5,10 @@ type Messages = typeof en;
 
 declare global {
   var firebaseUIStore: FirebaseUIStore | undefined;
+  var firebaseAuthEmulatorConnected: boolean | undefined;
+  var firebaseDatabaseEmulatorConnected: boolean | undefined;
   var firebaseFirestoreEmulatorConnected: boolean | undefined;
+  var firebaseFunctionsEmulatorConnected: boolean | undefined;
   var firebaseStorageEmulatorConnected: boolean | undefined;
 
   // Use type safe message keys with `next-intl`

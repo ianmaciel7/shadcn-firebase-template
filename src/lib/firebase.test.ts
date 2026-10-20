@@ -8,10 +8,14 @@ const mocks = vi.hoisted(() => ({
   getApp: vi.fn(),
   getApps: vi.fn(),
   getAuth: vi.fn(),
+  getDatabase: vi.fn(),
+  getFunctions: vi.fn(),
   initializeApp: vi.fn(),
   initializeUI: vi.fn(),
   connectAuthEmulator: vi.fn(),
+  connectDatabaseEmulator: vi.fn(),
   connectFirestoreEmulator: vi.fn(),
+  connectFunctionsEmulator: vi.fn(),
   connectStorageEmulator: vi.fn(),
   getFirestore: vi.fn(),
   getStorage: vi.fn(),
@@ -31,6 +35,14 @@ vi.mock("firebase/firestore", () => ({
   connectFirestoreEmulator: mocks.connectFirestoreEmulator,
   getFirestore: mocks.getFirestore,
 }));
+vi.mock("firebase/database", () => ({
+  connectDatabaseEmulator: mocks.connectDatabaseEmulator,
+  getDatabase: mocks.getDatabase,
+}));
+vi.mock("firebase/functions", () => ({
+  connectFunctionsEmulator: mocks.connectFunctionsEmulator,
+  getFunctions: mocks.getFunctions,
+}));
 vi.mock("firebase/storage", () => ({
   connectStorageEmulator: mocks.connectStorageEmulator,
   getStorage: mocks.getStorage,
@@ -48,6 +60,10 @@ describe("getFirebaseUI", () => {
     delete process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
     delete process.env.FIREBASE_STORAGE_EMULATOR_HOST;
     delete process.env.NEXT_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST;
+    delete process.env.FIREBASE_DATABASE_EMULATOR_HOST;
+    delete process.env.NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_HOST;
+    delete process.env.FUNCTIONS_EMULATOR_HOST;
+    delete process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST;
     mocks.apps = [];
     mocks.getApps.mockImplementation(() => mocks.apps);
     mocks.getApp.mockReturnValue(mocks.app);
@@ -55,13 +71,19 @@ describe("getFirebaseUI", () => {
     mocks.initializeApp.mockReturnValue(mocks.app);
     mocks.initializeUI.mockReturnValue(mocks.store);
     globalThis.firebaseUIStore = undefined;
+    globalThis.firebaseAuthEmulatorConnected = false;
+    globalThis.firebaseDatabaseEmulatorConnected = false;
     globalThis.firebaseStorageEmulatorConnected = false;
+    globalThis.firebaseFunctionsEmulatorConnected = false;
   });
 
   afterEach(() => {
     vi.unstubAllEnvs();
     globalThis.firebaseUIStore = undefined;
+    globalThis.firebaseAuthEmulatorConnected = false;
+    globalThis.firebaseDatabaseEmulatorConnected = false;
     globalThis.firebaseStorageEmulatorConnected = false;
+    globalThis.firebaseFunctionsEmulatorConnected = false;
   });
 
   it("reports missing public configuration", async () => {
@@ -107,6 +129,16 @@ describe("getFirebaseUI", () => {
     });
   });
 
+  it("returns the shared Auth instance and connects its emulator once", async () => {
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9098");
+
+    const { getFirebaseAuth } = await import("./firebase");
+    expect(getFirebaseAuth()).toBe(mocks.auth);
+    expect(getFirebaseAuth()).toBe(mocks.auth);
+    expect(mocks.connectAuthEmulator).toHaveBeenCalledOnce();
+  });
+
   it("reuses an existing app and UI store", async () => {
     mocks.apps = [mocks.app];
     globalThis.firebaseUIStore = mocks.store as never;
@@ -129,6 +161,34 @@ describe("getFirebaseUI", () => {
       storage,
       "127.0.0.1",
       9199,
+    );
+  });
+
+  it("connects Database and Functions to their public emulator endpoints", async () => {
+    vi.stubEnv("NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_HOST", "127.0.0.1:9000");
+    vi.stubEnv(
+      "NEXT_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST",
+      "127.0.0.1:5001",
+    );
+    const database = { app: mocks.app };
+    const functions = { app: mocks.app };
+    mocks.getDatabase.mockReturnValue(database);
+    mocks.getFunctions.mockReturnValue(functions);
+
+    const { getFirebaseDatabase, getFirebaseFunctions } = await import(
+      "./firebase"
+    );
+    expect(getFirebaseDatabase()).toBe(database);
+    expect(getFirebaseFunctions()).toBe(functions);
+    expect(mocks.connectDatabaseEmulator).toHaveBeenCalledWith(
+      database,
+      "127.0.0.1",
+      9000,
+    );
+    expect(mocks.connectFunctionsEmulator).toHaveBeenCalledWith(
+      functions,
+      "127.0.0.1",
+      5001,
     );
   });
 });

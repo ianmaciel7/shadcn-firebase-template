@@ -315,7 +315,7 @@ Use Context7 when current library documentation is needed. The project-local
 `context7-cli` skill documents its two-step library lookup and documentation
 query flow.
 
-## Firebase Authentication
+## Firebase Web SDK and Authentication
 
 Create a Firebase project and register a Web app in the Firebase Console. Copy
 its Web SDK values into `.env.local` using `.env.example`; these public values
@@ -344,15 +344,19 @@ protected data or actions. The `(public)` group is organization only. Unit tests
 must mock Firebase or use the Auth Emulator; CI must not need production keys.
 Real provider configuration, OAuth popup behavior, email delivery, and MFA need
 verification against a configured Firebase project or emulator as appropriate.
-For local emulator development, define the official `FIREBASE_AUTH_EMULATOR_HOST`
-variable (e.g. `127.0.0.1:9099`) in `.env` along with a project ID starting with `demo-`
-(such as `NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-test` or `GCLOUD_PROJECT=demo-test`).
-This mode is limited to development and rejects non-demo project IDs. In-code default
-fallback values are removed; environment configuration in `.env` is required. For
-production, omit `FIREBASE_AUTH_EMULATOR_HOST` and configure the real Web app values
-at build time. See [TESTING.md](TESTING.md#first-time-setup) for the isolated browser
-suite. For interactive local development, run `pnpm dev` with the emulator variables
-in `.env`. The operational commands for the Firebase Auth Emulator are:
+For local emulator development, define `FIREBASE_AUTH_EMULATOR_HOST` (for example,
+`127.0.0.1:9099`) in `.env` with a local project ID. Auth emulator use is limited to
+development. In-code default fallback values are removed; environment configuration in
+`.env` is required. For production, omit emulator variables and configure the real Web
+app values at build time. Browser code that uses Realtime Database or callable Cloud
+Functions must use `NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_HOST` and
+`NEXT_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST`, respectively. Configure
+`NEXT_PUBLIC_FIREBASE_DATABASE_URL` when using Realtime Database outside the emulator.
+Task queues, Pub/Sub, Extensions, and Admin SDK operations are server-side services:
+implement them in `functions/`, never in `src/lib/firebase.ts`. See
+[TESTING.md](TESTING.md#first-time-setup) for the isolated browser suite. For
+interactive local development, run `pnpm dev` with the emulator variables in `.env`.
+The operational commands for the Firebase Auth Emulator are:
 
 - `pnpm emulator`: starts the local Auth Emulator. The Emulator Suite UI is
   accessible at `http://127.0.0.1:4000/auth`.
