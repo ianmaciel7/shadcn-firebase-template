@@ -1,8 +1,8 @@
 id: require-component-props
 snapshots:
-  'interface MyComponentProps { title: string; }':
+  "interface MyComponentProps { title: string; }":
     labels:
-    - source: 'interface MyComponentProps { title: string; }'
+    - source: "interface MyComponentProps { title: string; }"
       style: primary
       start: 0
       end: 45
@@ -10,9 +10,9 @@ snapshots:
       style: secondary
       start: 10
       end: 26
-  'type MyComponentProps = { customProp: string };':
+  "type MyComponentProps = { customProp: string };":
     labels:
-    - source: 'type MyComponentProps = { customProp: string };'
+    - source: "type MyComponentProps = { customProp: string };"
       style: primary
       start: 0
       end: 47
@@ -20,9 +20,9 @@ snapshots:
       style: secondary
       start: 5
       end: 21
-  'type ProfilePreferenceFieldsProps = { profile: ProfileClientState };':
+  "type ProfilePreferenceFieldsProps = { profile: ProfileClientState };":
     labels:
-    - source: 'type ProfilePreferenceFieldsProps = { profile: ProfileClientState };'
+    - source: "type ProfilePreferenceFieldsProps = { profile: ProfileClientState };"
       style: primary
       start: 0
       end: 68

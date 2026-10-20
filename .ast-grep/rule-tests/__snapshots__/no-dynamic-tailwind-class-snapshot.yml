@@ -1,8 +1,8 @@
 id: no-dynamic-tailwind-class
 snapshots:
-  const a = <div className={`bg-${color}-500`} />;:
+  "const a = <div className={`bg-${color}-500`} />;":
     labels:
-    - source: '`bg-${color}-500`'
+    - source: "`bg-${color}-500`"
       style: primary
       start: 26
       end: 43
@@ -14,9 +14,9 @@ snapshots:
       style: secondary
       start: 15
       end: 44
-  const a = cn(`text-${size}`, "p-2");:
+  "const a = cn(`text-${size}`, \"p-2\");":
     labels:
-    - source: '`text-${size}`'
+    - source: "`text-${size}`"
       style: primary
       start: 13
       end: 27

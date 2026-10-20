@@ -6,7 +6,7 @@ snapshots:
       style: primary
       start: 18
       end: 36
-    - source: '"Close"'
+    - source: "\"Close\""
       style: secondary
       start: 29
       end: 36
@@ -14,13 +14,13 @@ snapshots:
       style: secondary
       start: 18
       end: 28
-  const a = <img alt="Logo" src={src} />;:
+  "const a = <img alt=\"Logo\" src={src} />;":
     labels:
     - source: alt="Logo"
       style: primary
       start: 15
       end: 25
-    - source: '"Logo"'
+    - source: "\"Logo\""
       style: secondary
       start: 19
       end: 25
@@ -34,7 +34,7 @@ snapshots:
       style: primary
       start: 17
       end: 40
-    - source: '"Your name"'
+    - source: "\"Your name\""
       style: secondary
       start: 29
       end: 40
