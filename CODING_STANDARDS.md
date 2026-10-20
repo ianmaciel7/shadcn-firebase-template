@@ -87,6 +87,32 @@ When standards conflict, apply them in this order:
 - Use Tailwind CSS and the existing design tokens. Avoid inline styles unless a
   value must be computed at runtime.
 
+### Form and Field Architecture (shadcn/ui & React Hook Form)
+
+Forms across the application follow the modern shadcn `Field` architecture implemented in `src/components/ui/field.tsx`, orchestrated with `react-hook-form` and schema validation:
+
+- **Canonical composition pattern**: Compose form inputs using `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, and `FieldError` from `@/components/ui/field` alongside React Hook Form's `<Controller>`. Prefer this modular primitive composition over monolithic form context wrappers.
+- **Form state orchestration**: Initialize forms via `useForm` typed with schema inference (e.g., `z.infer<typeof schema>`), providing an explicit validation resolver (`zodResolver` or `standardSchemaResolver`), explicit default values for every field, and reactive validation mode (`mode: "onChange"` or `mode: "onSubmit"`).
+- **Accessibility and state binding**:
+  - Bind `data-invalid={!!fieldState.error}` to the `<Field>` container.
+  - Bind `aria-invalid={!!fieldState.error}` to the interactive control (`<Input>`, `<Textarea>`, `<NativeSelect>`).
+  - Explicitly connect `<FieldLabel htmlFor={id}>` with the control's `id`.
+  - Display validation errors using `<FieldError>{fieldState.error.message}</FieldError>`.
+- **Default values requirement**: Always supply a complete `defaultValues` object matching the form schema shape to prevent React warnings regarding uncontrolled components switching to controlled.
+- **Form taxonomy and naming**: Structure form components according to the taxonomy in `.agents/rules/component-naming.md`:
+  - `*-form.tsx`: Primary interactive orchestrator component handling submission and action callbacks.
+  - `*-fields.tsx`: Composite sections grouping multiple inputs via `<FieldGroup>`.
+  - `*-field.tsx`: Granular, reusable field units (label + input + error/description).
+
+### Dependency Inversion and Composition in Screen Components (Auth Screens / Composition Roots)
+
+Feature screens and authentication UI (such as `src/components/firebase/*-auth-screen.tsx` and route components in `src/app/(public)/`) must adhere to the Dependency Inversion Principle (DIP) and React composition patterns:
+
+- **Zero route coupling in presentation screens**: Screen and auth form components must remain purely presentational and never import Next.js navigation hooks (`useRouter`, `redirect`, `Link`) or hardcode application routes (such as `/register`, `/sign-in`, or `/forgot-password`). Decouple them by defining explicit callback props (e.g., `onSignUpClick?: () => void`, `onForgotPasswordClick?: () => void`, `onSignIn?: (credential: UserCredential) => void`).
+- **Route-private composition roots**: Route-level private components (such as `src/app/(public)/sign-in/_components/sign-in-form.tsx` and `src/app/(public)/register/_components/register-form.tsx`) act as composition roots. They connect Next.js navigation hooks (`router.push(...)`) to the screen's callback props and assemble feature-specific dependencies.
+- **Provider and addon injection via `children` slots**: Presentation screens must not hardcode third-party identity providers (e.g., Google, GitHub, or SAML). Instead, expose an extensible `children` slot so that provider buttons (e.g., `<GoogleSignInButton />`) or custom actions can be injected at the composition root, conditioned on environment variables (such as `NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED`).
+- **Logic abstraction via custom hooks**: Isolate business logic, validation schemas, and auth lifecycle effects behind specialized hooks (such as `useUI()`, `useSignInAuthFormSchema()`, `useSignInAuthFormAction()`, and `useOnUserAuthenticated()`). This keeps presentation components focused on rendering state, layout, and event propagation without direct coupling to Firebase SDK operations.
+
 ## Internationalization
 
 - Write source, comments, and project documentation in English by default,
