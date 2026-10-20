@@ -47,7 +47,7 @@ import {
   type ThemePreference,
   themePreferences,
   writeUserPreferences,
-} from "./_lib/user-preferences";
+} from "../_lib/user-preferences";
 
 type ProfileValues = {
   displayName: string;
