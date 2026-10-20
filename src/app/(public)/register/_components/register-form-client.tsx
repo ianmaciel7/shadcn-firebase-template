@@ -5,9 +5,9 @@ import type { ComponentProps } from "react";
 import { GoogleSignInButton } from "@/components/firebase/google-sign-in-button";
 import { SignUpAuthScreen } from "@/components/firebase/sign-up-auth-screen";
 
-export type RegisterFormProps = ComponentProps<"div">;
+export type RegisterFormClientProps = ComponentProps<"div">;
 
-function RegisterForm(props: RegisterFormProps) {
+function RegisterFormClient(props: RegisterFormClientProps) {
   const router = useRouter();
   return (
     <div {...props}>
@@ -20,4 +20,4 @@ function RegisterForm(props: RegisterFormProps) {
   );
 }
 
-export { RegisterForm };
+export { RegisterFormClient };

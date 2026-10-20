@@ -1,7 +1,7 @@
-import { RegisterForm } from "./_components/register-form";
+import { RegisterFormClient } from "./_components/register-form-client";
 
 export const instant = false;
 
 export default function RegisterPage() {
-  return <RegisterForm />;
+  return <RegisterFormClient />;
 }

@@ -8,7 +8,7 @@ This rule establishes official, canonical component and file naming standards fo
 - **Export & Component naming**: Use `PascalCase` matching the file name (e.g., `ProfileAvatarField`, `AccountDangerCard`).
 - **Component Props**: Name props as `<ComponentName>Props` extending standard element or base component props.
 - **Export style**: Declare components using `function ComponentName(...) { ... }` and export explicitly with named export `export { ComponentName }`. Do not use inline `export function` or `export default function` in `_components/` or `src/components/`. Next.js route entry points (`page.tsx`, `layout.tsx`, `error.tsx`, `not-found.tsx`) remain the only files using `export default function`.
-- **Route Client Seams**: Never create pseudo-pages like `*-page-client.tsx` at the route root. Extract interactive client logic into semantic UI components in `_components/` following shadcn and feature-driven conventions (e.g., `register-form.tsx`, `forgot-password-form.tsx`, `sign-in-form.tsx`).
+- **Route Client Seams**: Never create pseudo-pages like `*-page-client.tsx` at the route root. Extract interactive client logic into semantic UI components in `_components/` following shadcn and feature-driven conventions (e.g., `register-form-client.tsx`, `forgot-password-form-client.tsx`, `sign-in-form-client.tsx`).
 
 ## Suffix Taxonomy & Semantic Roles
 
