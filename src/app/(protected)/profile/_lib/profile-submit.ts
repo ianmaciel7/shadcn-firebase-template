@@ -5,7 +5,7 @@ import {
 } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase";
-import type { ProfileValues } from "./profile-types";
+import type { ProfileValues } from "./types";
 import { writeUserPreferences } from "./user-preferences";
 
 type SaveProfileArgs = {

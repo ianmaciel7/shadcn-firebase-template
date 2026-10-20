@@ -21,14 +21,26 @@ When standards conflict, apply them in this order:
   that needs browser APIs, state, effects, or event handlers.
 - Keep client-only providers in dedicated component seams so route layouts can
   remain Server Components.
+- Whenever a client component uses an Effect, consider whether a descriptive
+  feature-local custom hook would make its purpose and data flow clearer. React
+  recommends considering a custom hook for each Effect ([Reusing Logic with
+  Custom Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks#when-to-use-custom-hooks)). Remove unnecessary Effects first, and extract a hook only when it creates a useful boundary; do not add one solely to shorten a component.
+- When a component owns several related stateful behaviors, consider a
+  component-specific hook such as `useProfileClient`. The component can keep
+  independent hooks, while the custom hook can compose React hooks and other
+  custom hooks ([Rules of Hooks](https://react.dev/reference/rules/rules-of-hooks#only-call-hooks-at-the-top-level)). Keep
+  this code colocated with its route in a private `_hooks` folder when
+  appropriate ([Next.js private folders](https://nextjs.org/docs/app/getting-started/project-structure#private-folders)). This is a project heuristic, not a framework requirement
+  for every component.
 
 ## Next.js App Router
 
 - Keep route entrypoints and Next.js special files in `src/app`.
 - Use the generated `PageProps`, `LayoutProps`, and `RouteContext` helpers for
   route parameters rather than hand-written equivalents.
-- Colocate route-specific code when it improves locality. Use `_components` or
-  `_lib` when marking the folder as a private implementation detail is useful.
+- Colocate route-specific code when it improves locality. Use `_components`,
+  `_hooks`, or `_lib` when marking the folder as a private implementation detail
+  is useful, following [Next.js private-folder guidance](https://nextjs.org/docs/app/getting-started/project-structure#private-folders).
 - Use route groups only to organize routes or layouts without changing the URL.
 
 ## Components and styling

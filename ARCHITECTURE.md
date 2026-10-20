@@ -57,8 +57,8 @@ files, and `public/` remain at the repository root, as required by the Next.js
 - Shared UI belongs in `src/components`; shared non-UI helpers belong in
   `src/lib`.
 - Route-specific implementation details may be colocated with a route. Use an
-  underscore-prefixed folder such as `_components` or `_lib` when explicitly
-  marking it as non-routable is useful.
+  underscore-prefixed folder such as `_components`, `_hooks`, or `_lib` when
+  explicitly marking it as non-routable is useful.
 - Use App Router route groups to organize related routes or layouts without
   changing their URLs:
   - `(public)` groups unauthenticated identity flows (`/sign-in`, `/register`,
@@ -79,8 +79,8 @@ files, and `public/` remain at the repository root, as required by the Next.js
 - Keep Playwright E2E specifications in root `tests/` with `*.spec.ts`.
   Feature-specific fixtures and helpers stay with their consumer unless shared
   by multiple E2E specifications.
-- Keep route-private test subjects under existing `_components` and `_lib`
-  boundaries; test placement must not alter a route's URL or structure.
+- Keep route-private test subjects under existing `_components`, `_hooks`, and
+  `_lib` boundaries; test placement must not alter a route's URL or structure.
 
 See [ADR 0006](docs/adr/0006-configure-testing.md) for the adopted architecture and [TESTING.md](TESTING.md) for
 commands and implementation conventions.
