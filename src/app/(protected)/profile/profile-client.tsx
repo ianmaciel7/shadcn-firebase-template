@@ -8,7 +8,7 @@ import {
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { ArrowLeft, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
@@ -19,11 +19,15 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -32,7 +36,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
+import { Spinner } from "@/components/ui/spinner";
+import { toast } from "@/components/ui/toast";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { defaultLocale, isLocale, type Locale, locales } from "@/i18n/routing";
 import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase";
 import {
@@ -75,7 +81,6 @@ export default function ProfileClient() {
   const [photoURL, setPhotoURL] = useState<string | null>(null);
   const [avatarVersion, setAvatarVersion] = useState(0);
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -171,25 +176,20 @@ export default function ProfileClient() {
     event.target.value = "";
     if (!file) return;
 
-    if (
-      !ACCEPTED_AVATAR_TYPES.has(file.type) ||
-      file.size > MAX_AVATAR_SIZE
-    ) {
-      setError(t("profilePhotoInvalid"));
+    if (!ACCEPTED_AVATAR_TYPES.has(file.type) || file.size > MAX_AVATAR_SIZE) {
+      toast.add({
+        title: t("profilePhotoInvalid"),
+        type: "error",
+      });
       return;
     }
 
     setAvatarFile(file);
-    setMessage(null);
-    setError(null);
   };
 
   const onSubmit: SubmitHandler<ProfileValues> = async (values) => {
     const previous = savedValuesRef.current;
     if (!user || !previous) return;
-
-    setMessage(null);
-    setError(null);
 
     const displayName = values.displayName.trim();
     const email = values.email.trim();
@@ -248,26 +248,35 @@ export default function ProfileClient() {
       savedValuesRef.current = savedValues;
       reset(savedValues);
       setAvatarFile(null);
-      setMessage(emailChanged ? t("emailVerificationSent") : t("profileSaved"));
+
+      toast.add({
+        title: emailChanged ? t("emailVerificationSent") : t("profileSaved"),
+        type: "success",
+      });
 
       if (values.locale !== activeLocale) {
         router.replace(pathname, { locale: values.locale });
       }
     } catch (cause) {
       console.error(cause);
-      setError(t("profileSaveError"));
+      toast.add({
+        title: t("profileSaveError"),
+        type: "error",
+      });
     }
   };
 
   const handleSignOut = async () => {
     setIsSigningOut(true);
-    setError(null);
     try {
       await signOut(getFirebaseUI().get().auth);
       router.replace("/sign-in");
     } catch (cause) {
       console.error(cause);
-      setError(t("profileSaveError"));
+      toast.add({
+        title: t("profileSaveError"),
+        type: "error",
+      });
       setIsSigningOut(false);
     }
   };
@@ -294,7 +303,8 @@ export default function ProfileClient() {
     "U"
   ).toUpperCase();
 
-  const avatarSrc = avatarPreview ??
+  const avatarSrc =
+    avatarPreview ??
     (photoURL
       ? avatarVersion
         ? `${photoURL}${photoURL.includes("?") ? "&" : "?"}v=${avatarVersion}`
@@ -302,15 +312,7 @@ export default function ProfileClient() {
       : undefined);
 
   return (
-    <div className="mx-auto w-full max-w-sm space-y-4">
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <ArrowLeft className="size-4" aria-hidden="true" />
-        {t("backToHome")}
-      </Link>
-
+    <div className="mx-auto w-full max-w-sm">
       <Card>
         <CardHeader>
           <CardTitle>{t("personalInfoTitle")}</CardTitle>
@@ -460,33 +462,32 @@ export default function ProfileClient() {
             </FieldGroup>
 
             <Button type="submit" className="w-full" disabled={isBusy}>
-              {isSubmitting ? t("savingProfile") : t("saveProfile")}
+              {isSubmitting ? (
+                <>
+                  <Spinner />
+                  {t("savingProfile")}
+                </>
+              ) : (
+                t("saveProfile")
+              )}
             </Button>
-
-            {message ? (
-              <p role="status" className="text-center text-xs text-muted-foreground">
-                {message}
-              </p>
-            ) : null}
-            {error ? (
-              <FieldError className="text-center">{error}</FieldError>
-            ) : null}
           </form>
-        </CardContent>
 
-        <CardFooter className="justify-start">
           <Button
             type="button"
             variant="ghost"
-            size="sm"
-            className="text-muted-foreground hover:text-destructive"
+            className="mt-2 w-full text-muted-foreground hover:text-destructive"
             disabled={isBusy}
             onClick={handleSignOut}
           >
-            <LogOut className="size-4" aria-hidden="true" />
+            {isSigningOut ? (
+              <Spinner />
+            ) : (
+              <LogOut className="size-4" aria-hidden="true" />
+            )}
             {t("signOut")}
           </Button>
-        </CardFooter>
+        </CardContent>
       </Card>
     </div>
   );

@@ -23,6 +23,7 @@ const mocks = vi.hoisted(() => ({
   readPreferences: vi.fn(),
   writePreferences: vi.fn(),
   setTheme: vi.fn(),
+  toastAdd: vi.fn(),
   currentUser: null as unknown,
 }));
 
@@ -30,10 +31,26 @@ vi.mock("next/navigation", () => ({
   useRouter: () => mocks.router,
 }));
 
+vi.mock("@/i18n/navigation", () => ({
+  Link: ({
+    href,
+    children,
+    ...props
+  }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
+  ),
+  usePathname: () => "/profile",
+  useRouter: () => mocks.router,
+}));
+
+const translate = (key: string) => key;
+
 vi.mock("next-intl", () => ({
   hasLocale: (locales: readonly string[], value: unknown) =>
     typeof value === "string" && locales.includes(value),
-  useTranslations: () => (key: string) => key,
+  useTranslations: () => translate,
   useLocale: () => "en",
 }));
 
@@ -59,6 +76,12 @@ vi.mock("@/lib/firebase", () => ({
   getFirebaseUI: mocks.getUI,
 }));
 
+vi.mock("@/components/ui/toast", () => ({
+  toast: {
+    add: mocks.toastAdd,
+  },
+}));
+
 vi.mock("@/app/(protected)/profile/_lib/user-preferences", () => ({
   isThemePreference: (value: unknown) =>
     value === "light" || value === "dark" || value === "system",
@@ -79,7 +102,10 @@ describe("Protected area", () => {
         },
       }),
     });
-    mocks.subscribe.mockReturnValue(() => {});
+    mocks.subscribe.mockImplementation((_auth, callback) => {
+      callback(mocks.currentUser);
+      return () => {};
+    });
     mocks.readPreferences.mockResolvedValue({});
     mocks.writePreferences.mockResolvedValue(undefined);
     mocks.updateProfile.mockResolvedValue(undefined);
@@ -93,6 +119,7 @@ describe("Protected area", () => {
 
   describe("ProtectedLayout", () => {
     it("renders loading indicator before auth resolves", () => {
+      mocks.subscribe.mockReturnValue(() => {});
       render(
         <ProtectedLayout params={Promise.resolve({})}>
           <div>{"Protected Content"}</div>
@@ -103,37 +130,23 @@ describe("Protected area", () => {
     });
 
     it("redirects unauthenticated user to /sign-in", () => {
-      let authCallback: (user: unknown) => void = () => {};
-      mocks.subscribe.mockImplementation((_auth, callback) => {
-        authCallback = callback;
-        return () => {};
-      });
+      mocks.currentUser = null;
       render(
         <ProtectedLayout params={Promise.resolve({})}>
           <div>{"Protected Content"}</div>
         </ProtectedLayout>,
       );
-      act(() => {
-        authCallback(null);
-      });
       expect(mocks.router.replace).toHaveBeenCalledWith("/sign-in");
       expect(screen.queryByText("Protected Content")).toBeNull();
     });
 
     it("renders children when authenticated", () => {
-      let authCallback: (user: unknown) => void = () => {};
-      mocks.subscribe.mockImplementation((_auth, callback) => {
-        authCallback = callback;
-        return () => {};
-      });
+      mocks.currentUser = { uid: "user-123" };
       render(
         <ProtectedLayout params={Promise.resolve({})}>
           <div>{"Protected Content"}</div>
         </ProtectedLayout>,
       );
-      act(() => {
-        authCallback({ uid: "user-123" });
-      });
       expect(screen.getByText("Protected Content")).toBeTruthy();
     });
 
@@ -157,20 +170,23 @@ describe("Protected area", () => {
       mocks.currentUser = null;
       const { container } = render(<ProfilePage />);
       expect(container.firstChild).toBeNull();
+      expect(mocks.router.replace).toHaveBeenCalledWith("/sign-in");
     });
 
-    it("renders user information with fallback when fields are not set", () => {
+    it("renders user information with fallback when fields are not set", async () => {
       mocks.currentUser = { uid: "user-123", email: null, displayName: null };
       render(<ProfilePage />);
-      expect(screen.getByText("personalInfoTitle")).toBeTruthy();
-      expect(screen.getByDisplayValue("user-123")).toBeTruthy();
-      expect(screen.getAllByPlaceholderText("notSet").length).toBe(1);
+
+      await waitFor(() => {
+        expect(screen.getByText("personalInfoTitle")).toBeTruthy();
+      });
+      expect(screen.getByPlaceholderText("notSet")).toBeTruthy();
       expect(
         (screen.getByLabelText("emailLabel") as HTMLInputElement).value,
       ).toBe("");
     });
 
-    it("renders user profile with displayName, email, and photoURL", () => {
+    it("renders user profile with displayName, email, and photoURL", async () => {
       mocks.currentUser = {
         uid: "uid-abc",
         email: "user@example.com",
@@ -178,39 +194,40 @@ describe("Protected area", () => {
         photoURL: "https://example.com/photo.jpg",
       };
       render(<ProfilePage />);
-      expect(
-        (screen.getByLabelText("displayNameLabel") as HTMLInputElement).value,
-      ).toBe("Ada Lovelace");
+
+      await waitFor(() => {
+        expect(
+          (screen.getByLabelText("displayNameLabel") as HTMLInputElement).value,
+        ).toBe("Ada Lovelace");
+      });
       expect(
         (screen.getByLabelText("emailLabel") as HTMLInputElement).value,
       ).toBe("user@example.com");
-      expect(screen.getByDisplayValue("uid-abc")).toBeTruthy();
-      expect(screen.getByText("backToHome").getAttribute("href")).toBe("/");
     });
 
-    it("renders language and theme preferences", () => {
+    it("renders language and theme preferences", async () => {
       mocks.currentUser = { uid: "user-123" };
 
       render(<ProfilePage />);
 
-      expect(screen.getByText("preferencesTitle")).toBeTruthy();
-      expect(screen.getByLabelText("languageLabel")).toBeTruthy();
+      await waitFor(() => {
+        expect(screen.getByLabelText("languageLabel")).toBeTruthy();
+      });
       expect(screen.getByLabelText("themeLabel")).toBeTruthy();
     });
 
     it("uploads a new avatar and updates the auth profile", async () => {
-      const reload = vi.fn().mockResolvedValue(undefined);
       mocks.currentUser = {
         uid: "user-123",
         email: "user@example.com",
-        reload,
       };
       render(<ProfilePage />);
 
       const file = new File(["avatar"], "avatar.png", { type: "image/png" });
-      fireEvent.change(screen.getByLabelText("profilePhotoChange"), {
+      fireEvent.change(await screen.findByLabelText("profilePhotoChange"), {
         target: { files: [file] },
       });
+      fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
 
       await waitFor(() =>
         expect(mocks.uploadBytes).toHaveBeenCalledWith("avatar-ref", file, {
@@ -218,9 +235,28 @@ describe("Protected area", () => {
         }),
       );
       expect(mocks.updateProfile).toHaveBeenCalledWith(mocks.currentUser, {
+        displayName: null,
         photoURL: "https://example.com/avatar.png",
       });
-      expect(reload).toHaveBeenCalled();
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "profileSaved",
+        type: "success",
+      });
+    });
+
+    it("shows error toast when invalid avatar is chosen", async () => {
+      mocks.currentUser = { uid: "user-123", email: "user@example.com" };
+      render(<ProfilePage />);
+
+      const file = new File(["test"], "test.txt", { type: "text/plain" });
+      fireEvent.change(await screen.findByLabelText("profilePhotoChange"), {
+        target: { files: [file] },
+      });
+
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "profilePhotoInvalid",
+        type: "error",
+      });
     });
 
     it("applies saved preferences from the user's document", async () => {
@@ -233,11 +269,11 @@ describe("Protected area", () => {
       expect(mocks.readPreferences).toHaveBeenCalledWith("user-123");
     });
 
-    it("saves a changed theme preference", async () => {
-      mocks.currentUser = { uid: "user-123" };
+    it("saves a changed theme preference and shows success toast", async () => {
+      mocks.currentUser = { uid: "user-123", email: "user@example.com" };
       render(<ProfilePage />);
 
-      fireEvent.click(screen.getByLabelText("themeLabel"));
+      fireEvent.click(await screen.findByLabelText("themeLabel"));
       const darkOption = await screen.findByRole("option", {
         name: "themeOptions.dark",
       });
@@ -245,15 +281,22 @@ describe("Protected area", () => {
       fireEvent.pointerUp(darkOption);
       fireEvent.click(darkOption);
 
+      fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+
       await waitFor(() =>
         expect(mocks.writePreferences).toHaveBeenCalledWith("user-123", {
+          locale: "en",
           theme: "dark",
         }),
       );
       expect(mocks.setTheme).toHaveBeenCalledWith("dark");
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "profileSaved",
+        type: "success",
+      });
     });
 
-    it("updates the display name and requests email verification", async () => {
+    it("updates the display name and requests email verification with toast", async () => {
       mocks.currentUser = {
         uid: "user-123",
         email: "old@example.com",
@@ -261,7 +304,7 @@ describe("Protected area", () => {
       };
       render(<ProfilePage />);
 
-      fireEvent.change(screen.getByLabelText("displayNameLabel"), {
+      fireEvent.change(await screen.findByLabelText("displayNameLabel"), {
         target: { value: "New Name" },
       });
       fireEvent.change(screen.getByLabelText("emailLabel"), {
@@ -272,20 +315,24 @@ describe("Protected area", () => {
       await waitFor(() =>
         expect(mocks.updateProfile).toHaveBeenCalledWith(mocks.currentUser, {
           displayName: "New Name",
+          photoURL: undefined,
         }),
       );
       expect(mocks.verifyBeforeUpdateEmail).toHaveBeenCalledWith(
         mocks.currentUser,
         "new@example.com",
       );
-      expect(screen.getByText("emailVerificationSent")).toBeTruthy();
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "emailVerificationSent",
+        type: "success",
+      });
     });
 
-    it("saves a changed language preference and refreshes the route", async () => {
-      mocks.currentUser = { uid: "user-123" };
+    it("saves a changed language preference and replaces the route", async () => {
+      mocks.currentUser = { uid: "user-123", email: "user@example.com" };
       render(<ProfilePage />);
 
-      fireEvent.click(screen.getByLabelText("languageLabel"));
+      fireEvent.click(await screen.findByLabelText("languageLabel"));
       const spanishOption = await screen.findByRole("option", {
         name: "languageOptions.es",
       });
@@ -293,15 +340,24 @@ describe("Protected area", () => {
       fireEvent.pointerUp(spanishOption);
       fireEvent.click(spanishOption);
 
+      fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+
       await waitFor(() =>
         expect(mocks.writePreferences).toHaveBeenCalledWith("user-123", {
           locale: "es",
+          theme: "system",
         }),
       );
-      expect(mocks.router.refresh).toHaveBeenCalled();
+      expect(mocks.router.replace).toHaveBeenCalledWith("/profile", {
+        locale: "es",
+      });
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "profileSaved",
+        type: "success",
+      });
     });
 
-    it("updates user state on auth change event", () => {
+    it("updates user state on auth change event", async () => {
       mocks.currentUser = null;
       let authCallback: (user: unknown) => void = () => {};
       mocks.subscribe.mockImplementation((_auth, callback) => {
@@ -309,15 +365,18 @@ describe("Protected area", () => {
         return () => {};
       });
       render(<ProfilePage />);
+      const dynamicUser = {
+        uid: "uid-dynamic",
+        email: "dynamic@example.com",
+        displayName: "Dynamic User",
+      };
+      mocks.currentUser = dynamicUser;
       act(() => {
-        authCallback({
-          uid: "uid-dynamic",
-          email: "dynamic@example.com",
-          displayName: "Dynamic User",
-        });
+        authCallback(dynamicUser);
       });
       expect(
-        (screen.getByLabelText("displayNameLabel") as HTMLInputElement).value,
+        ((await screen.findByLabelText("displayNameLabel")) as HTMLInputElement)
+          .value,
       ).toBe("Dynamic User");
     });
 
@@ -325,7 +384,8 @@ describe("Protected area", () => {
       mocks.currentUser = { uid: "user-123" };
       mocks.signOut.mockResolvedValue(undefined);
       render(<ProfilePage />);
-      const signOutBtn = screen.getByRole("button", { name: "signOut" });
+      const signOutBtn = await screen.findByRole("button", { name: "signOut" });
+      expect(signOutBtn.closest('[data-slot="card-content"]')).toBeTruthy();
       await act(async () => {
         fireEvent.click(signOutBtn);
       });
@@ -333,16 +393,20 @@ describe("Protected area", () => {
       expect(mocks.router.replace).toHaveBeenCalledWith("/sign-in");
     });
 
-    it("redirects to /sign-in even if sign out fails", async () => {
+    it("shows error toast when sign out fails", async () => {
       mocks.currentUser = { uid: "user-123" };
       mocks.signOut.mockRejectedValue(new Error("sign out failed"));
       const log = vi.spyOn(console, "error").mockImplementation(() => {});
       render(<ProfilePage />);
-      const signOutBtn = screen.getByRole("button", { name: "signOut" });
+      const signOutBtn = await screen.findByRole("button", { name: "signOut" });
+      expect(signOutBtn.closest('[data-slot="card-content"]')).toBeTruthy();
       await act(async () => {
         fireEvent.click(signOutBtn);
       });
-      expect(mocks.router.replace).toHaveBeenCalledWith("/sign-in");
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "profileSaveError",
+        type: "error",
+      });
       log.mockRestore();
     });
   });
