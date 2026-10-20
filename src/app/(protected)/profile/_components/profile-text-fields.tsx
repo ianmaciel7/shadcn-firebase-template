@@ -1,14 +1,22 @@
+import type { ComponentProps } from "react";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import type { ProfileClientState } from "../_hooks/use-profile-client";
 
-type ProfileTextFieldsProps = { profile: ProfileClientState };
+export type ProfileTextFieldsProps = ComponentProps<"div"> & {
+  profile: ProfileClientState;
+};
 
-export function ProfileTextFields({ profile }: ProfileTextFieldsProps) {
+export function ProfileTextFields({
+  className,
+  profile,
+  ...props
+}: ProfileTextFieldsProps) {
   const { errors, isBusy, register, t } = profile;
 
   return (
-    <>
+    <div className={cn("space-y-4", className)} {...props}>
       <Field>
         <FieldLabel htmlFor="profile-name">{t("displayNameLabel")}</FieldLabel>
         <Input
@@ -34,6 +42,6 @@ export function ProfileTextFields({ profile }: ProfileTextFieldsProps) {
         />
         {errors.email ? <FieldError>{t("profileSaveError")}</FieldError> : null}
       </Field>
-    </>
+    </div>
   );
 }

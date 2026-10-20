@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import { Controller } from "react-hook-form";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
@@ -8,21 +9,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { isLocale, locales } from "@/i18n/routing";
-import {
-  isThemePreference,
-  themePreferences,
-} from "@/lib/firebase/firestore/user-preferences";
+import { isThemePreference, themePreferences } from "@/lib/theme";
+import { cn } from "@/lib/utils";
 import type { ProfileClientState } from "../_hooks/use-profile-client";
 
-type ProfilePreferenceFieldsProps = { profile: ProfileClientState };
+export type ProfilePreferenceFieldsProps = ComponentProps<"div"> & {
+  profile: ProfileClientState;
+};
 
 export function ProfilePreferenceFields({
+  className,
   profile,
+  ...props
 }: ProfilePreferenceFieldsProps) {
   const { control, isBusy, t } = profile;
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className={cn("grid grid-cols-2 gap-3", className)} {...props}>
       <Controller
         name="locale"
         control={control}
