@@ -60,5 +60,5 @@ see [TESTING.md](../../TESTING.md#first-time-setup).
 
 The registry source had upstream type mismatches for optional auth credentials
 and optional Base UI selection values. Local forms and the country selector now
-handle those API results explicitly. ADR 0010 records the project's shadcn
+handle those API results explicitly. ADR 0008 records the template's shadcn
 source-ownership policy.

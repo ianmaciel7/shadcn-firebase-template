@@ -259,7 +259,7 @@ Recheck current documentation before adding a replacement rule.
   Fallow health, and React Doctor skip `src/components/firebase`; Knip ignores its
   unresolved imports. TypeScript includes the directory and checks all its files.
   See
-  [ADR 0010](docs/adr/0010-use-firebase-registry-source.md).
+  [ADR 0008](docs/adr/0008-install-firebase-ui-registry.md).
 - **Vendored components are excluded from coverage, Fallow health, React Doctor,
   and relaxed in Biome.** Formatting and import organization are disabled for the
   distributed shadcn/ui and AI Elements files; the existing targeted lint
