@@ -32,5 +32,10 @@ rule:
       field: parameters
       regex: 'fieldState'
   not:
-    has:
-      pattern: data-invalid={$$$ATTR}
+    matches: field-with-data-invalid
+
+utils:
+  field-with-data-invalid:
+    any:
+      - pattern: <Field $$$BEFORE data-invalid={$$$VAL} $$$AFTER>$$$CHILDREN</Field>
+      - pattern: <Field $$$BEFORE data-invalid $$$AFTER>$$$CHILDREN</Field>

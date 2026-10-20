@@ -104,14 +104,17 @@ Forms across the application follow the modern shadcn `Field` architecture imple
   - `*-fields.tsx`: Composite sections grouping multiple inputs via `<FieldGroup>`.
   - `*-field.tsx`: Granular, reusable field units (label + input + error/description).
 
-### Dependency Inversion and Composition in Screen Components (Auth Screens / Composition Roots)
+### Dependency Inversion and Composition in Screen and Presentation Components
 
-Feature screens and authentication UI (such as `src/components/firebase/*-auth-screen.tsx` and route components in `src/app/(public)/`) must adhere to the Dependency Inversion Principle (DIP) and React composition patterns:
+Components throughout the application—regardless of whether they are Server Components, Client Components, or shared isomorphic components (neither explicitly client nor server)—must adhere to the Dependency Inversion Principle (DIP) and React composition patterns:
 
+- **Universal Component Decoupling (Server, Client, and Shared Components)**:
+  - Do not hardcode high-level infrastructure, application routing (`useRouter`, `redirect`, `Link`), external API clients, or environment-dependent SDKs inside reusable or presentation components.
+  - Presentational and domain UI components must receive their actions, dynamic slots, and data abstractions via props (e.g., explicit callbacks, `children`, or injected interfaces) rather than instantiating or coupling to concrete implementations directly.
 - **Zero route coupling in presentation screens**: Screen and auth form components must remain purely presentational and never import Next.js navigation hooks (`useRouter`, `redirect`, `Link`) or hardcode application routes (such as `/register`, `/sign-in`, or `/forgot-password`). Decouple them by defining explicit callback props (e.g., `onSignUpClick?: () => void`, `onForgotPasswordClick?: () => void`, `onSignIn?: (credential: UserCredential) => void`).
 - **Route-private composition roots**: Route-level private components (such as `src/app/(public)/sign-in/_components/sign-in-form-client.tsx` and `src/app/(public)/register/_components/register-form-client.tsx`) act as composition roots. They connect Next.js navigation hooks (`router.push(...)`) to the screen's callback props and assemble feature-specific dependencies.
-- **Provider and addon injection via `children` slots**: Presentation screens must not hardcode third-party identity providers (e.g., Google, GitHub, or SAML). Instead, expose an extensible `children` slot so that provider buttons (e.g., `<GoogleSignInButton />`) or custom actions can be injected at the composition root, conditioned on environment variables (such as `NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED`).
-- **Logic abstraction via custom hooks**: Isolate business logic, validation schemas, and auth lifecycle effects behind specialized hooks (such as `useUI()`, `useSignInAuthFormSchema()`, `useSignInAuthFormAction()`, and `useOnUserAuthenticated()`). This keeps presentation components focused on rendering state, layout, and event propagation without direct coupling to Firebase SDK operations.
+- **Provider and addon injection via `children` slots**: Presentation screens and shared surfaces must not hardcode third-party identity providers (e.g., Google, GitHub, or SAML) or concrete third-party services. Instead, expose extensible `children` slots so that provider buttons (e.g., `<GoogleSignInButton />`) or custom actions can be injected at the composition root, conditioned on environment variables (such as `NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED`).
+- **Logic abstraction via custom hooks or service interfaces**: Isolate business logic, validation schemas, and lifecycle effects behind specialized hooks or pure service functions (such as `useUI()`, `useSignInAuthFormSchema()`, `useSignInAuthFormAction()`, and `useOnUserAuthenticated()`). This keeps presentation components focused on rendering state, layout, and event propagation without direct coupling to underlying SDK operations.
 
 ## Internationalization
 
