@@ -4,7 +4,8 @@
     "src/components/**/*.{ts,tsx}",
     "src/hooks/**/*.{ts,tsx}",
     "src/lib/**/*.{ts,tsx}",
-    "src/i18n/**/*.ts"
+    "src/i18n/**/*.ts",
+    "src/app/**/_hooks/**/*.{ts,tsx}"
   ],
   "ignorePatterns": [".ladle/**"],
   "health": {
@@ -12,7 +13,6 @@
       "src/components/ai-elements/**",
       "src/components/firebase/**",
       "src/components/ui/*.tsx",
-      "src/app/(protected)/profile/_components/profile-client.tsx",
       "src/app/(protected)/profile/_components/profile-submit.ts",
       "scripts/emulator/seed.mjs",
       "scripts/emulator/clear.mjs",
