@@ -12,6 +12,10 @@
       "src/components/ai-elements/**",
       "src/components/firebase/**",
       "src/components/ui/*.tsx",
+      "src/app/(protected)/profile/_components/profile-client.tsx",
+      "src/app/(protected)/profile/_components/profile-submit.ts",
+      "scripts/emulator/seed.mjs",
+      "scripts/emulator/clear.mjs",
       "**/*.stories.tsx"
     ]
   }

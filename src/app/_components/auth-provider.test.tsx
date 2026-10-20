@@ -17,7 +17,7 @@ vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
 vi.mock("firebase/auth", () => ({ onAuthStateChanged: mocks.subscribe }));
-vi.mock("@/lib/firebase/client", () => ({ getFirebaseUI: mocks.getUI }));
+vi.mock("@/lib/firebase", () => ({ getFirebaseUI: mocks.getUI }));
 vi.mock("@firebase-oss/ui-react", () => ({
   FirebaseUIProvider: ({ children }: { children: React.ReactNode }) => children,
 }));

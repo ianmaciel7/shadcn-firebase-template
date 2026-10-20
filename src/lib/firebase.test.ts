@@ -90,7 +90,7 @@ describe("getFirebaseUI", () => {
     vi.stubEnv("NEXT_PUBLIC_FIREBASE_API_KEY", "");
     vi.stubEnv("NEXT_PUBLIC_FIREBASE_APP_ID", "");
 
-    const { getFirebaseUI } = await import("./client");
+    const { getFirebaseUI } = await import("./firebase");
     expect(() => getFirebaseUI()).toThrow(
       "Missing Firebase configuration: apiKey, appId. See .env.example.",
     );
@@ -100,7 +100,7 @@ describe("getFirebaseUI", () => {
   it("rejects emulator use outside development", async () => {
     vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9099");
 
-    const { getFirebaseUI } = await import("./client");
+    const { getFirebaseUI } = await import("./firebase");
     expect(() => getFirebaseUI()).toThrow(
       "The Auth emulator requires development mode. See .env.example.",
     );
@@ -110,7 +110,7 @@ describe("getFirebaseUI", () => {
     vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9098");
 
-    const { getFirebaseUI } = await import("./client");
+    const { getFirebaseUI } = await import("./firebase");
     expect(getFirebaseUI()).toBe(mocks.store);
     expect(mocks.initializeApp).toHaveBeenCalledWith({
       apiKey: "api-key",
@@ -133,7 +133,7 @@ describe("getFirebaseUI", () => {
     vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9098");
 
-    const { getFirebaseAuth } = await import("./client");
+    const { getFirebaseAuth } = await import("./firebase");
     expect(getFirebaseAuth()).toBe(mocks.auth);
     expect(getFirebaseAuth()).toBe(mocks.auth);
     expect(mocks.connectAuthEmulator).toHaveBeenCalledOnce();
@@ -143,7 +143,7 @@ describe("getFirebaseUI", () => {
     mocks.apps = [mocks.app];
     globalThis.firebaseUIStore = mocks.store as never;
 
-    const { getFirebaseUI } = await import("./client");
+    const { getFirebaseUI } = await import("./firebase");
     expect(getFirebaseUI()).toBe(mocks.store);
     expect(mocks.getApp).toHaveBeenCalledOnce();
     expect(mocks.initializeApp).not.toHaveBeenCalled();
@@ -155,7 +155,7 @@ describe("getFirebaseUI", () => {
     const storage = { app: mocks.app };
     mocks.getStorage.mockReturnValue(storage);
 
-    const { getFirebaseStorage } = await import("./client");
+    const { getFirebaseStorage } = await import("./firebase");
     expect(getFirebaseStorage()).toBe(storage);
     expect(mocks.connectStorageEmulator).toHaveBeenCalledWith(
       storage,
@@ -176,7 +176,7 @@ describe("getFirebaseUI", () => {
     mocks.getFunctions.mockReturnValue(functions);
 
     const { getFirebaseDatabase, getFirebaseFunctions } = await import(
-      "./client"
+      "./firebase"
     );
     expect(getFirebaseDatabase()).toBe(database);
     expect(getFirebaseFunctions()).toBe(functions);

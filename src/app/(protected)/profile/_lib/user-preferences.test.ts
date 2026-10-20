@@ -15,7 +15,7 @@ vi.mock("firebase/firestore", () => ({
   setDoc: mocks.setDoc,
 }));
 
-vi.mock("../../../../lib/firebase/client", () => ({
+vi.mock("../../../../lib/firebase", () => ({
   getFirebaseFirestore: mocks.getFirestore,
 }));
 

@@ -96,17 +96,26 @@ export function getFirebaseApp(config = getFirebaseConfig()) {
     : initializeApp(config);
 }
 
-// fallow-ignore-next-line complexity
+function getEmulatorEndpoint(host: string, defaultPort: number) {
+  const url = new URL(host.includes("://") ? host : `http://${host}`);
+  return {
+    host: url.hostname,
+    port: Number(url.port || defaultPort),
+  };
+}
+
+function connectFirestoreIfNeeded(firestore: ReturnType<typeof getFirestore>) {
+  const host = process.env.FIRESTORE_EMULATOR_HOST?.trim();
+  if (!host || globalThis.firebaseFirestoreEmulatorConnected) return;
+
+  const endpoint = getEmulatorEndpoint(host, 8080);
+  connectFirestoreEmulator(firestore, endpoint.host, endpoint.port);
+  globalThis.firebaseFirestoreEmulatorConnected = true;
+}
+
 export function getFirebaseFirestore() {
   const firestore = getFirestore(getFirebaseApp(getValidatedFirebaseConfig()));
-  const host = process.env.FIRESTORE_EMULATOR_HOST?.trim();
-
-  if (!globalThis.firebaseFirestoreEmulatorConnected && host) {
-    const url = new URL(host.includes("://") ? host : `http://${host}`);
-    connectFirestoreEmulator(firestore, url.hostname, Number(url.port || 8080));
-    globalThis.firebaseFirestoreEmulatorConnected = true;
-  }
-
+  connectFirestoreIfNeeded(firestore);
   return firestore;
 }
 

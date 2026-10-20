@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
-import { getFirebaseUI } from "@/lib/firebase/client";
+import { getFirebaseUI } from "@/lib/firebase";
 
 export function AuthNavButton() {
   const t = useTranslations("App");

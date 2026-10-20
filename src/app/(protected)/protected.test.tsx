@@ -71,7 +71,7 @@ vi.mock("firebase/storage", () => ({
   uploadBytes: mocks.uploadBytes,
 }));
 
-vi.mock("@/lib/firebase/client", () => ({
+vi.mock("@/lib/firebase", () => ({
   getFirebaseStorage: mocks.getStorage,
   getFirebaseUI: mocks.getUI,
 }));

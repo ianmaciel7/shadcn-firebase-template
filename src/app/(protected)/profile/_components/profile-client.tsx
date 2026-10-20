@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  onAuthStateChanged,
-  signOut,
-  type User,
-  updateProfile,
-  verifyBeforeUpdateEmail,
-} from "firebase/auth";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import { LogOut } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
@@ -39,22 +32,15 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "@/components/ui/toast";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { defaultLocale, isLocale, type Locale, locales } from "@/i18n/routing";
-import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase/client";
+import { defaultLocale, isLocale, locales } from "@/i18n/routing";
+import { getFirebaseUI } from "@/lib/firebase";
+import { saveProfile } from "../_lib/profile-submit";
+import type { ProfileValues } from "../_lib/profile-types";
 import {
   isThemePreference,
   readUserPreferences,
-  type ThemePreference,
   themePreferences,
-  writeUserPreferences,
 } from "../_lib/user-preferences";
-
-type ProfileValues = {
-  displayName: string;
-  email: string;
-  locale: Locale;
-  theme: ThemePreference;
-};
 
 const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_AVATAR_TYPES = new Set([
@@ -63,7 +49,6 @@ const ACCEPTED_AVATAR_TYPES = new Set([
   "image/webp",
 ]);
 
-// fallow-ignore-next-line complexity
 export default function ProfileClient() {
   const t = useTranslations("Auth");
   const locale = useLocale();
@@ -188,71 +173,28 @@ export default function ProfileClient() {
     setAvatarFile(file);
   };
 
-  // fallow-ignore-next-line complexity
   const onSubmit: SubmitHandler<ProfileValues> = async (values) => {
     const previous = savedValuesRef.current;
     if (!user || !previous) return;
 
-    const displayName = values.displayName.trim();
-    const email = values.email.trim();
-
     try {
-      const authUser = getFirebaseUI().get().auth.currentUser;
-      if (!authUser || authUser.uid !== user.uid) {
-        throw new Error("Authentication session unavailable");
-      }
-
-      const emailChanged = email !== (authUser.email ?? "");
-      const nameChanged = displayName !== (authUser.displayName ?? "");
-      const preferencesChanged =
-        values.locale !== previous.locale || values.theme !== previous.theme;
-
-      if (emailChanged) {
-        await verifyBeforeUpdateEmail(authUser, email);
-      }
-
-      let nextPhotoURL = authUser.photoURL;
-      if (avatarFile) {
-        const avatarRef = ref(
-          getFirebaseStorage(),
-          `users/${authUser.uid}/avatar`,
-        );
-        await uploadBytes(avatarRef, avatarFile, {
-          contentType: avatarFile.type,
-        });
-        nextPhotoURL = await getDownloadURL(avatarRef);
-      }
-
-      if (nameChanged || avatarFile) {
-        await updateProfile(authUser, {
-          displayName: displayName || null,
-          photoURL: nextPhotoURL,
-        });
-        setPhotoURL(nextPhotoURL);
-        if (avatarFile) setAvatarVersion(Date.now());
-      }
-
-      if (preferencesChanged) {
-        await writeUserPreferences(authUser.uid, {
-          locale: values.locale,
-          theme: values.theme,
-        });
-      }
-
+      const savedProfile = await saveProfile({
+        user,
+        previous,
+        values,
+        avatarFile,
+      });
+      setPhotoURL(savedProfile.photoURL);
+      if (savedProfile.avatarChanged) setAvatarVersion(Date.now());
       if (values.theme !== previous.theme) setTheme(values.theme);
-
-      const savedValues: ProfileValues = {
-        displayName,
-        email: authUser.email ?? previous.email,
-        locale: values.locale,
-        theme: values.theme,
-      };
-      savedValuesRef.current = savedValues;
-      reset(savedValues);
+      savedValuesRef.current = savedProfile.values;
+      reset(savedProfile.values);
       setAvatarFile(null);
 
       toast.add({
-        title: emailChanged ? t("emailVerificationSent") : t("profileSaved"),
+        title: savedProfile.emailChanged
+          ? t("emailVerificationSent")
+          : t("profileSaved"),
         type: "success",
       });
 
