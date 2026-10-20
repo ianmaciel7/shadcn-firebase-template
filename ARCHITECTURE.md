@@ -136,7 +136,23 @@ Next.js runtime.
 `src/app`, and imports from `src/lib` into routes, components, hooks, or i18n.
 It does not ban all third-party React dependencies in `src/lib`.
 
-Firebase Authentication provides browser authentication on public auth routes and client-guarded protected routes (`(protected)/profile`); see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md). Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`; Firestore operations live in domain-specific modules under `src/lib/firebase/firestore/`. Profile preferences use Firestore at `users/{uid}` with owner and field/value validation rules. Avatar Storage rules restrict `users/{uid}/avatar` to its owner and enforce accepted image types and the 2 MiB upload limit. The client SDK relies on Firebase Security Rules; this is not a Next.js server-side DAL and does not provide server authorization for protected routes. No deployment integration is configured.
+Firebase Authentication provides browser authentication on public auth routes and
+client-guarded protected routes (`(protected)/profile`); see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md).
+Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`; Firestore
+operations live in descriptive modules under `src/lib/firebase/firestore/`, such
+as `user-preferences.ts`. The profile route's `useProfileActions` hook coordinates
+its Auth, Storage, and Firestore updates. Profile preferences use
+Firestore at `users/{uid}` with owner and field/value validation rules. Avatar
+Storage rules restrict `users/{uid}/avatar` to its owner and enforce accepted
+image types and the 2 MiB upload limit. These browser SDK modules are not a
+Next.js server-side DAL. Next.js documentation uses `data.ts` for server-side
+data access and `actions.ts` for Server Actions; we reserve those patterns for
+server code, rather than using those names for Firebase client modules
+([Fetching Data](https://nextjs.org/docs/app/getting-started/fetching-data),
+[Mutating Data](https://nextjs.org/docs/app/getting-started/mutating-data),
+[Data Security](https://nextjs.org/docs/app/guides/data-security)). The client
+SDK relies on Firebase Security Rules and does not provide server authorization
+for protected routes. No deployment integration is configured.
 Keep [DER.md](DER.md) and [GLOSSARY.md](GLOSSARY.md) pending until the respective
 persistence and product decisions exist.
 

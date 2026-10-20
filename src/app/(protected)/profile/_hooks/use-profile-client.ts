@@ -1,8 +1,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { defaultLocale, isLocale } from "@/i18n/routing";
-import type { ProfileValues } from "../_lib/types";
-import { useProfileActions } from "./use-profile-actions";
+import { type ProfileValues, useProfileActions } from "./use-profile-actions";
 import { useProfileAvatar } from "./use-profile-avatar";
 import { useProfileSession } from "./use-profile-session";
 
