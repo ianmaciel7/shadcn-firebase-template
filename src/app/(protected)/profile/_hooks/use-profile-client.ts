@@ -9,13 +9,7 @@ export function useProfileClient() {
   const t = useTranslations("Auth");
   const locale = useLocale();
   const activeLocale = isLocale(locale) ? locale : defaultLocale;
-  const {
-    register,
-    control,
-    reset,
-    handleSubmit,
-    formState: { isSubmitting, errors },
-  } = useForm<ProfileValues>({
+  const form = useForm<ProfileValues>({
     defaultValues: {
       displayName: "",
       email: "",
@@ -23,6 +17,13 @@ export function useProfileClient() {
       theme: "system",
     },
   });
+  const {
+    register,
+    control,
+    reset,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+  } = form;
 
   const session = useProfileSession(reset);
   const avatar = useProfileAvatar();
@@ -46,6 +47,7 @@ export function useProfileClient() {
     error: session.error,
     errors,
     fileInputRef: avatar.fileInputRef,
+    form,
     handleAvatarChange: avatar.handleAvatarChange,
     handleSignOut: actions.handleSignOut,
     handleSubmit,

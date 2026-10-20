@@ -1,5 +1,6 @@
+import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
-import { Controller } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
   Select,
@@ -11,18 +12,19 @@ import {
 import { isLocale, locales } from "@/i18n/routing";
 import { isThemePreference, themePreferences } from "@/lib/theme";
 import { cn } from "@/lib/utils";
-import type { ProfileClientState } from "../_hooks/use-profile-client";
+import type { ProfileValues } from "../_hooks/use-profile-actions";
 
 export type ProfilePreferenceFieldsProps = ComponentProps<"div"> & {
-  profile: ProfileClientState;
+  isBusy?: boolean;
 };
 
 function ProfilePreferenceFields({
   className,
-  profile,
+  isBusy = false,
   ...props
 }: ProfilePreferenceFieldsProps) {
-  const { control, isBusy, t } = profile;
+  const t = useTranslations("Auth");
+  const { control } = useFormContext<ProfileValues>();
 
   return (
     <div className={cn("grid grid-cols-2 gap-3", className)} {...props}>
