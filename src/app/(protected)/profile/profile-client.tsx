@@ -471,22 +471,22 @@ export default function ProfileClient() {
               <FieldError className="text-center">{error}</FieldError>
             ) : null}
           </form>
+
+          <div className="mt-2 flex justify-end">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-destructive"
+              disabled={isBusy}
+              onClick={handleSignOut}
+            >
+              <LogOut className="size-4" aria-hidden="true" />
+              {t("signOut")}
+            </Button>
+          </div>
         </CardContent>
       </Card>
-
-      <div className="flex justify-center">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="text-muted-foreground hover:text-destructive"
-          disabled={isBusy}
-          onClick={handleSignOut}
-        >
-          <LogOut className="size-4" aria-hidden="true" />
-          {t("signOut")}
-        </Button>
-      </div>
     </div>
   );
 }
