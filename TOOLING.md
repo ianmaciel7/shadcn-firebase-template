@@ -344,14 +344,21 @@ protected data or actions. The `(public)` group is organization only. Unit tests
 must mock Firebase or use the Auth Emulator; CI must not need production keys.
 Real provider configuration, OAuth popup behavior, email delivery, and MFA need
 verification against a configured Firebase project or emulator as appropriate.
-For local emulator development, use `NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR=true`
-with `NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-auth-e2e` and the Auth Emulator on
-`127.0.0.1:9099`; supply nonempty local-only values for the other Web SDK fields.
-This mode is limited to development and rejects other project IDs. For production,
-leave the emulator flag false and configure the real Web app values at build time.
-See [TESTING.md](TESTING.md#first-time-setup) for the isolated browser suite.
-For interactive local development, start the emulator with
-`firebase emulators:start --project demo-auth-e2e --only auth --config tests/firebase.emulator.json`
-and run `pnpm dev` separately with the emulator variables in `.env.local`.
+For local emulator development, define the official `FIREBASE_AUTH_EMULATOR_HOST`
+variable (e.g. `127.0.0.1:9099`) in `.env` along with a project ID starting with `demo-`
+(such as `NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-test` or `GCLOUD_PROJECT=demo-test`).
+This mode is limited to development and rejects non-demo project IDs. In-code default
+fallback values are removed; environment configuration in `.env` is required. For
+production, omit `FIREBASE_AUTH_EMULATOR_HOST` and configure the real Web app values
+at build time. See [TESTING.md](TESTING.md#first-time-setup) for the isolated browser
+suite. For interactive local development, run `pnpm dev` with the emulator variables
+in `.env`. The operational commands for the Firebase Auth Emulator are:
+
+- `pnpm emulator`: starts the local Auth Emulator. The Emulator Suite UI is
+  accessible at `http://127.0.0.1:4000/auth`.
+- `pnpm emulator:seed` (`node scripts/emulator/seed.mjs`): sends seed test accounts to the running emulator for
+  local development and testing.
+- `pnpm emulator:clear` (`node scripts/emulator/clear.mjs`): clears all accounts in the emulator.
+
 See [Firebase setup](https://firebase.google.com/docs/auth/web/start) and
 [OAuth domain guidance](https://firebase.google.com/docs/auth/web/redirect-best-practices).

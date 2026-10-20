@@ -52,7 +52,7 @@ describe("AuthProvider", () => {
       </AuthProvider>,
     );
     act(() => mocks.subscribe.mock.calls[0][1]({ uid: "user" }));
-    expect(mocks.router.replace).toHaveBeenCalledWith("/");
+    expect(mocks.router.replace).toHaveBeenCalledWith("/profile");
     expect(screen.queryByText("Screen")).toBeNull();
   });
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { buttonVariants } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
+import { AuthNavButton } from "./_components/auth-nav-button";
 
 export default function Home() {
   const t = useTranslations("App");
@@ -83,6 +84,7 @@ export default function Home() {
           >
             {t("documentation")}
           </Link>
+          <AuthNavButton />
         </div>
       </main>
     </div>

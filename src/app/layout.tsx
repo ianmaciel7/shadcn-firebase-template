@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { IntlProvider } from "@/components/ui/extensions/intl-provider";
 import { ThemeProvider } from "@/components/ui/extensions/theme-provider";
+import { Toaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               disableTransitionOnChange
             >
               <TooltipProvider>{children}</TooltipProvider>
+              <Toaster />
             </ThemeProvider>
           </IntlProvider>
         </Suspense>

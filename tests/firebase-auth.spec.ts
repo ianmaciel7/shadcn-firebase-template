@@ -1,8 +1,41 @@
-﻿import { expect, test } from "@playwright/test";
+import fs from "node:fs";
+import { expect, test } from "@playwright/test";
 
-const emulator = "http://127.0.0.1:9099";
-const project = "demo-auth-e2e";
-const password = "Test-password-123";
+for (const envFile of [".env.local", ".env"]) {
+  if (fs.existsSync(envFile)) {
+    process.loadEnvFile(envFile);
+    break;
+  }
+}
+
+const rawHost =
+  process.env.FIREBASE_AUTH_EMULATOR_HOST ||
+  process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
+if (!rawHost) {
+  throw new Error(
+    "Missing FIREBASE_AUTH_EMULATOR_HOST in environment. Define it in .env (e.g. 127.0.0.1:9099).",
+  );
+}
+
+const emulator =
+  rawHost.startsWith("http://") || rawHost.startsWith("https://")
+    ? rawHost.replace(/\/$/, "")
+    : `http://${rawHost}`.replace(/\/$/, "");
+
+const project =
+  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.GCLOUD_PROJECT;
+if (!project) {
+  throw new Error(
+    "Missing NEXT_PUBLIC_FIREBASE_PROJECT_ID in environment. Define it in .env (e.g. demo-test).",
+  );
+}
+
+const password = process.env.TEST_USER_PASSWORD;
+if (!password) {
+  throw new Error(
+    "Missing TEST_USER_PASSWORD in environment. Define it in .env.",
+  );
+}
 
 test("registration and persisted authentication redirect", async ({ page }) => {
   const email = `register-${crypto.randomUUID()}@example.test`;
@@ -12,9 +45,9 @@ test("registration and persisted authentication redirect", async ({ page }) => {
   await page.getByLabel("Email Address").fill(email);
   await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Create Account" }).click();
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(/\/profile$/);
   await page.goto("/sign-in");
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(/\/profile$/);
 });
 
 test("invalid credentials and successful sign-in", async ({
@@ -34,7 +67,7 @@ test("invalid credentials and successful sign-in", async ({
   await expect(page.getByText(/invalid|incorrect/i)).toBeVisible();
   await page.locator("#password").fill(password);
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(/\/profile$/);
 });
 
 test("password recovery sends an emulator reset code and displays failures", async ({
@@ -99,5 +132,25 @@ test("Google popup signs in with the emulator", async ({ page }) => {
     .getByLabel(/email/i)
     .fill(`google-${crypto.randomUUID()}@example.test`);
   await popup.getByRole("button", { name: /sign in/i }).click();
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL(/\/profile$/);
+});
+
+test("profile displays user email and signs out successfully", async ({
+  page,
+  request,
+}) => {
+  const email = `profile-${crypto.randomUUID()}@example.test`;
+  const created = await request.post(
+    `${emulator}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=emulator-only`,
+    { data: { email, password, returnSecureToken: true } },
+  );
+  expect(created.ok()).toBeTruthy();
+  await page.goto("/sign-in");
+  await page.getByLabel("Email Address").fill(email);
+  await page.locator("#password").fill(password);
+  await page.getByRole("button", { name: "Sign In", exact: true }).click();
+  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page.getByText(email)).toBeVisible();
+  await page.getByRole("button", { name: "Sign Out" }).click();
+  await expect(page).toHaveURL(/\/sign-in$/);
 });
