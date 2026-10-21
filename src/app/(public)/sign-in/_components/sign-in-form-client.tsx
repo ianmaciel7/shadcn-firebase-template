@@ -14,7 +14,9 @@ function SignInFormClient(props: SignInFormClientProps) {
     new URLSearchParams(window.location.search).get("next"),
   );
   const nextParam =
-    destination === "/profile" ? "" : `?next=${encodeURIComponent(destination)}`;
+    destination === "/profile"
+      ? ""
+      : `?next=${encodeURIComponent(destination)}`;
   return (
     <div {...props}>
       <SignInAuthScreen
