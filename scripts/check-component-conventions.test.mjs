@@ -190,7 +190,7 @@ describe("owned component conventions", () => {
       "function ProfileCard() { return <ProfileForm><Card><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };",
     );
     expectInvalid(
-      "function ProfileCard() { return <ProfileForm><Card><ProfileFormContent /><ProfileFormFooter><ProfileButton type=\"submit\" /><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };",
+      'function ProfileCard() { return <ProfileForm><Card><ProfileFormContent /><ProfileFormFooter><ProfileButton type="submit" /><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };',
       /ProfileButton must not accept an override/,
     );
     expectInvalid(

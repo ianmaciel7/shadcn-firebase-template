@@ -292,7 +292,10 @@ function checkProfileCardSafety(source, elements, report) {
           ts.isJsxAttribute(attribute) && attribute.name.text === "type",
       );
       if (typeProp) {
-        report(typeProp, `${action} must not accept an override of its fixed type.`);
+        report(
+          typeProp,
+          `${action} must not accept an override of its fixed type.`,
+        );
       }
     }
   }
@@ -349,8 +352,7 @@ function checkProfileFooterSafety(source, elements, report) {
 
 function attributePosition(attributes, name) {
   return attributes.findIndex(
-    (attribute) =>
-      ts.isJsxAttribute(attribute) && attribute.name.text === name,
+    (attribute) => ts.isJsxAttribute(attribute) && attribute.name.text === name,
   );
 }
 
