@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 function HomeScreen({
   title,
@@ -29,12 +28,10 @@ function HomeScreen({
       <div className="flex flex-col gap-4 text-base font-medium sm:flex-row w-full sm:w-auto">
         <Link
           href={primaryHref}
-          className={cn(
-            buttonVariants({
-              className:
-                "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
-            }),
-          )}
+          className={buttonVariants({
+            className:
+              "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
+          })}
         >
           {primaryLabel}
         </Link>
