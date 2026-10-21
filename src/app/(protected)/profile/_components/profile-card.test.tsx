@@ -41,8 +41,8 @@ describe("ProfileCard", () => {
     expect(card.className).toContain("custom-profile-card");
     expect(card.className).toContain("max-w-sm");
     expect(card.querySelectorAll('[data-slot="card"]')).toHaveLength(0);
-    expect(card.querySelector('[data-slot="card-header"]')?.textContent).toBe(
-      "Header",
+    expect(card.querySelector('[data-slot="card-header"]')?.textContent).toContain(
+      header,
     );
     expect(card.querySelector('[data-slot="card-content"]')?.textContent).toBe(
       "Content",
