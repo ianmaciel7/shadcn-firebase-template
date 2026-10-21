@@ -1,22 +1,26 @@
 import ts from "typescript";
 
+function primitiveImportBindings(statement) {
+  if (!ts.isImportDeclaration(statement)) return undefined;
+  if (!ts.isStringLiteral(statement.moduleSpecifier)) return undefined;
+  if (
+    !/^@\/components\/ui\/(?!extensions\/)/.test(statement.moduleSpecifier.text)
+  )
+    return undefined;
+  if (statement.importClause?.isTypeOnly) return undefined;
+  const bindings = statement.importClause?.namedBindings;
+  return bindings && ts.isNamedImports(bindings)
+    ? bindings.elements
+    : undefined;
+}
+
 function primitiveImports(source) {
   const names = new Set();
   for (const statement of source.statements) {
-    if (
-      !ts.isImportDeclaration(statement) ||
-      !ts.isStringLiteral(statement.moduleSpecifier) ||
-      !/^@\/components\/ui\/(?!extensions\/)/.test(
-        statement.moduleSpecifier.text,
-      ) ||
-      statement.importClause?.isTypeOnly
-    )
-      continue;
-    const bindings = statement.importClause?.namedBindings;
-    if (bindings && ts.isNamedImports(bindings)) {
-      for (const binding of bindings.elements) {
-        if (!binding.isTypeOnly) names.add(binding.name.text);
-      }
+    const bindings = primitiveImportBindings(statement);
+    if (!bindings) continue;
+    for (const binding of bindings) {
+      if (!binding.isTypeOnly) names.add(binding.name.text);
     }
   }
   return names;
@@ -34,6 +38,10 @@ function inheritedPrimitive(type, source, primitives, seen = new Set()) {
       .find(Boolean);
   }
   if (!ts.isTypeReferenceNode(type)) return undefined;
+  return inheritedReference(type, source, primitives, seen);
+}
+
+function inheritedReference(type, source, primitives, seen) {
   const name = type.typeName.getText(source);
   const argument = type.typeArguments?.[0];
   if (/^(React\.)?ComponentProps(WithRef|WithoutRef)?$/.test(name)) {
@@ -169,30 +177,31 @@ function checkAdapter(declaration, source, primitives, report) {
   }
 }
 
-function staticTarget(node) {
+function assignedTarget(node) {
+  if (!ts.isBinaryExpression(node)) return undefined;
+  if (node.operatorToken.kind !== ts.SyntaxKind.EqualsToken) return undefined;
+  const target = node.left;
+  return ts.isPropertyAccessExpression(target) ||
+    ts.isElementAccessExpression(target)
+    ? target.expression
+    : undefined;
+}
+
+function objectMutationTarget(node) {
+  if (!ts.isCallExpression(node)) return undefined;
+  if (!ts.isPropertyAccessExpression(node.expression)) return undefined;
+  const callee = node.expression;
+  if (!ts.isIdentifier(callee.expression)) return undefined;
+  if (callee.expression.text !== "Object") return undefined;
   if (
-    ts.isBinaryExpression(node) &&
-    node.operatorToken.kind === ts.SyntaxKind.EqualsToken
-  ) {
-    const target = node.left;
-    if (
-      ts.isPropertyAccessExpression(target) ||
-      ts.isElementAccessExpression(target)
-    ) {
-      return target.expression;
-    }
-  }
-  if (
-    ts.isCallExpression(node) &&
-    ts.isPropertyAccessExpression(node.expression) &&
-    ts.isIdentifier(node.expression.expression) &&
-    node.expression.expression.text === "Object" &&
-    ["assign", "defineProperty", "defineProperties"].includes(
-      node.expression.name.text,
-    )
+    !["assign", "defineProperty", "defineProperties"].includes(callee.name.text)
   )
-    return node.arguments[0];
-  return undefined;
+    return undefined;
+  return node.arguments[0];
+}
+
+function staticTarget(node) {
+  return assignedTarget(node) ?? objectMutationTarget(node);
 }
 
 export function checkComponentComposition(source, componentNames, report) {

@@ -213,15 +213,19 @@ function isRuntimeImport(statement) {
   );
 }
 
+function isServerRuntimeImport(statement) {
+  return (
+    ts.isImportDeclaration(statement) &&
+    isRuntimeImport(statement) &&
+    ts.isStringLiteral(statement.moduleSpecifier) &&
+    serverImports.test(statement.moduleSpecifier.text)
+  );
+}
+
 function checkClientImports(source, report) {
   if (!isClientBoundary(source)) return;
   for (const statement of source.statements) {
-    if (
-      ts.isImportDeclaration(statement) &&
-      isRuntimeImport(statement) &&
-      ts.isStringLiteral(statement.moduleSpecifier) &&
-      serverImports.test(statement.moduleSpecifier.text)
-    ) {
+    if (isServerRuntimeImport(statement)) {
       report(
         statement,
         "Never import server-only modules in a client boundary.",
