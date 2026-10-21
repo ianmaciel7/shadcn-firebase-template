@@ -175,7 +175,7 @@ describe("owned component conventions", () => {
       /focused field\/form\/button props/,
     );
     expectInvalid(
-      "function ProfileCard() { return <SignOutButton profile={profile} />; } export { ProfileCard };",
+      "function ProfileCard() { return <ProfileSignOutButton profile={profile} />; } export { ProfileCard };",
       /focused field\/form\/button props/,
     );
     expectValid(
@@ -186,29 +186,30 @@ describe("owned component conventions", () => {
   });
 
   it("enforces fixed submit and sign-out button types after prop spreads", () => {
-    const submit = "src/app/(protected)/profile/_components/profile-button.tsx";
+    const submit =
+      "src/app/(protected)/profile/_components/profile-save-button.tsx";
     const signOut =
-      "src/app/(protected)/profile/_components/sign-out-button.tsx";
+      "src/app/(protected)/profile/_components/profile-sign-out-button.tsx";
     expectValid(
-      'function ProfileButton() { return <Button {...props} type="submit" disabled={disabled} />; } export { ProfileButton };',
+      'function ProfileSaveButton() { return <Button {...props} type="submit" disabled={disabled} />; } export { ProfileSaveButton };',
       submit,
     );
     expectInvalid(
-      'function ProfileButton() { return <Button type="submit" disabled={disabled} {...props} />; } export { ProfileButton };',
+      'function ProfileSaveButton() { return <Button type="submit" disabled={disabled} {...props} />; } export { ProfileSaveButton };',
       /enforce type="submit"/,
       submit,
     );
     expectValid(
-      'function SignOutButton() { return <Button {...props} type="button" disabled={disabled} />; } export { SignOutButton };',
+      'function ProfileSignOutButton() { return <Button {...props} type="button" disabled={disabled} />; } export { ProfileSignOutButton };',
       signOut,
     );
     expectInvalid(
-      'function SignOutButton() { return <Button type="button" disabled={disabled} {...props} />; } export { SignOutButton };',
+      'function ProfileSignOutButton() { return <Button type="button" disabled={disabled} {...props} />; } export { ProfileSignOutButton };',
       /enforce type="button"/,
       signOut,
     );
     expectInvalid(
-      'function SignOutButton() { return <Button {...props} type="submit" disabled={disabled} />; } export { SignOutButton };',
+      'function ProfileSignOutButton() { return <Button {...props} type="submit" disabled={disabled} />; } export { ProfileSignOutButton };',
       /enforce type="button"/,
       signOut,
     );
@@ -234,31 +235,31 @@ describe("owned component conventions", () => {
     const section =
       "src/app/(protected)/profile/_components/profile-section.tsx";
     expectValid(
-      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
+      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
       section,
     );
     expectInvalid(
-      'function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileButton type="submit" /><SignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };',
-      /ProfileButton must not accept an override/,
+      'function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton type="submit" /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };',
+      /ProfileSaveButton must not accept an override/,
       section,
     );
     expectInvalid(
-      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><form /><ProfileCardFooter><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
+      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><form /><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
       /delegate native Card and form roots/,
       section,
     );
     expectInvalid(
-      "function ProfileSection() { return <ProfileForm><ProfileCard><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileCard></ProfileForm>; } export { ProfileSection };",
+      "function ProfileSection() { return <ProfileForm><ProfileCard><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileCard></ProfileForm>; } export { ProfileSection };",
       /ProfileForm must be inside ProfileCard/,
       section,
     );
     expectInvalid(
-      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileButton /><ProfileCardFooter><ProfileFormFooter><SignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
-      /ProfileButton must be inside ProfileFormFooter/,
+      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileSaveButton /><ProfileCardFooter><ProfileFormFooter><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
+      /ProfileSaveButton must be inside ProfileFormFooter/,
       section,
     );
     expectInvalid(
-      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileFormContent /><ProfileCardFooter><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
+      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileFormContent /><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
       /ProfileFormContent must be inside ProfileCardContent/,
       section,
     );

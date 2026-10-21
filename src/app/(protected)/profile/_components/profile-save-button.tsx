@@ -3,33 +3,42 @@ import type { ComponentProps } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import type { ProfileValues } from "@/lib/profile";
+import type { ProfileFormValues } from "@/lib/profile";
 import { cn } from "@/lib/utils";
 
-type ProfileButtonProps = ComponentProps<typeof Button>;
+type ProfileSaveButtonProps = Omit<
+  ComponentProps<typeof Button>,
+  "type" | "onClick"
+>;
 
-function ProfileButton({ className, disabled, ...props }: ProfileButtonProps) {
+function ProfileSaveButton({
+  className,
+  disabled,
+  children,
+  ...props
+}: ProfileSaveButtonProps) {
   const t = useTranslations("Auth");
-  const { formState } = useFormContext<ProfileValues>();
+  const { formState } = useFormContext<ProfileFormValues>();
   const isSubmitting = formState.isSubmitting;
 
   return (
     <Button
       {...props}
       type="submit"
+      aria-busy={isSubmitting}
       className={cn("w-full", className)}
       disabled={disabled || isSubmitting || formState.disabled}
     >
       {isSubmitting ? (
         <>
           <Spinner data-icon="inline-start" />
-          {t("savingProfile")}
+          {children ?? t("savingProfile")}
         </>
       ) : (
-        t("saveProfile")
+        (children ?? t("saveProfile"))
       )}
     </Button>
   );
 }
 
-export { ProfileButton };
+export { ProfileSaveButton };

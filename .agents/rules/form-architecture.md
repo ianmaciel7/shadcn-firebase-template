@@ -18,14 +18,14 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
 - `useProfileController` is removed. `ProfileSection` loads the shared session; it does not assemble field or button props.
 - `ProfileForm` owns submission through `useProfileSubmit`, React Hook Form defaults/reset, and the shared operation lock. `ProfileValues` and `ProfileFormValues` live in `src/lib/profile.ts`.
 - `ProfileAvatarField` owns selection, validation and preview through `useProfileAvatar`. Only the selected `File` lives in React Hook Form so submission can upload it; preview URLs are released on replacement, successful reset and unmount. Failed saves retain the selection for retry.
-- `SignOutButton` owns logout, redirect and error feedback. Only its pending flag is shared with the form to prevent concurrent saves, logout and edits. Saving likewise disables logout and fields.
+- `ProfileSignOutButton` owns logout, redirect and error feedback. Only its pending flag is shared with the form to prevent concurrent saves, logout and edits. Saving likewise disables logout and fields.
 - `ProfileFormContent` and `ProfileFormFooter` are colocated exports in `profile-form.tsx`; AST safety checks inspect each function independently.
 
 ## Profile form action safety (repository guard)
 
 - `ProfileCard` renders one native shadcn `Card` as its sole root and forwards arbitrary children; `ProfileSection` composes the header/content/footer, renders loading/error states, and shares loaded session data through `ProfileSessionContext`. `ProfileForm` owns the only native HTML `<form>` inside the Card under `FormProvider` and must not render another Card.
 - `ProfileCardHeader`, `ProfileCardTitle`, `ProfileCardDescription`, `ProfileCardContent` and `ProfileCardFooter` are defined together in `profile-card.tsx`, forwarding their native primitives and children. `ProfileCardContent` owns `CardContent`; `ProfileFormContent` owns **only** `FieldGroup`. `ProfileCardFooter` owns the single native `CardFooter`; `ProfileFormFooter` owns only the actions layout (`div`), avoiding nested CardFooter components. Both remain inside the same `ProfileForm`/native `<form>`.
-- `ProfileButton` is the only submit action and must force `type="submit"`. `SignOutButton` must force `type="button"` so sign-out never triggers profile persistence.
+- `ProfileSaveButton` is the only submit action and must force `type="submit"`. `ProfileSignOutButton` must force `type="button"` so sign-out never triggers profile persistence.
 - Spread caller attributes **before** fixed `type` and computed `disabled`, so even if a caller supplies a conflicting `type` the component enforces its intended action. A late `...props` may silently override both safeguards. The separate AST guard also disallows explicit `type` overrides at profile call sites.
 - `pnpm check:components` enforces these concrete profile invariants through TypeScript AST tests. This is a **UI action-safety guard**, not a substitute for Firebase security rules, authorization or server-side validation.
 

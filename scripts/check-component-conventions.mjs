@@ -249,7 +249,7 @@ function checkProfilePropDrilling(source, report) {
   function visit(node) {
     if (
       (ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) &&
-      /^(ProfileForm|ProfileAvatarField|SignOutButton)$/.test(
+      /^(ProfileForm|ProfileAvatarField|ProfileSignOutButton)$/.test(
         node.tagName.getText(source),
       )
     ) {
@@ -391,7 +391,7 @@ function checkProfileSectionSafety(source, elements, report) {
     ["ProfileCardFooter", "ProfileForm", "ProfileCard"],
     report,
   );
-  for (const action of ["ProfileButton", "SignOutButton"]) {
+  for (const action of ["ProfileSaveButton", "ProfileSignOutButton"]) {
     requireProfilePlacement(
       source,
       elements,
@@ -514,7 +514,7 @@ function checkFixedProfileButtonDisabled(button, attributes, stem, report) {
 }
 
 function checkProfileButtonSafety(source, elements, report, stem) {
-  const expected = stem === "profile-button" ? "submit" : "button";
+  const expected = stem === "profile-save-button" ? "submit" : "button";
   const buttons = profileElements(elements, "Button");
   if (buttons.length !== 1) {
     report(source, `${stem} must render exactly one Button.`);
@@ -533,9 +533,9 @@ function checkProfileFormSafety(source, stem, report) {
     "profile-form": checkProfileProviderSafety,
     "profile-form-content": checkProfileContentSafety,
     "profile-form-footer": checkProfileFooterSafety,
-    "profile-button": (file, elements, addIssue) =>
+    "profile-save-button": (file, elements, addIssue) =>
       checkProfileButtonSafety(file, elements, addIssue, stem),
-    "sign-out-button": (file, elements, addIssue) =>
+    "profile-sign-out-button": (file, elements, addIssue) =>
       checkProfileButtonSafety(file, elements, addIssue, stem),
   };
   const check = checks[stem];

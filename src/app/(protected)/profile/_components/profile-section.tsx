@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { useProfileSession } from "../_hooks/use-profile-session";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
 import { ProfileAvatarField } from "./profile-avatar-field";
-import { ProfileButton } from "./profile-button";
 import {
   ProfileCard,
   ProfileCardContent,
@@ -21,8 +20,9 @@ import {
   ProfileFormFooter,
 } from "./profile-form";
 import { ProfileLocaleField } from "./profile-locale-field";
+import { ProfileSaveButton } from "./profile-save-button";
+import { ProfileSignOutButton } from "./profile-sign-out-button";
 import { ProfileThemeField } from "./profile-theme-field";
-import { SignOutButton } from "./sign-out-button";
 
 function ProfileSection() {
   const profile = useProfileSession();
@@ -77,8 +77,8 @@ function ProfileSection() {
           </ProfileCardContent>
           <ProfileCardFooter>
             <ProfileFormFooter>
-              <ProfileButton />
-              <SignOutButton />
+              <ProfileSaveButton />
+              <ProfileSignOutButton />
             </ProfileFormFooter>
           </ProfileCardFooter>
         </ProfileForm>

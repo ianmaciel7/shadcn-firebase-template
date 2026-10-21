@@ -8,20 +8,24 @@ import { Spinner } from "@/components/ui/spinner";
 import { toast } from "@/components/ui/toast";
 import { useRouter } from "@/i18n/navigation";
 import { getFirebaseUI } from "@/lib/firebase/client";
+import type { ProfileFormValues } from "@/lib/profile";
 import { cn } from "@/lib/utils";
 import { useProfileFormState } from "../_hooks/use-profile-form-state";
 
-type SignOutButtonProps = Omit<ComponentProps<typeof Button>, "onClick">;
+type ProfileSignOutButtonProps = Omit<
+  ComponentProps<typeof Button>,
+  "type" | "onClick"
+>;
 
-function SignOutButton({
+function ProfileSignOutButton({
   className,
   disabled,
   children,
   ...props
-}: SignOutButtonProps) {
+}: ProfileSignOutButtonProps) {
   const t = useTranslations("Auth");
   const router = useRouter();
-  const { formState } = useFormContext();
+  const { formState } = useFormContext<ProfileFormValues>();
   const { isSigningOut, setIsSigningOut } = useProfileFormState();
 
   async function handleSignOut() {
@@ -42,6 +46,7 @@ function SignOutButton({
       {...props}
       onClick={handleSignOut}
       type="button"
+      aria-busy={isSigningOut}
       variant="ghost"
       className={cn(
         "w-full text-muted-foreground hover:text-destructive",
@@ -61,4 +66,4 @@ function SignOutButton({
   );
 }
 
-export { SignOutButton };
+export { ProfileSignOutButton };

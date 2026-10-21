@@ -7,7 +7,7 @@ These are **repository conventions**, not filename rules prescribed by Next.js o
 | Dimension | Convention | Examples |
 | --- | --- | --- |
 | Runtime | Server by default; `"use client"` on a client module boundary, not in its name | `ProfileCard` may be a Client Component |
-| Responsibility | Describe the composition or behavior, not its runtime | `ProfileCard`, `ProfileForm`, `ProfileAvatarField`, `SignOutButton`, `AuthProvider`, `ProtectedGate`, `SignInAuthFlow` |
+| Responsibility | Describe the composition or behavior, not its runtime | `ProfileCard`, `ProfileForm`, `ProfileAvatarField`, `ProfileSignOutButton`, `AuthProvider`, `ProtectedGate`, `SignInAuthFlow` |
 | Placement | Colocate route components in private `_components/`, hooks in `_hooks/` and shared components in `src/components/` | App Router private folders do not become routes |
 
 The shadcn primitives live under `src/components/ui/`; Firebase registry output
@@ -63,7 +63,7 @@ Use `src/components/ui/card.tsx`, `button.tsx` and `field.tsx` as reference impl
 - Use `children` for genuine component composition, as in `Card` and `FieldGroup`. A compound `ProfileForm` can accept independently declared field components via `children` and provide `FormProvider` context.
 - Keep application-owned Card adapters **composable**: `ProfileCard`, `ProfileCardHeader`, `ProfileCardTitle`, `ProfileCardDescription` and `ProfileCardContent` each forward native Card primitive props and `children`; `ProfileSection` assembles data-backed form content and handles loading/error states. `ProfileFormContent` provides `FieldGroup`, not a second `CardContent`. The form content/footer remain children of the same native `<form>`. Do not confuse an application view that renders a Card with a Card primitive wrapper.
 - Fields connected via `Controller name="displayName"` must use the semantically matching component/file name `ProfileDisplayNameField` / `profile-display-name-field.tsx`. The component may expose a friendly display label without renaming the Firebase field.
-- Prefer narrow component props; do not hand `ProfileForm`, `ProfileAvatarField` or `SignOutButton` the entire profile controller as a `profile` prop.
+- Prefer narrow component props; do not hand `ProfileForm`, `ProfileAvatarField` or `ProfileSignOutButton` the entire profile controller as a `profile` prop.
 - `FieldGroup`, `FieldSet`, `Field` and `Controller` are real primitives/API integrations; do not introduce arbitrary *Fields wrapper components solely for visual grouping.
 - The single-primary-export-per-file convention is project-specific and has explicitly guarded compound exceptions for `profile-card.tsx` and `profile-form.tsx`. Upstream shadcn/ui files also export related primitives together; generated registries remain unchanged.
 
