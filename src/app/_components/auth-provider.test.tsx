@@ -23,7 +23,10 @@ vi.mock("@firebase-oss/ui-react", () => ({
 }));
 
 describe("AuthProvider", () => {
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+    window.history.replaceState(null, "", "/");
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.getUI.mockReturnValue({
@@ -68,5 +71,25 @@ describe("AuthProvider", () => {
     );
     expect(screen.getByRole("alert").textContent).toBe("configurationError");
     log.mockRestore();
+  });
+
+  it.each([
+    ["/profile?tab=security", "/profile?tab=security"],
+    ["https://evil.example", "/profile"],
+    ["/sign-in", "/profile"],
+  ])("redirects safely after sign-in with next=%s", (next, destination) => {
+    window.history.replaceState(
+      null,
+      "",
+      `/sign-in?next=${encodeURIComponent(next)}`,
+    );
+    render(
+      <AuthProvider>
+        <p>{"Screen"}</p>
+      </AuthProvider>,
+    );
+    act(() => mocks.subscribe.mock.calls[0][1]({ uid: "user" }));
+    expect(mocks.router.replace).toHaveBeenCalledWith(destination);
+    expect(screen.queryByText("Screen")).toBeNull();
   });
 });

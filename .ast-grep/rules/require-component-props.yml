@@ -39,7 +39,7 @@ rule:
         - not:
             has:
               field: value
-              regex: '(ComponentProps|HTMLAttributes|PropsWithChildren)<'
+              matches: inherited-props
     - kind: interface_declaration
       all:
         - has:
@@ -52,4 +52,32 @@ rule:
         - not:
             has:
               kind: extends_type_clause
-              regex: '(ComponentProps|HTMLAttributes|PropsWithChildren)'
+              has:
+                matches: standard-props
+utils:
+  standard-props:
+    any:
+      - kind: generic_type
+        has:
+          field: name
+          regex: '^(React\.)?(ComponentProps|HTMLAttributes|PropsWithChildren)$'
+      - kind: type_identifier
+        regex: '^PropsWithChildren$'
+      - kind: nested_type_identifier
+        regex: '^React\.PropsWithChildren$'
+  # Only intersections and parentheses can carry inherited props to the alias.
+  # Stop before object members, wrapper arguments, and union alternatives.
+  inherited-props:
+    any:
+      - matches: standard-props
+      - all:
+          - any:
+              - kind: intersection_type
+              - kind: parenthesized_type
+          - has:
+              matches: standard-props
+              stopBy:
+                not:
+                  any:
+                    - kind: intersection_type
+                    - kind: parenthesized_type
