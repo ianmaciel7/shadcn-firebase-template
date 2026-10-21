@@ -1,7 +1,13 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useProfileController } from "../_hooks/use-profile-controller";
 import { ProfileAvatarField } from "./profile-avatar-field";
@@ -15,7 +21,7 @@ import { ProfileLocaleField } from "./profile-locale-field";
 import { ProfileThemeField } from "./profile-theme-field";
 import { SignOutButton } from "./sign-out-button";
 
-type ProfileCardProps = ComponentProps<"div">;
+type ProfileCardProps = ComponentProps<typeof Card>;
 
 function ProfileCard({ className, ...props }: ProfileCardProps) {
   const profile = useProfileController();
@@ -23,11 +29,13 @@ function ProfileCard({ className, ...props }: ProfileCardProps) {
 
   if (!profile.authReady || (user && !profile.preferencesReady)) {
     return (
-      <div className={cn("mx-auto w-full max-w-sm", className)} {...props}>
-        <p role="status" className="text-center text-sm text-muted-foreground">
-          {t("loading")}
-        </p>
-      </div>
+      <Card className={cn("mx-auto w-full max-w-sm", className)} {...props}>
+        <CardContent>
+          <p role="status" className="text-center text-sm text-muted-foreground">
+            {t("loading")}
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -35,14 +43,16 @@ function ProfileCard({ className, ...props }: ProfileCardProps) {
 
   if (!user || !profile.formProps) {
     return (
-      <div className={cn("mx-auto w-full max-w-sm", className)} {...props}>
-        <p role="alert">{profile.error ?? t("profileSaveError")}</p>
-      </div>
+      <Card className={cn("mx-auto w-full max-w-sm", className)} {...props}>
+        <CardContent>
+          <p role="alert">{profile.error ?? t("profileSaveError")}</p>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className={cn("mx-auto w-full max-w-sm", className)} {...props}>
+    <Card className={cn("mx-auto w-full max-w-sm", className)} {...props}>
       <ProfileForm key={user.uid} {...profile.formProps}>
         <CardHeader>
           <CardTitle>{t("personalInfoTitle")}</CardTitle>
@@ -66,7 +76,7 @@ function ProfileCard({ className, ...props }: ProfileCardProps) {
           </SignOutButton>
         </ProfileFormFooter>
       </ProfileForm>
-    </div>
+    </Card>
   );
 }
 
