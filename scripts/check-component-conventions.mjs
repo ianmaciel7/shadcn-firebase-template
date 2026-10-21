@@ -304,19 +304,33 @@ function checkProfileSectionSafety(source, elements, report) {
   requireProfilePlacement(
     source,
     elements,
-    "CardHeader",
+    "ProfileCardHeader",
     ["ProfileForm", "ProfileCard"],
     report,
   );
-  for (const region of ["ProfileFormContent", "ProfileFormFooter"]) {
+  for (const part of ["ProfileCardTitle", "ProfileCardDescription"]) {
     requireProfilePlacement(
       source,
       elements,
-      region,
-      ["ProfileForm", "ProfileCard"],
+      part,
+      ["ProfileCardHeader", "ProfileForm", "ProfileCard"],
       report,
     );
   }
+  requireProfilePlacement(
+    source,
+    elements,
+    "ProfileFormContent",
+    ["ProfileCardContent", "ProfileForm", "ProfileCard"],
+    report,
+  );
+  requireProfilePlacement(
+    source,
+    elements,
+    "ProfileFormFooter",
+    ["ProfileForm", "ProfileCard"],
+    report,
+  );
   for (const action of ["ProfileButton", "SignOutButton"]) {
     requireProfilePlacement(
       source,
@@ -346,6 +360,19 @@ function checkProfileSectionSafety(source, elements, report) {
   }
 }
 
+function checkProfileCardPartSafety(source, elements, report, stem) {
+  const primitives = {
+    "profile-card-header": "CardHeader",
+    "profile-card-content": "CardContent",
+    "profile-card-title": "CardTitle",
+    "profile-card-description": "CardDescription",
+  };
+  const expected = primitives[stem];
+  if (profileElements(elements, expected).length !== 1) {
+    report(source, `${stem} must render exactly one ${expected}.`);
+  }
+}
+
 function checkProfileProviderSafety(source, elements, report) {
   const nativeForms = profileElements(elements, "form");
   if (
@@ -372,16 +399,14 @@ function checkProfileProviderSafety(source, elements, report) {
 }
 
 function checkProfileContentSafety(source, elements, report) {
-  const groups = profileElements(elements, "FieldGroup");
   if (
-    profileElements(elements, "CardContent").length !== 1 ||
-    groups.length !== 1 ||
-    !isInsideProfile(groups[0], ["CardContent"]) ||
+    profileElements(elements, "FieldGroup").length !== 1 ||
+    profileElements(elements, "CardContent").length ||
     profileElements(elements, "form").length
   ) {
     report(
       source,
-      "ProfileFormContent must wrap FieldGroup in CardContent without a nested form.",
+      "ProfileFormContent must render exactly one FieldGroup without CardContent or a nested form.",
     );
   }
 }
@@ -455,6 +480,14 @@ function checkProfileFormSafety(source, stem, report) {
   const checks = {
     "profile-card": checkProfileCardSafety,
     "profile-section": checkProfileSectionSafety,
+    "profile-card-header": (file, elements, addIssue) =>
+      checkProfileCardPartSafety(file, elements, addIssue, stem),
+    "profile-card-content": (file, elements, addIssue) =>
+      checkProfileCardPartSafety(file, elements, addIssue, stem),
+    "profile-card-title": (file, elements, addIssue) =>
+      checkProfileCardPartSafety(file, elements, addIssue, stem),
+    "profile-card-description": (file, elements, addIssue) =>
+      checkProfileCardPartSafety(file, elements, addIssue, stem),
     "profile-form": checkProfileProviderSafety,
     "profile-form-content": checkProfileContentSafety,
     "profile-form-footer": checkProfileFooterSafety,
