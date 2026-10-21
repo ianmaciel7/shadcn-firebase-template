@@ -53,7 +53,7 @@ original date. Read current operational details in the
   - Husky in `.husky/pre-commit` sets `VIRTUALENV_OVERRIDE_APP_DATA` on Windows to
     prevent MAX_PATH (`WinError 206`) issues and bypasses missing `pre-commit`
     gracefully.
-  - The supported Node range is `^22.19.0 || ^24.5.0` in `package.json` (CI uses Node 22 LTS).
+  - The supported Node range is `^22.22.1 || ^24.5.0` in `package.json` (CI uses Node 22 LTS).
   - Continuous integration in GitHub Actions runs on `ubuntu-latest` with Node 22,
     Python 3.13, and pnpm across `ci.yml`, `visual-baselines.yml`, and `scheduled-quality.yml`.
   - In `.github/workflows/scheduled-quality.yml`, the `mutation` job (Stryker) is
