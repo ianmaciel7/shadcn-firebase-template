@@ -10,13 +10,18 @@ type SignInFormClientProps = ComponentProps<"div">;
 
 function SignInFormClient(props: SignInFormClientProps) {
   const router = useRouter();
-  const destination = getSafeReturnUrl(new URLSearchParams(window.location.search).get("next"));
-  const nextParam = destination === "/profile" ? "" : `?next=${encodeURIComponent(destination)}`;
+  const destination = getSafeReturnUrl(
+    new URLSearchParams(window.location.search).get("next"),
+  );
+  const nextParam =
+    destination === "/profile" ? "" : `?next=${encodeURIComponent(destination)}`;
   return (
     <div {...props}>
       <SignInAuthScreen
         onSignUpClick={() => router.push(`/register${nextParam}`)}
-        onForgotPasswordClick={() => router.push(`/forgot-password${nextParam}`)}
+        onForgotPasswordClick={() =>
+          router.push(`/forgot-password${nextParam}`)
+        }
       >
         {process.env.NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED === "true" ? (
           <GoogleSignInButton />
