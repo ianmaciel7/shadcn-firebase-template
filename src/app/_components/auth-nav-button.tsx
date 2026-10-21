@@ -41,4 +41,3 @@ function AuthNavButton() {
 }
 
 export { AuthNavButton };
-export default AuthNavButton;

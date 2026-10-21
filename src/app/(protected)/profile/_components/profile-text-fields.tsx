@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import type { ProfileValues } from "../_hooks/use-profile-actions";
 
-export type ProfileTextFieldsProps = ComponentProps<typeof FieldGroup> & {
+type ProfileTextFieldsProps = ComponentProps<typeof FieldGroup> & {
   isBusy?: boolean;
 };
 

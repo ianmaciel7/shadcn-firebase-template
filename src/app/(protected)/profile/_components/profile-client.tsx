@@ -13,7 +13,7 @@ import { useProfileClient } from "../_hooks/use-profile-client";
 import { ProfileForm } from "./profile-form";
 import { SignOutButton } from "./sign-out-button";
 
-export type ProfileClientProps = ComponentProps<"div">;
+type ProfileClientProps = ComponentProps<"div">;
 
 function ProfileClient({ className, ...props }: ProfileClientProps) {
   const profile = useProfileClient();

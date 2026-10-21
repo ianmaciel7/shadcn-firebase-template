@@ -9,7 +9,7 @@ import { ProfileAvatarField } from "./profile-avatar-field";
 import { ProfilePreferenceFields } from "./profile-preference-fields";
 import { ProfileTextFields } from "./profile-text-fields";
 
-export type ProfileFormProps = ComponentProps<"form"> & {
+type ProfileFormProps = ComponentProps<"form"> & {
   profile: ProfileClientState;
   user: NonNullable<ProfileClientState["user"]>;
 };

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
 import { ForgotPasswordAuthScreen } from "@/components/firebase/forgot-password-auth-screen";
 
-export type ForgotPasswordFormClientProps = ComponentProps<"div">;
+type ForgotPasswordFormClientProps = ComponentProps<"div">;
 
 function ForgotPasswordFormClient(props: ForgotPasswordFormClientProps) {
   const router = useRouter();

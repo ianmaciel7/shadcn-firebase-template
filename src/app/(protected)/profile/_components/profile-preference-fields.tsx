@@ -15,7 +15,7 @@ import { isThemePreference, themePreferences } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import type { ProfileValues } from "../_hooks/use-profile-actions";
 
-export type ProfilePreferenceFieldsProps = ComponentProps<"div"> & {
+type ProfilePreferenceFieldsProps = ComponentProps<"div"> & {
   isBusy?: boolean;
 };
 

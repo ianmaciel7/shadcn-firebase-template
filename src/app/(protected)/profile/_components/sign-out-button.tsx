@@ -5,7 +5,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import type { ProfileClientState } from "../_hooks/use-profile-client";
 
-export type SignOutButtonProps = ComponentProps<typeof Button> & {
+type SignOutButtonProps = ComponentProps<typeof Button> & {
   profile: ProfileClientState;
 };
 

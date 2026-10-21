@@ -5,7 +5,7 @@ import type { ComponentProps } from "react";
 import { GoogleSignInButton } from "@/components/firebase/google-sign-in-button";
 import { SignInAuthScreen } from "@/components/firebase/sign-in-auth-screen";
 
-export type SignInFormClientProps = ComponentProps<"div">;
+type SignInFormClientProps = ComponentProps<"div">;
 
 function SignInFormClient(props: SignInFormClientProps) {
   const router = useRouter();
