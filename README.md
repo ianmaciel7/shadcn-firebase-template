@@ -21,17 +21,15 @@ auto-updates as you edit the file.
 
 ## After creating a repository from this template
 
-1. Run `pnpm setup:github` locally with an authenticated `gh` CLI user who
-   has repository administration access. This configures Squash-only merges,
+1. Run `pnpm setup:github` locally with a `gh` CLI session authenticated
+   as a repository administrator. This configures Squash-only merges,
    auto-merge, and protection of the default branch (required `CI result`
    check, strict linear history, and review-conversation resolution). GitHub
    template repositories do not inherit these settings automatically.
-   Alternatively, create an Actions secret named `REPOSITORY_ADMIN_TOKEN`
-   containing a fine-grained personal access token scoped to this repository
-   with **Administration: write**, then manually run **Initialize Repository**
-   from GitHub Actions. It never runs on push: the default `GITHUB_TOKEN`
-   cannot modify repository settings or rulesets. Prefer local setup to avoid
-   storing an elevated token; delete the secret after the manual setup.
+   Repository administration is deliberately **not** performed by GitHub
+   Actions: the default `GITHUB_TOKEN` lacks permission to modify rulesets,
+   and privileged repository secrets must not be exposed to branch-selectable
+   workflows. Re-run the local command when repository policies change.
 2. Rename the package in `package.json`, update the application metadata and
    replace the starter home page. Update the README and domain documentation.
 3. Keep the generic Playwright smoke, localization-request, and new-tab safety
