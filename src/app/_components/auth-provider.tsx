@@ -6,6 +6,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { type PropsWithChildren, useEffect, useState } from "react";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { getSafeReturnUrl } from "@/lib/auth/return-url";
 import { getFirebaseUI } from "@/lib/firebase/client";
 
@@ -48,7 +49,8 @@ function AuthProvider({ children }: AuthProviderProps) {
   }, [ui, locale]);
 
   if (error) return <p role="alert">{t("configurationError")}</p>;
-  if (!ui || !ready) return <p role="status">{t("loading")}</p>;
+  if (!ui || !ready)
+    return <LoadingIndicator label={t("loading")} className="flex w-full" />;
   return <FirebaseUIProvider ui={ui}>{children}</FirebaseUIProvider>;
 }
 

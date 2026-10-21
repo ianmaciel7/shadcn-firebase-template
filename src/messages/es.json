@@ -30,7 +30,7 @@
     "system": "Sistema"
   },
   "Auth": {
-    "loading": "Cargando autenticación…",
+    "loading": "Cargando…",
     "configurationError": "La autenticación de Firebase no está configurada. Revisa la configuración de la aplicación.",
     "profileTitle": "Perfil de usuario",
     "profileDescription": "Administra tu sesión y detalles de cuenta.",
@@ -72,7 +72,8 @@
     "savingProfile": "Guardando perfil…",
     "profileSaved": "Perfil guardado",
     "emailVerificationSent": "Revisa tu nuevo correo para confirmar el cambio.",
-    "profileSaveError": "No se pudo guardar el perfil. Inténtalo de nuevo."
+    "profileSaveError": "No se pudo guardar el perfil. Inténtalo de nuevo.",
+    "signingOut": "Cerrando sesión…"
   },
   "Home": {
     "stack": "Next.js + shadcn/ui + Firebase",

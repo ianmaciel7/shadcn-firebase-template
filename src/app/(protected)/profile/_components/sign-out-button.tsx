@@ -1,7 +1,8 @@
+import { useTranslations } from "next-intl";
 import { LogOut } from "lucide-react";
 import type { ComponentProps } from "react";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { cn } from "@/lib/utils";
 
 type SignOutButtonProps = ComponentProps<typeof Button> & {
@@ -15,10 +16,12 @@ function SignOutButton({
   children,
   ...props
 }: SignOutButtonProps) {
+  const t = useTranslations("Auth");
   return (
     <Button
       {...props}
       type="button"
+      aria-busy={isSigningOut}
       variant="ghost"
       className={cn(
         "w-full text-muted-foreground hover:text-destructive",
@@ -27,11 +30,11 @@ function SignOutButton({
       disabled={disabled || isSigningOut}
     >
       {isSigningOut ? (
-        <Spinner data-icon="inline-start" />
+        <LoadingIndicator label={t("signingOut")} className="text-inherit" />
       ) : (
         <LogOut data-icon="inline-start" aria-hidden="true" />
       )}
-      {children}
+      {!isSigningOut && children}
     </Button>
   );
 }

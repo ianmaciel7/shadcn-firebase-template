@@ -25,6 +25,7 @@ import {
 import { Field, FieldLabel, FieldDescription, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { Policies } from "@/components/firebase/policies";
 import { CountrySelector, type CountrySelectorRef } from "@/components/firebase/country-selector";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
@@ -90,8 +91,12 @@ function VerifyPhoneNumberForm(props: VerifyPhoneNumberFormProps) {
             </Field>
           )}
         />
-        <Button type="submit" disabled={ui.state !== "idle"}>
-          {getTranslation(ui, "labels", "verifyCode")}
+        <Button type="submit" disabled={ui.state !== "idle"} aria-busy={ui.state !== "idle"}>
+          {ui.state !== "idle" ? (
+            <LoadingIndicator label={getTranslation(ui, "labels", "verifyCode")} className="text-inherit" />
+          ) : (
+            getTranslation(ui, "labels", "verifyCode")
+          )}
         </Button>
         {form.formState.errors.root && <FieldError>{form.formState.errors.root.message}</FieldError>}
       </form>
@@ -155,8 +160,12 @@ function PhoneNumberForm(props: PhoneNumberFormProps) {
         />
         <div ref={recaptchaContainerRef} />
         <Policies />
-        <Button type="submit" disabled={ui.state !== "idle"}>
-          {getTranslation(ui, "labels", "sendCode")}
+        <Button type="submit" disabled={ui.state !== "idle"} aria-busy={ui.state !== "idle"}>
+          {ui.state !== "idle" ? (
+            <LoadingIndicator label={getTranslation(ui, "labels", "sendCode")} className="text-inherit" />
+          ) : (
+            getTranslation(ui, "labels", "sendCode")
+          )}
         </Button>
         {form.formState.errors.root && <FieldError>{form.formState.errors.root.message}</FieldError>}
       </form>

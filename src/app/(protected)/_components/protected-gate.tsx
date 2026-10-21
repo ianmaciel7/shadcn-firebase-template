@@ -4,6 +4,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type PropsWithChildren, useEffect, useState } from "react";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { getFirebaseUI } from "@/lib/firebase/client";
 
 type ProtectedGateProps = PropsWithChildren;
@@ -46,9 +47,7 @@ function ProtectedGate({ children }: ProtectedGateProps) {
   if (!ready) {
     return (
       <main className="flex min-h-svh flex-1 items-center justify-center p-6 md:p-10">
-        <div role="status" className="flex items-center justify-center">
-          {t("loading")}
-        </div>
+        <LoadingIndicator label={t("loading")} />
       </main>
     );
   }

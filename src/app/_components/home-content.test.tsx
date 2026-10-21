@@ -96,6 +96,27 @@ describe("home session", () => {
     expect(screen.getByRole("link", { name: en.Home.signIn })).toBeDefined();
   });
 
+  it("shows the shared loading indicator and prevents repeated sign-out requests", async () => {
+    let finish: () => void = () => {};
+    mocks.signOut.mockReturnValue(
+      new Promise<void>((resolve) => {
+        finish = resolve;
+      }),
+    );
+    renderHome();
+    act(() => mocks.subscribe.mock.calls[0][1]({ displayName: "Alex" }));
+    fireEvent.click(screen.getByRole("button", { name: en.Auth.signOut }));
+    const pending = screen.getByRole("button", { name: en.Home.signingOut });
+    expect(pending.hasAttribute("disabled")).toBe(true);
+    expect(pending.getAttribute("aria-busy")).toBe("true");
+    expect(screen.getByRole("status").textContent).toBe(en.Home.signingOut);
+    fireEvent.click(pending);
+    expect(mocks.signOut).toHaveBeenCalledOnce();
+    await act(async () => {
+      finish();
+    });
+  });
+
   it("allows retrying when sign out fails", async () => {
     mocks.signOut.mockRejectedValue(new Error("network"));
     renderHome();

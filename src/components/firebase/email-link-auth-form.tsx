@@ -16,6 +16,7 @@ import { useForm, FormProvider, Controller } from "react-hook-form";
 import { Policies } from "@/components/firebase/policies";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
@@ -72,8 +73,12 @@ export function EmailLinkAuthForm(props: EmailLinkAuthFormProps) {
           )}
         />
         <Policies />
-        <Button type="submit" disabled={ui.state !== "idle"}>
-          {getTranslation(ui, "labels", "sendSignInLink")}
+        <Button type="submit" disabled={ui.state !== "idle"} aria-busy={ui.state !== "idle"}>
+          {ui.state !== "idle" ? (
+            <LoadingIndicator label={getTranslation(ui, "labels", "sendSignInLink")} className="text-inherit" />
+          ) : (
+            getTranslation(ui, "labels", "sendSignInLink")
+          )}
         </Button>
         {form.formState.errors.root && <FieldError>{form.formState.errors.root.message}</FieldError>}
       </form>

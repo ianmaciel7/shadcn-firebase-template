@@ -1,5 +1,6 @@
 "use client";
 
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { useProfileController } from "../_hooks/use-profile-controller";
 import { ProfileAvatarField } from "./profile-avatar-field";
 import { ProfileButton } from "./profile-button";
@@ -30,12 +31,7 @@ function ProfileSection() {
     return (
       <ProfileCard>
         <ProfileCardContent>
-          <p
-            role="status"
-            className="text-center text-sm text-muted-foreground"
-          >
-            {t("loading")}
-          </p>
+          <LoadingIndicator label={t("loading")} className="flex w-full" />
         </ProfileCardContent>
       </ProfileCard>
     );

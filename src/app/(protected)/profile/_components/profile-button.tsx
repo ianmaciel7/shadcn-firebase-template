@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { cn } from "@/lib/utils";
 import type { ProfileValues } from "../_hooks/use-profile-actions";
 
@@ -17,14 +17,12 @@ function ProfileButton({ className, disabled, ...props }: ProfileButtonProps) {
     <Button
       {...props}
       type="submit"
+      aria-busy={isSubmitting}
       className={cn("w-full", className)}
       disabled={disabled || isSubmitting || formState.disabled}
     >
       {isSubmitting ? (
-        <>
-          <Spinner data-icon="inline-start" />
-          {t("savingProfile")}
-        </>
+        <LoadingIndicator label={t("savingProfile")} className="text-inherit" />
       ) : (
         t("saveProfile")
       )}

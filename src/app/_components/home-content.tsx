@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { useHomeSession } from "../_hooks/use-home-session";
 import { AuthenticatedHome } from "./authenticated-home";
 import { GuestHome } from "./guest-home";
@@ -22,9 +23,7 @@ function HomeContent() {
           priority
         />
         {!ready ? (
-          <p role="status" className="text-sm text-muted-foreground">
-            {t("loading")}
-          </p>
+          <LoadingIndicator label={t("loading")} />
         ) : user ? (
           <AuthenticatedHome user={user} />
         ) : (

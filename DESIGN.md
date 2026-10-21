@@ -222,3 +222,17 @@ Base radius `--radius: 0.625rem` (10px). Derived tokens:
 
 - Don't hardcode hex or `oklch()` values in components.
 - Don't add a brand accent without adding the matching token pair (light and dark) in `globals.css`.
+
+## Loading states
+
+Application loading states use `LoadingIndicator` from
+`src/components/loading/loading-indicator.tsx`, built on the shared `Spinner`.
+Use translated labels, a single polite status announcement, and a decorative
+spinner that respects reduced motion. Inside buttons, retain the button color
+with `text-inherit` and mark the button busy and disabled during the operation.
+
+The root and route groups provide `loading.tsx` for navigation. Session checks
+and form actions use the same indicator explicitly because they also run after
+hydration. The root layout supplies a fallback while the locale provider loads;
+its initial English label is marked with `lang="en"`. Once locale messages are
+available, loading labels follow the selected language.

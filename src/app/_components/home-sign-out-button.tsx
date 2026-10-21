@@ -3,6 +3,7 @@
 import { signOut } from "firebase/auth";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { buttonVariants } from "@/components/ui/button";
 import { getFirebaseUI } from "@/lib/firebase/client";
 
@@ -27,13 +28,18 @@ function HomeSignOutButton() {
         type="button"
         onClick={handleSignOut}
         disabled={state === "pending"}
+        aria-busy={state === "pending"}
         className={buttonVariants({
           variant: "outline",
           className:
             "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
         })}
       >
-        {state === "pending" ? t("signingOut") : auth("signOut")}
+        {state === "pending" ? (
+          <LoadingIndicator label={t("signingOut")} className="text-inherit" />
+        ) : (
+          auth("signOut")
+        )}
       </button>
       {state === "error" && (
         <p role="alert" className="max-w-xs text-sm text-destructive">

@@ -20,6 +20,7 @@ import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
 type TotpMultiFactorSecretGenerationFormProps = {
@@ -62,8 +63,12 @@ function TotpMultiFactorSecretGenerationForm(props: TotpMultiFactorSecretGenerat
             </Field>
           )}
         />
-        <Button type="submit" disabled={ui.state !== "idle"}>
-          {getTranslation(ui, "labels", "generateQrCode")}
+        <Button type="submit" disabled={ui.state !== "idle"} aria-busy={ui.state !== "idle"}>
+          {ui.state !== "idle" ? (
+            <LoadingIndicator label={getTranslation(ui, "labels", "generateQrCode")} className="text-inherit" />
+          ) : (
+            getTranslation(ui, "labels", "generateQrCode")
+          )}
         </Button>
         {form.formState.errors.root && <FieldError>{form.formState.errors.root.message}</FieldError>}
       </form>
@@ -133,8 +138,12 @@ export function MultiFactorEnrollmentVerifyTotpForm(props: MultiFactorEnrollment
               </Field>
             )}
           />
-          <Button type="submit" disabled={ui.state !== "idle"}>
-            {getTranslation(ui, "labels", "verifyCode")}
+          <Button type="submit" disabled={ui.state !== "idle"} aria-busy={ui.state !== "idle"}>
+            {ui.state !== "idle" ? (
+              <LoadingIndicator label={getTranslation(ui, "labels", "verifyCode")} className="text-inherit" />
+            ) : (
+              getTranslation(ui, "labels", "verifyCode")
+            )}
           </Button>
           {form.formState.errors.root && <FieldError>{form.formState.errors.root.message}</FieldError>}
         </form>

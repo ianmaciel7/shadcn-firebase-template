@@ -15,6 +15,7 @@ import { FirebaseUIError, getTranslation } from "@firebase-oss/ui-core";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { Policies } from "./policies";
 
 export type { SignUpAuthFormProps };
@@ -86,8 +87,12 @@ export function SignUpAuthForm(props: SignUpAuthFormProps) {
           )}
         />
         <Policies />
-        <Button type="submit" disabled={ui.state !== "idle"}>
-          {getTranslation(ui, "labels", "createAccount")}
+        <Button type="submit" disabled={ui.state !== "idle"} aria-busy={ui.state !== "idle"}>
+          {ui.state !== "idle" ? (
+            <LoadingIndicator label={getTranslation(ui, "labels", "createAccount")} className="text-inherit" />
+          ) : (
+            getTranslation(ui, "labels", "createAccount")
+          )}
         </Button>
         {form.formState.errors.root && <FieldError>{form.formState.errors.root.message}</FieldError>}
         {props.onSignInClick ? (
