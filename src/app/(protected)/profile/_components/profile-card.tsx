@@ -31,7 +31,10 @@ function ProfileCard({ className, ...props }: ProfileCardProps) {
     return (
       <Card className={cn("mx-auto w-full max-w-sm", className)} {...props}>
         <CardContent>
-          <p role="status" className="text-center text-sm text-muted-foreground">
+          <p
+            role="status"
+            className="text-center text-sm text-muted-foreground"
+          >
             {t("loading")}
           </p>
         </CardContent>

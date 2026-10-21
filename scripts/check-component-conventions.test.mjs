@@ -238,5 +238,4 @@ describe("owned component conventions", () => {
       path,
     );
   });
-
 });
