@@ -81,6 +81,7 @@ and the distinction between current guidance and historical decisions.
 - [Architecture decision records](docs/adr/README.md)
 - [Agent integrations and skills](.agents/README.md)
 - [shadcn/ui documentation workflow and source inventory](docs/agents/shadcn.md)
+- [Next.js documentation workflow and source inventory](docs/agents/nextjs.md)
 
 ## Validation
 

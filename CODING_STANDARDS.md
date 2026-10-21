@@ -62,8 +62,8 @@ When standards conflict, apply them in this order:
 - Keep route entrypoints and Next.js special files in `src/app`.
 - **Server and Client boundary separation**: Route entrypoints (`page.tsx`, `layout.tsx`) cannot be simultaneously Server and Client Components. In the React Server Components model:
   - Adding `"use client"` transforms the entire module into a Client Component boundary, rendering it and all its imports in the client bundle.
-  - Server-only exports such as `metadata`, `generateMetadata`, and server-side data fetching functions cannot be exported from files marked with `"use client"`.
-  - Conversely, server components cannot use React hooks (`useState`, `useEffect`, `useRouter`) or event handlers (`onClick`).
+  - Framework server exports such as `metadata`, `generateMetadata`, and `generateStaticParams` cannot be exported from a `"use client"` route module. Ordinary browser data-fetching functions are different; their allowed APIs depend on the import graph.
+  - Server Components cannot use client state/effect/navigation hooks (`useState`, `useEffect`, `useRouter`) or DOM event handlers (`onClick`). This does not prohibit every API whose name begins with `use`; for example, React supports `use` in synchronous Server Components.
   - Therefore, keep route entrypoint files (`page.tsx`) as Server Components by default. Whenever interactivity or client hooks are required, never create a generic `*-page-client.tsx` at the route root. Instead, extract the client logic into a semantically named UI component in a private `_components/` directory (e.g., following shadcn conventions such as `_components/register-auth-flow.tsx`, `_components/sign-in-auth-flow.tsx`, or `_components/forgot-password-auth-flow.tsx`) and render it from the server `page.tsx`.
 - Use the generated `PageProps`, `LayoutProps`, and `RouteContext` helpers for
   route parameters rather than hand-written equivalents:
@@ -343,3 +343,114 @@ Components throughout the application—regardless of whether they are Server Co
   external library's internals.
 - Cover asynchronous Server Components with Playwright E2E tests rather than
   forcing them through Vitest.
+
+## Next.js request data and caching
+
+Use the installed-version guide before copying an example. This application
+uses App Router with Cache Components and Partial Prefetching enabled. The
+[complete upstream reference](docs/agents/nextjs.md) separates versioned APIs,
+newer documentation, and optional deployment recipes.
+
+### Async request APIs and streaming
+
+- Await `cookies()`, `headers()`, `draftMode()`, and promised route `params` /
+  page `searchParams` before reading their values; React `use` is another
+  framework-supported option where appropriate. Preserve this repository's
+  stricter hook-free route policy. Generated `PageProps`, `LayoutProps`, and
+  `RouteContext` are available after `next typegen`, `next dev`, or `next build`.
+- Put request-time or uncached asynchronous reads beneath a useful `Suspense`
+  boundary. Move the read into a child if the parent would await it before
+  returning that boundary. Do not assume `loading.tsx` covers its own layout's
+  earlier work. Keep fallbacks accessible and consistent with the design system.
+- Read request cookies and headers outside a shared `"use cache"` scope. Pass
+  only resolved, minimal values needed by a cached function, after authorization.
+  Request-dependent promises captured through props or closures do not become
+  safe cache inputs. Request identity and sensitive data need a deliberate
+  isolation policy; adding a user ID to a key is not authorization.
+- Server Components and cached functions must stay free of render-time writes.
+  Do not use `"use server"` to label a Server Component. It marks Server Functions.
+  Client Components may also render initial HTML on the server, so browser APIs
+  must run at an appropriate client lifecycle point.
+
+### Cache ownership and mutation consistency
+
+For new shared cached work, prefer `"use cache"` with an explicit `cacheLife`
+and, when invalidation is needed, `cacheTag`. Choose a lifetime from freshness
+requirements; never increase it only to silence a prerender diagnostic.
+React `cache()` deduplicates work within a request; it is not a persistent cache.
+Plain `fetch` results are not persistently cached by default.
+
+With `cacheComponents` enabled, do not introduce old `dynamic`, `dynamicParams`,
+`fetchCache`, `revalidate`, or `runtime` segment exports from previous-model
+recipes. Consult the migration guide and installed compiler diagnostics;
+`cacheLife` and cache scopes express caching. Existing `fetch` cache options and
+`unstable_cache` have migration guidance; this does not require a speculative
+rewrite of code that is not present.
+
+| API | Intended use |
+| --- | --- |
+| `cacheLife`, `cacheTag` | Define lifetime and tags inside a cache scope |
+| `revalidateTag(tag, "max")` | Mark tagged server data stale with stale-while-revalidate behavior; Server Functions or Route Handlers |
+| `updateTag(tag)` | Immediately expire tagged data for read-your-own-writes; Server Actions only |
+| `revalidatePath(path)` | Invalidate the selected page/layout path; does not replace tags shared by other paths |
+| `refresh()` from `next/cache` | Refresh the client router from a Server Action; does not invalidate tagged server data |
+| `router.refresh()` from `next/navigation` | Request and merge fresh RSC output for the current route while preserving unaffected client state; does not invalidate the server cache |
+
+The single-argument `revalidateTag(tag)` form is deprecated. For immediate
+invalidation from a Route Handler, use the documented `{ expire: 0 }` profile
+instead of calling the Server-Action-only `updateTag`.
+
+Current Firebase writes remain browser SDK operations with explicit form reset,
+feedback, and Security Rules. The cache APIs above are guidance for future
+server-owned data, not a migration of the profile submit workflow.
+
+### Routing, metadata, and errors
+
+Use `next/navigation` for App Router navigation hooks, `next/link` for navigation
+links, and the Metadata API for route metadata. The native Biome
+`noRestrictedImports` rule rejects `next/router`, `next/head`, `next/document`,
+and `next/app` in owned app, component, and hook modules. It also checks UI
+extensions, while untouched registry components keep their exclusions. Static
+imports and re-exports are checked; this is not a complete transitive graph
+analysis. Keep the current unprefixed locale URLs and use the existing safe
+return-URL validator for user-controlled redirect destinations.
+
+Use `error.tsx` / `global-error.tsx` according to their Client Component contracts;
+a global error boundary replaces the root layout and needs its own document
+markup. Error boundaries do not catch every event-handler or async callback
+failure. Return expected action errors as explicit state; keep unexpected
+failures for the framework boundary. `redirect()` and `notFound()` throw
+framework control-flow signals, so do not swallow them in generic catches.
+
+Keep `metadata` / `generateMetadata` and `viewport` / `generateViewport` on the
+server and use their respective APIs. Metadata can stream under supported
+conditions; inspect crawler behavior and the installed version's diagnostics
+before adding request-dependent metadata. The existing static viewport and
+localized metadata are not automatically changed by a documentation refresh.
+
+### Route Handlers and Server Functions
+
+Server Components should call their data layer directly instead of fetching
+the application's own Route Handler through HTTP. A Route Handler is a public
+HTTP boundary: validate inputs, authorize each operation, and return only the
+intended response data. A Server Function is also directly callable over the
+network; verify identity and resource authorization inside each operation.
+See [Security](SECURITY.md#nextjs-server-and-environment-boundaries).
+
+Use Server Actions for mutations, not as a parallel data-fetching API. Write
+response cookies only in a Server Function or Route Handler before streaming
+starts. This application does not currently implement these server mutation
+surfaces; adding one requires its own behavior and authorization tests.
+
+### Navigation state and optional features
+
+With Cache Components, Next.js may preserve inactive UI using React Activity.
+Do not assume navigation always unmounts a component, clears a form, or disposes
+an external resource. Follow the preserving-state guide for intentional resets,
+and test navigation, back/forward, focus, and effect cleanup.
+
+Use `next/image`, `next/font`, `next/script`, and Metadata APIs according to the
+installed reference. Image allowlists, script strategy, CSP, telemetry,
+instrumentation, remote cache handlers, and hosting adapters are separate
+configuration decisions. Do not enable experimental flags, run codemods, or
+install upstream agent skills simply because a guide mentions them.

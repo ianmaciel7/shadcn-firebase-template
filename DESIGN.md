@@ -270,3 +270,22 @@ buttons have explicit scoped color overrides in `globals.css`; those do not
 change the global semantic palette. Keep any provider branding scoped there.
 `rtl: false` does not establish RTL support; an RTL change also needs direction,
 logical spacing, keyboard, and visual verification.
+
+## Next.js streaming and navigation presentation
+
+Use existing semantic tokens and components for loading and error feedback.
+A `Suspense` fallback is part of the rendered shell: preserve useful layout,
+accessible status feedback, and focus behavior when the real content arrives.
+A skeleton should describe an actual pending region rather than hide a
+request read that blocks above the boundary.
+
+Keep the current font variables, theme provider, and scoped hydration handling
+in the root layout. Client Components can produce server-rendered HTML; avoid
+browser-only render reads that cause hydration mismatches. Prefer the
+framework image/font primitives and document sizing and remote-source choices.
+
+Navigation can preserve component state with Cache Components. Review retained
+form values, dialogs, pending indicators, and effect cleanup across navigation
+and back/forward. Runtime rules and cache choices are owned by
+[Coding standards](CODING_STANDARDS.md#nextjs-request-data-and-caching); the
+[upstream review](docs/agents/nextjs.md) records the matching official guides.

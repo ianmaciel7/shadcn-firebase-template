@@ -19,6 +19,7 @@ language, as defined in `.agents/rules/language.md`.
 | [Glossary](../GLOSSARY.md) | Agreed product vocabulary; currently pending | Adopted product terminology |
 | [Entity-relationship diagram](../DER.md) | Pending product model and existing technical Firebase stores | Current SDK modules, Security Rules, and adopted domain constraints |
 | [Agent instructions](../AGENTS.md) | Repository-wide contributor guidance | Current guides and agent configuration |
+| [Next.js reference](agents/nextjs.md) | Complete stable/current docs and error-message inventory, compatibility, and lookup workflow | Official source revisions, installed Next.js, current config |
 | [shadcn/ui reference](agents/shadcn.md) | Official documentation coverage, source inventory, and lookup workflow | Official source revision and current local configuration |
 
 ## Decisions and agent references

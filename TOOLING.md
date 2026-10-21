@@ -439,3 +439,67 @@ No shadcn MCP server or custom registry publisher is configured. The only
 explicit additional registry is `@firebase`. See
 [the source review](docs/agents/shadcn.md) for the full upstream inventory and
 [the persistent rule](.agents/rules/shadcn-ui.md) for the project workflow.
+
+## Next.js documentation and CLI workflow
+
+`package.json` pins Next.js 16.4.2. The
+[complete source inventory](docs/agents/nextjs-sources.json) records the official
+stable and current documentation revisions, including `errors/` messages.
+The installed `node_modules/next/dist/docs/` bundle contains version-matched
+Markdown generated from upstream MDX; its filenames and bytes can differ from
+the repository sources. Do not compare generated `.md` bodies with source
+`.mdx` hashes as if they were identical files.
+
+Use the project's pnpm runner and inspect supported options before changing a
+workflow:
+
+```bash
+pnpm exec next --version
+pnpm exec next --help
+pnpm exec next typegen --help
+pnpm exec next info
+pnpm typecheck
+pnpm build
+```
+
+`pnpm typecheck` runs `next typegen` before TypeScript. Type generation loads
+Next.js configuration in the production build phase and can require its
+plugins, environment, and native dependencies even without a full build.
+`next dev` and `next build` also generate route types. Do not hand-edit generated
+`.next/types` or replace the configured `tsconfig.build.json` with an example.
+`next lint` is removed in Next.js 16; Biome owns this project's lint commands.
+Turbopack is the configured bundler; webpack-only configuration is not applied
+by copying an example into it.
+
+The existing Next.js DevTools MCP is configured in `.agents/agents.json`.
+Runtime diagnostics require a running development server and a connected MCP
+client; configuration alone does not prove a successful runtime inspection.
+Context7 provides targeted current lookups; the immutable source inventory
+establishes full reference scope and the installed version establishes API
+compatibility. Neither lookup installs another MCP server or agent skill.
+
+Next.js can maintain documentation guidance in `AGENTS.md`. Preserve its
+managed block and keep project policies outside the markers. Upstream upgrade
+reminders, `next upgrade`, and suggested codemods do not authorize a dependency
+upgrade in a documentation-only task. Review package and lockfile changes on
+a focused branch when an upgrade is requested.
+
+### Next.js diagnostics and native guard ownership
+
+| Concern | Owner | Boundary |
+| --- | --- | --- |
+| Framework exports, generated route types, invalid segment configuration, RSC and prerender constraints | Next.js build and TypeScript plugin | Depends on installed version and actual import/render graph |
+| Async Client Components | Biome `noNextAsyncClientComponent` | Native Next.js domain rule; no duplicate custom implementation |
+| Pages Router imports in owned App Router code | Biome `noRestrictedImports` in `biome.json` | `next/router`, `next/head`, `next/document`, `next/app`; regression-tested in `.biome/rules/nextjs/app-router-imports.test.ts` |
+| Thin route entrypoints | Existing route AST guard and ast-grep | Stricter repository policy; does not claim Next.js forbids branching or all hooks universally |
+| Component family and adapter contracts | Existing component AST guards | Repository conventions for owned components; full graph validation stays with Next.js |
+| Actual freshness, navigation state, authorization, and cache isolation | Behavior tests, production E2E, and review | Syntax checks do not prove these properties |
+
+The Pages Router import restriction includes owned `src/app`, `src/components`,
+`src/hooks`, and `ui/extensions` code. Registry and generated sources retain
+their existing exclusions. It uses a native rule with project configuration;
+no new custom parser or framework diagnostic is introduced.
+
+CSpell excludes the generated `docs/agents/nextjs-sources.json` evidence file,
+whose upstream paths include historical API spellings and error identifiers.
+The explanatory Next.js reference and canonical Markdown guides remain checked.
