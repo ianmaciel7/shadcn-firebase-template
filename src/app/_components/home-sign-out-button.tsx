@@ -3,7 +3,7 @@
 import { signOut } from "firebase/auth";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { getFirebaseUI } from "@/lib/firebase/client";
 
 function HomeSignOutButton() {
@@ -23,15 +23,18 @@ function HomeSignOutButton() {
 
   return (
     <div className="flex w-full flex-col gap-2 sm:w-auto">
-      <Button
+      <button
         type="button"
-        variant="outline"
         onClick={handleSignOut}
         disabled={state === "pending"}
-        className="flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]"
+        className={buttonVariants({
+          variant: "outline",
+          className:
+            "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
+        })}
       >
         {state === "pending" ? t("signingOut") : auth("signOut")}
-      </Button>
+      </button>
       {state === "error" && (
         <p role="alert" className="max-w-xs text-sm text-destructive">
           {t("signOutError")}
