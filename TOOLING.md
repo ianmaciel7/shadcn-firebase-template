@@ -194,6 +194,9 @@ valid and invalid tests, before registering a new custom rule.
 | --- | --- | --- | --- | --- |
 | `owned-component-composition` | TypeScript AST (`scripts/check-component-composition.mjs`) | error | All owned component modules, Server and Client, through `pnpm check:components` | TypeScript permits dropping inherited props and constructing static compound APIs; this enforces our separate-named-export and adapter-forwarding contract. Checks remaining props and extracted children/className. Tests live in `scripts/check-component-composition.test.mjs`. [Coverage and limits](CODING_STANDARDS.md#composition-guard-coverage). |
 | `owned-component-family` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | All owned component modules, Server and Client | Root-prefixed family names, filename/export matching, and local function declarations are repository conventions that TypeScript and Next.js allow alternatives to. Preserves the existing direct client-boundary checks, with type-only imports excluded. The complete RSC graph remains a Next.js build responsibility. |
+| `owned-component-behavior` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | All owned component functions | Enforces component-named orchestration hooks, focused behavior ownership, and declarative rendering. React permits other arrangements; these are repository policies. See [.agents/rules/component-naming.md](.agents/rules/component-naming.md). |
+| `owned-component-naming` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | Owned TypeScript modules throughout `src` | Rejects generic View/Screen naming terms while preserving external API names through local aliases. Vendor and fixture exclusions apply. |
+| `profile-direct-parent-chain` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | Profile Card, Form, and action composition | Validates immediate JSX parent relationships and action safety. Extra wrappers can alter slots even when a matching ancestor exists. See [.agents/rules/form-architecture.md](.agents/rules/form-architecture.md#direct-parent-relationships). |
 | `prefer-page-props` | Grit (Biome plugin) | error | `export default async function Page({ params }: {...})` | Next.js accepts compatible hand-written types, so TypeScript will not reject them. This enforces the generated `PageProps<"/route">` helper ([Next.js docs](https://nextjs.org/docs/app/api-reference/file-conventions/page)). Convention, not a framework requirement. |
 | `prefer-layout-props` | Grit (Biome plugin) | error | `export default function Layout({ children }: { children: ReactNode })` | Same reasoning for `LayoutProps<"/route">`. `Readonly<{ children: ReactNode }>` is not matched. |
 | `prefer-route-context` | Grit (Biome plugin) | error | Route Handlers `GET`/`POST`/`PUT`/`PATCH`/`DELETE` with a hand-written `{ params }` | Same reasoning for `RouteContext<"/route">`. |
@@ -234,7 +237,8 @@ is reintroduced:
   covered by axe and Playwright.
 - **Hooks placement and inline components** (`exported-hook-location`,
   `extract-stateful-hooks`, `no-inline-hook-definition`): Biome
-  `noNestedComponentDefinitions` and `useHookAtTopLevel`; hooks may be colocated.
+  `noNestedComponentDefinitions` and `useHookAtTopLevel`. The repository additionally requires component-named
+  orchestration hooks in separate hook modules, as registered above.
 - **Effects and state** (`react-effect-set-state`, controlled/uncontrolled
   rules): React Doctor and TypeScript.
 - **Tailwind style preferences** (`logical-properties`, `no-inline-styles`,

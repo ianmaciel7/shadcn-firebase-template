@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   inspectComponent,
+  inspectNaming,
   isOwnedComponent,
 } from "./check-component-conventions.mjs";
 
@@ -118,7 +119,7 @@ describe("owned component conventions", () => {
   it("permits client interaction but rejects server-only imports", () => {
     expectValid(
       compoundCard(
-        '"use client"; import { useState } from "react"; function ProfileCard() { const [open] = useState(false); return <Card {...props} />; } export { ProfileCard };',
+        '"use client"; import { useProfileCard } from "../_hooks/use-profile-card"; function ProfileCard() { const { open } = useProfileCard(); return <Card {...props} />; } export { ProfileCard };',
       ),
     );
     expectInvalid(
@@ -128,6 +129,167 @@ describe("owned component conventions", () => {
     expectInvalid(
       '"use client"; import "server-only"; function ProfileCard() { return <Card />; } export { ProfileCard };',
       /server-only/,
+    );
+  });
+
+  it("requires focused hooks for session decisions, effects and async workflows", () => {
+    const path = "src/app/_components/session-panel.tsx";
+    const component = (body) =>
+      `function SessionPanel() { ${body} return <div />; } export { SessionPanel };`;
+    for (const condition of [
+      "!profile.authReady || (user && !profile.preferencesReady)",
+      "!user && !profile.error",
+      "!user || !profile.defaultValues",
+    ]) {
+      expectInvalid(
+        component(`if (${condition}) return null;`),
+        /custom hook/,
+        path,
+      );
+    }
+    expectInvalid(
+      component('const message = profile.error ?? t("profileSaveError");'),
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      component(
+        "const loading = !profile.authReady || !profile.preferencesReady;",
+      ),
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      'import { useEffect as effect } from "react"; ' +
+        component("effect(() => {});"),
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      `import React from "react"; ${component("React.useState(false);")}`,
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      `import { signOut } from "firebase/auth"; ${component("")}`,
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      component("async function handleSubmit() { await save(); }"),
+      /custom hook/,
+      path,
+    );
+    expectValid(
+      'import { useSessionPanel } from "../_hooks/use-session-panel"; ' +
+        component(
+          'const { status, message } = useSessionPanel(); if (status === "loading") return <Loading />; if (status === "error") return <p>{message}</p>;',
+        ),
+      path,
+    );
+    expectValid(
+      "function SessionPanel({ children, disabled }) { return <Button disabled={disabled || pending}>{children ?? label}</Button>; } export { SessionPanel };",
+      path,
+    );
+  });
+
+  it("requires the component-named orchestration hook, including aliased calls", () => {
+    const path = "src/app/_components/session-panel.tsx";
+    const render = (imports, calls) =>
+      `${imports} function SessionPanel() { ${calls} return <div />; } export { SessionPanel };`;
+    expectInvalid(
+      render(
+        'import { useSession, useSessionView } from "../_hooks/session";',
+        "const session = useSession(); const view = useSessionView(session);",
+      ),
+      /useSessionPanel/,
+      path,
+    );
+    expectInvalid(
+      render(
+        'import { useSession } from "../_hooks/session";',
+        "useSession();",
+      ),
+      /useSessionPanel/,
+      path,
+    );
+    expectInvalid(
+      render(
+        'import { useSession as readSession } from "../_hooks/session";',
+        "readSession();",
+      ),
+      /useSessionPanel/,
+      path,
+    );
+    expectInvalid(
+      render(
+        'import { useSessionPanel } from "../_hooks/use-session-panel"; import { useTranslations } from "next-intl";',
+        'useSessionPanel(); useTranslations("Auth");',
+      ),
+      /call only that component hook/,
+      path,
+    );
+    expectInvalid(
+      render("", "useSessionPanel();"),
+      /separate hook module/,
+      path,
+    );
+    expectValid(
+      render(
+        'import { useSessionPanel as usePanel } from "../_hooks/use-session-panel";',
+        "usePanel();",
+      ),
+      path,
+    );
+    expectValid(
+      render(
+        'import { useTranslations } from "next-intl";',
+        'const t = useTranslations("Auth");',
+      ),
+      path,
+    );
+  });
+
+  it("bans View and Screen naming in owned components, hooks and aliases", () => {
+    const component = "src/app/_components/account-section.tsx";
+    const hook = "src/app/_hooks/use-account-status.ts";
+    for (const [file, code] of [
+      [component, "function AccountView() {}"],
+      [component, "function AccountScreen() {}"],
+      [hook, "export function useAccountView() {}"],
+      [hook, "const screen = getState();"],
+      [hook, "const { view } = useAccount();"],
+      [component, 'import { Screen } from "external";'],
+      ["src/app/_hooks/use-account-screen.ts", "export const status = 1;"],
+    ])
+      assert.ok(inspectNaming(code, file).length, code);
+    assert.deepEqual(
+      inspectNaming(
+        'import { AccountScreen as AccountContent } from "external"; function AccountSection() {}',
+        component,
+      ),
+      [],
+    );
+    assert.deepEqual(
+      inspectNaming(
+        'import type { Viewport } from "next"; const preview = true;',
+        hook,
+      ),
+      [],
+    );
+    assert.deepEqual(
+      inspectNaming(
+        "function AccountScreen() {}",
+        "src/components/firebase/account-screen.tsx",
+      ),
+      [],
+    );
+    assert.deepEqual(
+      inspectNaming(
+        "const screen = getScreen();",
+        "src/app/_hooks/account.test.ts",
+      ),
+      [],
     );
   });
 
@@ -175,7 +337,7 @@ describe("owned component conventions", () => {
       /focused field\/form\/button props/,
     );
     expectInvalid(
-      "function ProfileCard() { return <SignOutButton profile={profile} />; } export { ProfileCard };",
+      "function ProfileCard() { return <ProfileSignOutButton profile={profile} />; } export { ProfileCard };",
       /focused field\/form\/button props/,
     );
     expectValid(
@@ -186,29 +348,30 @@ describe("owned component conventions", () => {
   });
 
   it("enforces fixed submit and sign-out button types after prop spreads", () => {
-    const submit = "src/app/(protected)/profile/_components/profile-button.tsx";
+    const submit =
+      "src/app/(protected)/profile/_components/profile-save-button.tsx";
     const signOut =
-      "src/app/(protected)/profile/_components/sign-out-button.tsx";
+      "src/app/(protected)/profile/_components/profile-sign-out-button.tsx";
     expectValid(
-      'function ProfileButton() { return <Button {...props} type="submit" disabled={disabled} />; } export { ProfileButton };',
+      'function ProfileSaveButton() { return <Button {...props} type="submit" disabled={disabled} />; } export { ProfileSaveButton };',
       submit,
     );
     expectInvalid(
-      'function ProfileButton() { return <Button type="submit" disabled={disabled} {...props} />; } export { ProfileButton };',
+      'function ProfileSaveButton() { return <Button type="submit" disabled={disabled} {...props} />; } export { ProfileSaveButton };',
       /enforce type="submit"/,
       submit,
     );
     expectValid(
-      'function SignOutButton() { return <Button {...props} type="button" disabled={disabled} />; } export { SignOutButton };',
+      'function ProfileSignOutButton() { return <Button {...props} type="button" disabled={disabled} />; } export { ProfileSignOutButton };',
       signOut,
     );
     expectInvalid(
-      'function SignOutButton() { return <Button type="button" disabled={disabled} {...props} />; } export { SignOutButton };',
+      'function ProfileSignOutButton() { return <Button type="button" disabled={disabled} {...props} />; } export { ProfileSignOutButton };',
       /enforce type="button"/,
       signOut,
     );
     expectInvalid(
-      'function SignOutButton() { return <Button {...props} type="submit" disabled={disabled} />; } export { SignOutButton };',
+      'function ProfileSignOutButton() { return <Button {...props} type="submit" disabled={disabled} />; } export { ProfileSignOutButton };',
       /enforce type="button"/,
       signOut,
     );
@@ -234,34 +397,59 @@ describe("owned component conventions", () => {
     const section =
       "src/app/(protected)/profile/_components/profile-section.tsx";
     expectValid(
-      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
+      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
       section,
     );
     expectInvalid(
-      'function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileButton type="submit" /><SignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };',
-      /ProfileButton must not accept an override/,
+      'function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton type="submit" /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };',
+      /ProfileSaveButton must not accept an override/,
       section,
     );
     expectInvalid(
-      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><form /><ProfileCardFooter><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
+      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><form /><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
       /delegate native Card and form roots/,
       section,
     );
     expectInvalid(
-      "function ProfileSection() { return <ProfileForm><ProfileCard><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileCard></ProfileForm>; } export { ProfileSection };",
+      "function ProfileSection() { return <ProfileForm><ProfileCard><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileCard></ProfileForm>; } export { ProfileSection };",
       /ProfileForm must be inside ProfileCard/,
       section,
     );
     expectInvalid(
-      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileButton /><ProfileCardFooter><ProfileFormFooter><SignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
-      /ProfileButton must be inside ProfileFormFooter/,
+      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileSaveButton /><ProfileCardFooter><ProfileFormFooter><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
+      /ProfileSaveButton must be inside ProfileFormFooter/,
       section,
     );
     expectInvalid(
-      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileFormContent /><ProfileCardFooter><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
+      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileFormContent /><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
       /ProfileFormContent must be inside ProfileCardContent/,
       section,
     );
+  });
+
+  it("rejects wrappers between profile regions and their direct parents", () => {
+    const path = "src/app/(protected)/profile/_components/profile-section.tsx";
+    const valid =
+      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };";
+    expectValid(valid, path);
+    const regions = [
+      "<ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader>",
+      "<ProfileCardContent><ProfileFormContent /></ProfileCardContent>",
+      "<ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter>",
+      "<ProfileCardTitle />",
+      "<ProfileCardDescription />",
+      "<ProfileFormContent />",
+      "<ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter>",
+      "<ProfileSaveButton />",
+      "<ProfileSignOutButton />",
+    ];
+    for (const region of regions) {
+      expectInvalid(
+        valid.replace(region, `<div>${region}</div>`),
+        /must be inside/,
+        path,
+      );
+    }
   });
 
   it("keeps the compound Card parts declared and exported together", () => {

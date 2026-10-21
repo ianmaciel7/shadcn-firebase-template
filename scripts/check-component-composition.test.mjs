@@ -232,8 +232,10 @@ describe("component composition across server and client graphs", () => {
     valid(
       "async function AccountCard() { return <div />; } export { AccountCard };",
     );
-    valid(
+    // The repository hook guard separately owns async workflow handlers.
+    invalid(
       '"use client"; function AccountCard() { const save = async () => {}; return <Button onClick={save} />; } export { AccountCard };',
+      /asynchronous workflow handlers/,
     );
   });
 

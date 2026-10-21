@@ -1,5 +1,7 @@
 "use client";
 
+import { Loading } from "@/components/ui/extensions/loading";
+
 import type { ForgotPasswordAuthFormSchema } from "@firebase-oss/ui-core";
 import {
   useForgotPasswordAuthFormAction,
@@ -67,8 +69,16 @@ export function ForgotPasswordAuthForm(props: ForgotPasswordAuthFormProps) {
           )}
         />
         <Policies />
-        <Button type="submit" disabled={ui.state !== "idle"}>
-          {getTranslation(ui, "labels", "resetPassword")}
+        <Button
+          type="submit"
+          disabled={ui.state !== "idle"}
+          aria-busy={ui.state !== "idle"}
+        >
+          {ui.state !== "idle" ? (
+            <Loading>{getTranslation(ui, "labels", "resetPassword")}</Loading>
+          ) : (
+            getTranslation(ui, "labels", "resetPassword")
+          )}
         </Button>
         {form.formState.errors.root && <FieldError>{form.formState.errors.root.message}</FieldError>}
         {props.onBackToSignInClick ? (

@@ -2,6 +2,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   ProfileCard,
+  ProfileCardAction,
   ProfileCardContent,
   ProfileCardDescription,
   ProfileCardFooter,
@@ -28,6 +29,9 @@ describe("ProfileCard", () => {
       >
         <ProfileCardHeader>
           {header}
+          <ProfileCardAction aria-label="Profile actions">
+            {footer}
+          </ProfileCardAction>
           <ProfileCardTitle>{title}</ProfileCardTitle>
           <ProfileCardDescription>{description}</ProfileCardDescription>
         </ProfileCardHeader>
@@ -37,6 +41,11 @@ describe("ProfileCard", () => {
     );
 
     const card = screen.getByTestId("profile-card");
+    expect(
+      card
+        .querySelector('[data-slot="card-action"]')
+        ?.getAttribute("aria-label"),
+    ).toBe("Profile actions");
     expect(card.getAttribute("data-slot")).toBe("card");
     expect(card.getAttribute("data-size")).toBe("sm");
     expect(card.getAttribute("aria-label")).toBe("Profile details");

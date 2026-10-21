@@ -1,16 +1,13 @@
-import { useTranslations } from "next-intl";
-import { type ComponentProps, useId } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import type { ComponentProps } from "react";
+import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import type { ProfileValues } from "../_hooks/use-profile-actions";
+import { useProfileDisplayNameField } from "../_hooks/use-profile-display-name-field";
 
 type ProfileDisplayNameFieldProps = ComponentProps<typeof Field>;
 
 function ProfileDisplayNameField(props: ProfileDisplayNameFieldProps) {
-  const id = useId();
-  const t = useTranslations("Auth");
-  const { control } = useFormContext<ProfileValues>();
+  const { id, t, control } = useProfileDisplayNameField();
 
   return (
     <Controller
