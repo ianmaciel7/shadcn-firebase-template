@@ -36,18 +36,24 @@ function exported(statement) {
 }
 
 function namedExports(statement) {
-  if (!ts.isExportDeclaration(statement) ||
-      !statement.exportClause ||
-      !ts.isNamedExports(statement.exportClause)) return [];
+  if (
+    !ts.isExportDeclaration(statement) ||
+    !statement.exportClause ||
+    !ts.isNamedExports(statement.exportClause)
+  )
+    return [];
   return statement.exportClause.elements
     .map((specifier) => specifier.name.text)
     .filter((name) => /^[A-Z]/.test(name));
 }
 
 function exportedFunctionNames(statement) {
-  if (!ts.isFunctionDeclaration(statement) ||
-      !exported(statement) ||
-      !statement.name) return [];
+  if (
+    !ts.isFunctionDeclaration(statement) ||
+    !exported(statement) ||
+    !statement.name
+  )
+    return [];
   const name = statement.name.text;
   return /^[A-Z]/.test(name) ? [name] : [];
 }
