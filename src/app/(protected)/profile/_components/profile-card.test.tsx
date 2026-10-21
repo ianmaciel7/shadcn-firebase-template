@@ -184,9 +184,9 @@ describe("ProfileCard", () => {
     expect(displayName.closest("form")).toBe(form);
     expect(signOutButton.closest("form")).toBe(form);
     expect(
-      displayName.closest('[data-slot="field-group"]')?.closest(
-        '[data-slot="card-content"]',
-      ),
+      displayName
+        .closest('[data-slot="field-group"]')
+        ?.closest('[data-slot="card-content"]'),
     ).toBeTruthy();
     expect(form?.querySelectorAll("form")).toHaveLength(0);
     expect(saveButton.getAttribute("type")).toBe("submit");
