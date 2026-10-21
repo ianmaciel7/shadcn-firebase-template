@@ -273,25 +273,33 @@ function requireProfilePlacement(source, elements, name, parents, report) {
 }
 
 function checkProfileCardSafety(source, elements, report) {
-  if (profileElements(elements, "ProfileForm").length !== 1) {
-    report(source, "ProfileCard must compose exactly one ProfileForm.");
+  const cards = profileElements(elements, "Card");
+  if (cards.length === 0 || cards.some((card) => card.ancestors.length > 0)) {
+    report(source, "ProfileCard must render the native Card as its root.");
   }
+  requireProfilePlacement(source, elements, "ProfileForm", ["Card"], report);
   requireProfilePlacement(
     source,
     elements,
     "CardHeader",
-    ["ProfileForm"],
+    ["ProfileForm", "Card"],
     report,
   );
   for (const region of ["ProfileFormContent", "ProfileFormFooter"]) {
-    requireProfilePlacement(source, elements, region, ["ProfileForm"], report);
+    requireProfilePlacement(
+      source,
+      elements,
+      region,
+      ["ProfileForm", "Card"],
+      report,
+    );
   }
   for (const action of ["ProfileButton", "SignOutButton"]) {
     requireProfilePlacement(
       source,
       elements,
       action,
-      ["ProfileFormFooter", "ProfileForm"],
+      ["ProfileFormFooter", "ProfileForm", "Card"],
       report,
     );
     for (const button of profileElements(elements, action)) {
@@ -310,9 +318,6 @@ function checkProfileCardSafety(source, elements, report) {
   if (profileElements(elements, "form").length > 0) {
     report(source, "Do not nest an HTML form inside ProfileForm.");
   }
-  if (profileElements(elements, "Card").length > 0) {
-    report(source, "ProfileCard must delegate the Card root to ProfileForm.");
-  }
 }
 
 function checkProfileProviderSafety(source, elements, report) {
@@ -326,13 +331,9 @@ function checkProfileProviderSafety(source, elements, report) {
       "ProfileForm must provide exactly one HTML form inside FormProvider.",
     );
   }
-  requireProfilePlacement(
-    source,
-    elements,
-    "Card",
-    ["form", "FormProvider"],
-    report,
-  );
+  if (profileElements(elements, "Card").length > 0) {
+    report(source, "ProfileForm must delegate the Card root to ProfileCard.");
+  }
   if (
     profileElements(elements, "FieldGroup").length ||
     profileElements(elements, "Button").length

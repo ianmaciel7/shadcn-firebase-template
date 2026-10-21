@@ -193,6 +193,31 @@ describe("ProfileCard", () => {
     expect(signOutButton.getAttribute("type")).toBe("button");
   });
 
+  it("forwards native Card props, including size and className", async () => {
+    mocks.currentUser = { uid: "user-123", email: "user@example.com" };
+    render(
+      <ProfileCard
+        data-testid="profile-card"
+        size="sm"
+        className="custom-profile-card"
+        aria-label="Profile details"
+      />,
+    );
+
+    await screen.findByRole("button", { name: "saveProfile" });
+    const card = screen.getByTestId("profile-card");
+    expect(card.getAttribute("data-slot")).toBe("card");
+    expect(card.getAttribute("data-size")).toBe("sm");
+    expect(card.className).toContain("custom-profile-card");
+    expect(card.getAttribute("aria-label")).toBe("Profile details");
+    const form = card.querySelector("form");
+    expect(form?.parentElement).toBe(card);
+    expect(card.querySelectorAll('[data-slot="card"]')).toHaveLength(0);
+    expect(form?.querySelector('[data-slot="card-header"]')).toBeTruthy();
+    expect(form?.querySelector('[data-slot="card-content"]')).toBeTruthy();
+    expect(form?.querySelector('[data-slot="card-footer"]')).toBeTruthy();
+  });
+
   it("uploads a new avatar and updates the auth profile", async () => {
     mocks.currentUser = {
       uid: "user-123",
