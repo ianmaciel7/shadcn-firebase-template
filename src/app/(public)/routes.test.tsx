@@ -1,5 +1,6 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { renderToString } from "react-dom/server";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import ForgotPasswordPage from "./forgot-password/page";
 import RegisterPage from "./register/page";
 import SignInPage from "./sign-in/page";
@@ -39,11 +40,26 @@ vi.mock("@/components/firebase/forgot-password-auth-screen", () => ({
   ),
 }));
 
+beforeEach(() => {
+  window.history.replaceState(null, "", "/");
+});
 afterEach(() => {
   cleanup();
   push.mockClear();
+  window.history.replaceState(null, "", "/");
 });
 describe("authentication routes", () => {
+  it.each([SignInPage, RegisterPage, ForgotPasswordPage])(
+    "renders %s without browser globals",
+    (Page) => {
+      vi.stubGlobal("window", undefined);
+      try {
+        expect(renderToString(<Page />)).toContain("button");
+      } finally {
+        vi.unstubAllGlobals();
+      }
+    },
+  );
   it("navigates from sign in to registration and recovery", () => {
     render(<SignInPage />);
     fireEvent.click(screen.getByRole("button", { name: "register" }));
@@ -59,5 +75,40 @@ describe("authentication routes", () => {
     render(<ForgotPasswordPage />);
     fireEvent.click(screen.getByRole("button", { name: "back" }));
     expect(push).toHaveBeenCalledWith("/sign-in");
+  });
+
+  it("preserves the requested destination throughout registration and recovery", () => {
+    const next = "?next=%2Fprofile%3Ftab%3Dsecurity";
+    window.history.replaceState(null, "", `/sign-in${next}`);
+    const { unmount } = render(<SignInPage />);
+    fireEvent.click(screen.getByRole("button", { name: "register" }));
+    fireEvent.click(screen.getByRole("button", { name: "reset" }));
+    expect(push.mock.calls).toEqual([
+      [`/register${next}`],
+      [`/forgot-password${next}`],
+    ]);
+    unmount();
+
+    window.history.replaceState(null, "", `/register${next}`);
+    const registration = render(<RegisterPage />);
+    fireEvent.click(screen.getByRole("button", { name: "sign in" }));
+    expect(push).toHaveBeenLastCalledWith(`/sign-in${next}`);
+    registration.unmount();
+
+    window.history.replaceState(null, "", `/forgot-password${next}`);
+    render(<ForgotPasswordPage />);
+    fireEvent.click(screen.getByRole("button", { name: "back" }));
+    expect(push).toHaveBeenLastCalledWith(`/sign-in${next}`);
+  });
+
+  it("drops unsafe return destinations from authentication navigation", () => {
+    window.history.replaceState(
+      null,
+      "",
+      "/sign-in?next=https%3A%2F%2Fevil.example",
+    );
+    render(<SignInPage />);
+    fireEvent.click(screen.getByRole("button", { name: "register" }));
+    expect(push).toHaveBeenCalledWith("/register");
   });
 });

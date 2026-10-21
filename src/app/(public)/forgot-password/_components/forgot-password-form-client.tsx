@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
 import { ForgotPasswordAuthScreen } from "@/components/firebase/forgot-password-auth-screen";
+import { getAuthNavigationUrl } from "@/lib/auth/return-url";
 
 type ForgotPasswordFormClientProps = ComponentProps<"div">;
 
@@ -11,7 +12,9 @@ function ForgotPasswordFormClient(props: ForgotPasswordFormClientProps) {
   return (
     <div {...props}>
       <ForgotPasswordAuthScreen
-        onBackToSignInClick={() => router.push("/sign-in")}
+        onBackToSignInClick={() =>
+          router.push(getAuthNavigationUrl("/sign-in", window.location.search))
+        }
       />
     </div>
   );

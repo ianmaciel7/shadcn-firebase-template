@@ -25,3 +25,14 @@ export function getSafeReturnUrl(value: string | null | undefined): string {
     return "/profile";
   }
 }
+
+/** Preserve a validated destination when moving between authentication screens. */
+export function getAuthNavigationUrl(
+  pathname: "/sign-in" | "/register" | "/forgot-password",
+  search: string,
+): string {
+  const destination = getSafeReturnUrl(new URLSearchParams(search).get("next"));
+  return destination === "/profile"
+    ? pathname
+    : `${pathname}?next=${encodeURIComponent(destination)}`;
+}

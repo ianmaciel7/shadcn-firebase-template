@@ -4,25 +4,22 @@ import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
 import { GoogleSignInButton } from "@/components/firebase/google-sign-in-button";
 import { SignInAuthScreen } from "@/components/firebase/sign-in-auth-screen";
-import { getSafeReturnUrl } from "@/lib/auth/return-url";
+import { getAuthNavigationUrl } from "@/lib/auth/return-url";
 
 type SignInFormClientProps = ComponentProps<"div">;
 
 function SignInFormClient(props: SignInFormClientProps) {
   const router = useRouter();
-  const destination = getSafeReturnUrl(
-    new URLSearchParams(window.location.search).get("next"),
-  );
-  const nextParam =
-    destination === "/profile"
-      ? ""
-      : `?next=${encodeURIComponent(destination)}`;
   return (
     <div {...props}>
       <SignInAuthScreen
-        onSignUpClick={() => router.push(`/register${nextParam}`)}
+        onSignUpClick={() =>
+          router.push(getAuthNavigationUrl("/register", window.location.search))
+        }
         onForgotPasswordClick={() =>
-          router.push(`/forgot-password${nextParam}`)
+          router.push(
+            getAuthNavigationUrl("/forgot-password", window.location.search),
+          )
         }
       >
         {process.env.NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED === "true" ? (
