@@ -13,9 +13,11 @@ import {
 } from "./profile-card";
 import { ProfileDisplayNameField } from "./profile-display-name-field";
 import { ProfileEmailField } from "./profile-email-field";
-import { ProfileForm } from "./profile-form";
-import { ProfileFormContent } from "./profile-form-content";
-import { ProfileFormFooter } from "./profile-form-footer";
+import {
+  ProfileForm,
+  ProfileFormContent,
+  ProfileFormFooter,
+} from "./profile-form";
 import { ProfileLocaleField } from "./profile-locale-field";
 import { ProfileThemeField } from "./profile-theme-field";
 import { SignOutButton } from "./sign-out-button";

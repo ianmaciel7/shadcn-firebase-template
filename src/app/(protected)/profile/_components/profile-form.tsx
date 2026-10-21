@@ -1,5 +1,6 @@
-import type { PropsWithChildren } from "react";
+import type { ComponentProps, PropsWithChildren } from "react";
 import { FormProvider, type UseFormProps, useForm } from "react-hook-form";
+import { FieldGroup } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import type { ProfileValues } from "../_hooks/use-profile-actions";
 
@@ -36,4 +37,18 @@ function ProfileForm({
   );
 }
 
-export { ProfileForm };
+type ProfileFormContentProps = ComponentProps<typeof FieldGroup>;
+
+function ProfileFormContent(props: ProfileFormContentProps) {
+  return <FieldGroup {...props} />;
+}
+
+type ProfileFormFooterProps = ComponentProps<"div">;
+
+function ProfileFormFooter({ className, ...props }: ProfileFormFooterProps) {
+  return (
+    <div className={cn("flex w-full flex-col gap-2", className)} {...props} />
+  );
+}
+
+export { ProfileForm, ProfileFormContent, ProfileFormFooter };
