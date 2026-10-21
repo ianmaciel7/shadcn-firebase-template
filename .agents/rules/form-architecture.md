@@ -10,13 +10,13 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
 - A parent may pass a strongly typed set of `formProps` via spread to the composed form. The form extracts `onSubmit`, `children`, and presentation attributes **before** forwarding only `UseFormProps<ProfileValues>` to `useForm`. `onSubmit` is an application component prop, **not** a `UseFormProps` option.
 - A screen/controller owns asynchronous data loading; only mount a form with prepared defaults or deliberately use RHF `values` / `reset` to synchronize subsequent changes. After successful client Firebase mutations, reset the form to the persisted values without clobbering unsaved edits.
 - Avatar file selection and preview remain a separate field, since `File` / `FileList` need application-level lifecycle handling. Sign-out is an independent `type="button"` action; if placed within the form for a shared card footer, it must not trigger submit.
-- The profile uses `ProfileFormContent` as a purposeful adapter around native shadcn `CardContent` + `FieldGroup`, and `ProfileFormFooter` around `CardFooter`. `ProfileButton` consumes React Hook Form state to render the submit action. This composition keeps the card header, content, and footer as siblings within one `<Card>` and the whole card inside the single HTML `<form>`.
+- The profile follows a shadcn-style composition: `ProfileForm` provides `FormProvider`, the native HTML `<form>` and the shadcn `Card` root. Its children compose native `CardHeader` plus `ProfileFormContent` (`CardContent` + `FieldGroup`) and `ProfileFormFooter` (`CardFooter`). `ProfileButton` consumes React Hook Form state. This arrangement keeps native Card regions as direct siblings and the footer inside the only form.
 - UI primitives already provided by shadcn/ui (`FieldGroup`, `FieldSet`, `FieldLegend`) are preferable to splitting basic fields into arbitrary grouping components without a semantic responsibility.
 
 ## Profile form action safety (repository guard)
 
-- `ProfileForm` owns the only native HTML `<form>` and wraps the composed card with `FormProvider`; do not nest a second HTML form.
-- `ProfileFormContent` provides `CardContent` + `FieldGroup`; `ProfileFormFooter` provides `CardFooter`. Both live inside the same profile Card and ProfileForm.
+- `ProfileForm` owns the only native HTML `<form>` and renders the native `Card` inside it, under `FormProvider`; the screen must not add another Card or form.
+- `ProfileFormContent` provides `CardContent` + `FieldGroup`; `ProfileFormFooter` provides `CardFooter`. Both are direct children of `ProfileForm` in application JSX and siblings inside its Card.
 - `ProfileButton` is the only submit action and must force `type="submit"`. `SignOutButton` must force `type="button"` so sign-out never triggers profile persistence.
 - Spread caller attributes **before** fixed `type` and computed `disabled`, so even if a caller supplies a conflicting `type` the component enforces its intended action. A late `...props` may silently override both safeguards. The separate AST guard also disallows explicit `type` overrides at profile call sites.
 - `pnpm check:components` enforces these concrete profile invariants through TypeScript AST tests. This is a **UI action-safety guard**, not a substitute for Firebase security rules, authorization or server-side validation.
@@ -31,6 +31,16 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
 
 - `pnpm check:structure` applies `require-form-provider` to owned `*-form.tsx` files; here forms with nested fields intentionally use a Provider. This is a *repository guard*, not an official shadcn/ui requirement for every form.
 - `pnpm check:components` validates single primary named export, filename semantics and literal Controller-name-to-field-name matching, plus the profile controller prop boundary.
+
+## Native primitive audit
+
+The profile components were compared with all maintained UI component modules under `src/components/ui` (excluding story/test fixtures), including `card.tsx`, `field.tsx`, `input.tsx`, `select.tsx`, `avatar.tsx`, `button.tsx` and the compound patterns used by `dialog.tsx`, `item.tsx` and `tabs.tsx`.
+
+- Keep application-owned components in private `_components/`, importing rather than modifying the registry.
+- Preserve native slots: `Card`, `CardHeader`, `CardContent`, and `CardFooter` come from the registry. The profile root form adds `data-slot="profile-form"` without shadowing the Card slots.
+- Follow `ComponentProps<typeof Primitive>`, native children, `cn()` overrides and named exports for component adapters.
+- Use `useId()` for reusable field label/control pairs; do not hard-code duplicate `id` values when a profile form might mount more than once.
+- Keep `type="submit"` and `type="button"` fixed after props spreads. These are explicit repository conventions, not mandatory official shadcn file structure.
 
 ## Primary sources
 
