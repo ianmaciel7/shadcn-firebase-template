@@ -1,9 +1,9 @@
 name: Initialize Repository
 
+# Repository settings and rulesets require an admin credential. Run this only
+# when deliberately initializing (or reconfiguring) a repository; the default
+# GITHUB_TOKEN cannot grant itself Administration: write.
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
@@ -11,10 +11,18 @@ permissions:
 
 jobs:
   setup-repository:
-    # Only run in derived repositories, not the root template
-    if: github.repository != 'ianmaciel7/shadcn-template'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
+      - name: Require repository administration token
+        env:
+          GH_TOKEN: ${{ secrets.REPOSITORY_ADMIN_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::Set the REPOSITORY_ADMIN_TOKEN secret with repository Administration: write, or run pnpm setup:github locally using an admin-authenticated gh CLI."
+            exit 1
+          fi
+
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -27,5 +35,5 @@ jobs:
 
       - name: Configure GitHub Branch Protection & Settings
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.REPOSITORY_ADMIN_TOKEN }}
         run: node scripts/setup-github.mjs
