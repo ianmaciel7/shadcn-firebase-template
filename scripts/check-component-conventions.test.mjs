@@ -46,7 +46,7 @@ describe("owned component conventions", () => {
 
   it("allows semantic roles, matching exports and Server Components", () => {
     expectValid(
-      '"use client"; type ProfileCardProps = ComponentProps<"div">; function ProfileCard(props: ProfileCardProps) { return <Card {...props} />; } export { ProfileCard };',
+      '"use client"; type ProfileCardProps = ComponentProps<"div">; function ProfileCard(props: ProfileCardProps) { return <ProfileForm><Card><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };',
     );
     expectValid(
       "async function IntlProvider({ children }) { return <Provider>{children}</Provider>; } export { IntlProvider };",
@@ -92,7 +92,7 @@ describe("owned component conventions", () => {
 
   it("permits client interaction but rejects server-only imports", () => {
     expectValid(
-      '"use client"; import { useState } from "react"; function ProfileCard() { const [open] = useState(false); return <Card open={open} />; } export { ProfileCard };',
+      '"use client"; import { useState } from "react"; function ProfileCard() { const [open] = useState(false); return <ProfileForm><Card open={open}><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };',
     );
     expectInvalid(
       '"use client"; import { cookies } from "next/headers"; function ProfileCard() { return <Card />; } export { ProfileCard };',
@@ -152,7 +152,7 @@ describe("owned component conventions", () => {
       /focused field\/form\/button props/,
     );
     expectValid(
-      "function ProfileCard() { return <ProfileForm {...profile.formProps} />; } export { ProfileCard };",
+      "function ProfileCard() { return <ProfileForm {...profile.formProps}><Card><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };",
     );
   });
 
@@ -190,7 +190,7 @@ describe("owned component conventions", () => {
     );
     expectInvalid(
       "function ProfileCard() { return <ProfileForm><Card><ProfileFormContent /><ProfileFormFooter><ProfileButton type=\"submit\" /><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };",
-      /ProfileButton must be inside|submit type/,
+      /ProfileButton must not accept an override/,
     );
     expectInvalid(
       "function ProfileCard() { return <ProfileForm><Card><ProfileFormContent /><form /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };",

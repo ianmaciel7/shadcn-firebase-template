@@ -292,12 +292,15 @@ function checkProfileFormSafety(source, stem, report) {
     if (named("form").length > 0) {
       report(source, "Do not nest an HTML form inside ProfileForm.");
     }
-    for (const signOut of named("SignOutButton")) {
-      const typeProp = signOut.node.attributes.properties.find(
-        (attribute) => ts.isJsxAttribute(attribute) && attribute.name.text === "type",
-      );
-      if (typeProp) {
-        report(typeProp, "SignOutButton must not accept a submit type.");
+    for (const action of ["ProfileButton", "SignOutButton"]) {
+      for (const button of named(action)) {
+        const typeProp = button.node.attributes.properties.find(
+          (attribute) =>
+            ts.isJsxAttribute(attribute) && attribute.name.text === "type",
+        );
+        if (typeProp) {
+          report(typeProp, `${action} must not accept an override of its fixed type.`);
+        }
       }
     }
   }
