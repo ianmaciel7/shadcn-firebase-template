@@ -118,3 +118,27 @@ URLs and proxy destinations to prevent unintended server requests. A dynamic
 nonce-based CSP, instrumentation exporter, or hosting adapter needs a deployment
 and rendering review. None is enabled by this documentation update. See the
 [official data-security and environment sources](docs/agents/nextjs.md).
+
+## React rendering and input boundaries
+
+React escapes ordinary text children; that does not sanitize arbitrary HTML,
+executable content, DOM sinks, external URLs, or third-party renderers. Review
+`dangerouslySetInnerHTML`, rich/streamed markup, JSX parsing, and URL-bearing
+props at the actual trust boundary. Use the application's reviewed sanitization
+and URL policies when such content is introduced; a registry or UI component's
+presence is not a security approval.
+
+Render purity and immutable inputs reduce unexpected cross-render behavior,
+but lint and Compiler diagnostics do not establish authorization. React Actions,
+optimistic updates, context providers, pending/disabled UI, and error boundaries
+are not data-access controls. Server Function inputs and outputs remain
+untrusted network boundaries; preserve the Next.js and Firebase security
+contracts already documented above.
+
+Do not expose privileged data through client props, raw server errors,
+profiling artifacts, or broad cache entries. Framework-managed RSC transport
+and hydration are not reasons to add custom serialization or HTML injection.
+React and React DOM versions, framework integration, and server-component
+security advisories must be reviewed together during an authorized upgrade.
+The [React source inventory](docs/agents/react.md) records a snapshot, not a
+continuing vulnerability audit.

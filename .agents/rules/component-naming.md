@@ -73,7 +73,7 @@ References: [shadcn/ui Field](https://ui.shadcn.com/docs/components/field), [sha
 
 ## Component behavior and custom hooks
 
-Owned components keep rendering, translations, primitive prop forwarding and simple UI composition. Place stateful effects, Firebase operations and asynchronous workflow handlers in responsibility-specific custom hooks. Components may call several focused hooks; do not restore a single controller that owns every field and action.
+Owned components keep rendering, translations, primitive prop forwarding and simple UI composition. Place stateful effects, Firebase operations and asynchronous workflow handlers in responsibility-specific custom hooks. Focused hooks compose inside the component-named orchestration hook described below; do not restore a single controller that owns every field and action.
 
 - Expose discriminated status states for session components (`loading`, `hidden`, `error`, `ready`). Components render `state.status` and an already resolved error message, rather than deriving readiness from user, authentication and preferences flags.
 - Keep responsibilities local: `useProfileStatus` derives session status, `useProfileForm` coordinates form lifecycle, `useProfileAvatarField` prepares avatar data, and `useProfileSignOutButton` handles logout. Auth provider, gate, navigation button and auth flow navigation have separate hooks.

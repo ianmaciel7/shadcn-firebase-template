@@ -99,3 +99,17 @@ install suggested agent skills, select hosting, or alter Firebase persistence.
 For an authorized upgrade, review the release notes, installed CLI support,
 configuration migrations, package/lockfile diff, and production behavior in a
 focused change. Preserve accepted ADRs and unrelated working-tree changes.
+
+## React documentation and runtime changes
+
+Use [the React source review](docs/agents/react.md) to distinguish current
+reference material, installed React/React DOM APIs, Compiler support, and
+optional/experimental features. Document the source revision and actual
+verification when refreshing guidance or changing behavior.
+
+Keep native diagnostic configuration and its valid/invalid regression cases
+together. A framework/library recommendation does not automatically install
+ESLint, replace React Hook Form, enable another renderer, remove all manual
+memoization, or upgrade dependencies. Review runtime, DOM, framework, type,
+and Compiler compatibility together when an upgrade is explicitly requested.
+Preserve accepted ADRs, external skill provenance, and unrelated local edits.

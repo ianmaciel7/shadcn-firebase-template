@@ -82,6 +82,7 @@ and the distinction between current guidance and historical decisions.
 - [Agent integrations and skills](.agents/README.md)
 - [shadcn/ui documentation workflow and source inventory](docs/agents/shadcn.md)
 - [Next.js documentation workflow and source inventory](docs/agents/nextjs.md)
+- [React documentation workflow and source inventory](docs/agents/react.md)
 
 ## Validation
 
