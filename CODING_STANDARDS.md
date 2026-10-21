@@ -42,6 +42,15 @@ When standards conflict, apply them in this order:
   - Form fields must use the primitives in `@/components/ui/field` (`<Field>`, `<FieldLabel>`, `<FieldError>`).
   - Enforced automatically via the `require-form-provider` ast-grep rule. Detailed specification in `.agents/rules/form-architecture.md`.
 
+- **Data and Authentication Module Architecture**:
+  - Follow the canonical module taxonomy in [.agents/rules/data-layer-modules.md](.agents/rules/data-layer-modules.md) for data and auth boundaries:
+    - `definitions.ts`: Types, interfaces, and validation schemas (e.g. Zod schemas).
+    - `dto.ts`: Select and structure transferred data crossing system boundaries.
+    - `dal.ts`: Protected data access and authorization boundary (`verifySession()`).
+    - `data.ts`: Low-level database/persistence operations and query execution.
+    - `auth.ts`: Authentication operations answering identity verification ("Who are you?"), such as credential validation, sign-in, sign-up, password recovery, and sign-out.
+    - `session.ts`: Session lifecycle, state, token verification, and cookie persistence ("Are you authenticated and what is your active session?").
+
 ## Next.js App Router
 
 - Keep route entrypoints and Next.js special files in `src/app`.

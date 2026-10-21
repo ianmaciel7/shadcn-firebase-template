@@ -31,9 +31,9 @@ function SignOutButton({
       {...props}
     >
       {isSigningOut ? (
-        <Spinner />
+        <Spinner data-icon="inline-start" />
       ) : (
-        <LogOut className="size-4" aria-hidden="true" />
+        <LogOut data-icon="inline-start" aria-hidden="true" />
       )}
       {t("signOut")}
     </Button>

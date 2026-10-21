@@ -5,6 +5,7 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -48,11 +49,13 @@ function ProfilePreferenceFields({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {locales.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {t(`languageOptions.${option}`)}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {locales.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {t(`languageOptions.${option}`)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </Field>
@@ -76,11 +79,13 @@ function ProfilePreferenceFields({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {themePreferences.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {t(`themeOptions.${option}`)}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {themePreferences.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {t(`themeOptions.${option}`)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </Field>

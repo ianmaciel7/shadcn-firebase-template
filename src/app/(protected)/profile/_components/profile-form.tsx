@@ -27,7 +27,7 @@ function ProfileForm({
     <FormProvider {...form}>
       <form
         onSubmit={onSubmitProp ?? handleSubmit(onSubmit)}
-        className={cn("space-y-5", className)}
+        className={cn("flex flex-col gap-5", className)}
         {...props}
       >
         <FieldGroup className="gap-5">
@@ -38,7 +38,7 @@ function ProfileForm({
         <Button type="submit" className="w-full" disabled={isBusy}>
           {isSubmitting ? (
             <>
-              <Spinner />
+              <Spinner data-icon="inline-start" />
               {t("savingProfile")}
             </>
           ) : (
