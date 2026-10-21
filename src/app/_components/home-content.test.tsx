@@ -30,6 +30,8 @@ describe("home session", () => {
   it("waits for authentication before offering registration", () => {
     renderHome();
     expect(screen.queryByRole("link", { name: en.Home.getStarted })).toBeNull();
+    expect(screen.queryByRole("heading", { level: 1 })).toBeNull();
+    expect(screen.getByRole("status").textContent).toBe(en.Home.loading);
     act(() => mocks.subscribe.mock.calls[0][1](null));
     expect(
       screen
