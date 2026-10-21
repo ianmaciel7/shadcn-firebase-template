@@ -7,12 +7,17 @@ const root = resolve(__dirname, "../../..");
 const biome = join(root, "node_modules/@biomejs/biome/bin/biome");
 // Biome 2.5 expects explicitly checked files to be under the workspace root.
 // Keep fixtures inside the repository and remove them after the test suite.
-const vendorDir = mkdtempSync(join(root, "src/components/ui", "grit-rules-"));
+const extensionDir = mkdtempSync(
+  join(root, "src/components/ui/extensions", "grit-rules-"),
+);
+const vendorDir = join(root, "src/components/ui");
+const vendorName = `grit-vendor-${process.pid}.tsx`;
 const dir = mkdtempSync(join(root, "src/components", "grit-rules-"));
 
 afterAll(() => {
   rmSync(dir, { recursive: true, force: true });
-  rmSync(vendorDir, { recursive: true, force: true });
+  rmSync(extensionDir, { recursive: true, force: true });
+  rmSync(join(vendorDir, vendorName), { force: true });
 });
 
 // Biome has no test harness for GritQL plugins, so lint a fixture with the
@@ -70,11 +75,21 @@ describe("prefer-is-error", () => {
   it("excludes vendored components", () => {
     expect(
       lint(
-        "vendor.tsx",
+        vendorName,
         'export const failed = state.status === "error";',
         vendorDir,
       ),
     ).not.toContain(message);
+  });
+
+  it("reports comparisons in application-owned UI extensions", () => {
+    expect(
+      lint(
+        "extension.tsx",
+        'export const failed = state.status === "error";',
+        extensionDir,
+      ),
+    ).toContain(message);
   });
 
   it("allows deriving the flag in a hook module", () => {
