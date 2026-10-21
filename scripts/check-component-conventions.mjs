@@ -169,6 +169,64 @@ function checkClientImports(source, report) {
   }
 }
 
+
+function checkFieldControllerNames(source, stem, report) {
+  if (!stem.endsWith("-field")) return;
+
+  function visit(node) {
+    if (
+      ts.isJsxSelfClosingElement(node) &&
+      node.tagName.getText(source) === "Controller"
+    ) {
+      const name = node.attributes.properties.find(
+        (attribute) =>
+          ts.isJsxAttribute(attribute) && attribute.name.text === "name",
+      );
+      if (name?.initializer && ts.isStringLiteral(name.initializer)) {
+        const fieldName = name.initializer.text.replace(
+          /[A-Z]/g,
+          (letter) => `-${letter.toLowerCase()}`,
+        );
+        if (
+          stem !== `${fieldName}-field` &&
+          !stem.endsWith(`-${fieldName}-field`)
+        ) {
+          report(
+            name,
+            `Field component filename must match Controller name="${name.initializer.text}" (e.g. *-${fieldName}-field.tsx).`,
+          );
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(source);
+}
+
+function checkProfilePropDrilling(source, report) {
+  function visit(node) {
+    if (
+      (ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) &&
+      /^(ProfileForm|ProfileAvatarField|SignOutButton)$/.test(
+        node.tagName.getText(source),
+      )
+    ) {
+      for (const attribute of node.attributes.properties) {
+        if (ts.isJsxAttribute(attribute) && attribute.name.text === "profile") {
+          report(
+            attribute,
+            "Pass focused field/form/button props instead of the entire profile controller.",
+          );
+        }
+      }
+    }
+    ts.forEachChild(node, visit);
+  }
+
+  visit(source);
+}
+
 export function inspectComponent(content, filename) {
   if (!isOwnedComponent(filename)) return [];
   const source = ts.createSourceFile(
@@ -196,6 +254,8 @@ export function inspectComponent(content, filename) {
   checkExportStyle(source, report);
   checkProps(source, pascalCase(stem), report);
   checkClientImports(source, report);
+  checkFieldControllerNames(source, stem, report);
+  checkProfilePropDrilling(source, report);
   return findings;
 }
 

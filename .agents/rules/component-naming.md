@@ -56,3 +56,19 @@ except generated registry trees and test/story files. It is included in
 - [Next.js private folders/project structure](https://nextjs.org/docs/app/getting-started/project-structure)
 - [shadcn/ui components.json](https://ui.shadcn.com/docs/components-json)
 - [shadcn/ui Card composition](https://ui.shadcn.com/docs/components/base/card)
+
+## Composition matching local shadcn/ui primitives
+
+Use `src/components/ui/card.tsx`, `button.tsx` and `field.tsx` as reference implementations for application-owned components:
+
+- Use a local named function followed by an explicit named export. Prefer `ComponentProps<typeof Primitive>` or `ComponentProps<"element">` for wrappers that forward standard element props. Specialized third-party component contracts (such as `UseFormProps`) are also valid when that is the real component API.
+- Forward applicable `className` and `...props` to the underlying component; use `cn(..., className)` for application-specific styles. Do not blindly spread HTML attributes into `useForm`.
+- Use `children` for genuine component composition, as in `Card` and `FieldGroup`. A compound `ProfileForm` can accept independently declared field components via `children` and provide `FormProvider` context.
+- Fields connected via `Controller name="displayName"` must use the semantically matching component/file name `ProfileDisplayNameField` / `profile-display-name-field.tsx`. The component may expose a friendly display label without renaming the Firebase field.
+- Prefer narrow component props; do not hand `ProfileForm`, `ProfileAvatarField` or `SignOutButton` the entire profile controller as a `profile` prop.
+- `FieldGroup`, `FieldSet`, `Field` and `Controller` are real primitives/API integrations; do not introduce arbitrary *Fields wrapper components solely for visual grouping.
+- The single-primary-export-per-file convention is project-specific: upstream shadcn/ui files can and do export related primitives together. Generated registries remain unchanged.
+
+The TypeScript AST guard checks literal Controller names against owned `*-field.tsx` filenames and prevents whole-controller `profile` props on the profile components listed above. These checks cannot judge all component responsibilities and do not inspect dynamic Controller names.
+
+References: [shadcn/ui Field](https://ui.shadcn.com/docs/components/field), [shadcn/ui React Hook Form](https://ui.shadcn.com/docs/forms/react-hook-form), [React Hook Form FormProvider](https://react-hook-form.com/docs/formprovider).

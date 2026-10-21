@@ -1,25 +1,32 @@
 # Form Architecture & Context Standards
 
-This document establishes the architecture standards for forms across the application, specifically regarding React Hook Form, shadcn primitives, and form context propagation.
+These are project conventions aligned with the current shadcn/ui and React Hook Form documentation, not universal framework requirements.
 
-## Core Directives
+## Compound forms
 
-1. **Composite Forms Must Use `FormProvider`**:
-   - Any multi-field form orchestrator component (`*-form.tsx`) using `react-hook-form` must wrap its form content in `<FormProvider {...form}>` (or shadcn's `<Form {...form}>`).
-   - This eliminates prop drilling of form instances, `register`, `control`, `errors`, and other form state methods into subcomponents.
+- A composite form that renders nested field components (as with `ProfileForm`) creates exactly one `useForm` instance, wraps its content in `FormProvider {...form}` and uses `form.handleSubmit(onSubmit)`.
+- Child fields access `control` with `useFormContext<ProfileValues>()`; they compose shadcn/ui `Field`, `FieldLabel`, `Input` / `Select`, and `FieldError` with React Hook Form `Controller`.
+- Match each independently named `*-field.tsx` to its literal React Hook Form `Controller name`. For example `name="displayName"` is implemented by `ProfileDisplayNameField`, while the label may simply read "Name".
+- A parent may pass a strongly typed set of `formProps` via spread to the composed form. The form extracts `onSubmit`, `children`, and presentation attributes **before** forwarding only `UseFormProps<ProfileValues>` to `useForm`. `onSubmit` is an application component prop, **not** a `UseFormProps` option.
+- A screen/controller owns asynchronous data loading; only mount a form with prepared defaults or deliberately use RHF `values` / `reset` to synchronize subsequent changes. After successful client Firebase mutations, reset the form to the persisted values without clobbering unsaved edits.
+- Avatar file selection and preview remain a separate field, since `File` / `FileList` need application-level lifecycle handling. Sign-out is an independent action, outside the HTML form.
+- UI primitives already provided by shadcn/ui (`FieldGroup`, `FieldSet`, `FieldLegend`) are preferable to splitting basic fields into arbitrary grouping components.
 
-2. **Child Field Sections Consume `useFormContext`**:
-   - Subcomponents grouping fields (e.g., `*-fields.tsx`) or individual field components (e.g., `*-field.tsx`) must obtain form state through `useFormContext<FormValues>()` rather than receiving the form state object or form methods as props.
-   - Props for subcomponents should only receive behavior flags or presentation props (e.g., `isBusy?: boolean`, `className?: string`, or non-form domain objects like `user`).
+## Accessibility and Next.js
 
-3. **Field Primitives & Accessibility**:
-   - Form controls must use the primitives from `@/components/ui/field`: `<Field>`, `<FieldLabel>`, `<FieldError>`, and `<FieldGroup>`.
-   - Any controlled input or component wrapped in `<Controller>` or consuming `fieldState` must reflect validation status to `<Field>` using `data-invalid={Boolean(fieldState.error)}` or `data-invalid={Boolean(errors.fieldName)}`.
-   - Never use the Next.js `<Form>` (`next/form`) for client-driven Firebase SDK actions (e.g., client authentication, Firestore/Storage uploads), as `next/form` is designed for Server Actions and GET search navigations.
+- For `Controller`-bound fields, set `data-invalid={fieldState.invalid}` on `Field`, `aria-invalid={fieldState.invalid}` on the input or Select trigger, and show `FieldError` for errors. Associate `FieldLabel` with the control.
+- Preserve the `"use client"` entry boundary for the Firebase client-side workflow. Imported field files need no additional directive solely because they are imported by this client subtree.
+- Do not replace the Firebase SDK submit handler with `next/form`, which serves different navigation/Server Action use cases.
 
-## Automated Verification
+## Repository verification
 
-- Enforcement is performed automatically via the ast-grep structural rule:
-  - `require-form-provider`: Ensures composite form orchestrators (`*-form.tsx`) wrap `<form>` in `<FormProvider>` or `<Form>`.
-  - `require-field-data-invalid`: Ensures `<Field>` elements bind `data-invalid`.
-- Verify with `pnpm check:structure`.
+- `pnpm check:structure` applies `require-form-provider` to owned `*-form.tsx` files; here forms with nested fields intentionally use a Provider. This is a *repository guard*, not an official shadcn/ui requirement for every form.
+- `pnpm check:components` validates single primary named export, filename semantics and literal Controller-name-to-field-name matching, plus the profile controller prop boundary.
+
+## Primary sources
+
+- [shadcn/ui React Hook Form](https://ui.shadcn.com/docs/forms/react-hook-form)
+- [shadcn/ui Field](https://ui.shadcn.com/docs/components/field)
+- [React Hook Form useForm](https://react-hook-form.com/docs/useform)
+- [React Hook Form FormProvider](https://react-hook-form.com/docs/formprovider)
+- [Next.js Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components)
