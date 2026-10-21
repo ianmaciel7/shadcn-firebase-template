@@ -18,7 +18,7 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
 - `ProfileForm` owns the only native HTML `<form>` and wraps the composed card with `FormProvider`; do not nest a second HTML form.
 - `ProfileFormContent` provides `CardContent` + `FieldGroup`; `ProfileFormFooter` provides `CardFooter`. Both live inside the same profile Card and ProfileForm.
 - `ProfileButton` is the only submit action and must force `type="submit"`. `SignOutButton` must force `type="button"` so sign-out never triggers profile persistence.
-- Spread caller attributes **before** fixed `type` and computed `disabled`, and omit the public `type` prop for these fixed-purpose buttons. A late `...props` may silently override both safeguards.
+- Spread caller attributes **before** fixed `type` and computed `disabled`, so even if a caller supplies a conflicting `type` the component enforces its intended action. A late `...props` may silently override both safeguards. The separate AST guard also disallows explicit `type` overrides at profile call sites.
 - `pnpm check:components` enforces these concrete profile invariants through TypeScript AST tests. This is a **UI action-safety guard**, not a substitute for Firebase security rules, authorization or server-side validation.
 
 ## Accessibility and Next.js

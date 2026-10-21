@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
-type SignOutButtonProps = Omit<ComponentProps<typeof Button>, "type"> & {
+type SignOutButtonProps = ComponentProps<typeof Button> & {
   isSigningOut?: boolean;
 };
 
