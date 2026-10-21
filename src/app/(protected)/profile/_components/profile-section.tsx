@@ -1,14 +1,13 @@
 "use client";
 
-
 import { useProfileController } from "../_hooks/use-profile-controller";
+import { ProfileAvatarField } from "./profile-avatar-field";
+import { ProfileButton } from "./profile-button";
+import { ProfileCard } from "./profile-card";
 import { ProfileCardContent } from "./profile-card-content";
 import { ProfileCardDescription } from "./profile-card-description";
 import { ProfileCardHeader } from "./profile-card-header";
 import { ProfileCardTitle } from "./profile-card-title";
-import { ProfileAvatarField } from "./profile-avatar-field";
-import { ProfileButton } from "./profile-button";
-import { ProfileCard } from "./profile-card";
 import { ProfileDisplayNameField } from "./profile-display-name-field";
 import { ProfileEmailField } from "./profile-email-field";
 import { ProfileForm } from "./profile-form";
@@ -54,7 +53,9 @@ function ProfileSection() {
       <ProfileForm key={user.uid} {...profile.formProps}>
         <ProfileCardHeader>
           <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
-          <ProfileCardDescription>{t("personalInfoDescription")}</ProfileCardDescription>
+          <ProfileCardDescription>
+            {t("personalInfoDescription")}
+          </ProfileCardDescription>
         </ProfileCardHeader>
         <ProfileCardContent>
           <ProfileFormContent>

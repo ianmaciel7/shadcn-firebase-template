@@ -1,11 +1,11 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { CardFooter } from "@/components/ui/card";
+import { ProfileCard } from "./profile-card";
 import { ProfileCardContent } from "./profile-card-content";
 import { ProfileCardDescription } from "./profile-card-description";
 import { ProfileCardHeader } from "./profile-card-header";
 import { ProfileCardTitle } from "./profile-card-title";
-import { ProfileCard } from "./profile-card";
 
 describe("ProfileCard", () => {
   afterEach(cleanup);
