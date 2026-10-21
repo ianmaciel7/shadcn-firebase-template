@@ -503,3 +503,60 @@ no new custom parser or framework diagnostic is introduced.
 CSpell excludes the generated `docs/agents/nextjs-sources.json` evidence file,
 whose upstream paths include historical API spellings and error identifiers.
 The explanatory Next.js reference and canonical Markdown guides remain checked.
+
+## React documentation and diagnostic workflow
+
+`package.json` pins React and React DOM 19.3.1 and React Compiler 1.0.0.
+The [official-source review](docs/agents/react.md) and
+[complete source inventory](docs/agents/react-sources.json) record the exact
+React documentation revision, current release, and runtime error catalog.
+Documentation is maintained within a major version, so a live page is not
+proof that its newest API exists in every React 19 installation.
+
+Inspect installed versions and exports without upgrading packages:
+
+```bash
+pnpm list react react-dom babel-plugin-react-compiler --depth 0
+pnpm exec biome explain noNestedComponentDefinitions
+pnpm exec biome explain noReactPropAssignments
+pnpm test
+pnpm analyze:react
+```
+
+The Next.js `reactCompiler` option owns application compilation. The package's
+presence does not enable Compiler in every Vite pipeline or prove every
+component was optimized. React DevTools can inspect optimized components and
+React performance tracks; actual profiling requires a running application.
+Do not report a profiling session based only on configuration or a successful
+source lookup.
+
+### Native React guards and limits
+
+| Concern | Enforcement | Limits |
+| --- | --- | --- |
+| Ordinary hook call order | Biome `useHookAtTopLevel`, existing React domain | Native diagnostics; React `use` retains its conditional/loop exception |
+| Reactive Effect dependencies | Biome `useExhaustiveDependencies`, existing React domain | Does not establish cleanup, async ordering, or external-system correctness |
+| Stable component type identity | Biome `noNestedComponentDefinitions`, explicit error for owned code | Rejects nested component definitions; does not prohibit every ordinary callback |
+| Direct prop assignment | Biome `noReactPropAssignments`, explicit error for owned code | Does not prove deep immutability of all props, context, state, or hook results |
+| React 19 ref convention | Existing Biome `noReactForwardRef` configuration | Project preference; upstream `forwardRef` is still available |
+| Repository behavior ownership | Existing component and route AST guards | Stricter than the Rules of React; retains documented presentation-hook exceptions |
+| Compiler eligibility and semantic React issues | Compiler, React Doctor, tests, and review | Biome does not implement every diagnostic documented for `eslint-plugin-react-hooks` |
+
+The two newly explicit policies cover owned `src/app`, `src/components`, and
+`src/hooks`, including `ui/extensions`, with existing registry exclusions.
+`.biome/rules/react/native-rules.test.ts` exercises the actual configuration
+without forcing rules on via CLI flags: invalid patterns, valid counterparts,
+React `use`, ref props, each owned code area, and vendor exclusions. It runs in
+the existing unit project and CI; no new parser, runner, or lint dependency is
+introduced.
+
+The prior tooling notes about the React domain did not establish that nested
+component definitions were blocking by default. Explicit configuration and
+regression probes now establish that behavior. Native diagnostic severity and
+scope must be verified rather than inferred from a domain label.
+
+Upstream `eslint-plugin-react-hooks` documentation is an API/reference source,
+not a statement that ESLint is installed here. Keep Biome, React Doctor,
+Compiler, and behavior-test responsibilities explicit before proposing another
+lint stack. CSpell excludes only the generated React source inventory's
+upstream identifiers; the explanatory review and canonical Markdown stay checked.

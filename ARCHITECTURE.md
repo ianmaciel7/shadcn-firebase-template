@@ -233,3 +233,27 @@ Route groups are URL-neutral, private folders do not create routes, and
 access authorization boundary. Hosting adapters, static export, Edge runtime,
 remote/private caches, parallel/intercepted routes, and offline support are
 reviewed upstream options; this refresh does not adopt them.
+
+## React runtime and lifecycle boundaries
+
+React and React DOM are pinned together at 19.3.1. Next.js owns application root
+creation, hydration, RSC transport, and streaming; application features should
+not add a second `createRoot`/`hydrateRoot` bootstrap. Ladle and Vitest own their
+separate workbench/test roots. React Compiler 1.0.0 is enabled through Next.js;
+that flag does not establish compiler transformation in the Vite-based test or
+Ladle pipeline.
+
+Browser Firebase subscriptions stay in focused hooks behind the existing
+component-named orchestration seams. The profile form uses React Hook Form and
+its providers, not React form Actions or a server mutation layer. Avatar object
+URLs are created in an Effect with replacement/unmount cleanup. The viewport
+hook uses `useSyncExternalStore` with a matching initial server/hydration
+snapshot. These are external-system contracts, not redundant derived state.
+
+The current framework can preserve hidden UI state with Activity. Effect
+cleanup may occur when content hides or is replaced, not only on permanent
+unmount; ownership must tolerate setup/cleanup/setup. Keep this independent of
+Server/Client import-graph membership and of compound-component anatomy.
+[Coding standards](CODING_STANDARDS.md#react-rendering-hooks-and-identity) own
+the behavioral rules; [the React review](docs/agents/react.md) records sources
+and stable/experimental boundaries.

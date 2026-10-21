@@ -57,7 +57,7 @@ instead of a stubbed `matchMedia`).
 - Do not write a test only to make a tool report success. When a tool has no
   suitable subject yet, leave it unused and say so.
 
-Five Vitest suites verify configuration rather than application behavior:
+Six Vitest suites verify configuration rather than application behavior:
 `src/messages/messages.test.ts` checks that every locale catalog has the same
 keys and ICU arguments as the default locale and no empty messages, and
 `.biome/rules/nextjs/rules.test.ts` and `.biome/rules/dom/rules.test.ts` lint
@@ -66,6 +66,8 @@ fixtures to prove each Grit rule reports invalid code and accepts valid code.
 and its file scope.
 `.biome/rules/nextjs/app-router-imports.test.ts` verifies the native App Router
 import policy and its exclusions.
+`.biome/rules/react/native-rules.test.ts` verifies native React diagnostic
+configuration, valid counterparts, and owned/vendor scope.
 Semgrep rules are tested with `semgrep --test` (`pnpm check:security:rules`) and
 ast-grep rules with `ast-grep test`.
 
@@ -315,3 +317,40 @@ change must cover accessibility and Cache Components rendering behavior.
 Local missing native bindings, blocked external lookups, and unavailable MCP
 runtime sessions are environment limitations, not successful checks. Keep CI
 requirements and coverage thresholds intact while reporting those limitations.
+
+## React rules and lifecycle verification
+
+The native React configuration suite lives in
+`.biome/rules/react/native-rules.test.ts`. It verifies blocking diagnostics for
+hook order/dependencies, nested component identity, direct prop assignment,
+and the existing ref convention using actual project configuration. Valid
+counterparts include conditional React `use` and React 19 ref props. Owned
+route/component/hook areas, UI extensions, and the new policies' registry
+exclusions are exercised. Run it with the existing `unit` Vitest project.
+
+For lifecycle changes, test user-visible state and owned resources across
+setup, cleanup, replacement, and reveal. Use a Strict Mode wrapper when it can
+expose missing cleanup; do not assert that an Effect or ref callback always
+runs exactly once. Verify unsubscribe/release behavior and that obsolete async
+results cannot overwrite the current user or resource. Activity and Suspense
+can tear down Effects while preserving other state, so permanent unmount is
+not the only cleanup case.
+
+Keep real viewport/media/focus behavior in Browser Mode, and hydration,
+framework navigation, async Server Components, and production cache behavior
+in Playwright. RTL/hook tests and isolated Ladle renders do not reproduce the
+entire Next.js renderer or prove Compiler optimization. Profile only with an
+actual running app; do not infer performance gains from a memoization diff.
+
+Prefer React Testing Library and supported `act` integration. If a manual
+flush is needed, use `await act(async () => ...)` from `react`; do not introduce
+`react-dom/test-utils` or deprecated `react-test-renderer` as a new test stack.
+Avoid hiding act warnings with blanket suppression. Keep async user actions
+awaited and make assertions after observable completion.
+
+For a complete React reference refresh, inventory all Markdown/MDX beneath
+`react.dev`'s content tree, retrieve every body at its pinned revision, and
+verify blob hashes. The versioned runtime error catalog is a separate source
+from the narrative error guides. Record source scope, installed API support,
+and actual behavior-test results separately, following
+[the review workflow](docs/agents/react.md).
