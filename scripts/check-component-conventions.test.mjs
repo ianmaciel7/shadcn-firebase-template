@@ -155,4 +155,77 @@ describe("owned component conventions", () => {
       "function ProfileCard() { return <ProfileForm {...profile.formProps} />; } export { ProfileCard };",
     );
   });
+
+  it("enforces fixed submit and sign-out button types after prop spreads", () => {
+    const submit = "src/app/(protected)/profile/_components/profile-button.tsx";
+    const signOut = "src/app/(protected)/profile/_components/sign-out-button.tsx";
+    expectValid(
+      'function ProfileButton() { return <Button {...props} type="submit" disabled={disabled} />; } export { ProfileButton };',
+      submit,
+    );
+    expectInvalid(
+      'function ProfileButton() { return <Button type="submit" disabled={disabled} {...props} />; } export { ProfileButton };',
+      /enforce type="submit"/,
+      submit,
+    );
+    expectValid(
+      'function SignOutButton() { return <Button {...props} type="button" disabled={disabled} />; } export { SignOutButton };',
+      signOut,
+    );
+    expectInvalid(
+      'function SignOutButton() { return <Button type="button" disabled={disabled} {...props} />; } export { SignOutButton };',
+      /enforce type="button"/,
+      signOut,
+    );
+    expectInvalid(
+      'function SignOutButton() { return <Button {...props} type="submit" disabled={disabled} />; } export { SignOutButton };',
+      /enforce type="button"/,
+      signOut,
+    );
+  });
+
+  it("prevents nested forms and submits outside the profile footer", () => {
+    expectValid(
+      "function ProfileCard() { return <ProfileForm><Card><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };",
+    );
+    expectInvalid(
+      "function ProfileCard() { return <ProfileForm><Card><ProfileFormContent /><ProfileFormFooter><ProfileButton type=\"submit\" /><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };",
+      /ProfileButton must be inside|submit type/,
+    );
+    expectInvalid(
+      "function ProfileCard() { return <ProfileForm><Card><ProfileFormContent /><form /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };",
+      /Do not nest an HTML form/,
+    );
+    expectInvalid(
+      "function ProfileCard() { return <Card><ProfileForm><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileForm></Card>; } export { ProfileCard };",
+      /ProfileFormContent must be inside/,
+    );
+    expectInvalid(
+      "function ProfileCard() { return <ProfileForm><Card><ProfileFormContent /><ProfileButton /><ProfileFormFooter><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };",
+      /ProfileButton must be inside ProfileFormFooter/,
+    );
+  });
+
+  it("keeps FieldGroup in ProfileFormContent rather than ProfileForm", () => {
+    const form = "src/app/(protected)/profile/_components/profile-form.tsx";
+    const content = "src/app/(protected)/profile/_components/profile-form-content.tsx";
+    expectValid(
+      "function ProfileForm() { return <FormProvider><form>{children}</form></FormProvider>; } export { ProfileForm };",
+      form,
+    );
+    expectInvalid(
+      "function ProfileForm() { return <FormProvider><form><FieldGroup /></form></FormProvider>; } export { ProfileForm };",
+      /delegate fields and actions/,
+      form,
+    );
+    expectValid(
+      "function ProfileFormContent() { return <CardContent><FieldGroup>{children}</FieldGroup></CardContent>; } export { ProfileFormContent };",
+      content,
+    );
+    expectInvalid(
+      "function ProfileFormContent() { return <CardContent>{children}</CardContent>; } export { ProfileFormContent };",
+      /wrap FieldGroup/,
+      content,
+    );
+  });
 });

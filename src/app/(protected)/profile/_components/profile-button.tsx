@@ -6,7 +6,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import type { ProfileValues } from "../_hooks/use-profile-actions";
 
-type ProfileButtonProps = ComponentProps<typeof Button>;
+type ProfileButtonProps = Omit<ComponentProps<typeof Button>, "type">;
 
 function ProfileButton({
   className,

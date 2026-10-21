@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
-type SignOutButtonProps = ComponentProps<typeof Button> & {
+type SignOutButtonProps = Omit<ComponentProps<typeof Button>, "type"> & {
   isSigningOut?: boolean;
 };
 
@@ -17,6 +17,7 @@ function SignOutButton({
 }: SignOutButtonProps) {
   return (
     <Button
+      {...props}
       type="button"
       variant="ghost"
       className={cn(
@@ -24,7 +25,6 @@ function SignOutButton({
         className,
       )}
       disabled={disabled || isSigningOut}
-      {...props}
     >
       {isSigningOut ? (
         <Spinner data-icon="inline-start" />

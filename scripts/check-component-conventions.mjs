@@ -226,6 +226,144 @@ function checkProfilePropDrilling(source, report) {
   visit(source);
 }
 
+function jsxEntries(source) {
+  const elements = [];
+
+  function visit(node, ancestors = []) {
+    if (ts.isJsxElement(node)) {
+      const name = node.openingElement.tagName.getText(source);
+      elements.push({ name, node: node.openingElement, ancestors });
+      for (const child of node.children) visit(child, [...ancestors, name]);
+      return;
+    }
+    if (ts.isJsxSelfClosingElement(node)) {
+      elements.push({ name: node.tagName.getText(source), node, ancestors });
+      return;
+    }
+    ts.forEachChild(node, (child) => visit(child, ancestors));
+  }
+
+  visit(source);
+  return elements;
+}
+
+function checkProfileFormSafety(source, stem, report) {
+  const guarded = new Set([
+    "profile-card",
+    "profile-form",
+    "profile-form-content",
+    "profile-form-footer",
+    "profile-button",
+    "sign-out-button",
+  ]);
+  if (!guarded.has(stem)) return;
+  if (!source.fileName.replaceAll("\\", "/").includes("/profile/_components/")) {
+    return;
+  }
+
+  const elements = jsxEntries(source);
+  const named = (name) => elements.filter((element) => element.name === name);
+  const inside = (element, ancestors) =>
+    ancestors.every((name) => element.ancestors.includes(name));
+
+  if (stem === "profile-card") {
+    const form = named("ProfileForm");
+    if (form.length !== 1) {
+      report(source, "ProfileCard must compose exactly one ProfileForm.");
+    }
+    for (const region of ["ProfileFormContent", "ProfileFormFooter"]) {
+      if (
+        named(region).length !== 1 ||
+        !named(region).every((element) => inside(element, ["ProfileForm", "Card"]))
+      ) {
+        report(source, `${region} must be inside the Card and ProfileForm.`);
+      }
+    }
+    for (const action of ["ProfileButton", "SignOutButton"]) {
+      if (
+        named(action).length !== 1 ||
+        !named(action).every((element) =>
+          inside(element, ["ProfileForm", "Card", "ProfileFormFooter"]),
+        )
+      ) {
+        report(source, `${action} must be inside ProfileFormFooter and ProfileForm.`);
+      }
+    }
+    if (named("form").length > 0) {
+      report(source, "Do not nest an HTML form inside ProfileForm.");
+    }
+    for (const signOut of named("SignOutButton")) {
+      const typeProp = signOut.node.attributes.properties.find(
+        (attribute) => ts.isJsxAttribute(attribute) && attribute.name.text === "type",
+      );
+      if (typeProp) {
+        report(typeProp, "SignOutButton must not accept a submit type.");
+      }
+    }
+  }
+
+  if (stem === "profile-form") {
+    if (
+      named("form").length !== 1 ||
+      !inside(named("form")[0], ["FormProvider"])
+    ) {
+      report(source, "ProfileForm must provide exactly one HTML form inside FormProvider.");
+    }
+    if (named("FieldGroup").length || named("Button").length) {
+      report(source, "ProfileForm must delegate fields and actions to its children.");
+    }
+  }
+
+  if (stem === "profile-form-content") {
+    if (
+      named("CardContent").length !== 1 ||
+      named("FieldGroup").length !== 1 ||
+      !inside(named("FieldGroup")[0], ["CardContent"]) ||
+      named("form").length
+    ) {
+      report(source, "ProfileFormContent must wrap FieldGroup in CardContent without a nested form.");
+    }
+  }
+
+  if (stem === "profile-form-footer" && named("CardFooter").length !== 1) {
+    report(source, "ProfileFormFooter must use the shadcn CardFooter primitive.");
+  }
+
+  if (stem === "profile-button" || stem === "sign-out-button") {
+    const expected = stem === "profile-button" ? "submit" : "button";
+    const buttons = named("Button");
+    if (buttons.length !== 1) {
+      report(source, `${stem} must render exactly one Button.`);
+      return;
+    }
+    const button = buttons[0];
+    const attributes = button.node.attributes.properties;
+    const typeIndex = attributes.findIndex(
+      (attribute) => ts.isJsxAttribute(attribute) && attribute.name.text === "type",
+    );
+    const typeAttribute = attributes[typeIndex];
+    if (
+      !typeAttribute ||
+      !typeAttribute.initializer ||
+      !ts.isStringLiteral(typeAttribute.initializer) ||
+      typeAttribute.initializer.text !== expected ||
+      attributes.slice(typeIndex + 1).some(ts.isJsxSpreadAttribute)
+    ) {
+      report(button.node, `${stem} must enforce type="${expected}" after any spread props.`);
+    }
+    const disabledIndex = attributes.findIndex(
+      (attribute) =>
+        ts.isJsxAttribute(attribute) && attribute.name.text === "disabled",
+    );
+    if (
+      disabledIndex < 0 ||
+      attributes.slice(disabledIndex + 1).some(ts.isJsxSpreadAttribute)
+    ) {
+      report(button.node, `${stem} must preserve disabled state after spread props.`);
+    }
+  }
+}
+
 export function inspectComponent(content, filename) {
   if (!isOwnedComponent(filename)) return [];
   const source = ts.createSourceFile(
@@ -255,6 +393,7 @@ export function inspectComponent(content, filename) {
   checkClientImports(source, report);
   checkFieldControllerNames(source, stem, report);
   checkProfilePropDrilling(source, report);
+  checkProfileFormSafety(source, stem, report);
   return findings;
 }
 
