@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { useId, type ComponentProps } from "react";
+import { type ComponentProps, useId } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import {
@@ -26,9 +26,7 @@ function ProfileLocaleField(props: ProfileLocaleFieldProps) {
       control={control}
       render={({ field, fieldState }) => (
         <Field {...props} data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor={id}>
-            {t("languageLabel")}
-          </FieldLabel>
+          <FieldLabel htmlFor={id}>{t("languageLabel")}</FieldLabel>
           <Select
             name={field.name}
             value={field.value}

@@ -1,11 +1,7 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import {
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useProfileController } from "../_hooks/use-profile-controller";
 import { ProfileAvatarField } from "./profile-avatar-field";

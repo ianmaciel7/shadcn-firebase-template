@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { useId, type ComponentProps } from "react";
+import { type ComponentProps, useId } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -18,9 +18,7 @@ function ProfileDisplayNameField(props: ProfileDisplayNameFieldProps) {
       control={control}
       render={({ field, fieldState }) => (
         <Field {...props} data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor={id}>
-            {t("displayNameLabel")}
-          </FieldLabel>
+          <FieldLabel htmlFor={id}>{t("displayNameLabel")}</FieldLabel>
           <Input
             {...field}
             id={id}

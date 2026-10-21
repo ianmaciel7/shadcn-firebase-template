@@ -276,7 +276,13 @@ function checkProfileCardSafety(source, elements, report) {
   if (profileElements(elements, "ProfileForm").length !== 1) {
     report(source, "ProfileCard must compose exactly one ProfileForm.");
   }
-  requireProfilePlacement(source, elements, "CardHeader", ["ProfileForm"], report);
+  requireProfilePlacement(
+    source,
+    elements,
+    "CardHeader",
+    ["ProfileForm"],
+    report,
+  );
   for (const region of ["ProfileFormContent", "ProfileFormFooter"]) {
     requireProfilePlacement(source, elements, region, ["ProfileForm"], report);
   }
