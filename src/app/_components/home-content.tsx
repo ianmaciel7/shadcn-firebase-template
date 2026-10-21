@@ -1,92 +1,119 @@
-import Image from "next/image";
+"use client";
+
+import { ArrowDown, ArrowRight, Layers, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { buttonVariants } from "@/components/ui/button";
-import { Kbd } from "@/components/ui/kbd";
-import { AuthNavButton } from "./auth-nav-button";
+import { useHomeSession } from "../_hooks/use-home-session";
+import { HomeAccountPreview } from "./home-account-preview";
+import { HomeFeatures } from "./home-features";
+
+function getFirstName(
+  displayName: string | null | undefined,
+  fallback: string,
+) {
+  return displayName?.trim().split(/\s+/)[0] || fallback;
+}
 
 function HomeContent() {
-  const t = useTranslations("App");
+  const t = useTranslations("Home");
+  const { ready, user } = useHomeSession();
+  const name = getFirstName(user?.displayName, t("friend"));
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground font-sans">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-foreground">
-            {t("getStartedPrefix")}{" "}
-            <Kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.9em] text-foreground border border-border h-auto">
-              {t("pageFile")}
-            </Kbd>{" "}
-            {t("getStartedSuffix")}
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-muted-foreground">
-            {t("instructionsPrefix")}{" "}
-            <Link
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-foreground hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t("templates")}
-            </Link>{" "}
-            {t("instructionsMiddle")}{" "}
-            <Link
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-foreground hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {t("learning")}
-            </Link>{" "}
-            {t("instructionsSuffix")}
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row w-full sm:w-auto">
-          <Link
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={t("deployNow")}
-            className={buttonVariants({
-              className:
-                "flex h-12 w-full items-center justify-center gap-2 rounded-full px-5 text-base font-medium md:w-[158px]",
-            })}
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="mx-auto flex max-w-6xl items-center justify-between gap-4 border-b px-6 py-6 lg:px-10">
+        <Link
+          href="/"
+          aria-label={t("home")}
+          className="flex items-center gap-2.5 font-semibold tracking-tight"
+        >
+          <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <Layers className="size-5" />
+          </span>
+          {t("brand")}
+        </Link>
+        <nav
+          aria-label={t("navigation")}
+          className="flex items-center gap-5 text-sm"
+        >
+          <a
+            href="#explore"
+            className="hidden text-muted-foreground hover:text-foreground sm:block"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            {t("deployNow")}
-          </Link>
-          <Link
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={t("documentation")}
-            className={buttonVariants({
-              variant: "outline",
-              className:
-                "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
-            })}
-          >
-            {t("documentation")}
-          </Link>
-          <AuthNavButton />
-        </div>
+            {t("explore")}
+          </a>
+          {ready ? (
+            <Link
+              href={user ? "/profile" : "/sign-in"}
+              className={buttonVariants({ variant: "outline" })}
+            >
+              {user ? t("myAccount") : t("signIn")}
+              <ArrowRight className="size-4" />
+            </Link>
+          ) : (
+            <span role="status" className="text-muted-foreground">
+              {t("loading")}
+            </span>
+          )}
+        </nav>
+      </header>
+
+      <main className="mx-auto max-w-6xl px-6 lg:px-10">
+        <section className="grid items-center gap-14 py-16 md:grid-cols-[1.15fr_1fr] md:py-24">
+          <div>
+            <p className="mb-6 inline-flex items-center gap-2 rounded-full border bg-muted/40 px-3 py-1.5 text-xs font-medium">
+              <span className="size-1.5 rounded-full bg-foreground" />
+              {user ? t("welcomeLabel") : t("eyebrow")}
+            </p>
+            <h1 className="max-w-xl text-5xl font-semibold leading-[1.08] tracking-[-0.055em] sm:text-6xl lg:text-7xl">
+              {user ? t("welcome", { name }) : t("title")}
+              <span className="block text-muted-foreground">
+                {user ? t("welcomeEnd") : t("titleEnd")}
+              </span>
+            </h1>
+            <p className="mt-6 max-w-md text-base leading-7 text-muted-foreground">
+              {user ? t("signedInDescription") : t("description")}
+            </p>
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              {ready ? (
+                <Link
+                  href={user ? "/profile" : "/register"}
+                  className={buttonVariants({
+                    className: "h-12 rounded-xl px-6",
+                  })}
+                >
+                  {user ? t("manageAccount") : t("getStarted")}
+                  <ArrowRight className="size-4" />
+                </Link>
+              ) : (
+                <p role="status" className="text-sm text-muted-foreground">
+                  {t("loading")}
+                </p>
+              )}
+              <a
+                href="#explore"
+                className="flex items-center gap-2 rounded-md p-2 text-sm font-medium hover:bg-muted"
+              >
+                {t("discover")}
+                <ArrowDown className="size-4" />
+              </a>
+            </div>
+            <p className="mt-6 flex items-center gap-2 text-xs text-muted-foreground">
+              <ShieldCheck className="size-4" />
+              {user ? t("sessionActive") : t("reassurance")}
+            </p>
+          </div>
+
+          <HomeAccountPreview user={user} name={name} />
+        </section>
+
+        <HomeFeatures signedIn={!!user} />
       </main>
+      <footer className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 border-t px-6 py-6 text-xs text-muted-foreground lg:px-10">
+        <span>{`${t("brand")} / ${t("footer")}`}</span>
+        <span>{t("footerNote")}</span>
+      </footer>
     </div>
   );
 }
