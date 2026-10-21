@@ -2,22 +2,23 @@ import { onAuthStateChanged, type User } from "firebase/auth";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
-import type { UseFormReset } from "react-hook-form";
 import { useRouter } from "@/i18n/navigation";
 import { defaultLocale, isLocale } from "@/i18n/routing";
 import { getFirebaseUI } from "@/lib/firebase/client";
 import { readUserPreferences } from "@/lib/firebase/firestore/user-preferences";
 import type { ProfileValues } from "./use-profile-actions";
 
-export function useProfileSession(reset: UseFormReset<ProfileValues>) {
+export function useProfileSession() {
   const t = useTranslations("Auth");
   const locale = useLocale();
   const activeLocale = isLocale(locale) ? locale : defaultLocale;
   const router = useRouter();
   const { setTheme } = useTheme();
   const savedValuesRef = useRef<ProfileValues | null>(null);
+  const activeUserIdRef = useRef<string | null>(null);
 
   const [user, setUser] = useState<User | null>(null);
+  const [defaultValues, setDefaultValues] = useState<ProfileValues | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [preferencesReady, setPreferencesReady] = useState(false);
   const [photoURL, setPhotoURL] = useState<string | null>(null);
@@ -30,6 +31,12 @@ export function useProfileSession(reset: UseFormReset<ProfileValues>) {
       return onAuthStateChanged(
         auth,
         (currentUser) => {
+          if (currentUser?.uid !== activeUserIdRef.current) {
+            activeUserIdRef.current = currentUser?.uid ?? null;
+            savedValuesRef.current = null;
+            setDefaultValues(null);
+            setPreferencesReady(false);
+          }
           setUser(currentUser);
           setPhotoURL(currentUser?.photoURL ?? null);
           setAuthReady(true);
@@ -69,7 +76,7 @@ export function useProfileSession(reset: UseFormReset<ProfileValues>) {
         };
 
         savedValuesRef.current = nextValues;
-        reset(nextValues);
+        setDefaultValues(nextValues);
         if (preferences.theme) setTheme(preferences.theme);
       })
       .catch((cause) => {
@@ -83,11 +90,12 @@ export function useProfileSession(reset: UseFormReset<ProfileValues>) {
     return () => {
       active = false;
     };
-  }, [uid, activeLocale, reset, setTheme, t]);
+  }, [uid, activeLocale, setTheme, t]);
 
   return {
     activeLocale,
     authReady,
+    defaultValues,
     avatarVersion,
     error,
     preferencesReady,

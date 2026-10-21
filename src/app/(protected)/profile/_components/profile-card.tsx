@@ -5,22 +5,27 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useProfileController } from "../_hooks/use-profile-controller";
+import { ProfileAvatarField } from "./profile-avatar-field";
+import { ProfileDisplayNameField } from "./profile-display-name-field";
+import { ProfileEmailField } from "./profile-email-field";
 import { ProfileForm } from "./profile-form";
+import { ProfileLocaleField } from "./profile-locale-field";
+import { ProfileThemeField } from "./profile-theme-field";
 import { SignOutButton } from "./sign-out-button";
 
 type ProfileCardProps = ComponentProps<"div">;
 
 function ProfileCard({ className, ...props }: ProfileCardProps) {
   const profile = useProfileController();
-  const { authReady, error, preferencesReady, savedValuesReady, t, user } =
-    profile;
+  const { user, t } = profile;
 
-  if (!authReady || (user && !preferencesReady)) {
+  if (!profile.authReady || (user && !profile.preferencesReady)) {
     return (
       <div className={cn("mx-auto w-full max-w-sm", className)} {...props}>
         <p role="status" className="text-center text-sm text-muted-foreground">
@@ -31,17 +36,17 @@ function ProfileCard({ className, ...props }: ProfileCardProps) {
   }
 
   if (!user) {
-    return error ? (
+    return profile.error ? (
       <div className={cn("mx-auto w-full max-w-sm", className)} {...props}>
-        <p role="alert">{error}</p>
+        <p role="alert">{profile.error}</p>
       </div>
     ) : null;
   }
 
-  if (!savedValuesReady) {
+  if (!profile.formProps) {
     return (
       <div className={cn("mx-auto w-full max-w-sm", className)} {...props}>
-        <p role="alert">{error ?? t("profileSaveError")}</p>
+        <p role="alert">{profile.error ?? t("profileSaveError")}</p>
       </div>
     );
   }
@@ -54,9 +59,23 @@ function ProfileCard({ className, ...props }: ProfileCardProps) {
           <CardDescription>{t("personalInfoDescription")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <ProfileForm profile={profile} user={user} />
-          <SignOutButton profile={profile} />
+          <ProfileForm key={user.uid} {...profile.formProps}>
+            <ProfileAvatarField {...profile.avatarProps} />
+            <ProfileDisplayNameField />
+            <ProfileEmailField />
+            <ProfileLocaleField />
+            <ProfileThemeField />
+          </ProfileForm>
         </CardContent>
+        <CardFooter>
+          <SignOutButton
+            onClick={profile.handleSignOut}
+            disabled={profile.isBusy}
+            isSigningOut={profile.isSigningOut}
+          >
+            {t("signOut")}
+          </SignOutButton>
+        </CardFooter>
       </Card>
     </div>
   );
