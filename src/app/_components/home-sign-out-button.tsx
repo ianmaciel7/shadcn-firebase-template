@@ -25,7 +25,6 @@ function HomeSignOutButton() {
     <div className="flex w-full flex-col gap-2 sm:w-auto">
       <Button
         type="button"
-        variant="outline"
         onClick={handleSignOut}
         disabled={state === "pending"}
         className="flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]"

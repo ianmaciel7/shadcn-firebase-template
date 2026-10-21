@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { HomeScreen } from "./home-screen";
 
 function GuestHome() {
@@ -14,11 +15,13 @@ function GuestHome() {
       secondaryAction={
         <Link
           href="/register"
-          className={buttonVariants({
-            variant: "outline",
-            className:
-              "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
-          })}
+          className={cn(
+            buttonVariants({
+              variant: "outline",
+              className:
+                "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
+            }),
+          )}
         >
           {t("getStarted")}
         </Link>
