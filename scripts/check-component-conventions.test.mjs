@@ -200,7 +200,8 @@ describe("owned component conventions", () => {
   });
 
   it("keeps the profile form and actions in ProfileSection", () => {
-    const section = "src/app/(protected)/profile/_components/profile-section.tsx";
+    const section =
+      "src/app/(protected)/profile/_components/profile-section.tsx";
     expectValid(
       "function ProfileSection() { return <ProfileCard><ProfileForm><CardHeader /><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
       section,

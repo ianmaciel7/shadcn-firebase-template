@@ -7,6 +7,10 @@ describe("ProfileCard", () => {
   afterEach(cleanup);
 
   it("composes native Card slots and forwards props", () => {
+    const header = "Header";
+    const content = "Content";
+    const footer = "Footer";
+
     render(
       <ProfileCard
         data-testid="profile-card"
@@ -14,9 +18,9 @@ describe("ProfileCard", () => {
         className="custom-profile-card"
         aria-label="Profile details"
       >
-        <CardHeader>Header</CardHeader>
-        <CardContent>Content</CardContent>
-        <CardFooter>Footer</CardFooter>
+        <CardHeader>{header}</CardHeader>
+        <CardContent>{content}</CardContent>
+        <CardFooter>{footer}</CardFooter>
       </ProfileCard>,
     );
 

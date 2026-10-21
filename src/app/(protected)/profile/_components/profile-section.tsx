@@ -1,6 +1,11 @@
 "use client";
 
-import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { useProfileController } from "../_hooks/use-profile-controller";
 import { ProfileAvatarField } from "./profile-avatar-field";
 import { ProfileButton } from "./profile-button";

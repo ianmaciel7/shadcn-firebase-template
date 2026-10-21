@@ -283,7 +283,10 @@ function checkProfileCardSafety(source, elements, report) {
     profileElements(elements, "ProfileFormContent").length ||
     profileElements(elements, "ProfileFormFooter").length
   ) {
-    report(source, "ProfileCard must accept children; compose profile UI in ProfileSection.");
+    report(
+      source,
+      "ProfileCard must accept children; compose profile UI in ProfileSection.",
+    );
   }
 }
 
