@@ -89,16 +89,26 @@ function checkFileName(source, stem, report) {
 const profileCardParts = [
   "ProfileCard",
   "ProfileCardHeader",
+  "ProfileCardAction",
   "ProfileCardTitle",
   "ProfileCardDescription",
   "ProfileCardContent",
   "ProfileCardFooter",
 ];
 
+const profileFormParts = [
+  "ProfileForm",
+  "ProfileFormContent",
+  "ProfileFormFooter",
+];
+
 function expectedComponentNames(source, stem) {
   const path = source.fileName.replaceAll("\\", "/");
   if (path.endsWith("/profile/_components/profile-card.tsx")) {
     return profileCardParts;
+  }
+  if (path.endsWith("/profile/_components/profile-form.tsx")) {
+    return profileFormParts;
   }
   return [pascalCase(stem)];
 }
@@ -147,13 +157,10 @@ function checkExportStyle(source, report) {
   }
 }
 
-function checkProps(source, expected, report) {
-  const allowed = (
-    source.fileName
-      .replaceAll("\\", "/")
-      .endsWith("/profile/_components/profile-card.tsx")
-      ? profileCardParts
-      : [expected]
+function checkProps(source, _expected, report) {
+  const allowed = expectedComponentNames(
+    source,
+    basename(source.fileName, ".tsx"),
   ).map((name) => `${name}Props`);
   for (const statement of source.statements) {
     if (
@@ -261,7 +268,7 @@ function checkProfilePropDrilling(source, report) {
   visit(source);
 }
 
-function jsxEntries(source) {
+function jsxEntries(source, root = source) {
   const elements = [];
 
   function visit(node, ancestors = []) {
@@ -278,7 +285,7 @@ function jsxEntries(source) {
     ts.forEachChild(node, (child) => visit(child, ancestors));
   }
 
-  visit(source);
+  visit(root);
   return elements;
 }
 
@@ -324,6 +331,7 @@ function checkProfileCardSafety(source, elements, report) {
   }
   for (const primitive of [
     "CardHeader",
+    "CardAction",
     "CardTitle",
     "CardDescription",
     "CardContent",
@@ -535,6 +543,21 @@ function checkProfileFormSafety(source, stem, report) {
     !check ||
     !source.fileName.replaceAll("\\", "/").includes("/profile/_components/")
   ) {
+    return;
+  }
+  if (stem === "profile-form") {
+    for (const [name, partCheck] of [
+      ["ProfileForm", checkProfileProviderSafety],
+      ["ProfileFormContent", checkProfileContentSafety],
+      ["ProfileFormFooter", checkProfileFooterSafety],
+    ]) {
+      const declaration = source.statements.find(
+        (statement) =>
+          ts.isFunctionDeclaration(statement) && statement.name?.text === name,
+      );
+      if (declaration)
+        partCheck(source, jsxEntries(source, declaration), report);
+    }
     return;
   }
   check(source, jsxEntries(source), report);

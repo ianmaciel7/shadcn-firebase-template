@@ -9,6 +9,13 @@ const profile = "src/app/(protected)/profile/_components/profile-card.tsx";
 const inspect = (content, file = profile) =>
   inspectComponent(content, file).map((issue) => issue.message);
 
+function compoundForm(source) {
+  return source.replace(
+    "export { ProfileForm };",
+    "function ProfileFormContent() { return <FieldGroup>{children}</FieldGroup>; } function ProfileFormFooter() { return <div>{children}</div>; } export { ProfileForm, ProfileFormContent, ProfileFormFooter };",
+  );
+}
+
 function expectValid(content, file) {
   assert.deepEqual(inspect(content, file), []);
 }
@@ -18,6 +25,7 @@ function expectInvalid(content, pattern, file) {
 }
 
 const compoundParts = [
+  "function ProfileCardAction(props) { return <CardAction {...props} />; }",
   "function ProfileCardHeader(props) { return <CardHeader {...props} />; }",
   "function ProfileCardTitle(props) { return <CardTitle {...props} />; }",
   "function ProfileCardDescription(props) { return <CardDescription {...props} />; }",
@@ -28,7 +36,7 @@ const compoundParts = [
 function compoundCard(source) {
   return source.replace(
     "export { ProfileCard };",
-    `${compoundParts} export { ProfileCard, ProfileCardHeader, ProfileCardTitle, ProfileCardDescription, ProfileCardContent, ProfileCardFooter };`,
+    `${compoundParts} export { ProfileCard, ProfileCardAction, ProfileCardHeader, ProfileCardTitle, ProfileCardDescription, ProfileCardContent, ProfileCardFooter };`,
   );
 }
 
@@ -308,7 +316,9 @@ describe("owned component conventions", () => {
     const content =
       "src/app/(protected)/profile/_components/profile-form-content.tsx";
     expectValid(
-      "function ProfileForm() { return <FormProvider><form>{children}</form></FormProvider>; } export { ProfileForm };",
+      compoundForm(
+        "function ProfileForm() { return <FormProvider><form>{children}</form></FormProvider>; } export { ProfileForm };",
+      ),
       form,
     );
     expectInvalid(
@@ -326,6 +336,30 @@ describe("owned component conventions", () => {
       content,
     );
   });
+  it("validates colocated form parts without accepting nested card primitives", () => {
+    const path = "src/app/(protected)/profile/_components/profile-form.tsx";
+    const valid = compoundForm(
+      "function ProfileForm() { return <FormProvider><form>{children}</form></FormProvider>; } export { ProfileForm };",
+    );
+    expectValid(valid, path);
+    expectInvalid(
+      valid.replace(
+        "<FieldGroup>{children}</FieldGroup>",
+        "<CardContent><FieldGroup>{children}</FieldGroup></CardContent>",
+      ),
+      /without CardContent/,
+      path,
+    );
+    expectInvalid(
+      valid.replace(
+        "ProfileForm, ProfileFormContent, ProfileFormFooter",
+        "ProfileForm, ProfileFormContent",
+      ),
+      /Export exactly/,
+      path,
+    );
+  });
+
   it("forbids a second Card inside ProfileForm", () => {
     const path = "src/app/(protected)/profile/_components/profile-form.tsx";
     expectInvalid(

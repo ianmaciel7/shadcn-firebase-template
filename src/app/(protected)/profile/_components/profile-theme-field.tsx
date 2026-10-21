@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { ProfileValues } from "@/lib/profile";
 import { isThemePreference, themePreferences } from "@/lib/theme";
-import type { ProfileValues } from "../_hooks/use-profile-actions";
 
 type ProfileThemeFieldProps = ComponentProps<typeof Field>;
 

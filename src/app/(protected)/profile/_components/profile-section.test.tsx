@@ -386,4 +386,66 @@ describe("ProfileSection", () => {
     });
     log.mockRestore();
   });
+  it("blocks logout and field edits while saving", async () => {
+    mocks.currentUser = {
+      uid: "user-123",
+      email: "user@example.com",
+      displayName: "Before",
+    };
+    let finishSave!: () => void;
+    mocks.updateProfile.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          finishSave = resolve;
+        }),
+    );
+    render(<ProfileSection />);
+    const name = (await screen.findByLabelText(
+      "displayNameLabel",
+    )) as HTMLInputElement;
+    fireEvent.change(name, { target: { value: "After" } });
+    fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+    await waitFor(() => expect(name.disabled).toBe(true));
+    const signOut = screen.getByRole("button", {
+      name: "signOut",
+    }) as HTMLButtonElement;
+    expect(signOut.disabled).toBe(true);
+    fireEvent.click(signOut);
+    expect(mocks.signOut).not.toHaveBeenCalled();
+    await act(async () => finishSave());
+    await waitFor(() => expect(name.disabled).toBe(false));
+    expect(signOut.disabled).toBe(false);
+  });
+
+  it("retains an avatar after a failed save and clears it after a successful retry", async () => {
+    mocks.currentUser = { uid: "user-123", email: "user@example.com" };
+    mocks.uploadBytes.mockRejectedValueOnce(new Error("Upload failed"));
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      render(<ProfileSection />);
+      const input = (await screen.findByLabelText(
+        "profilePhotoChange",
+      )) as HTMLInputElement;
+      const file = new File(["avatar"], "avatar.png", { type: "image/png" });
+      fireEvent.change(input, { target: { files: [file] } });
+      fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+      await waitFor(() =>
+        expect(mocks.toastAdd).toHaveBeenCalledWith({
+          title: "profileSaveError",
+          type: "error",
+        }),
+      );
+      const save = await screen.findByRole("button", { name: "saveProfile" });
+      fireEvent.click(save);
+      await waitFor(() => expect(mocks.updateProfile).toHaveBeenCalled());
+      expect(mocks.uploadBytes).toHaveBeenCalledTimes(2);
+      await screen.findByRole("button", { name: "saveProfile" });
+      fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+      await waitFor(() => expect(mocks.toastAdd).toHaveBeenCalledTimes(3));
+      expect(mocks.uploadBytes).toHaveBeenCalledTimes(2);
+      expect(input.value).toBe("");
+    } finally {
+      log.mockRestore();
+    }
+  });
 });

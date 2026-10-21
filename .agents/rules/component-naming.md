@@ -18,7 +18,7 @@ from application naming checks. Application-owned extensions under
 
 ## Component file contracts
 
-- Use `kebab-case.tsx` and a matching PascalCase named export for ordinary components. The compound `profile-card.tsx` is the **narrow exception**: it declares and exports `ProfileCard`, `ProfileCardHeader`, `ProfileCardTitle`, `ProfileCardDescription` and `ProfileCardContent` together, as `card.tsx` does. Other owned components retain a single export. Do not use `export default` or `export function` in owned reusable components.
+- Use `kebab-case.tsx` and a matching PascalCase named export for ordinary components. The compound `profile-card.tsx` exports `ProfileCard` with its Header, Title, Description, Action, Content and Footer parts, as `card.tsx` does. Likewise, `profile-form.tsx` exports `ProfileForm`, `ProfileFormContent` and `ProfileFormFooter` together. Other owned components retain a single export. Do not use `export default` or `export function` in owned reusable components.
 - Use `ProfileCardProps` for props of `ProfileCard`; inherit React/HTML
   component props according to the existing component-props rule.
 - Prefer semantic roles: `*-field`, `*-fields`, `*-form`, `*-card`,
@@ -65,7 +65,7 @@ Use `src/components/ui/card.tsx`, `button.tsx` and `field.tsx` as reference impl
 - Fields connected via `Controller name="displayName"` must use the semantically matching component/file name `ProfileDisplayNameField` / `profile-display-name-field.tsx`. The component may expose a friendly display label without renaming the Firebase field.
 - Prefer narrow component props; do not hand `ProfileForm`, `ProfileAvatarField` or `SignOutButton` the entire profile controller as a `profile` prop.
 - `FieldGroup`, `FieldSet`, `Field` and `Controller` are real primitives/API integrations; do not introduce arbitrary *Fields wrapper components solely for visual grouping.
-- The single-primary-export-per-file convention is project-specific and now has one explicitly guarded compound exception for `profile-card.tsx`. Upstream shadcn/ui files also export related primitives together; generated registries remain unchanged.
+- The single-primary-export-per-file convention is project-specific and has explicitly guarded compound exceptions for `profile-card.tsx` and `profile-form.tsx`. Upstream shadcn/ui files also export related primitives together; generated registries remain unchanged.
 
 The TypeScript AST guard checks literal Controller names against owned `*-field.tsx` filenames and prevents whole-controller `profile` props on the profile components listed above. These checks cannot judge all component responsibilities and do not inspect dynamic Controller names.
 

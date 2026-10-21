@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { isLocale, locales } from "@/i18n/routing";
-import type { ProfileValues } from "../_hooks/use-profile-actions";
+import type { ProfileValues } from "@/lib/profile";
 
 type ProfileLocaleFieldProps = ComponentProps<typeof Field>;
 

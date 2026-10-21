@@ -1,33 +1,27 @@
 import { useTranslations } from "next-intl";
-import type { ChangeEventHandler, ComponentProps, RefObject } from "react";
+import type { ComponentProps } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import type { ProfileFormValues } from "@/lib/profile";
 import { cn } from "@/lib/utils";
+import { useProfileAvatar } from "../_hooks/use-profile-avatar";
+import { useProfileSessionContext } from "../_hooks/use-profile-session-context";
 
-type ProfileAvatarFieldProps = ComponentProps<"div"> & {
-  displayName: string | null;
-  email: string | null;
-  photoURL: string | null;
-  avatarPreview: string | null;
-  avatarVersion: number;
-  fileInputRef: RefObject<HTMLInputElement | null>;
-  onFileChange: ChangeEventHandler<HTMLInputElement>;
-  disabled?: boolean;
-};
+type ProfileAvatarFieldProps = ComponentProps<"div">;
 
-function ProfileAvatarField({
-  className,
-  displayName,
-  email,
-  photoURL,
-  avatarPreview,
-  avatarVersion,
-  fileInputRef,
-  onFileChange,
-  disabled,
-  ...props
-}: ProfileAvatarFieldProps) {
+function ProfileAvatarField({ className, ...props }: ProfileAvatarFieldProps) {
   const t = useTranslations("Auth");
+  const { user, photoURL, avatarVersion } = useProfileSessionContext();
+  const { control, setValue, formState } = useFormContext<ProfileFormValues>();
+  const avatarFile = useWatch({ control, name: "avatarFile" });
+  const { avatarPreview, fileInputRef, handleAvatarChange } = useProfileAvatar(
+    avatarFile,
+    (file) => setValue("avatarFile", file, { shouldDirty: true }),
+  );
+  const displayName = user?.displayName ?? null;
+  const email = user?.email ?? null;
+  const disabled = formState.disabled || formState.isSubmitting;
   const avatarSrc = getAvatarSource(avatarPreview, photoURL, avatarVersion);
   const fallbackInitial = (
     displayName?.charAt(0) ||
@@ -67,7 +61,7 @@ function ProfileAvatarField({
           className="sr-only"
           aria-label={t("profilePhotoChange")}
           disabled={disabled}
-          onChange={onFileChange}
+          onChange={handleAvatarChange}
         />
       </div>
     </div>

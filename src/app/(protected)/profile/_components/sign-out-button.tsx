@@ -1,37 +1,62 @@
+import { signOut } from "firebase/auth";
 import { LogOut } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
+import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { toast } from "@/components/ui/toast";
+import { useRouter } from "@/i18n/navigation";
+import { getFirebaseUI } from "@/lib/firebase/client";
 import { cn } from "@/lib/utils";
+import { useProfileFormState } from "../_hooks/use-profile-form-state";
 
-type SignOutButtonProps = ComponentProps<typeof Button> & {
-  isSigningOut?: boolean;
-};
+type SignOutButtonProps = Omit<ComponentProps<typeof Button>, "onClick">;
 
 function SignOutButton({
   className,
   disabled,
-  isSigningOut = false,
   children,
   ...props
 }: SignOutButtonProps) {
+  const t = useTranslations("Auth");
+  const router = useRouter();
+  const { formState } = useFormContext();
+  const { isSigningOut, setIsSigningOut } = useProfileFormState();
+
+  async function handleSignOut() {
+    if (isSigningOut || formState.isSubmitting) return;
+    setIsSigningOut(true);
+    try {
+      await signOut(getFirebaseUI().get().auth);
+      router.replace("/sign-in");
+    } catch (cause) {
+      console.error(cause);
+      toast.add({ title: t("profileSaveError"), type: "error" });
+      setIsSigningOut(false);
+    }
+  }
+
   return (
     <Button
       {...props}
+      onClick={handleSignOut}
       type="button"
       variant="ghost"
       className={cn(
         "w-full text-muted-foreground hover:text-destructive",
         className,
       )}
-      disabled={disabled || isSigningOut}
+      disabled={
+        disabled || isSigningOut || formState.isSubmitting || formState.disabled
+      }
     >
       {isSigningOut ? (
         <Spinner data-icon="inline-start" />
       ) : (
         <LogOut data-icon="inline-start" aria-hidden="true" />
       )}
-      {children}
+      {children ?? t("signOut")}
     </Button>
   );
 }

@@ -3,8 +3,8 @@ import type { ComponentProps } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import type { ProfileValues } from "@/lib/profile";
 import { cn } from "@/lib/utils";
-import type { ProfileValues } from "../_hooks/use-profile-actions";
 
 type ProfileButtonProps = ComponentProps<typeof Button>;
 

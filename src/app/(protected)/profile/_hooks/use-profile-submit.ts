@@ -1,25 +1,15 @@
 import {
-  signOut,
   type User,
   updateProfile,
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
 import { toast } from "@/components/ui/toast";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase/client";
 import { writeUserPreferences } from "@/lib/firebase/firestore/user-preferences";
-import type { Locale } from "@/lib/locale";
-import type { ThemePreference } from "@/lib/theme";
-
-export type ProfileValues = {
-  displayName: string;
-  email: string;
-  locale: Locale;
-  theme: ThemePreference;
-};
+import type { ProfileFormValues, ProfileValues } from "@/lib/profile";
 
 type SavedProfile = {
   values: ProfileValues;
@@ -93,52 +83,44 @@ async function saveProfile({
   };
 }
 
-type UseProfileActionsOptions = {
+type UseProfileSubmitOptions = {
   activeLocale: string;
-  avatarFile: File | null;
   savedValuesRef: { current: ProfileValues | null };
-  setAvatarFile: (file: File | null) => void;
   setAvatarVersion: (version: number) => void;
   setPhotoURL: (photoURL: string | null) => void;
   setTheme: (theme: ProfileValues["theme"]) => void;
   user: User | null;
 };
 
-export function useProfileActions({
+export function useProfileSubmit({
   activeLocale,
-  avatarFile,
   savedValuesRef,
-  setAvatarFile,
   setAvatarVersion,
   setPhotoURL,
   setTheme,
   user,
-}: UseProfileActionsOptions) {
+}: UseProfileSubmitOptions) {
   const t = useTranslations("Auth");
   const router = useRouter();
   const pathname = usePathname();
-  const [isSigningOut, setIsSigningOut] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
 
   const onSubmit = async (
-    values: ProfileValues,
+    values: ProfileFormValues,
   ): Promise<ProfileValues | undefined> => {
     const previous = savedValuesRef.current;
     if (!user || !previous) return;
 
-    setIsSaving(true);
     try {
       const savedProfile = await saveProfile({
         user,
         previous,
         values,
-        avatarFile,
+        avatarFile: values.avatarFile,
       });
       setPhotoURL(savedProfile.photoURL);
       if (savedProfile.avatarChanged) setAvatarVersion(Date.now());
       if (values.theme !== previous.theme) setTheme(values.theme);
       savedValuesRef.current = savedProfile.values;
-      setAvatarFile(null);
 
       toast.add({
         title: savedProfile.emailChanged
@@ -150,7 +132,6 @@ export function useProfileActions({
       if (values.locale !== activeLocale) {
         router.replace(pathname, { locale: values.locale });
       }
-      setIsSaving(false);
       return savedProfile.values;
     } catch (cause) {
       console.error(cause);
@@ -158,25 +139,9 @@ export function useProfileActions({
         title: t("profileSaveError"),
         type: "error",
       });
-      setIsSaving(false);
       return undefined;
     }
   };
 
-  const handleSignOut = async () => {
-    setIsSigningOut(true);
-    try {
-      await signOut(getFirebaseUI().get().auth);
-      router.replace("/sign-in");
-    } catch (cause) {
-      console.error(cause);
-      toast.add({
-        title: t("profileSaveError"),
-        type: "error",
-      });
-      setIsSigningOut(false);
-    }
-  };
-
-  return { handleSignOut, isSaving, isSigningOut, onSubmit };
+  return { onSubmit };
 }
