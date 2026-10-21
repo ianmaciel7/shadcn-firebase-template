@@ -23,7 +23,7 @@ export function useProfileSession() {
   const [avatarVersion, setAvatarVersion] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const uid = auth.user?.uid;
-  const defaultValues = loaded?.uid === uid ? loaded.values : null;
+  const defaultValues = loaded && loaded.uid === uid ? loaded.values : null;
   const preferencesReady = Boolean(uid && readyUid === uid);
 
   useEffect(() => {
