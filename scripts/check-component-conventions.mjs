@@ -274,15 +274,35 @@ function requireProfilePlacement(source, elements, name, parents, report) {
 
 function checkProfileCardSafety(source, elements, report) {
   const cards = profileElements(elements, "Card");
-  if (cards.length === 0 || cards.some((card) => card.ancestors.length > 0)) {
-    report(source, "ProfileCard must render the native Card as its root.");
+  if (cards.length !== 1 || cards[0].ancestors.length > 0) {
+    report(source, "ProfileCard must render one native Card as its root.");
   }
-  requireProfilePlacement(source, elements, "ProfileForm", ["Card"], report);
+  if (
+    profileElements(elements, "ProfileForm").length ||
+    profileElements(elements, "CardHeader").length ||
+    profileElements(elements, "ProfileFormContent").length ||
+    profileElements(elements, "ProfileFormFooter").length
+  ) {
+    report(source, "ProfileCard must accept children; compose profile UI in ProfileSection.");
+  }
+}
+
+function checkProfileSectionSafety(source, elements, report) {
+  if (profileElements(elements, "ProfileCard").length === 0) {
+    report(source, "ProfileSection must compose ProfileCard.");
+  }
+  requireProfilePlacement(
+    source,
+    elements,
+    "ProfileForm",
+    ["ProfileCard"],
+    report,
+  );
   requireProfilePlacement(
     source,
     elements,
     "CardHeader",
-    ["ProfileForm", "Card"],
+    ["ProfileForm", "ProfileCard"],
     report,
   );
   for (const region of ["ProfileFormContent", "ProfileFormFooter"]) {
@@ -290,7 +310,7 @@ function checkProfileCardSafety(source, elements, report) {
       source,
       elements,
       region,
-      ["ProfileForm", "Card"],
+      ["ProfileForm", "ProfileCard"],
       report,
     );
   }
@@ -299,7 +319,7 @@ function checkProfileCardSafety(source, elements, report) {
       source,
       elements,
       action,
-      ["ProfileFormFooter", "ProfileForm", "Card"],
+      ["ProfileFormFooter", "ProfileForm", "ProfileCard"],
       report,
     );
     for (const button of profileElements(elements, action)) {
@@ -315,8 +335,11 @@ function checkProfileCardSafety(source, elements, report) {
       }
     }
   }
-  if (profileElements(elements, "form").length > 0) {
-    report(source, "Do not nest an HTML form inside ProfileForm.");
+  if (
+    profileElements(elements, "form").length ||
+    profileElements(elements, "Card").length
+  ) {
+    report(source, "ProfileSection must delegate native Card and form roots.");
   }
 }
 
@@ -428,6 +451,7 @@ function checkProfileButtonSafety(source, elements, report, stem) {
 function checkProfileFormSafety(source, stem, report) {
   const checks = {
     "profile-card": checkProfileCardSafety,
+    "profile-section": checkProfileSectionSafety,
     "profile-form": checkProfileProviderSafety,
     "profile-form-content": checkProfileContentSafety,
     "profile-form-footer": checkProfileFooterSafety,

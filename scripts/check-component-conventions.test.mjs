@@ -46,7 +46,7 @@ describe("owned component conventions", () => {
 
   it("allows semantic roles, matching exports and Server Components", () => {
     expectValid(
-      '"use client"; type ProfileCardProps = ComponentProps<"div">; function ProfileCard(props: ProfileCardProps) { return <Card><ProfileForm><CardHeader /><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileForm></Card>; } export { ProfileCard };',
+      '"use client"; type ProfileCardProps = ComponentProps<"div">; function ProfileCard(props: ProfileCardProps) { return <Card {...props} />; } export { ProfileCard };',
     );
     expectValid(
       "async function IntlProvider({ children }) { return <Provider>{children}</Provider>; } export { IntlProvider };",
@@ -92,7 +92,7 @@ describe("owned component conventions", () => {
 
   it("permits client interaction but rejects server-only imports", () => {
     expectValid(
-      '"use client"; import { useState } from "react"; function ProfileCard() { const [open] = useState(false); return <Card><ProfileForm><CardHeader /><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileForm></Card>; } export { ProfileCard };',
+      '"use client"; import { useState } from "react"; function ProfileCard() { const [open] = useState(false); return <Card {...props} />; } export { ProfileCard };',
     );
     expectInvalid(
       '"use client"; import { cookies } from "next/headers"; function ProfileCard() { return <Card />; } export { ProfileCard };',
@@ -152,7 +152,7 @@ describe("owned component conventions", () => {
       /focused field\/form\/button props/,
     );
     expectValid(
-      "function ProfileCard() { return <Card><ProfileForm {...profile.formProps}><CardHeader /><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileForm></Card>; } export { ProfileCard };",
+      "function ProfileCard() { return <Card {...props} />; } export { ProfileCard };",
     );
   });
 
@@ -185,25 +185,45 @@ describe("owned component conventions", () => {
     );
   });
 
-  it("keeps ProfileCard as Card root and ProfileForm inside it", () => {
+  it("keeps ProfileCard a native, composable Card wrapper", () => {
     expectValid(
-      "function ProfileCard() { return <Card><ProfileForm><CardHeader /><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileForm></Card>; } export { ProfileCard };",
+      "function ProfileCard(props) { return <Card {...props} />; } export { ProfileCard };",
     );
     expectInvalid(
-      'function ProfileCard() { return <Card><ProfileForm><CardHeader /><ProfileFormContent /><ProfileFormFooter><ProfileButton type="submit" /><SignOutButton /></ProfileFormFooter></ProfileForm></Card>; } export { ProfileCard };',
+      "function ProfileCard() { return <ProfileForm><Card /></ProfileForm>; } export { ProfileCard };",
+      /one native Card as its root/,
+    );
+    expectInvalid(
+      "function ProfileCard() { return <Card><ProfileForm /></Card>; } export { ProfileCard };",
+      /accept children/,
+    );
+  });
+
+  it("keeps the profile form and actions in ProfileSection", () => {
+    const section = "src/app/(protected)/profile/_components/profile-section.tsx";
+    expectValid(
+      "function ProfileSection() { return <ProfileCard><ProfileForm><CardHeader /><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
+      section,
+    );
+    expectInvalid(
+      'function ProfileSection() { return <ProfileCard><ProfileForm><CardHeader /><ProfileFormContent /><ProfileFormFooter><ProfileButton type="submit" /><SignOutButton /></ProfileFormFooter></ProfileForm></ProfileCard>; } export { ProfileSection };',
       /ProfileButton must not accept an override/,
+      section,
     );
     expectInvalid(
-      "function ProfileCard() { return <Card><ProfileForm><CardHeader /><ProfileFormContent /><form /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileForm></Card>; } export { ProfileCard };",
-      /Do not nest an HTML form/,
+      "function ProfileSection() { return <ProfileCard><ProfileForm><CardHeader /><ProfileFormContent /><form /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
+      /delegate native Card and form roots/,
+      section,
     );
     expectInvalid(
-      "function ProfileCard() { return <ProfileForm><Card><CardHeader /><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></Card></ProfileForm>; } export { ProfileCard };",
-      /ProfileForm must be inside Card/,
+      "function ProfileSection() { return <ProfileForm><ProfileCard><CardHeader /><ProfileFormContent /><ProfileFormFooter><ProfileButton /><SignOutButton /></ProfileFormFooter></ProfileCard></ProfileForm>; } export { ProfileSection };",
+      /ProfileForm must be inside ProfileCard/,
+      section,
     );
     expectInvalid(
-      "function ProfileCard() { return <Card><ProfileForm><CardHeader /><ProfileFormContent /><ProfileButton /><ProfileFormFooter><SignOutButton /></ProfileFormFooter></ProfileForm></Card>; } export { ProfileCard };",
+      "function ProfileSection() { return <ProfileCard><ProfileForm><CardHeader /><ProfileFormContent /><ProfileButton /><ProfileFormFooter><SignOutButton /></ProfileFormFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
       /ProfileButton must be inside ProfileFormFooter/,
+      section,
     );
   });
 
