@@ -1,6 +1,9 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { inspectComponent, isOwnedComponent } from "./check-component-conventions.mjs";
+import {
+  inspectComponent,
+  isOwnedComponent,
+} from "./check-component-conventions.mjs";
 
 const profile = "src/app/(protected)/profile/_components/profile-card.tsx";
 const inspect = (content, file = profile) =>
@@ -17,16 +20,28 @@ function expectInvalid(content, pattern, file) {
 describe("owned component conventions", () => {
   it("selects private components and project-owned extensions", () => {
     assert.equal(isOwnedComponent(profile), true);
-    assert.equal(isOwnedComponent("src/app/_components/home-content.tsx"), true);
-    assert.equal(isOwnedComponent("src/components/ui/extensions/theme-provider.tsx"), true);
+    assert.equal(
+      isOwnedComponent("src/app/_components/home-content.tsx"),
+      true,
+    );
+    assert.equal(
+      isOwnedComponent("src/components/ui/extensions/theme-provider.tsx"),
+      true,
+    );
   });
 
   it("excludes framework entrypoints, tests and generated registries", () => {
     assert.equal(isOwnedComponent("src/app/page.tsx"), false);
     assert.equal(isOwnedComponent("src/app/_components/card.test.tsx"), false);
     assert.equal(isOwnedComponent("src/components/ui/button.tsx"), false);
-    assert.equal(isOwnedComponent("src/components/firebase/sign-in-auth-screen.tsx"), false);
-    assert.equal(isOwnedComponent("src/components/ai-elements/message.tsx"), false);
+    assert.equal(
+      isOwnedComponent("src/components/firebase/sign-in-auth-screen.tsx"),
+      false,
+    );
+    assert.equal(
+      isOwnedComponent("src/components/ai-elements/message.tsx"),
+      false,
+    );
   });
 
   it("allows semantic roles, matching exports and Server Components", () => {

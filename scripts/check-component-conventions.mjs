@@ -35,27 +35,37 @@ function exported(statement) {
   );
 }
 
+function namedExports(statement) {
+  if (!ts.isExportDeclaration(statement) ||
+      !statement.exportClause ||
+      !ts.isNamedExports(statement.exportClause)) return [];
+  return statement.exportClause.elements
+    .map((specifier) => specifier.name.text)
+    .filter((name) => /^[A-Z]/.test(name));
+}
+
+function exportedFunctionNames(statement) {
+  if (!ts.isFunctionDeclaration(statement) ||
+      !exported(statement) ||
+      !statement.name) return [];
+  const name = statement.name.text;
+  return /^[A-Z]/.test(name) ? [name] : [];
+}
+
+function exportedVariableNames(statement) {
+  if (!ts.isVariableStatement(statement) || !exported(statement)) return [];
+  return statement.declarationList.declarations
+    .filter((declaration) => ts.isIdentifier(declaration.name))
+    .map((declaration) => declaration.name.text)
+    .filter((name) => /^[A-Z]/.test(name));
+}
+
 function componentExports(source) {
-  const names = [];
-  for (const statement of source.statements) {
-    if (ts.isExportDeclaration(statement) &&
-      statement.exportClause && ts.isNamedExports(statement.exportClause)) {
-      for (const specifier of statement.exportClause.elements) {
-        if (/^[A-Z]/.test(specifier.name.text)) names.push(specifier.name.text);
-      }
-    }
-    if (ts.isFunctionDeclaration(statement) && exported(statement) &&
-      statement.name && /^[A-Z]/.test(statement.name.text)) {
-      names.push(statement.name.text);
-    }
-    if (ts.isVariableStatement(statement) && exported(statement)) {
-      for (const declaration of statement.declarationList.declarations) {
-        if (ts.isIdentifier(declaration.name) &&
-          /^[A-Z]/.test(declaration.name.text)) names.push(declaration.name.text);
-      }
-    }
-  }
-  return names;
+  return source.statements.flatMap((statement) => [
+    ...namedExports(statement),
+    ...exportedFunctionNames(statement),
+    ...exportedVariableNames(statement),
+  ]);
 }
 
 function checkName(source, stem, report) {
@@ -64,52 +74,71 @@ function checkName(source, stem, report) {
     return;
   }
   if (environmentSuffix.test(stem)) {
-    report(source, "Name by semantic role, never by Client/Server/Component/UI.");
+    report(
+      source,
+      "Name by semantic role, never by Client/Server/Component/UI.",
+    );
   }
   const expected = pascalCase(stem);
   const names = componentExports(source);
   if (names.length !== 1 || names[0] !== expected) {
-    report(source, "Export exactly one named component " + expected + ".");
+    report(source, `Export exactly one named component ${expected}.`);
   }
   for (const statement of source.statements) {
     if (ts.isExportAssignment(statement)) {
       report(statement, "Owned components must use named exports.");
     }
     if (ts.isFunctionDeclaration(statement) && exported(statement)) {
-      report(statement, "Use function declaration followed by export { Name }.");
+      report(
+        statement,
+        "Use function declaration followed by export { Name }.",
+      );
     }
   }
 }
 
 function checkProps(source, expected, report) {
   for (const statement of source.statements) {
-    if (!ts.isTypeAliasDeclaration(statement) &&
-        !ts.isInterfaceDeclaration(statement)) continue;
+    if (
+      !ts.isTypeAliasDeclaration(statement) &&
+      !ts.isInterfaceDeclaration(statement)
+    )
+      continue;
     const name = statement.name.text;
-    if (name.endsWith("Props") && name !== expected + "Props") {
-      report(statement, "Props type must be named " + expected + "Props.");
+    if (name.endsWith("Props") && name !== `${expected}Props`) {
+      report(statement, `Props type must be named ${expected}Props.`);
     }
   }
 }
 
 function isClientBoundary(source) {
   const first = source.statements[0];
-  return first && ts.isExpressionStatement(first) &&
+  return (
+    first &&
+    ts.isExpressionStatement(first) &&
     ts.isStringLiteral(first.expression) &&
-    first.expression.text === "use client";
+    first.expression.text === "use client"
+  );
 }
 
 function checkClientImports(source, report) {
   if (!isClientBoundary(source)) return;
   for (const statement of source.statements) {
-    if (ts.isImportDeclaration(statement) &&
-        ts.isStringLiteral(statement.moduleSpecifier) &&
-        serverImports.test(statement.moduleSpecifier.text)) {
-      report(statement, "Never import server-only modules in a client boundary.");
+    if (
+      ts.isImportDeclaration(statement) &&
+      ts.isStringLiteral(statement.moduleSpecifier) &&
+      serverImports.test(statement.moduleSpecifier.text)
+    ) {
+      report(
+        statement,
+        "Never import server-only modules in a client boundary.",
+      );
     }
-    if (ts.isExpressionStatement(statement) &&
-        ts.isStringLiteral(statement.expression) &&
-        statement.expression.text === "use server") {
+    if (
+      ts.isExpressionStatement(statement) &&
+      ts.isStringLiteral(statement.expression) &&
+      statement.expression.text === "use server"
+    ) {
       report(statement, "Do not mix use client and use server in one module.");
     }
   }
@@ -118,11 +147,17 @@ function checkClientImports(source, report) {
 export function inspectComponent(content, filename) {
   if (!isOwnedComponent(filename)) return [];
   const source = ts.createSourceFile(
-    filename, content, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX,
+    filename,
+    content,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
   );
   const findings = [];
   const report = (node, message) => {
-    const position = source.getLineAndCharacterOfPosition(node.getStart(source));
+    const position = source.getLineAndCharacterOfPosition(
+      node.getStart(source),
+    );
     findings.push({
       file: filename,
       line: position.line + 1,
@@ -146,17 +181,27 @@ function scan(directory) {
 }
 
 export function checkComponents(root) {
-  const files = [...scan(join(root, "src/app")), ...scan(join(root, "src/components"))];
+  const files = [
+    ...scan(join(root, "src/app")),
+    ...scan(join(root, "src/components")),
+  ];
   return files.flatMap((file) => {
     const path = relative(root, file).split(sep).join("/");
     return inspectComponent(readFileSync(file, "utf8"), path);
   });
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const findings = checkComponents(fileURLToPath(new URL("../", import.meta.url)));
+if (
+  process.argv[1] &&
+  resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+) {
+  const findings = checkComponents(
+    fileURLToPath(new URL("../", import.meta.url)),
+  );
   for (const issue of findings) {
-    console.error(issue.file + ":" + issue.line + ":" + issue.column + " " + issue.message);
+    console.error(
+      `${issue.file}:${issue.line}:${issue.column} ${issue.message}`,
+    );
   }
   if (findings.length) process.exitCode = 1;
   else console.log("Component conventions: all owned files passed.");
