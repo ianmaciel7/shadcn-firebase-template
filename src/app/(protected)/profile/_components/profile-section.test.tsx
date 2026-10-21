@@ -173,16 +173,16 @@ describe("ProfileSection", () => {
     const saveButton = await screen.findByRole("button", {
       name: "saveProfile",
     });
-    const signOutButton = screen.getByRole("button", { name: "signOut" });
+    const backLink = screen.getByRole("link", { name: "backToHome" });
     const displayName = screen.getByLabelText("displayNameLabel");
 
     expect(displayName.closest('[data-slot="card-content"]')).toBeTruthy();
     expect(saveButton.closest('[data-slot="card-footer"]')).toBeTruthy();
-    expect(signOutButton.closest('[data-slot="card-footer"]')).toBeTruthy();
+    expect(backLink.closest('[data-slot="card-footer"]')).toBeTruthy();
     const form = saveButton.closest("form");
     expect(form).toBeTruthy();
     expect(displayName.closest("form")).toBe(form);
-    expect(signOutButton.closest("form")).toBe(form);
+    expect(backLink.closest("form")).toBe(form);
     expect(
       displayName
         .closest('[data-slot="field-group"]')
@@ -190,7 +190,7 @@ describe("ProfileSection", () => {
     ).toBeTruthy();
     expect(form?.querySelectorAll("form")).toHaveLength(0);
     expect(saveButton.getAttribute("type")).toBe("submit");
-    expect(signOutButton.getAttribute("type")).toBe("button");
+    expect(backLink.getAttribute("href")).toBe("/");
   });
 
   it("uploads a new avatar and updates the auth profile", async () => {
@@ -357,33 +357,11 @@ describe("ProfileSection", () => {
     ).toBe("Dynamic User");
   });
 
-  it("signs out and redirects to /sign-in on click", async () => {
+  it("offers a link home instead of signing out from the profile", async () => {
     mocks.currentUser = { uid: "user-123" };
-    mocks.signOut.mockResolvedValue(undefined);
     render(<ProfileSection />);
-    const signOutBtn = await screen.findByRole("button", { name: "signOut" });
-    expect(signOutBtn.closest('[data-slot="card"]')).toBeTruthy();
-    await act(async () => {
-      fireEvent.click(signOutBtn);
-    });
-    expect(mocks.signOut).toHaveBeenCalled();
-    expect(mocks.router.replace).toHaveBeenCalledWith("/sign-in");
-  });
-
-  it("shows error toast when sign out fails", async () => {
-    mocks.currentUser = { uid: "user-123" };
-    mocks.signOut.mockRejectedValue(new Error("sign out failed"));
-    const log = vi.spyOn(console, "error").mockImplementation(() => {});
-    render(<ProfileSection />);
-    const signOutBtn = await screen.findByRole("button", { name: "signOut" });
-    expect(signOutBtn.closest('[data-slot="card"]')).toBeTruthy();
-    await act(async () => {
-      fireEvent.click(signOutBtn);
-    });
-    expect(mocks.toastAdd).toHaveBeenCalledWith({
-      title: "profileSaveError",
-      type: "error",
-    });
-    log.mockRestore();
+    const back = await screen.findByRole("link", { name: "backToHome" });
+    expect(back.getAttribute("href")).toBe("/");
+    expect(screen.queryByRole("button", { name: "signOut" })).toBeNull();
   });
 });

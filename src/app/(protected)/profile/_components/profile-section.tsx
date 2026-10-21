@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { useProfileController } from "../_hooks/use-profile-controller";
 import { ProfileAvatarField } from "./profile-avatar-field";
@@ -21,20 +23,13 @@ import {
 } from "./profile-form";
 import { ProfileLocaleField } from "./profile-locale-field";
 import { ProfileThemeField } from "./profile-theme-field";
-import { SignOutButton } from "./sign-out-button";
 
 function ProfileSection() {
   const profile = useProfileController();
   const { user, t } = profile;
 
   if (!profile.authReady || (user && !profile.preferencesReady)) {
-    return (
-      <ProfileCard>
-        <ProfileCardContent>
-          <LoadingIndicator label={t("loading")} className="flex w-full" />
-        </ProfileCardContent>
-      </ProfileCard>
-    );
+    return <LoadingIndicator label={t("loading")} className="flex w-full" />;
   }
 
   if (!user && !profile.error) return null;
@@ -70,13 +65,15 @@ function ProfileSection() {
         <ProfileCardFooter>
           <ProfileFormFooter>
             <ProfileButton />
-            <SignOutButton
-              onClick={profile.handleSignOut}
-              disabled={profile.isBusy}
-              isSigningOut={profile.isSigningOut}
+            <Link
+              href="/"
+              className={buttonVariants({
+                variant: "link",
+                className: "w-full",
+              })}
             >
-              {t("signOut")}
-            </SignOutButton>
+              {t("backToHome")}
+            </Link>
           </ProfileFormFooter>
         </ProfileCardFooter>
       </ProfileForm>

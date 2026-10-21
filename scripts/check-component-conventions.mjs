@@ -384,6 +384,8 @@ function checkProfileSectionSafety(source, elements, report) {
     report,
   );
   for (const action of ["ProfileButton", "SignOutButton"]) {
+    if (action === "SignOutButton" && !profileElements(elements, action).length)
+      continue;
     requireProfilePlacement(
       source,
       elements,
