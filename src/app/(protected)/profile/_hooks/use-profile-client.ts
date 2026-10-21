@@ -33,7 +33,7 @@ export function useProfileClient() {
     reset,
     savedValuesRef: session.savedValuesRef,
     setAvatarFile: avatar.setAvatarFile,
-    setAvatarVersion: avatar.setAvatarVersion,
+    setAvatarVersion: session.setAvatarVersion,
     setPhotoURL: session.setPhotoURL,
     setTheme: session.setTheme,
     user: session.user,
@@ -42,7 +42,8 @@ export function useProfileClient() {
   return {
     authReady: session.authReady,
     avatarPreview: avatar.avatarPreview,
-    avatarVersion: avatar.avatarVersion,
+    avatarVersion: session.avatarVersion,
+    clearAvatar: avatar.clearAvatar,
     control,
     error: session.error,
     errors,
