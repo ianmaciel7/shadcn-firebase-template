@@ -6,9 +6,9 @@ import { GoogleSignInButton } from "@/components/firebase/google-sign-in-button"
 import { SignInAuthScreen } from "@/components/firebase/sign-in-auth-screen";
 import { getAuthNavigationUrl } from "@/lib/auth/return-url";
 
-type SignInFormClientProps = ComponentProps<"div">;
+type SignInAuthFlowProps = ComponentProps<"div">;
 
-function SignInFormClient(props: SignInFormClientProps) {
+function SignInAuthFlow(props: SignInAuthFlowProps) {
   const router = useRouter();
   return (
     <div {...props}>
@@ -30,4 +30,4 @@ function SignInFormClient(props: SignInFormClientProps) {
   );
 }
 
-export { SignInFormClient };
+export { SignInAuthFlow };

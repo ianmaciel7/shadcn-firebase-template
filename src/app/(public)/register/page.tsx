@@ -1,7 +1,7 @@
-import { RegisterFormClient } from "./_components/register-form-client";
+import { RegisterAuthFlow } from "./_components/register-auth-flow";
 
 export const instant = false;
 
 export default function RegisterPage() {
-  return <RegisterFormClient />;
+  return <RegisterAuthFlow />;
 }

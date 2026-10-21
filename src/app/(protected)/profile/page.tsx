@@ -1,7 +1,7 @@
-import { ProfileClient } from "./_components/profile-client";
+import { ProfileCard } from "./_components/profile-card";
 
 export const instant = false;
 
 export default function ProfilePage() {
-  return <ProfileClient />;
+  return <ProfileCard />;
 }

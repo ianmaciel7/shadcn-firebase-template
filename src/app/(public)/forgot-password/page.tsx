@@ -1,7 +1,7 @@
-import { ForgotPasswordFormClient } from "./_components/forgot-password-form-client";
+import { ForgotPasswordAuthFlow } from "./_components/forgot-password-auth-flow";
 
 export const instant = false;
 
 export default function ForgotPasswordPage() {
-  return <ForgotPasswordFormClient />;
+  return <ForgotPasswordAuthFlow />;
 }

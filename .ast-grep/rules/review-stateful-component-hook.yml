@@ -12,7 +12,7 @@ ignores:
   - "**/*.test.tsx"
   - "**/*.stories.tsx"
 severity: warning
-message: Consider extracting this component's related state and Effects into a component-specific custom Hook (for example, useProfileClient); other Hooks can remain in the component or be composed by that Hook.
+message: Consider extracting this component's related state and Effects into a component-specific custom Hook (for example, useProfileController); other Hooks can remain in the component or be composed by that Hook.
 note: |
   This heuristic flags a component that combines useState and useEffect. It is
   a review prompt: React does not require one custom Hook per component, and

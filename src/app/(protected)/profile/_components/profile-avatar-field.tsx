@@ -2,11 +2,11 @@ import type { ComponentProps } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { ProfileClientState } from "../_hooks/use-profile-client";
+import type { ProfileControllerState } from "../_hooks/use-profile-controller";
 
 type ProfileAvatarFieldProps = ComponentProps<"div"> & {
-  profile: ProfileClientState;
-  user: NonNullable<ProfileClientState["user"]>;
+  profile: ProfileControllerState;
+  user: NonNullable<ProfileControllerState["user"]>;
 };
 
 function ProfileAvatarField({
@@ -70,9 +70,9 @@ function ProfileAvatarField({
 }
 
 function getAvatarSource(
-  preview: ProfileClientState["avatarPreview"],
-  photoURL: ProfileClientState["photoURL"],
-  version: ProfileClientState["avatarVersion"],
+  preview: ProfileControllerState["avatarPreview"],
+  photoURL: ProfileControllerState["photoURL"],
+  version: ProfileControllerState["avatarVersion"],
 ) {
   if (preview) return preview;
   if (!photoURL || !version) return photoURL ?? undefined;
@@ -80,7 +80,7 @@ function getAvatarSource(
   return `${photoURL}${photoURL.includes("?") ? "&" : "?"}v=${version}`;
 }
 
-function getFallbackInitial(user: NonNullable<ProfileClientState["user"]>) {
+function getFallbackInitial(user: NonNullable<ProfileControllerState["user"]>) {
   return (
     user.displayName?.charAt(0) ||
     user.email?.charAt(0) ||

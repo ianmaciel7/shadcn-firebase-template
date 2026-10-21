@@ -7,7 +7,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ProfileClient } from "./profile-client";
+import { ProfileCard } from "./profile-card";
 
 const mocks = vi.hoisted(() => ({
   router: { replace: vi.fn(), push: vi.fn(), refresh: vi.fn() },
@@ -89,7 +89,7 @@ vi.mock("@/lib/firebase/firestore/user-preferences", () => ({
   writeUserPreferences: mocks.writePreferences,
 }));
 
-describe("ProfileClient", () => {
+describe("ProfileCard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.getUI.mockReturnValue({
@@ -118,14 +118,14 @@ describe("ProfileClient", () => {
 
   it("renders nothing when user is null", () => {
     mocks.currentUser = null;
-    const { container } = render(<ProfileClient />);
+    const { container } = render(<ProfileCard />);
     expect(container.firstChild).toBeNull();
     expect(mocks.router.replace).toHaveBeenCalledWith("/sign-in");
   });
 
   it("renders user information with fallback when fields are not set", async () => {
     mocks.currentUser = { uid: "user-123", email: null, displayName: null };
-    render(<ProfileClient />);
+    render(<ProfileCard />);
 
     await waitFor(() => {
       expect(screen.getByText("personalInfoTitle")).toBeTruthy();
@@ -143,7 +143,7 @@ describe("ProfileClient", () => {
       displayName: "Ada Lovelace",
       photoURL: "https://example.com/photo.jpg",
     };
-    render(<ProfileClient />);
+    render(<ProfileCard />);
 
     await waitFor(() => {
       expect(
@@ -158,7 +158,7 @@ describe("ProfileClient", () => {
   it("renders language and theme preferences", async () => {
     mocks.currentUser = { uid: "user-123" };
 
-    render(<ProfileClient />);
+    render(<ProfileCard />);
 
     await waitFor(() => {
       expect(screen.getByLabelText("languageLabel")).toBeTruthy();
@@ -171,7 +171,7 @@ describe("ProfileClient", () => {
       uid: "user-123",
       email: "user@example.com",
     };
-    render(<ProfileClient />);
+    render(<ProfileCard />);
 
     const file = new File(["avatar"], "avatar.png", { type: "image/png" });
     fireEvent.change(await screen.findByLabelText("profilePhotoChange"), {
@@ -196,7 +196,7 @@ describe("ProfileClient", () => {
 
   it("shows error toast when invalid avatar is chosen", async () => {
     mocks.currentUser = { uid: "user-123", email: "user@example.com" };
-    render(<ProfileClient />);
+    render(<ProfileCard />);
 
     const file = new File(["test"], "test.txt", { type: "text/plain" });
     fireEvent.change(await screen.findByLabelText("profilePhotoChange"), {
@@ -213,7 +213,7 @@ describe("ProfileClient", () => {
     mocks.currentUser = { uid: "user-123" };
     mocks.readPreferences.mockResolvedValue({ locale: "es", theme: "dark" });
 
-    render(<ProfileClient />);
+    render(<ProfileCard />);
 
     await waitFor(() => expect(mocks.setTheme).toHaveBeenCalledWith("dark"));
     expect(mocks.readPreferences).toHaveBeenCalledWith("user-123");
@@ -221,7 +221,7 @@ describe("ProfileClient", () => {
 
   it("saves a changed theme preference and shows success toast", async () => {
     mocks.currentUser = { uid: "user-123", email: "user@example.com" };
-    render(<ProfileClient />);
+    render(<ProfileCard />);
 
     fireEvent.click(await screen.findByLabelText("themeLabel"));
     const darkOption = await screen.findByRole("option", {
@@ -252,7 +252,7 @@ describe("ProfileClient", () => {
       email: "old@example.com",
       displayName: "Old Name",
     };
-    render(<ProfileClient />);
+    render(<ProfileCard />);
 
     fireEvent.change(await screen.findByLabelText("displayNameLabel"), {
       target: { value: "New Name" },
@@ -280,7 +280,7 @@ describe("ProfileClient", () => {
 
   it("saves a changed language preference and replaces the route", async () => {
     mocks.currentUser = { uid: "user-123", email: "user@example.com" };
-    render(<ProfileClient />);
+    render(<ProfileCard />);
 
     fireEvent.click(await screen.findByLabelText("languageLabel"));
     const spanishOption = await screen.findByRole("option", {
@@ -314,7 +314,7 @@ describe("ProfileClient", () => {
       authCallback = callback;
       return () => {};
     });
-    render(<ProfileClient />);
+    render(<ProfileCard />);
     const dynamicUser = {
       uid: "uid-dynamic",
       email: "dynamic@example.com",
@@ -333,7 +333,7 @@ describe("ProfileClient", () => {
   it("signs out and redirects to /sign-in on click", async () => {
     mocks.currentUser = { uid: "user-123" };
     mocks.signOut.mockResolvedValue(undefined);
-    render(<ProfileClient />);
+    render(<ProfileCard />);
     const signOutBtn = await screen.findByRole("button", { name: "signOut" });
     expect(signOutBtn.closest('[data-slot="card-content"]')).toBeTruthy();
     await act(async () => {
@@ -347,7 +347,7 @@ describe("ProfileClient", () => {
     mocks.currentUser = { uid: "user-123" };
     mocks.signOut.mockRejectedValue(new Error("sign out failed"));
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
-    render(<ProfileClient />);
+    render(<ProfileCard />);
     const signOutBtn = await screen.findByRole("button", { name: "signOut" });
     expect(signOutBtn.closest('[data-slot="card-content"]')).toBeTruthy();
     await act(async () => {
