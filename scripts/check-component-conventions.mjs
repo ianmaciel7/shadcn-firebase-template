@@ -74,10 +74,9 @@ function componentExports(source) {
   ]);
 }
 
-function checkName(source, stem, report) {
+function checkFileName(source, stem, report) {
   if (!kebabCase.test(stem)) {
     report(source, "Component filename must be kebab-case.");
-    return;
   }
   if (environmentSuffix.test(stem)) {
     report(
@@ -85,6 +84,9 @@ function checkName(source, stem, report) {
       "Name by semantic role, never by Client/Server/Component/UI.",
     );
   }
+}
+
+function checkPrimaryExport(source, stem, report) {
   const expected = pascalCase(stem);
   const isLocalFunction = source.statements.some(
     (statement) =>
@@ -99,6 +101,9 @@ function checkName(source, stem, report) {
   if (names.length !== 1 || names[0] !== expected) {
     report(source, `Export exactly one named component ${expected}.`);
   }
+}
+
+function checkExportStyle(source, report) {
   for (const statement of source.statements) {
     if (ts.isExportAssignment(statement)) {
       report(statement, "Owned components must use named exports.");
@@ -186,7 +191,9 @@ export function inspectComponent(content, filename) {
     });
   };
   const stem = basename(filename, ".tsx");
-  checkName(source, stem, report);
+  checkFileName(source, stem, report);
+  checkPrimaryExport(source, stem, report);
+  checkExportStyle(source, report);
   checkProps(source, pascalCase(stem), report);
   checkClientImports(source, report);
   return findings;
