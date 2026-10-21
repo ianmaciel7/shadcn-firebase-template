@@ -1,10 +1,10 @@
 import { useTranslations } from "next-intl";
 import { useProfileSession } from "./use-profile-session";
-import { useProfileView } from "./use-profile-view";
+import { useProfileStatus } from "./use-profile-status";
 
 export function useProfileSection() {
   const profile = useProfileSession();
-  const view = useProfileView(profile);
+  const state = useProfileStatus(profile);
   const t = useTranslations("Auth");
-  return { profile, view, t };
+  return { profile, state, t };
 }

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   inspectComponent,
+  inspectNaming,
   isOwnedComponent,
 } from "./check-component-conventions.mjs";
 
@@ -246,6 +247,49 @@ describe("owned component conventions", () => {
         'const t = useTranslations("Auth");',
       ),
       path,
+    );
+  });
+
+  it("bans View and Screen naming in owned components, hooks and aliases", () => {
+    const component = "src/app/_components/account-section.tsx";
+    const hook = "src/app/_hooks/use-account-status.ts";
+    for (const [file, code] of [
+      [component, "function AccountView() {}"],
+      [component, "function AccountScreen() {}"],
+      [hook, "export function useAccountView() {}"],
+      [hook, "const screen = getState();"],
+      [hook, "const { view } = useAccount();"],
+      [component, 'import { Screen } from "external";'],
+      ["src/app/_hooks/use-account-screen.ts", "export const status = 1;"],
+    ])
+      assert.ok(inspectNaming(code, file).length, code);
+    assert.deepEqual(
+      inspectNaming(
+        'import { AccountScreen as AccountContent } from "external"; function AccountSection() {}',
+        component,
+      ),
+      [],
+    );
+    assert.deepEqual(
+      inspectNaming(
+        'import type { Viewport } from "next"; const preview = true;',
+        hook,
+      ),
+      [],
+    );
+    assert.deepEqual(
+      inspectNaming(
+        "function AccountScreen() {}",
+        "src/components/firebase/account-screen.tsx",
+      ),
+      [],
+    );
+    assert.deepEqual(
+      inspectNaming(
+        "const screen = getScreen();",
+        "src/app/_hooks/account.test.ts",
+      ),
+      [],
     );
   });
 

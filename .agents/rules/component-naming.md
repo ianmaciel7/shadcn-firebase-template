@@ -75,13 +75,19 @@ References: [shadcn/ui Field](https://ui.shadcn.com/docs/components/field), [sha
 
 Owned components keep rendering, translations, primitive prop forwarding and simple UI composition. Place stateful effects, Firebase operations and asynchronous workflow handlers in responsibility-specific custom hooks. Components may call several focused hooks; do not restore a single controller that owns every field and action.
 
-- Expose discriminated view states for session screens (`loading`, `hidden`, `error`, `ready`). Components render `view.status` and an already resolved error message, rather than deriving readiness from user, authentication and preferences flags.
-- Keep responsibilities local: `useProfileView` derives screen state, `useProfileForm` coordinates form lifecycle, `useProfileAvatarField` prepares avatar data, and `useProfileSignOut` handles logout. Auth provider, gate, navigation button and auth flow navigation have separate hooks.
+- Expose discriminated status states for session components (`loading`, `hidden`, `error`, `ready`). Components render `state.status` and an already resolved error message, rather than deriving readiness from user, authentication and preferences flags.
+- Keep responsibilities local: `useProfileStatus` derives session status, `useProfileForm` coordinates form lifecycle, `useProfileAvatarField` prepares avatar data, and `useProfileSignOutButton` handles logout. Auth provider, gate, navigation button and auth flow navigation have separate hooks.
 - `check:components` rejects React state/effect imports (including aliases), namespace state/effect calls, Firebase value imports, async workflow functions, compound `if` conditions/derived locals and error fallbacks inside owned component functions. Async Server Components, simple discriminated-state branches, translations, form context and presentation props such as `disabled={disabled || pending}` remain valid.
 - The guard checks syntax, not arbitrary semantic equivalence or the ideal number of hooks. Generated Firebase/UI registries and Next.js special files retain their existing scope exclusions. Module-level setup is outside component branch analysis.
 
 ### Component-named orchestration hooks
 
-A component that uses behavior/context hooks or coordinates multiple hooks must call a single imported `use<ComponentName>` hook in a separate hook module. For example, `ProfileSection` calls `useProfileSection`, which composes `useProfileSession`, `useProfileView` and translations internally. `ProfileAvatarField`, `ProfileSaveButton`, `ProfileSignOutButton`, profile fields and auth flows follow the same naming rule. Their hooks may compose focused hooks; this does not restore a global controller.
+A component that uses behavior/context hooks or coordinates multiple hooks must call a single imported `use<ComponentName>` hook in a separate hook module. For example, `ProfileSection` calls `useProfileSection`, which composes `useProfileSession`, `useProfileStatus` and translations internally. `ProfileAvatarField`, `ProfileSaveButton`, `ProfileSignOutButton`, profile fields and auth flows follow the same naming rule. Their hooks may compose focused hooks; this does not restore a global controller.
 
 `check:components` verifies the called hook's canonical imported name (including aliased imports), rejects extra hook calls alongside it, and rejects missing imports. Components with no hooks and components using only one presentation hook (`useTranslations`, `useFormatter` or `useId`) do not require a boilerplate wrapper. This rule applies to all owned component functions; existing vendor and route-entrypoint exclusions remain.
+
+### Banned generic naming terms
+
+Do not use `View` or `Screen` as words in owned component, hook, type, variable, parameter, import-binding or file names. Use the responsibility instead (`ProfileSection`, `useProfileSection`, `useProfileStatus`, `AuthContent`, `AuthFlow`). `useProfileStatus` replaces `useProfileView`; profile rendering consumes `state.status`.
+
+`check:components` scans owned `.ts` and `.tsx` files throughout `src`, including hooks and library modules. CamelCase and kebab-case words are checked, so `AccountScreenState` and `use-account-view.ts` fail; unrelated words such as `Viewport` and `preview` remain valid. Generated registries and test/story files retain their exclusions. Preserve external API export names, but alias their local bindings (`SignInAuthScreen as SignInAuthContent`).

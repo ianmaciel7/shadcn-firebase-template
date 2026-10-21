@@ -25,9 +25,9 @@ import { ProfileSignOutButton } from "./profile-sign-out-button";
 import { ProfileThemeField } from "./profile-theme-field";
 
 function ProfileSection() {
-  const { profile, view, t } = useProfileSection();
+  const { profile, state, t } = useProfileSection();
 
-  if (view.status === "loading") {
+  if (state.status === "loading") {
     return (
       <ProfileCard>
         <ProfileCardContent>
@@ -39,13 +39,13 @@ function ProfileSection() {
     );
   }
 
-  if (view.status === "hidden") return null;
+  if (state.status === "hidden") return null;
 
-  if (view.status === "error") {
+  if (state.status === "error") {
     return (
       <ProfileCard>
         <ProfileCardContent>
-          <p role="alert">{view.message}</p>
+          <p role="alert">{state.message}</p>
         </ProfileCardContent>
       </ProfileCard>
     );
@@ -54,7 +54,7 @@ function ProfileSection() {
   return (
     <ProfileSessionContext value={profile}>
       <ProfileCard>
-        <ProfileForm key={view.userId}>
+        <ProfileForm key={state.userId}>
           <ProfileCardHeader>
             <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
             <ProfileCardDescription>

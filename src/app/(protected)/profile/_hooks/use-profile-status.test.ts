@@ -2,7 +2,7 @@ import { renderHook } from "@testing-library/react";
 import type { User } from "firebase/auth";
 import { describe, expect, it, vi } from "vitest";
 import type { useProfileSession } from "./use-profile-session";
-import { useProfileView } from "./use-profile-view";
+import { useProfileStatus } from "./use-profile-status";
 
 vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }));
 
@@ -33,18 +33,18 @@ function session(overrides: Partial<Session> = {}): Session {
   };
 }
 
-describe("useProfileView", () => {
+describe("useProfileStatus", () => {
   it.each([
     session({ authReady: false }),
     session({ preferencesReady: false }),
   ])("waits for authentication and user preferences", (pending) => {
-    const { result } = renderHook(() => useProfileView(pending));
+    const { result } = renderHook(() => useProfileStatus(pending));
     expect(result.current).toEqual({ status: "loading" });
   });
 
   it("hides the profile after unauthenticated redirect without an error", () => {
     const { result } = renderHook(() =>
-      useProfileView(session({ user: null, defaultValues: null })),
+      useProfileStatus(session({ user: null, defaultValues: null })),
     );
     expect(result.current).toEqual({ status: "hidden" });
   });
@@ -56,7 +56,7 @@ describe("useProfileView", () => {
     "resolves a missing-defaults error in the hook: $expected",
     ({ error, expected }) => {
       const { result } = renderHook(() =>
-        useProfileView(session({ defaultValues: null, error })),
+        useProfileStatus(session({ defaultValues: null, error })),
       );
       expect(result.current).toEqual({ status: "error", message: expected });
     },
@@ -64,7 +64,7 @@ describe("useProfileView", () => {
 
   it("renders an authentication error instead of hiding it", () => {
     const { result } = renderHook(() =>
-      useProfileView(session({ user: null, error: "Authentication failed" })),
+      useProfileStatus(session({ user: null, error: "Authentication failed" })),
     );
     expect(result.current).toEqual({
       status: "error",
@@ -73,7 +73,7 @@ describe("useProfileView", () => {
   });
 
   it("provides the authenticated user's identity only when ready", () => {
-    const { result } = renderHook(() => useProfileView(session()));
+    const { result } = renderHook(() => useProfileStatus(session()));
     expect(result.current).toEqual({ status: "ready", userId: "user-123" });
   });
 });

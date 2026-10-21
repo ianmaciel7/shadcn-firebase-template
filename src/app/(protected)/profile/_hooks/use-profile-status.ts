@@ -1,7 +1,9 @@
 import { useTranslations } from "next-intl";
 import type { useProfileSession } from "./use-profile-session";
 
-export function useProfileView(session: ReturnType<typeof useProfileSession>) {
+export function useProfileStatus(
+  session: ReturnType<typeof useProfileSession>,
+) {
   const t = useTranslations("Auth");
   const { user, error, defaultValues, authReady, preferencesReady } = session;
   if (!authReady || (user && !preferencesReady))

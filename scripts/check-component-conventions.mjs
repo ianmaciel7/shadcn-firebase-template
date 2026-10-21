@@ -796,6 +796,76 @@ export function inspectComponent(content, filename) {
   return findings;
 }
 
+function hasBannedNamingTerm(name) {
+  return name
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
+    .split(/[^A-Za-z0-9]+/)
+    .some((word) => /^(view|screen)$/i.test(word));
+}
+
+function isOwnedNamingFile(filename) {
+  const path = filename.replaceAll("\\", "/");
+  return (
+    path.startsWith("src/") &&
+    /\.tsx?$/.test(path) &&
+    !/\.(test|spec|stories)\.tsx?$/.test(path) &&
+    !/^src\/components\/(firebase|ai-elements)\//.test(path) &&
+    (!path.startsWith("src/components/ui/") ||
+      path.startsWith("src/components/ui/extensions/"))
+  );
+}
+
+function declaredName(node) {
+  if (ts.isImportSpecifier(node)) return node.name;
+  if (ts.isImportClause(node)) return node.name;
+  if (ts.isNamespaceImport(node)) return node.name;
+  if (
+    ts.isFunctionDeclaration(node) ||
+    ts.isClassDeclaration(node) ||
+    ts.isTypeAliasDeclaration(node) ||
+    ts.isInterfaceDeclaration(node) ||
+    ts.isVariableDeclaration(node) ||
+    ts.isBindingElement(node) ||
+    ts.isParameter(node)
+  )
+    return node.name;
+  return undefined;
+}
+
+export function inspectNaming(content, filename) {
+  if (!isOwnedNamingFile(filename)) return [];
+  const findings = [];
+  const source = ts.createSourceFile(
+    filename,
+    content,
+    ts.ScriptTarget.Latest,
+    true,
+    filename.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  );
+  function report(node, name) {
+    const position = source.getLineAndCharacterOfPosition(
+      node.getStart(source),
+    );
+    findings.push({
+      file: filename,
+      line: position.line + 1,
+      column: position.character + 1,
+      message: `Do not use View or Screen as naming terms (${name}); choose a concrete responsibility such as Status, Section, Content or Flow.`,
+    });
+  }
+  if (hasBannedNamingTerm(basename(filename).replace(/\.tsx?$/, "")))
+    report(source, basename(filename));
+  function visit(node) {
+    const name = declaredName(node);
+    if (name && ts.isIdentifier(name) && hasBannedNamingTerm(name.text))
+      report(name, name.text);
+    ts.forEachChild(node, visit);
+  }
+  visit(source);
+  return findings;
+}
+
 function scan(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const path = join(directory, entry.name);
@@ -805,13 +875,15 @@ function scan(directory) {
 }
 
 export function checkComponents(root) {
-  const files = [
-    ...scan(join(root, "src/app")),
-    ...scan(join(root, "src/components")),
-  ];
+  const files = scan(join(root, "src"));
   return files.flatMap((file) => {
     const path = relative(root, file).split(sep).join("/");
-    return inspectComponent(readFileSync(file, "utf8"), path);
+    if (!/\.tsx?$/.test(path)) return [];
+    const content = readFileSync(file, "utf8");
+    return [
+      ...inspectNaming(content, path),
+      ...inspectComponent(content, path),
+    ];
   });
 }
 
