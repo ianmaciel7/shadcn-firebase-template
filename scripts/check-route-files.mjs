@@ -144,11 +144,13 @@ function isAllowedExportedArrow(node) {
   );
 }
 
-function checkFunction(node) {
+function checkArrowFunction(node) {
   if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
     if (!isAllowedExportedArrow(node)) return messages.callback;
-    return;
   }
+}
+
+function checkNamedFunction(node) {
   if (!ts.isFunctionDeclaration(node)) return;
   const modifiers = node.modifiers ?? [];
   const exported = modifiers.some(
@@ -172,7 +174,8 @@ const checks = [
   checkMutableDeclaration,
   checkEventHandler,
   checkBrowserApi,
-  checkFunction,
+  checkArrowFunction,
+  checkNamedFunction,
 ];
 
 export function isRouteEntrypoint(path) {
