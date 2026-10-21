@@ -14,10 +14,9 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-The current lockfile contains package-manager metadata without the full
-application dependency graph. Before a clean installation can use the frozen
-workflow above, regenerate and review the application lockfile with the pinned
-pnpm version. See [Package management](TOOLING.md#package-management).
+pnpm 12 stores package-manager metadata and the application dependency graph
+in separate YAML documents within the committed lockfile. Read both documents
+when inspecting it. See [Package management](TOOLING.md#package-management).
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

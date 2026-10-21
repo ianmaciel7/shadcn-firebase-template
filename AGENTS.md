@@ -97,3 +97,11 @@ unavailable network lookups or host tools without claiming they passed.
 When `/save` is requested, use `.agents/skills/save/SKILL.md` to persist verified
 knowledge in its canonical document. Preserve accepted ADRs and local changes;
 document a new architectural decision in a new ADR when one is actually made.
+
+## Composition applies across runtime boundaries
+
+Apply the [compound component contract](CODING_STANDARDS.md#compound-components-and-serverclient-boundaries) to all
+owned components, both Server and Client. Composition and runtime are separate
+axes; a missing `"use client"` directive does not classify a shared module's
+complete import graph. `pnpm check:components` enforces the documented subset
+with regression cases for both boundary and directive-free modules.

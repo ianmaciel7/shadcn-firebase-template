@@ -28,6 +28,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Unused code | Knip | 6.41.0 | Finds unused files, exports, and dependencies. | `knip.jsonc` |
 | Architecture boundaries | dependency-cruiser | 18.6.0 | Enforces layering rules and forbids dependency cycles. | `.dependency-cruiser.cjs` |
 | Structural rules | ast-grep | 0.51.0 | Enforces form, prop, Tailwind, and route conventions, with warning-level React review hints. Rules have snapshot tests. | `sgconfig.yml`, `.ast-grep/` |
+| Component contracts | TypeScript compiler API | Uses the existing TypeScript dependency | Checks repository-specific named families and adapter forwarding through `pnpm check:components`; does not duplicate native framework diagnostics. | `scripts/check-component-conventions.mjs`, `scripts/check-component-composition.mjs`, their regression tests, `package.json` |
 | Duplication | jscpd | 5.4.1 | Reports meaningful duplicated code. | `.jscpd.json` |
 | Complexity and health | Fallow | 3.34.0 | Reports complexity, CRAP score (from real coverage), and hotspots. Route-private hooks under `src/app/**/_hooks/` are included. `.ladle/` is excluded on purpose: it is tooling glue that Ladle loads by convention. Vendored `src/components/ui/*.tsx` and `ai-elements` are excluded; custom code under `ui/extensions/` is analyzed. Dead-code, duplication, and architecture analysis stay with Knip, jscpd, and dependency-cruiser. | `.fallowrc.json` |
 | React diagnostics | React Doctor | 0.9.18 | Scans application React code for correctness, performance, and security issues. | `doctor.config.json` |
@@ -76,15 +77,12 @@ by hand outside the hook may need the same variable.
 
 Use [pnpm](https://pnpm.io/) `12.14.0`, as pinned by the `packageManager`
 field in `package.json`. The `pnpm-lock.yaml` file is the lockfile of record.
-Inspect its importer
-coverage before asserting that every dependency version is locked; the current
-file contains package-manager dependency metadata rather than the complete
-application dependency graph.
-
-Before relying on `pnpm install --frozen-lockfile` for a clean checkout,
-regenerate the application dependency graph with the pinned pnpm version and
-review the resulting lockfile. Documentation-only work should report this
-baseline limitation without silently resolving or upgrading dependencies.
+pnpm 12 serializes two YAML documents in this file: package-manager dependency
+metadata first, followed by the application importers, packages, and snapshots.
+Read the complete stream when inspecting lock coverage; the first document
+alone is not evidence of a missing application dependency graph. Validate
+frozen installs with the pinned pnpm version. Documentation-only work should
+not silently resolve or upgrade dependencies.
 
 Do not approve third-party build scripts unless a reviewed dependency needs
 them for documented core functionality. ADR 0007 also prohibits approving tools
@@ -113,7 +111,7 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm check:duplicates` | jscpd. |
 | `pnpm check:structure` | ast-grep rule tests, then a scan of application code. |
 | `pnpm check:routes` | Enforce thin `page.tsx`, `layout.tsx` and `template.tsx` entrypoints with AST tests. |
-| `pnpm check:components` | Test and enforce owned component semantic names, matching named exports, props names and client/server import boundaries; registry code excluded. |
+| `pnpm check:components` | Test and enforce owned component names, family-root/part exports, primitive-adapter forwarding, static-compound restrictions, and direct client-boundary checks; registry code excluded. |
 | `pnpm check:spelling` / `pnpm check:markdown` | CSpell / markdownlint. |
 | `pnpm check:security` / `pnpm check:security:rules` | Semgrep scan of `src` (fails on findings) / tests of the Semgrep rules. Run inside a Git work tree. |
 | `pnpm check:secrets` / `pnpm audit` | Gitleaks / dependency audit. |
@@ -163,6 +161,7 @@ theming decision is recorded in ADR 0003.
 | `biome.json` | Biome formatting, linting, and custom-rule configuration. |
 | `.biome/rules/nextjs/*.grit` | GritQL source for project-specific Biome rules. |
 | `components.json` | shadcn/ui configuration and import aliases. |
+| `scripts/check-component-conventions.mjs`, `scripts/check-component-composition.mjs` | Owned component naming/family conventions and adapter forwarding; regression tests are colocated `*.test.mjs` files. |
 | `vitest.config.mts` | `unit` and `browser` projects and coverage. |
 | `vitest.mutation.config.mts` | Unit-only Vitest config used by Stryker. |
 | `playwright.config.ts` | Playwright projects, web server, and screenshot tolerance. |
@@ -193,6 +192,8 @@ valid and invalid tests, before registering a new custom rule.
 
 | Rule | Owner | Severity | Scope | Why it is not native |
 | --- | --- | --- | --- | --- |
+| `owned-component-composition` | TypeScript AST (`scripts/check-component-composition.mjs`) | error | All owned component modules, Server and Client, through `pnpm check:components` | TypeScript permits dropping inherited props and constructing static compound APIs; this enforces our separate-named-export and adapter-forwarding contract. Checks remaining props and extracted children/className. Tests live in `scripts/check-component-composition.test.mjs`. [Coverage and limits](CODING_STANDARDS.md#composition-guard-coverage). |
+| `owned-component-family` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | All owned component modules, Server and Client | Root-prefixed family names, filename/export matching, and local function declarations are repository conventions that TypeScript and Next.js allow alternatives to. Preserves the existing direct client-boundary checks, with type-only imports excluded. The complete RSC graph remains a Next.js build responsibility. |
 | `prefer-page-props` | Grit (Biome plugin) | error | `export default async function Page({ params }: {...})` | Next.js accepts compatible hand-written types, so TypeScript will not reject them. This enforces the generated `PageProps<"/route">` helper ([Next.js docs](https://nextjs.org/docs/app/api-reference/file-conventions/page)). Convention, not a framework requirement. |
 | `prefer-layout-props` | Grit (Biome plugin) | error | `export default function Layout({ children }: { children: ReactNode })` | Same reasoning for `LayoutProps<"/route">`. `Readonly<{ children: ReactNode }>` is not matched. |
 | `prefer-route-context` | Grit (Biome plugin) | error | Route Handlers `GET`/`POST`/`PUT`/`PATCH`/`DELETE` with a hand-written `{ params }` | Same reasoning for `RouteContext<"/route">`. |
@@ -256,6 +257,11 @@ Recheck current documentation before adding a replacement rule.
   passes `ref` as a prop; relaxed for vendored components), and the `next` and
   `react` domains, which include `noNestedComponentDefinitions`,
   `useHookAtTopLevel`, and `useExhaustiveDependencies`.
+- **Native async client-component check:** Biome 2.5.15 provides
+  `lint/correctness/noNextAsyncClientComponent`, enabled by the configured
+  Next.js domain. Its diagnostics cover default exports, inline named exports,
+  and local named functions exported separately. Keep this responsibility in
+  Biome instead of duplicating it in the custom component guard.
 - **Not available in 2.4.2:** `noInlineStyles`, `noTailwindRawColors`,
   `noTailwindArbitraryValue`, `useTailwindShorthandClasses`. Revisit after a
   Biome upgrade; do not reintroduce them as Grit rules.
@@ -332,7 +338,8 @@ Reusable agent skills and MCP configuration live in `.agents/`. Run
 `agents sync --check` before opening a pull request that changes them.
 
 The configured MCP servers are Serena and Next.js DevTools. The installed
-skills are `ask-matt`, `context7-cli`, `save`, `setup-matt-pocock-skills`, and `shadcn`;
+seven skills are `ask-matt`, `context7-cli`, `firebase-basics`,
+`firebase-auth-basics`, `save`, `setup-matt-pocock-skills`, and `shadcn`;
 see the [agent inventory](.agents/README.md). Configuration does not guarantee
 that an external executable is installed or a server is running.
 

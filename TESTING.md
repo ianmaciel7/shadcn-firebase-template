@@ -263,3 +263,19 @@ Do not infer accessibility from the component name, generated source, or an axe
 pass alone. Use browser interaction checks for focus, portals, and keyboard
 behavior. Add regression tests for changed application behavior, rather than
 mirroring third-party implementation details.
+
+## Compound component guard regression tests
+
+`pnpm check:components` runs the naming/profile safety tests and the general
+composition regression suite, then scans all owned components. New cases cover
+valid named families in both directive-free and client-boundary modules, simple
+components without invented parts, unrelated exports, static compound mutation,
+renamed primitive imports and bindings, forwarded/rest props, extracted
+children/className, type-only imports, and async Server Components. Async
+client-component diagnostics belong to Biome's native
+`noNextAsyncClientComponent`; the custom suite verifies that responsibility is
+not duplicated. Keep valid counterexamples alongside rejected cases.
+
+The [coverage contract](CODING_STANDARDS.md#composition-guard-coverage) records
+what the guard can prove. It does not resolve arbitrary component anatomy or
+transitive RSC imports; builds and behavior tests still validate those paths.

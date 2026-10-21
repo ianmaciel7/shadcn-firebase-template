@@ -108,6 +108,126 @@ When standards conflict, apply them in this order:
 - Use Tailwind CSS and the existing design tokens. Avoid inline styles unless a
   value must be computed at runtime.
 
+### Compound components and Server/Client boundaries
+
+These conventions apply to **all application-owned components**, both Server
+and Client Components: route-private `_components/`, shared `src/components/`,
+and `src/components/ui/extensions/`. They are not limited to the profile route.
+Generated registry trees retain their documented exclusions.
+
+Composition describes a component's public API. A compound component exposes a
+root and independently usable parts, such as `Card`, `CardHeader`, `CardTitle`,
+and `CardContent`. The caller assembles those parts through `children` or named
+slots. Each adapter inherits its corresponding primitive's props and forwards
+applicable attributes, `className`, `children`, and `ref`. React 19 can carry
+`ref` through the ordinary props contract and spread.
+
+A simple `Button`, field, or application view does not need invented parts or
+an unused `children` prop. A primitive adapter preserves the primitive contract;
+a feature view may own its content, actions, and loading states. Do not confuse
+a fixed feature view with a general-purpose Card adapter.
+
+Use separate named exports from one family module. `account-card.tsx` declares
+`AccountCard` plus any actual parts named `AccountCardHeader`,
+`AccountCardContent`, etc. The root matches the filename, every part is a local
+named function with the same root prefix, and each props type matches its part.
+Unrelated components belong in their own modules. The exact profile families
+retain their additional safety checks.
+
+```tsx
+import type { ComponentProps } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
+function AccountCard(props: ComponentProps<typeof Card>) {
+  return <Card {...props} />;
+}
+
+function AccountCardHeader(props: ComponentProps<typeof CardHeader>) {
+  return <CardHeader {...props} />;
+}
+
+function AccountCardContent(props: ComponentProps<typeof CardContent>) {
+  return <CardContent {...props} />;
+}
+
+export { AccountCard, AccountCardHeader, AccountCardContent };
+```
+
+At the call site, the caller supplies the content for each part:
+
+```tsx
+<AccountCard>
+  <AccountCardHeader>{heading}</AccountCardHeader>
+  <AccountCardContent>{children}</AccountCardContent>
+</AccountCard>
+```
+
+Compose only the parts with content. An adapter that extracts `className` merges
+it with its layout classes using `cn`; an extracted `children` value must reach
+the primitive. Forward remaining standard props instead of copying a small
+selection such as `id` and `title` and silently dropping everything else.
+
+Server/Client describes module graphs and rendering, independently of compound
+anatomy. It is not a third component naming taxonomy:
+
+| Situation | Meaning |
+| --- | --- |
+| Module without a directive | It can participate in the server graph, client graph, or both depending on imports; the missing directive alone does not prove it is a Server Component |
+| Module with `"use client"` in its directive prologue | It establishes a client boundary; its runtime dependencies join the client graph without repeating the directive in every file |
+| Client Component on an initial request | Next.js can render its initial HTML on the server and hydrate it in the browser; Client does not mean browser-only rendering |
+| Server parent passes `<ServerDetails />` as `children` to a Client Component | The server renders the details and passes their output; the Client Component does not import the server module |
+| Ordinary callback inside the client graph | It can pass between Client Components; React serialization constraints apply when values cross the Server-to-Client boundary |
+
+Keep browser interactivity behind the smallest useful client boundary. Shared
+components do not gain a runtime from names such as `Card`, `Form`, `Header`,
+`Section`, or `Provider`. `"use server"` marks server functions; it is not a
+way to declare an ordinary Server Component. An exported component at a client
+boundary cannot be an async function; an async event handler inside it is valid.
+
+Expose compound parts as named exports rather than assigning static properties
+such as `AccountCard.Header = AccountCardHeader` or using
+`Object.assign(AccountCard, { Header })`. A Server Component importing a Client
+Component receives a client reference, so looking up an arbitrary static part
+on it is not a safe cross-boundary API. Named exports let the framework create
+an independent reference for each client part. This is our portable project
+contract even for a family currently used inside one graph; upstream React also
+supports static compound patterns within a single graph.
+
+The import graph and the rendered tree are different. A client boundary must
+not import runtime server-only APIs. Type-only imports are erased and do not
+establish runtime dependencies. Passing server-rendered nodes through slots is
+valid; importing their server-only implementation into client code is not.
+See the installed Next.js boundary guide and the
+[official Server and Client boundary reference](https://nextjs.org/docs/app/guides/server-and-client-boundary).
+
+### Composition guard coverage
+
+`pnpm check:components` tests and runs the TypeScript AST guard for all owned
+components, without restricting the scan to files with `"use client"`.
+It enforces semantic filenames, a matching family root, locally declared named
+parts with the root prefix, matching props names, and separate named exports.
+It rejects static component-property assignment and direct `Object.assign`,
+`Object.defineProperty`, or `Object.defineProperties` on a component family.
+
+For direct returned adapters whose local parameter contract resolves to
+`ComponentProps<typeof Primitive>` (including React's ref variants, local type
+aliases, intersections, and `Omit`) and whose primitive is a named value import
+from `@/components/ui/`, the guard checks remaining-props spreads and forwarding
+of explicitly extracted `children` and `className`, including renamed bindings.
+It also detects client directives in the full directive prologue, ignores
+erased type imports, and preserves the existing direct runtime server-only
+import checks at client boundaries. Biome's native
+`noNextAsyncClientComponent` rule owns async client-component diagnostics;
+the custom composition guard does not duplicate it.
+
+This is a bounded source guard, not a proof of complete RSC behavior. It does
+not resolve the transitive import graph, barrel/namespace imports, arbitrary
+wrapper helpers, external/interface type contracts, conditional return trees,
+all prop/ref data flow, or the semantic purpose of a slot. It does not infer
+that every component without a directive is server-only or require every view
+to have compound parts. TypeScript, Next.js builds, structural checks, and
+behavior/accessibility tests remain responsible for their respective contracts.
+
 ### Form and Field Architecture (shadcn/ui & React Hook Form)
 
 Use `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, and `FieldError`

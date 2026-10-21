@@ -146,10 +146,11 @@ Firebase Authentication provides browser authentication on public auth routes an
 client-guarded protected routes (`(protected)/profile`); see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md).
 Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`; Firestore
 operations live in descriptive modules under `src/lib/firebase/firestore/`, such
-as `user-preferences.ts`. The profile route's `useProfileSubmit` hook coordinates
-its Auth, Storage, and Firestore updates; `ProfileForm` owns the form instance,
-submission state, and reset. `ProfileSection` loads the session and composes
-the Card parts. The canonical profile responsibilities live in
+as `user-preferences.ts`. The profile route's `useProfileActions` hook coordinates its Auth, Storage,
+and Firestore updates. `useProfileController` assembles the session, field, and
+action props for `ProfileSection`, which composes the Card parts. `ProfileForm`
+owns its form instance and submission/reset handler. The canonical profile
+responsibilities live in
 [the form rule](.agents/rules/form-architecture.md). Profile preferences use
 Firestore at `users/{uid}` with owner and field/value validation rules. Avatar
 Storage rules restrict `users/{uid}/avatar` to its owner and enforce accepted
@@ -187,3 +188,14 @@ The repository consumes registries; it does not publish a custom registry.
 Monorepo, package-import, React Aria, Radix, alternative form-library, and
 server-action examples in upstream documentation are available references,
 not adopted architecture. See [the upstream applicability map](docs/agents/shadcn.md).
+
+## Compound APIs and runtime graphs
+
+All owned UI follows the general
+[compound component contract](CODING_STANDARDS.md#compound-components-and-serverclient-boundaries).
+Server/Client graph membership is independent of component anatomy. Shared
+modules can be compiled in both graphs; server-rendered children can be passed
+into client slots without importing server code into the client graph. Named
+part exports preserve an independent reference for each client part across
+that boundary. The [composition guard](CODING_STANDARDS.md#composition-guard-coverage)
+checks local contracts and leaves complete graph validation to Next.js.

@@ -228,6 +228,11 @@ Base radius `--radius: 0.625rem` (10px). Derived tokens:
 
 ## Component composition contracts
 
+The [general composition contract](CODING_STANDARDS.md#compound-components-and-serverclient-boundaries)
+applies to all owned components, both Server and Client. It defines family
+exports, primitive adapters, feature views, and runtime boundaries; this section
+owns the visual anatomy and spacing.
+
 Compose the installed primitives and their named parts. Cards use `CardHeader`,
 `CardTitle`, optional `CardDescription`/`CardAction`, `CardContent`, and optional
 `CardFooter`; include parts that have content rather than empty placeholders.

@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { basename, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
+import { checkComponentComposition } from "./check-component-composition.mjs";
 
 const kebabCase = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 const environmentSuffix = /-(client|server|component|ui)$/;
@@ -38,11 +39,13 @@ function exported(statement) {
 function namedExports(statement) {
   if (
     !ts.isExportDeclaration(statement) ||
+    statement.isTypeOnly ||
     !statement.exportClause ||
     !ts.isNamedExports(statement.exportClause)
   )
     return [];
   return statement.exportClause.elements
+    .filter((specifier) => !specifier.isTypeOnly)
     .map((specifier) => specifier.name.text)
     .filter((name) => /^[A-Z]/.test(name));
 }
@@ -89,10 +92,17 @@ function checkFileName(source, stem, report) {
 const profileCardParts = [
   "ProfileCard",
   "ProfileCardHeader",
+  "ProfileCardAction",
   "ProfileCardTitle",
   "ProfileCardDescription",
   "ProfileCardContent",
   "ProfileCardFooter",
+];
+
+const profileFormParts = [
+  "ProfileForm",
+  "ProfileFormContent",
+  "ProfileFormFooter",
 ];
 
 function expectedComponentNames(source, stem) {
@@ -100,7 +110,14 @@ function expectedComponentNames(source, stem) {
   if (path.endsWith("/profile/_components/profile-card.tsx")) {
     return profileCardParts;
   }
-  return [pascalCase(stem)];
+  if (path.endsWith("/profile/_components/profile-form.tsx")) {
+    return profileFormParts;
+  }
+  const root = pascalCase(stem);
+  const parts = componentExports(source).filter(
+    (name) => name.startsWith(root) && /^[A-Z]/.test(name.slice(root.length)),
+  );
+  return [root, ...parts];
 }
 
 function checkPrimaryExport(source, stem, report) {
@@ -147,13 +164,10 @@ function checkExportStyle(source, report) {
   }
 }
 
-function checkProps(source, expected, report) {
-  const allowed = (
-    source.fileName
-      .replaceAll("\\", "/")
-      .endsWith("/profile/_components/profile-card.tsx")
-      ? profileCardParts
-      : [expected]
+function checkProps(source, _expected, report) {
+  const allowed = expectedComponentNames(
+    source,
+    basename(source.fileName, ".tsx"),
   ).map((name) => `${name}Props`);
   for (const statement of source.statements) {
     if (
@@ -172,12 +186,30 @@ function checkProps(source, expected, report) {
 }
 
 function isClientBoundary(source) {
-  const first = source.statements[0];
-  return (
-    first &&
-    ts.isExpressionStatement(first) &&
-    ts.isStringLiteral(first.expression) &&
-    first.expression.text === "use client"
+  for (const statement of source.statements) {
+    if (
+      !ts.isExpressionStatement(statement) ||
+      !ts.isStringLiteral(statement.expression)
+    )
+      break;
+    if (statement.expression.text === "use client") return true;
+  }
+  return false;
+}
+
+function isRuntimeImport(statement) {
+  const clause = statement.importClause;
+  if (!clause) return true;
+  if (clause.isTypeOnly) return false;
+  if (
+    clause.name ||
+    !clause.namedBindings ||
+    ts.isNamespaceImport(clause.namedBindings) ||
+    clause.namedBindings.elements.length === 0
+  )
+    return true;
+  return clause.namedBindings.elements.some(
+    (specifier) => !specifier.isTypeOnly,
   );
 }
 
@@ -186,6 +218,7 @@ function checkClientImports(source, report) {
   for (const statement of source.statements) {
     if (
       ts.isImportDeclaration(statement) &&
+      isRuntimeImport(statement) &&
       ts.isStringLiteral(statement.moduleSpecifier) &&
       serverImports.test(statement.moduleSpecifier.text)
     ) {
@@ -261,7 +294,7 @@ function checkProfilePropDrilling(source, report) {
   visit(source);
 }
 
-function jsxEntries(source) {
+function jsxEntries(source, root = source) {
   const elements = [];
 
   function visit(node, ancestors = []) {
@@ -278,7 +311,7 @@ function jsxEntries(source) {
     ts.forEachChild(node, (child) => visit(child, ancestors));
   }
 
-  visit(source);
+  visit(root);
   return elements;
 }
 
@@ -324,6 +357,7 @@ function checkProfileCardSafety(source, elements, report) {
   }
   for (const primitive of [
     "CardHeader",
+    "CardAction",
     "CardTitle",
     "CardDescription",
     "CardContent",
@@ -537,6 +571,21 @@ function checkProfileFormSafety(source, stem, report) {
   ) {
     return;
   }
+  if (stem === "profile-form") {
+    for (const [name, partCheck] of [
+      ["ProfileForm", checkProfileProviderSafety],
+      ["ProfileFormContent", checkProfileContentSafety],
+      ["ProfileFormFooter", checkProfileFooterSafety],
+    ]) {
+      const declaration = source.statements.find(
+        (statement) =>
+          ts.isFunctionDeclaration(statement) && statement.name?.text === name,
+      );
+      if (declaration)
+        partCheck(source, jsxEntries(source, declaration), report);
+    }
+    return;
+  }
   check(source, jsxEntries(source), report);
 }
 
@@ -567,6 +616,11 @@ export function inspectComponent(content, filename) {
   checkExportStyle(source, report);
   checkProps(source, pascalCase(stem), report);
   checkClientImports(source, report);
+  checkComponentComposition(
+    source,
+    expectedComponentNames(source, stem),
+    report,
+  );
   checkFieldControllerNames(source, stem, report);
   checkProfilePropDrilling(source, report);
   checkProfileFormSafety(source, stem, report);
