@@ -21,11 +21,15 @@ auto-updates as you edit the file.
 
 ## After creating a repository from this template
 
-1. Run `pnpm setup:github` (requires authenticated `gh` CLI) to configure GitHub
-   repository merge policies (Squash only, Auto-merge enabled) and enable branch
-   protection on the default branch (`CI result` required check, strict linear
-   history, conversation resolution). GitHub template repositories do not inherit
-   branch protection or repository settings from their template automatically.
+1. Run `pnpm setup:github` locally with a `gh` CLI session authenticated
+   as a repository administrator. This configures Squash-only merges,
+   auto-merge, and protection of the default branch (required `CI result`
+   check, strict linear history, and review-conversation resolution). GitHub
+   template repositories do not inherit these settings automatically.
+   Repository administration is deliberately **not** performed by GitHub
+   Actions: the default `GITHUB_TOKEN` lacks permission to modify rulesets,
+   and privileged repository secrets must not be exposed to branch-selectable
+   workflows. Re-run the local command when repository policies change.
 2. Rename the package in `package.json`, update the application metadata and
    replace the starter home page. Update the README and domain documentation.
 3. Keep the generic Playwright smoke, localization-request, and new-tab safety
