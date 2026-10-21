@@ -88,6 +88,8 @@
     "loading": "Cargando…",
     "shadcnDocs": "shadcn/ui",
     "firebaseDocs": "Firebase",
-    "source": "GitHub"
+    "source": "GitHub",
+    "signingOut": "Cerrando sesión…",
+    "signOutError": "No se pudo cerrar la sesión. Inténtalo de nuevo."
   }
 }

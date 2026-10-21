@@ -88,6 +88,8 @@
     "loading": "Carregando…",
     "shadcnDocs": "shadcn/ui",
     "firebaseDocs": "Firebase",
-    "source": "GitHub"
+    "source": "GitHub",
+    "signingOut": "Saindo…",
+    "signOutError": "Não foi possível sair. Tente novamente."
   }
 }

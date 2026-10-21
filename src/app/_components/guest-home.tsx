@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { buttonVariants } from "@/components/ui/button";
 import { HomeScreen } from "./home-screen";
 
 function GuestHome() {
@@ -9,8 +11,18 @@ function GuestHome() {
       description={t("description")}
       primaryHref="/sign-in"
       primaryLabel={t("signIn")}
-      secondaryHref="/register"
-      secondaryLabel={t("getStarted")}
+      secondaryAction={
+        <Link
+          href="/register"
+          className={buttonVariants({
+            variant: "outline",
+            className:
+              "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
+          })}
+        >
+          {t("getStarted")}
+        </Link>
+      }
     />
   );
 }

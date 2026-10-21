@@ -1,6 +1,7 @@
 import type { User } from "firebase/auth";
 import { useTranslations } from "next-intl";
 import { HomeScreen } from "./home-screen";
+import { HomeSignOutButton } from "./home-sign-out-button";
 
 function AuthenticatedHome({
   user,
@@ -14,8 +15,7 @@ function AuthenticatedHome({
       description={t("signedInDescription")}
       primaryHref="/profile"
       primaryLabel={t("manageAccount")}
-      secondaryHref="https://github.com/ianmaciel7/shadcn-firebase-template"
-      secondaryLabel={t("source")}
+      secondaryAction={<HomeSignOutButton />}
     />
   );
 }

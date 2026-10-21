@@ -1,4 +1,10 @@
-import { act, cleanup, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import en from "@/messages/en.json";
@@ -8,8 +14,12 @@ const mocks = vi.hoisted(() => ({
   subscribe: vi.fn(),
   unsubscribe: vi.fn(),
   getUI: vi.fn(),
+  signOut: vi.fn(),
 }));
-vi.mock("firebase/auth", () => ({ onAuthStateChanged: mocks.subscribe }));
+vi.mock("firebase/auth", () => ({
+  onAuthStateChanged: mocks.subscribe,
+  signOut: mocks.signOut,
+}));
 vi.mock("@/lib/firebase/client", () => ({ getFirebaseUI: mocks.getUI }));
 
 function renderHome() {
@@ -66,6 +76,44 @@ describe("home session", () => {
     unmount();
     expect(mocks.unsubscribe).toHaveBeenCalledOnce();
   });
+  it("only offers profile and sign out when authenticated and restores visitor home after logout", async () => {
+    mocks.signOut.mockImplementation(async () => {
+      mocks.subscribe.mock.calls[0][1](null);
+    });
+    renderHome();
+    act(() =>
+      mocks.subscribe.mock.calls[0][1]({
+        displayName: "Alex",
+        email: "alex@example.test",
+      }),
+    );
+    expect(screen.getAllByRole("link")).toHaveLength(1);
+    expect(screen.getAllByRole("button")).toHaveLength(1);
+    await act(async () =>
+      fireEvent.click(screen.getByRole("button", { name: en.Auth.signOut })),
+    );
+    expect(mocks.signOut).toHaveBeenCalledOnce();
+    expect(screen.getByRole("link", { name: en.Home.signIn })).toBeDefined();
+  });
+
+  it("allows retrying when sign out fails", async () => {
+    mocks.signOut.mockRejectedValue(new Error("network"));
+    renderHome();
+    act(() => mocks.subscribe.mock.calls[0][1]({ displayName: "Alex" }));
+    await act(async () =>
+      fireEvent.click(screen.getByRole("button", { name: en.Auth.signOut })),
+    );
+    expect(screen.getByRole("alert").textContent).toBe(en.Home.signOutError);
+    expect(
+      screen
+        .getByRole("button", { name: en.Auth.signOut })
+        .hasAttribute("disabled"),
+    ).toBe(false);
+    expect(
+      screen.getByRole("link", { name: en.Home.manageAccount }),
+    ).toBeDefined();
+  });
+
   it("keeps visitor access available if Firebase configuration is missing", () => {
     mocks.getUI.mockImplementation(() => {
       throw new Error("missing configuration");

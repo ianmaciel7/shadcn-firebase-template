@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { buttonVariants } from "@/components/ui/button";
 
 function HomeScreen({
@@ -6,15 +7,13 @@ function HomeScreen({
   description,
   primaryHref,
   primaryLabel,
-  secondaryHref,
-  secondaryLabel,
+  secondaryAction,
 }: {
   title: string;
   description: string;
   primaryHref: string;
   primaryLabel: string;
-  secondaryHref: string;
-  secondaryLabel: string;
+  secondaryAction: ReactNode;
 }) {
   return (
     <>
@@ -36,16 +35,7 @@ function HomeScreen({
         >
           {primaryLabel}
         </Link>
-        <Link
-          href={secondaryHref}
-          className={buttonVariants({
-            variant: "outline",
-            className:
-              "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
-          })}
-        >
-          {secondaryLabel}
-        </Link>
+        {secondaryAction}
       </div>
     </>
   );
