@@ -41,7 +41,7 @@ function ProfileSection() {
 
   if (state.status === "hidden") return null;
 
-  if (state.status === "error") {
+  if (state.isError) {
     return (
       <ProfileCard>
         <ProfileCardContent>
