@@ -122,6 +122,30 @@ function checkAdapterRoot(root, binding, primitive, report) {
   }
 }
 
+function isFormController(root, source) {
+  const tag = root.opening.tagName.getText(source);
+  return source.statements.some((statement) => {
+    if (
+      !ts.isImportDeclaration(statement) ||
+      !ts.isStringLiteral(statement.moduleSpecifier) ||
+      statement.moduleSpecifier.text !== "react-hook-form" ||
+      statement.importClause?.isTypeOnly
+    )
+      return false;
+    const bindings = statement.importClause?.namedBindings;
+    return (
+      bindings &&
+      ts.isNamedImports(bindings) &&
+      bindings.elements.some(
+        (binding) =>
+          !binding.isTypeOnly &&
+          binding.name.text === tag &&
+          (binding.propertyName?.text ?? binding.name.text) === "Controller",
+      )
+    );
+  });
+}
+
 function checkAdapter(declaration, source, primitives, report) {
   const parameter = declaration.parameters[0];
   if (!parameter || !declaration.body) return;
@@ -130,9 +154,19 @@ function checkAdapter(declaration, source, primitives, report) {
   const roots = declaration.body.statements
     .filter(ts.isReturnStatement)
     .map(returnRoot)
-    .filter((root) => root?.opening.tagName.getText(source) === primitive);
-  for (const root of roots)
+    .filter(Boolean);
+  for (const root of roots) {
+    // Controller delegates its visual root to a render callback, not this return.
+    if (isFormController(root, source)) continue;
+    if (root.opening.tagName.getText(source) !== primitive) {
+      report(
+        root.opening,
+        `Primitive adapters must return their inherited primitive ${primitive}.`,
+      );
+      continue;
+    }
     checkAdapterRoot(root, parameter.name, primitive, report);
+  }
 }
 
 function staticTarget(node) {

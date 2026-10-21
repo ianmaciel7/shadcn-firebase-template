@@ -164,6 +164,41 @@ describe("component composition across server and client graphs", () => {
     );
   });
 
+  it("rejects direct roots that replace the inherited primitive", () => {
+    for (const root of ["div", "OtherPrimitive"]) {
+      for (const directive of ["", '"use client";']) {
+        invalid(
+          `${directive}${adapter(`return <${root} {...props} />;`)}`,
+          /must return their inherited primitive Surface/,
+        );
+      }
+    }
+  });
+
+  it("preserves React Hook Form Controller render-prop composition", () => {
+    for (const name of ["Controller", "FieldController"]) {
+      valid(`${primitiveImport}
+        import { Controller as ${name} } from "react-hook-form";
+        ${contract}
+        function AccountCard(props: AccountCardProps) {
+          return <${name} render={() => <Surface {...props} />} />;
+        }
+        export { AccountCard };
+      `);
+    }
+    invalid(
+      `${primitiveImport}
+      import { Controller } from "another-library";
+      ${contract}
+      function AccountCard(props: AccountCardProps) {
+        return <Controller {...props} />;
+      }
+      export { AccountCard };
+    `,
+      /must return their inherited primitive Surface/,
+    );
+  });
+
   it("accepts explicit children props and preserves direct function return scope", () => {
     valid(
       adapter(
@@ -173,7 +208,7 @@ describe("component composition across server and client graphs", () => {
     );
     valid(`${primitiveImport} ${contract}
       function AccountCard(props: AccountCardProps) {
-        return <Controller render={() => <Surface />} />;
+        return <Surface {...props}><Controller render={() => <Surface />} /></Surface>;
       }
       export { AccountCard };
     `);

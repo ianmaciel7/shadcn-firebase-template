@@ -212,13 +212,18 @@ It rejects static component-property assignment and direct `Object.assign`,
 For direct returned adapters whose local parameter contract resolves to
 `ComponentProps<typeof Primitive>` (including React's ref variants, local type
 aliases, intersections, and `Omit`) and whose primitive is a named value import
-from `@/components/ui/`, the guard checks remaining-props spreads and forwarding
+from `@/components/ui/`, the guard requires a matching direct JSX root and
+checks remaining-props spreads and forwarding
 of explicitly extracted `children` and `className`, including renamed bindings.
 It also detects client directives in the full directive prologue, ignores
 erased type imports, and preserves the existing direct runtime server-only
 import checks at client boundaries. Biome's native
 `noNextAsyncClientComponent` rule owns async client-component diagnostics;
 the custom composition guard does not duplicate it.
+
+React Hook Form `Controller` roots delegate their visual output to a render
+callback and are excluded from this direct-root check; aliases of its named
+value import are recognized.
 
 This is a bounded source guard, not a proof of complete RSC behavior. It does
 not resolve the transitive import graph, barrel/namespace imports, arbitrary
