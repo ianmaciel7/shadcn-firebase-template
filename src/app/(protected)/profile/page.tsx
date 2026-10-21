@@ -1,7 +1,7 @@
-import { ProfileCard } from "./_components/profile-card";
+import { ProfileSection } from "./_components/profile-section";
 
 export const instant = false;
 
 export default function ProfilePage() {
-  return <ProfileCard />;
+  return <ProfileSection />;
 }
