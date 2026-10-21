@@ -61,43 +61,49 @@ function checkHook(node) {
   if (/^use[A-Z]/.test(name)) return messages.hook;
 }
 
+const controlFlowKinds = new Set([
+  ts.SyntaxKind.IfStatement,
+  ts.SyntaxKind.SwitchStatement,
+  ts.SyntaxKind.TryStatement,
+  ts.SyntaxKind.ForStatement,
+  ts.SyntaxKind.ForOfStatement,
+  ts.SyntaxKind.ForInStatement,
+  ts.SyntaxKind.WhileStatement,
+  ts.SyntaxKind.DoStatement,
+  ts.SyntaxKind.ConditionalExpression,
+  ts.SyntaxKind.ThrowStatement,
+]);
+
 function checkControlFlow(node) {
+  if (controlFlowKinds.has(node.kind)) return messages.branch;
+}
+
+function checkBinaryLogic(node) {
+  if (!ts.isBinaryExpression(node)) return;
+  const operator = node.operatorToken.kind;
   if (
-    ts.isIfStatement(node) ||
-    ts.isSwitchStatement(node) ||
-    ts.isTryStatement(node) ||
-    ts.isForStatement(node) ||
-    ts.isForOfStatement(node) ||
-    ts.isForInStatement(node) ||
-    ts.isWhileStatement(node) ||
-    ts.isDoStatement(node) ||
-    ts.isConditionalExpression(node) ||
-    ts.isThrowStatement(node)
+    operator === ts.SyntaxKind.AmpersandAmpersandToken ||
+    operator === ts.SyntaxKind.BarBarToken ||
+    (operator >= ts.SyntaxKind.FirstAssignment &&
+      operator <= ts.SyntaxKind.LastAssignment)
   ) {
-    return messages.branch;
+    return messages.mutation;
   }
 }
 
-function checkMutation(node) {
-  if (ts.isBinaryExpression(node)) {
-    const operator = node.operatorToken.kind;
-    if (
-      operator === ts.SyntaxKind.AmpersandAmpersandToken ||
-      operator === ts.SyntaxKind.BarBarToken ||
-      (operator >= ts.SyntaxKind.FirstAssignment &&
-        operator <= ts.SyntaxKind.LastAssignment)
-    ) {
-      return messages.mutation;
-    }
+function checkUpdateExpression(node) {
+  if (!ts.isPrefixUnaryExpression(node) && !ts.isPostfixUnaryExpression(node)) {
+    return;
   }
-  if (ts.isPrefixUnaryExpression(node) || ts.isPostfixUnaryExpression(node)) {
-    if (
-      node.operator === ts.SyntaxKind.PlusPlusToken ||
-      node.operator === ts.SyntaxKind.MinusMinusToken
-    ) {
-      return messages.mutation;
-    }
+  if (
+    node.operator === ts.SyntaxKind.PlusPlusToken ||
+    node.operator === ts.SyntaxKind.MinusMinusToken
+  ) {
+    return messages.mutation;
   }
+}
+
+function checkMutableDeclaration(node) {
   if (ts.isVariableDeclarationList(node) && node.flags & ts.NodeFlags.Let) {
     return messages.state;
   }
@@ -143,7 +149,9 @@ const checks = [
   checkSdkImport,
   checkHook,
   checkControlFlow,
-  checkMutation,
+  checkBinaryLogic,
+  checkUpdateExpression,
+  checkMutableDeclaration,
   checkEventHandler,
   checkBrowserApi,
   checkFunction,
