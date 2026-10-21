@@ -35,7 +35,7 @@ When standards conflict, apply them in this order:
   - Consolidate state variables that always transition together into a single atomic state object rather than maintaining fragmented, dependent `useState` declarations.
   - When managing external imperatively allocated browser resources (such as `URL.createObjectURL`), manage creation and revocation synchronously in handlers or during unmount cleanup, avoiding cascaded rendering ticks.
 - When a component owns several related stateful behaviors, consider a
-  component-specific hook such as `useProfileController`. The component can keep
+  component-specific hook such as `useProfileSubmit`. The component can keep
   independent hooks, while the custom hook can compose React hooks and other
   custom hooks ([Rules of Hooks](https://react.dev/reference/rules/rules-of-hooks#only-call-hooks-at-the-top-level)). Keep
   this code colocated with its route in a private `_hooks` folder when
@@ -113,22 +113,183 @@ When standards conflict, apply them in this order:
 - Use Tailwind CSS and the existing design tokens. Avoid inline styles unless a
   value must be computed at runtime.
 
+### Compound components and Server/Client boundaries
+
+These conventions apply to **all application-owned components**, both Server
+and Client Components: route-private `_components/`, shared `src/components/`,
+and `src/components/ui/extensions/`. They are not limited to the profile route.
+Generated registry trees retain their documented exclusions.
+
+Composition describes a component's public API. A compound component exposes a
+root and independently usable parts, such as `Card`, `CardHeader`, `CardTitle`,
+and `CardContent`. The caller assembles those parts through `children` or named
+slots. Each adapter inherits its corresponding primitive's props and forwards
+applicable attributes, `className`, `children`, and `ref`. React 19 can carry
+`ref` through the ordinary props contract and spread.
+
+A simple `Button`, field, or application view does not need invented parts or
+an unused `children` prop. A primitive adapter preserves the primitive contract;
+a feature view may own its content, actions, and loading states. Do not confuse
+a fixed feature view with a general-purpose Card adapter.
+
+Use separate named exports from one family module. `account-card.tsx` declares
+`AccountCard` plus any actual parts named `AccountCardHeader`,
+`AccountCardContent`, etc. The root matches the filename, every part is a local
+named function with the same root prefix, and each props type matches its part.
+Unrelated components belong in their own modules. The exact profile families
+retain their additional safety checks.
+
+```tsx
+import type { ComponentProps } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
+function AccountCard(props: ComponentProps<typeof Card>) {
+  return <Card {...props} />;
+}
+
+function AccountCardHeader(props: ComponentProps<typeof CardHeader>) {
+  return <CardHeader {...props} />;
+}
+
+function AccountCardContent(props: ComponentProps<typeof CardContent>) {
+  return <CardContent {...props} />;
+}
+
+export { AccountCard, AccountCardHeader, AccountCardContent };
+```
+
+At the call site, the caller supplies the content for each part:
+
+```tsx
+<AccountCard>
+  <AccountCardHeader>{heading}</AccountCardHeader>
+  <AccountCardContent>{children}</AccountCardContent>
+</AccountCard>
+```
+
+Compose only the parts with content. An adapter that extracts `className` merges
+it with its layout classes using `cn`; an extracted `children` value must reach
+the primitive. Forward remaining standard props instead of copying a small
+selection such as `id` and `title` and silently dropping everything else.
+
+Server/Client describes module graphs and rendering, independently of compound
+anatomy. It is not a third component naming taxonomy:
+
+| Situation | Meaning |
+| --- | --- |
+| Module without a directive | It can participate in the server graph, client graph, or both depending on imports; the missing directive alone does not prove it is a Server Component |
+| Module with `"use client"` in its directive prologue | It establishes a client boundary; its runtime dependencies join the client graph without repeating the directive in every file |
+| Client Component on an initial request | Next.js can render its initial HTML on the server and hydrate it in the browser; Client does not mean browser-only rendering |
+| Server parent passes `<ServerDetails />` as `children` to a Client Component | The server renders the details and passes their output; the Client Component does not import the server module |
+| Ordinary callback inside the client graph | It can pass between Client Components; React serialization constraints apply when values cross the Server-to-Client boundary |
+
+Keep browser interactivity behind the smallest useful client boundary. Shared
+components do not gain a runtime from names such as `Card`, `Form`, `Header`,
+`Section`, or `Provider`. `"use server"` marks server functions; it is not a
+way to declare an ordinary Server Component. An exported component at a client
+boundary cannot be an async function; an async event handler inside it is valid.
+
+Expose compound parts as named exports rather than assigning static properties
+such as `AccountCard.Header = AccountCardHeader` or using
+`Object.assign(AccountCard, { Header })`. A Server Component importing a Client
+Component receives a client reference, so looking up an arbitrary static part
+on it is not a safe cross-boundary API. Named exports let the framework create
+an independent reference for each client part. This is our portable project
+contract even for a family currently used inside one graph; upstream React also
+supports static compound patterns within a single graph.
+
+The import graph and the rendered tree are different. A client boundary must
+not import runtime server-only APIs. Type-only imports are erased and do not
+establish runtime dependencies. Passing server-rendered nodes through slots is
+valid; importing their server-only implementation into client code is not.
+See the installed Next.js boundary guide and the
+[official Server and Client boundary reference](https://nextjs.org/docs/app/guides/server-and-client-boundary).
+
+### Composition guard coverage
+
+`pnpm check:components` tests and runs the TypeScript AST guard for all owned
+components, without restricting the scan to files with `"use client"`.
+It enforces semantic filenames, a matching family root, locally declared named
+parts with the root prefix, matching props names, and separate named exports.
+It rejects static component-property assignment and direct `Object.assign`,
+`Object.defineProperty`, or `Object.defineProperties` on a component family.
+
+For direct returned adapters whose local parameter contract resolves to
+`ComponentProps<typeof Primitive>` (including React's ref variants, local type
+aliases, intersections, and `Omit`) and whose primitive is a named value import
+from `@/components/ui/`, the guard requires a matching direct JSX root and
+checks remaining-props spreads and forwarding
+of explicitly extracted `children` and `className`, including renamed bindings.
+It also detects client directives in the full directive prologue, ignores
+erased type imports, and preserves the existing direct runtime server-only
+import checks at client boundaries. Biome's native
+`noNextAsyncClientComponent` rule owns async client-component diagnostics;
+the custom composition guard does not duplicate it.
+
+React Hook Form `Controller` roots delegate their visual output to a render
+callback and are excluded from this direct-root check; aliases of its named
+value import are recognized.
+
+This is a bounded source guard, not a proof of complete RSC behavior. It does
+not resolve the transitive import graph, barrel/namespace imports, arbitrary
+wrapper helpers, external/interface type contracts, conditional return trees,
+all prop/ref data flow, or the semantic purpose of a slot. It does not infer
+that every component without a directive is server-only or require every view
+to have compound parts. TypeScript, Next.js builds, structural checks, and
+behavior/accessibility tests remain responsible for their respective contracts.
+
 ### Form and Field Architecture (shadcn/ui & React Hook Form)
 
-Forms across the application follow the modern shadcn `Field` architecture implemented in `src/components/ui/field.tsx`, orchestrated with `react-hook-form` and schema validation:
+Use `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, and `FieldError`
+from the installed `@/components/ui/field` alongside React Hook Form
+`Controller`. The upstream guide demonstrates a choice of schema validation;
+it does not require a specific schema library or `FormProvider` in every form.
+The profile currently uses RHF defaults, controlled values, and field-level
+rules, without a schema resolver. Add one only when the feature needs it.
 
-- **Canonical composition pattern**: Compose form inputs using `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, and `FieldError` from `@/components/ui/field` alongside React Hook Form's `<Controller>`. Prefer this modular primitive composition over monolithic form context wrappers.
-- **Form state orchestration**: Initialize forms via `useForm` typed with schema inference (e.g., `z.infer<typeof schema>`), providing an explicit validation resolver (`zodResolver` or `standardSchemaResolver`), explicit default values for every field, and reactive validation mode (`mode: "onChange"` or `mode: "onSubmit"`).
-- **Accessibility and state binding**:
-  - Bind `data-invalid={!!fieldState.error}` to the `<Field>` container.
-  - Bind `aria-invalid={!!fieldState.error}` to the interactive control (`<Input>`, `<Textarea>`, `<NativeSelect>`).
-  - Explicitly connect `<FieldLabel htmlFor={id}>` with the control's `id`.
-  - Display validation errors using `<FieldError>{fieldState.error.message}</FieldError>`.
-- **Default values requirement**: Always supply a complete `defaultValues` object matching the form schema shape to prevent React warnings regarding uncontrolled components switching to controlled.
-- **Form taxonomy and naming**: Structure form components according to the taxonomy in `.agents/rules/component-naming.md`:
-  - `*-form.tsx`: Primary interactive orchestrator component handling submission and action callbacks.
-  - `*-fields.tsx`: Composite sections grouping multiple inputs via `<FieldGroup>`.
-  - `*-field.tsx`: Granular, reusable field units (label + input + error/description).
+- Initialize complete defaults for controlled values. When external values
+  change, choose RHF `values` or `reset` deliberately and preserve unsaved edits.
+- Follow [.agents/rules/form-architecture.md](.agents/rules/form-architecture.md)
+  for the single form instance, compound children, Provider boundary, profile
+  operation lock, reset, avatar cleanup, and fixed button action types. These
+  are repository policies rather than universal shadcn/ui requirements.
+- Use `FieldGroup` for field layout and `FieldSet` with `FieldLegend` for
+  semantically related controls. `*-fields.tsx` is available for a real grouped
+  responsibility, not a requirement to wrap every set of inputs.
+- Bind `data-invalid={fieldState.invalid}` on `Field` and
+  `aria-invalid={fieldState.invalid}` on the interactive control; for Select,
+  put the latter on `SelectTrigger`. Connect labels with stable control IDs.
+  Use `FieldError errors={[fieldState.error]}` when invalid, or its supported
+  children API for a specific message.
+- Bind Select through `value` and `onValueChange`; inspect local types for
+  nullable values. Do not copy Radix-only props into Base UI components.
+- Use `InputGroupInput`/`InputGroupTextarea` within `InputGroup`, with
+  `InputGroupAddon` and the matching button component for embedded actions.
+- Use native validation where appropriate. A documentation demo's `noValidate`
+  is a demonstration choice, not a production default. Client validation never
+  replaces Firebase Security Rules or server authorization.
+
+### shadcn/ui API and accessibility
+
+Read [.agents/rules/shadcn-ui.md](.agents/rules/shadcn-ui.md) before UI work and
+use the CLI workflow in [TOOLING.md](TOOLING.md#shadcnui-cli-workflow). Base UI
+uses `render` and presence state attributes; Radix `asChild` and
+`data-state` examples do not establish the local API. For navigation, apply
+`buttonVariants` to a real anchor or Link instead of rendering an anchor
+through Base UI Button, which supplies button semantics.
+
+Keep Select items inside `SelectGroup`, menu items in the corresponding group,
+and Tabs triggers inside `TabsList`. Dialog, Sheet, and Drawer need an
+accessible title; avatars need a fallback. An icon-only action needs a localized
+accessible name. Preserve `ref`, applicable element props, keyboard behavior,
+and focus management when adapting primitives. Use `ComponentProps` of the
+actual primitive, not a prop contract copied from a different base.
+
+Use semantic colors and existing variants. Application classes should primarily
+control layout; shared visual changes belong in the primitive or theme. Use
+the `cn` package directly or the existing `@/lib/utils` re-export rather than
+reintroducing a `clsx`/`tailwind-merge` helper. Preserve intentional registry
+exclusions while keeping application extensions subject to normal checks.
 
 ### Dependency Inversion and Composition in Screen and Presentation Components
 

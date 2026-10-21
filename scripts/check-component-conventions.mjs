@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { basename, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
+import { checkComponentComposition } from "./check-component-composition.mjs";
 
 const kebabCase = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
 const environmentSuffix = /-(client|server|component|ui)$/;
@@ -38,11 +39,13 @@ function exported(statement) {
 function namedExports(statement) {
   if (
     !ts.isExportDeclaration(statement) ||
+    statement.isTypeOnly ||
     !statement.exportClause ||
     !ts.isNamedExports(statement.exportClause)
   )
     return [];
   return statement.exportClause.elements
+    .filter((specifier) => !specifier.isTypeOnly)
     .map((specifier) => specifier.name.text)
     .filter((name) => /^[A-Z]/.test(name));
 }
@@ -110,7 +113,11 @@ function expectedComponentNames(source, stem) {
   if (path.endsWith("/profile/_components/profile-form.tsx")) {
     return profileFormParts;
   }
-  return [pascalCase(stem)];
+  const root = pascalCase(stem);
+  const parts = componentExports(source).filter(
+    (name) => name.startsWith(root) && /^[A-Z]/.test(name.slice(root.length)),
+  );
+  return [root, ...parts];
 }
 
 function checkPrimaryExport(source, stem, report) {
@@ -179,23 +186,46 @@ function checkProps(source, _expected, report) {
 }
 
 function isClientBoundary(source) {
-  const first = source.statements[0];
+  for (const statement of source.statements) {
+    if (
+      !ts.isExpressionStatement(statement) ||
+      !ts.isStringLiteral(statement.expression)
+    )
+      break;
+    if (statement.expression.text === "use client") return true;
+  }
+  return false;
+}
+
+function isRuntimeImport(statement) {
+  const clause = statement.importClause;
+  if (!clause) return true;
+  if (clause.isTypeOnly) return false;
+  if (
+    clause.name ||
+    !clause.namedBindings ||
+    ts.isNamespaceImport(clause.namedBindings) ||
+    clause.namedBindings.elements.length === 0
+  )
+    return true;
+  return clause.namedBindings.elements.some(
+    (specifier) => !specifier.isTypeOnly,
+  );
+}
+
+function isServerRuntimeImport(statement) {
   return (
-    first &&
-    ts.isExpressionStatement(first) &&
-    ts.isStringLiteral(first.expression) &&
-    first.expression.text === "use client"
+    ts.isImportDeclaration(statement) &&
+    isRuntimeImport(statement) &&
+    ts.isStringLiteral(statement.moduleSpecifier) &&
+    serverImports.test(statement.moduleSpecifier.text)
   );
 }
 
 function checkClientImports(source, report) {
   if (!isClientBoundary(source)) return;
   for (const statement of source.statements) {
-    if (
-      ts.isImportDeclaration(statement) &&
-      ts.isStringLiteral(statement.moduleSpecifier) &&
-      serverImports.test(statement.moduleSpecifier.text)
-    ) {
+    if (isServerRuntimeImport(statement)) {
       report(
         statement,
         "Never import server-only modules in a client boundary.",
@@ -791,6 +821,11 @@ export function inspectComponent(content, filename) {
   checkExportStyle(source, report);
   checkProps(source, pascalCase(stem), report);
   checkClientImports(source, report);
+  checkComponentComposition(
+    source,
+    expectedComponentNames(source, stem),
+    report,
+  );
   checkHookResponsibilities(source, report);
   checkFieldControllerNames(source, stem, report);
   checkProfilePropDrilling(source, report);

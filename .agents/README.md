@@ -18,12 +18,18 @@ Agents CLI are host tools; `next-devtools-mcp` is a project dependency.
 
 ## Installed skills
 
-The repository contains `ask-matt`, `context7-cli`, `save`,
-`setup-matt-pocock-skills`, and `shadcn`. See the
+The repository contains seven skills: `ask-matt`, `context7-cli`,
+`firebase-basics`, `firebase-auth-basics`, `save`, `setup-matt-pocock-skills`,
+and `shadcn`. See the
 [skill inventory](skills/README.md) for entrypoints and provenance.
 
-Persistent rules cover [English as the default language](rules/language.md)
-and [ADR naming and immutability](rules/adr-naming.md).
+Persistent rules cover [language](rules/language.md),
+[ADR history](rules/adr-naming.md), [component naming](rules/component-naming.md),
+[compound forms](rules/form-architecture.md),
+[data modules](rules/data-layer-modules.md),
+[route entrypoints](rules/route-special-files.md), and
+[shadcn/ui maintenance](rules/shadcn-ui.md). The
+[shadcn/ui reference](../docs/agents/shadcn.md) records upstream coverage.
 
 ## Source and local files
 
