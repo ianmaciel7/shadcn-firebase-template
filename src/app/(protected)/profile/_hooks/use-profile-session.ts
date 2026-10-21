@@ -1,68 +1,36 @@
-import { onAuthStateChanged, type User } from "firebase/auth";
 import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "@/i18n/navigation";
 import { defaultLocale, isLocale } from "@/i18n/routing";
 import { getFirebaseUI } from "@/lib/firebase/client";
 import { readUserPreferences } from "@/lib/firebase/firestore/user-preferences";
 import type { ProfileValues } from "./use-profile-actions";
+import { useProfileAuth } from "./use-profile-auth";
 
 export function useProfileSession() {
   const t = useTranslations("Auth");
   const locale = useLocale();
   const activeLocale = isLocale(locale) ? locale : defaultLocale;
-  const router = useRouter();
   const { setTheme } = useTheme();
+  const auth = useProfileAuth();
   const savedValuesRef = useRef<ProfileValues | null>(null);
-  const activeUserIdRef = useRef<string | null>(null);
 
-  const [user, setUser] = useState<User | null>(null);
-  const [defaultValues, setDefaultValues] = useState<ProfileValues | null>(
-    null,
-  );
-  const [authReady, setAuthReady] = useState(false);
-  const [preferencesReady, setPreferencesReady] = useState(false);
-  const [photoURL, setPhotoURL] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState<{
+    uid: string;
+    values: ProfileValues;
+  } | null>(null);
+  const [readyUid, setReadyUid] = useState<string | null>(null);
   const [avatarVersion, setAvatarVersion] = useState(0);
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    try {
-      const auth = getFirebaseUI().get().auth;
-      return onAuthStateChanged(
-        auth,
-        (currentUser) => {
-          if (currentUser?.uid !== activeUserIdRef.current) {
-            activeUserIdRef.current = currentUser?.uid ?? null;
-            savedValuesRef.current = null;
-            setDefaultValues(null);
-            setPreferencesReady(false);
-          }
-          setUser(currentUser);
-          setPhotoURL(currentUser?.photoURL ?? null);
-          setAuthReady(true);
-          if (!currentUser) router.replace("/sign-in");
-        },
-        (cause) => {
-          console.error(cause);
-          setError(t("profileSaveError"));
-          setAuthReady(true);
-        },
-      );
-    } catch (cause) {
-      console.error(cause);
-      setError(t("profileSaveError"));
-      setAuthReady(true);
-    }
-  }, [router, t]);
-
-  const uid = user?.uid;
+  const uid = auth.user?.uid;
+  const defaultValues = loaded?.uid === uid ? loaded.values : null;
+  const preferencesReady = Boolean(uid && readyUid === uid);
 
   useEffect(() => {
     if (!uid) return;
     let active = true;
-    setPreferencesReady(false);
+    savedValuesRef.current = null;
+    setReadyUid(null);
 
     void readUserPreferences(uid)
       .then((preferences) => {
@@ -78,7 +46,7 @@ export function useProfileSession() {
         };
 
         savedValuesRef.current = nextValues;
-        setDefaultValues(nextValues);
+        setLoaded({ uid, values: nextValues });
         if (preferences.theme) setTheme(preferences.theme);
       })
       .catch((cause) => {
@@ -86,7 +54,7 @@ export function useProfileSession() {
         if (active) setError(t("profileSaveError"));
       })
       .finally(() => {
-        if (active) setPreferencesReady(true);
+        if (active) setReadyUid(uid);
       });
 
     return () => {
@@ -96,16 +64,16 @@ export function useProfileSession() {
 
   return {
     activeLocale,
-    authReady,
-    defaultValues,
+    authReady: auth.authReady,
     avatarVersion,
-    error,
+    defaultValues,
+    error: error ?? auth.error,
+    photoURL: auth.photoURL,
     preferencesReady,
     savedValuesRef,
     setAvatarVersion,
-    setPhotoURL,
+    setPhotoURL: auth.setPhotoURL,
     setTheme,
-    user,
-    photoURL,
+    user: auth.user,
   };
 }

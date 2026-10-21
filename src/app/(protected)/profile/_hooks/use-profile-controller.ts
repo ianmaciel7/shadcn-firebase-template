@@ -29,6 +29,8 @@ export function useProfileController() {
     formProps: session.defaultValues
       ? {
           defaultValues: session.defaultValues,
+          values: session.defaultValues,
+          resetOptions: { keepDirtyValues: true },
           disabled: isBusy,
           onSubmit: actions.onSubmit,
         }
