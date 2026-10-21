@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { expect, test } from "@playwright/test";
+import esMessages from "../src/messages/es.json";
 
 for (const envFile of [".env.local", ".env"]) {
   if (fs.existsSync(envFile)) {
@@ -172,10 +173,15 @@ test("saving the profile language keeps the unprefixed route and translates afte
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
   await expect(page).toHaveURL("http://127.0.0.1:3100/profile");
   await page.getByLabel("Language", { exact: true }).click();
-  await page.getByRole("option", { name: "Español", exact: true }).click();
+  await page
+    .getByRole("option", {
+      name: esMessages.Auth.languageOptions.es,
+      exact: true,
+    })
+    .click();
   await page.getByRole("button", { name: "Save profile", exact: true }).click();
   await expect(
-    page.getByText("Información personal", { exact: true }),
+    page.getByText(esMessages.Auth.personalInfoTitle, { exact: true }),
   ).toBeVisible();
   await expect(page).toHaveURL("http://127.0.0.1:3100/profile");
   expect(
@@ -184,7 +190,7 @@ test("saving the profile language keeps the unprefixed route and translates afte
   ).toBe("es");
   await page.reload();
   await expect(
-    page.getByText("Información personal", { exact: true }),
+    page.getByText(esMessages.Auth.personalInfoTitle, { exact: true }),
   ).toBeVisible();
   await expect(page).toHaveURL("http://127.0.0.1:3100/profile");
 });

@@ -584,6 +584,11 @@ function checkStateHookImport(bindings, report) {
   }
 }
 
+function hasValueImport(bindings) {
+  if (!bindings || !ts.isNamedImports(bindings)) return true;
+  return bindings.elements.some((element) => !element.isTypeOnly);
+}
+
 function checkHookImport(statement, report) {
   if (
     !ts.isImportDeclaration(statement) ||
@@ -594,10 +599,7 @@ function checkHookImport(statement, report) {
   const clause = statement.importClause;
   if (clause?.isTypeOnly) return;
   const bindings = clause?.namedBindings;
-  const valueImport =
-    !bindings ||
-    !ts.isNamedImports(bindings) ||
-    bindings.elements.some((element) => !element.isTypeOnly);
+  const valueImport = hasValueImport(bindings);
   if (valueImport && /^(firebase\/|@\/lib\/firebase\/)/.test(module)) {
     report(
       statement,
@@ -710,7 +712,7 @@ function checkHookResponsibilities(source, report) {
     });
     return found;
   }
-  function visit(node) {
+  function checkDerivedState(node) {
     if (ts.isIfStatement(node) && hasLogic(node.expression)) {
       report(
         node.expression,
@@ -737,6 +739,9 @@ function checkHookResponsibilities(source, report) {
         "Resolve error-message fallbacks in a custom hook, not in component rendering.",
       );
     }
+  }
+  function visit(node) {
+    checkDerivedState(node);
     if (isAsyncWorkflow(node, source)) {
       report(
         node,
@@ -816,21 +821,21 @@ function isOwnedNamingFile(filename) {
   );
 }
 
+const namedDeclarationKinds = new Set([
+  ts.SyntaxKind.ImportSpecifier,
+  ts.SyntaxKind.ImportClause,
+  ts.SyntaxKind.NamespaceImport,
+  ts.SyntaxKind.FunctionDeclaration,
+  ts.SyntaxKind.ClassDeclaration,
+  ts.SyntaxKind.TypeAliasDeclaration,
+  ts.SyntaxKind.InterfaceDeclaration,
+  ts.SyntaxKind.VariableDeclaration,
+  ts.SyntaxKind.BindingElement,
+  ts.SyntaxKind.Parameter,
+]);
+
 function declaredName(node) {
-  if (ts.isImportSpecifier(node)) return node.name;
-  if (ts.isImportClause(node)) return node.name;
-  if (ts.isNamespaceImport(node)) return node.name;
-  if (
-    ts.isFunctionDeclaration(node) ||
-    ts.isClassDeclaration(node) ||
-    ts.isTypeAliasDeclaration(node) ||
-    ts.isInterfaceDeclaration(node) ||
-    ts.isVariableDeclaration(node) ||
-    ts.isBindingElement(node) ||
-    ts.isParameter(node)
-  )
-    return node.name;
-  return undefined;
+  return namedDeclarationKinds.has(node.kind) ? node.name : undefined;
 }
 
 export function inspectNaming(content, filename) {

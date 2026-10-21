@@ -16,20 +16,19 @@ export function useProfileForm() {
     disabled: isSigningOut || isSaving,
   });
 
-  async function handleSubmit(values: ProfileFormValues) {
+  function handleSubmit(values: ProfileFormValues) {
     if (isSigningOut || isSaving) return;
     setIsSaving(true);
-    try {
-      const savedValues = await onSubmit(values);
-      if (savedValues) {
-        form.reset(
-          { ...savedValues, avatarFile: null },
-          { keepDirtyValues: false },
-        );
-      }
-    } finally {
-      setIsSaving(false);
-    }
+    return onSubmit(values)
+      .then((savedValues) => {
+        if (savedValues) {
+          form.reset(
+            { ...savedValues, avatarFile: null },
+            { keepDirtyValues: false },
+          );
+        }
+      })
+      .finally(() => setIsSaving(false));
   }
 
   return { form, handleSubmit, isSigningOut, setIsSigningOut };
