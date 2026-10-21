@@ -367,7 +367,13 @@ function spreadAfter(attributes, position) {
   return attributes.slice(position + 1).some(ts.isJsxSpreadAttribute);
 }
 
-function checkFixedProfileButtonType(button, attributes, stem, expected, report) {
+function checkFixedProfileButtonType(
+  button,
+  attributes,
+  stem,
+  expected,
+  report,
+) {
   const typeIndex = attributePosition(attributes, "type");
   const typeAttribute = attributes[typeIndex];
   const typeValue = typeAttribute?.initializer;
