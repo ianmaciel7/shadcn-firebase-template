@@ -127,9 +127,27 @@ function checkBrowserApi(node) {
   }
 }
 
+function isAllowedExportedArrow(node) {
+  const parent = node.parent;
+  if (ts.isExportAssignment(parent) && !parent.isExportEquals) return true;
+  if (!ts.isVariableDeclaration(parent) || parent.initializer !== node) {
+    return false;
+  }
+  if (!ts.isIdentifier(parent.name)) return false;
+  const statement = parent.parent.parent;
+  return (
+    ts.isVariableStatement(statement) &&
+    statement.modifiers?.some(
+      (modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword,
+    ) &&
+    permittedNextFunctions.has(parent.name.text)
+  );
+}
+
 function checkFunction(node) {
   if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
-    return messages.callback;
+    if (!isAllowedExportedArrow(node)) return messages.callback;
+    return;
   }
   if (!ts.isFunctionDeclaration(node)) return;
   const modifiers = node.modifiers ?? [];
