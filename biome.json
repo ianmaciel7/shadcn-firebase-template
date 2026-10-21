@@ -160,6 +160,33 @@
           }
         }
       }
+    },
+    {
+      "includes": [
+        "src/app/**",
+        "src/components/**",
+        "src/hooks/**",
+        "!src/components/ui/*.tsx",
+        "!src/components/ai-elements/**",
+        "!src/components/firebase/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "next/router": "Use next/navigation in App Router code.",
+                  "next/head": "Use the App Router Metadata API.",
+                  "next/document": "Use the App Router root layout.",
+                  "next/app": "Use App Router layouts and providers."
+                }
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }

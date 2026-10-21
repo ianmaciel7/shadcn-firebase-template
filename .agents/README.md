@@ -56,3 +56,8 @@ unrequested servers or approve package-provided agent skills (ADR 0007).
 Generated tool configuration and local state must remain untracked. The
 selected integrations and sync mode determine the materialized outputs; use
 `agents status` instead of assuming every supported output exists.
+
+The [Next.js maintenance rule](rules/nextjs.md) connects the version-matched
+installed docs to the [complete source review](../docs/agents/nextjs.md).
+Use that reference for App Router, Cache Components, and framework diagnostic
+ownership; existing route and component rules retain their stricter scope.

@@ -81,3 +81,40 @@ registry health score is not a security audit.
 Client form validation, disabled actions, and route guards do not authorize
 Firebase data access. Preserve the existing Firestore and Storage ownership,
 field/value, MIME type, and upload-size checks when updating UI source.
+
+## Next.js server and environment boundaries
+
+Server Components do not make all imported modules or returned props private.
+Keep privileged server data access in a `server-only` boundary and project only
+the fields the client needs. Client Components can render initial HTML on the
+server and must still be treated as browser code. `"use server"` identifies
+callable Server Functions; it does not establish user or resource permissions.
+
+If a Server Function or Route Handler is introduced, validate untrusted inputs
+and authenticate and authorize the operation at its data-access boundary.
+Page redirects, client guards, Proxy matchers, hidden buttons, encrypted action
+identifiers, and closed-over values do not replace those checks. Review response
+serialization, upload limits, error disclosure, and cookie options with the
+new endpoint. The current Firebase Web SDK continues to rely on its Security
+Rules; Firebase Admin would require a separate server authorization design.
+
+`NEXT_PUBLIC_*` values are public and inlined at build time. Also treat every
+entry in `next.config.ts`'s `env` object as public bundle configuration,
+regardless of its prefix. This project lists Auth and Firestore emulator host
+addresses there; never add credentials, Admin service-account data, private
+keys, or session secrets. A prefix-free name in that object is not secret.
+Changing a deployment environment does not rewrite already-built public values.
+
+Shared caching must preserve tenant/user isolation and permission changes.
+Do not put cookie stores, request headers, tokens, or privileged results into
+a shared cache through closures or unresolved promises. Resolve request inputs
+outside the cache, authorize access, and deliberately choose cache keys,
+returned fields, lifetime, and invalidation. Cache invalidation is not access
+control. Private/remote cache examples and taint APIs are optional tools, not
+proof that cached data is safe.
+
+For new external image sources, use narrow `remotePatterns`; validate external
+URLs and proxy destinations to prevent unintended server requests. A dynamic
+nonce-based CSP, instrumentation exporter, or hosting adapter needs a deployment
+and rendering review. None is enabled by this documentation update. See the
+[official data-security and environment sources](docs/agents/nextjs.md).

@@ -57,13 +57,15 @@ instead of a stubbed `matchMedia`).
 - Do not write a test only to make a tool report success. When a tool has no
   suitable subject yet, leave it unused and say so.
 
-Four Vitest suites verify configuration rather than application behavior:
+Five Vitest suites verify configuration rather than application behavior:
 `src/messages/messages.test.ts` checks that every locale catalog has the same
 keys and ICU arguments as the default locale and no empty messages, and
 `.biome/rules/nextjs/rules.test.ts` and `.biome/rules/dom/rules.test.ts` lint
 fixtures to prove each Grit rule reports invalid code and accepts valid code.
 `.biome/rules/react/rules.test.ts` verifies the hook error-flag convention
 and its file scope.
+`.biome/rules/nextjs/app-router-imports.test.ts` verifies the native App Router
+import policy and its exclusions.
 Semgrep rules are tested with `semgrep --test` (`pnpm check:security:rules`) and
 ast-grep rules with `ast-grep test`.
 
@@ -281,3 +283,35 @@ not duplicated. Keep valid counterexamples alongside rejected cases.
 The [coverage contract](CODING_STANDARDS.md#composition-guard-coverage) records
 what the guard can prove. It does not resolve arbitrary component anatomy or
 transitive RSC imports; builds and behavior tests still validate those paths.
+
+## Next.js documentation and framework verification
+
+For a complete documentation refresh, require non-truncated inventories for
+both upstream `docs/` and `errors/`, pin source revisions, retrieve every body,
+and verify Git blob hashes. Compare the installed stable version with the
+current documentation before adopting changed APIs. Record failures explicitly;
+a URL index or a successful Context7 query alone is not complete coverage.
+See [the review record](docs/agents/nextjs.md).
+
+The App Router import policy uses native Biome diagnostics. Its colocated
+configuration regression suite tests invalid imports, valid App Router APIs,
+re-exports, each owned code area, UI extensions, and the vendor exclusion.
+It runs in the existing `unit` project; `verify:fast` and CI already include it.
+Next.js build remains responsible for its own RSC and rendering diagnostics.
+
+For changes to request APIs, caching, metadata, or navigation, use a production
+build and Playwright in addition to relevant unit tests. Verify request-specific
+content, Suspense fallbacks, direct navigation, client navigation, back/forward
+state, and mutation consistency. Test different users/locales when cache keys
+could cross those boundaries. A development-only success or a mocked router
+does not prove production prerendering or cache isolation.
+
+Async Server Components remain E2E subjects; do not add jsdom rendering
+workarounds for unsupported Vitest behavior. Server mutation/API introductions
+need authorization and invalid-input tests at the new boundary. Cookie-based
+translations and static `html lang` are separate contracts; a language-attribute
+change must cover accessibility and Cache Components rendering behavior.
+
+Local missing native bindings, blocked external lookups, and unavailable MCP
+runtime sessions are environment limitations, not successful checks. Keep CI
+requirements and coverage thresholds intact while reporting those limitations.

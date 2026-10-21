@@ -113,8 +113,11 @@ validation integrates `@cspell/dict-pt-br`.
 
 The root layout (`src/app/layout.tsx`) currently declares a static `<html
 lang="en">` attribute even when translated content is rendered through
-`IntlProvider` via the cookie. Derived applications requiring dynamic
-server-rendered `lang` attributes must read the cookie in `RootLayout`. See
+`IntlProvider` via the cookie. A dynamic server-rendered `lang` needs an explicit locale/rendering design:
+with Cache Components, awaiting a request cookie at the root above all
+`Suspense` boundaries can block prerendering. Moving the existing cookie read
+there is not a complete fix. Preserve the current behavior until that design
+and its accessibility tests are implemented. See
 [ADR 0004](docs/adr/0004-configure-internationalization.md) for the complete
 decision.
 
@@ -200,3 +203,33 @@ into client slots without importing server code into the client graph. Named
 part exports preserve an independent reference for each client part across
 that boundary. The [composition guard](CODING_STANDARDS.md#composition-guard-coverage)
 checks local contracts and leaves complete graph validation to Next.js.
+
+## Next.js rendering and cache model
+
+The installed Next.js 16.4.2 configuration explicitly enables both
+`cacheComponents` and `partialPrefetching`. The applicable model combines a
+prerendered shell, cached work, and request-time streamed content. Guidance for
+caching without Cache Components and Pages Router APIs remains migration
+reference material. See [the versioned review](docs/agents/nextjs.md).
+
+`src/i18n/request.ts` awaits `cookies()` to resolve request-specific messages.
+The async `IntlProvider` renders within the root layout's `Suspense` boundary;
+keep request access beneath a boundary that can cover it. A boundary returned
+by a component cannot cover an await already performed by that component.
+A same-segment `loading.tsx` covers the page subtree, not an earlier read in
+its layout. Metadata and viewport have their own rendering rules.
+
+The browser Firebase cache, React request memoization, Next.js server caches,
+and client navigation cache have different lifetimes. No server profile cache,
+Server Action persistence layer, Route Handler API, or custom cache handler is
+configured. `router.refresh()` does not turn browser SDK mutations into
+server cache invalidation. Implement a consistency contract when introducing
+server-owned data; its API choices belong in
+[Coding standards](CODING_STANDARDS.md#nextjs-request-data-and-caching).
+
+Route groups are URL-neutral, private folders do not create routes, and
+`src/app` is the active router. There is no Pages Router, `proxy.ts`, or
+`middleware.ts` implementation. A proxy or route-group layout is not a data
+access authorization boundary. Hosting adapters, static export, Edge runtime,
+remote/private caches, parallel/intercepted routes, and offline support are
+reviewed upstream options; this refresh does not adopt them.

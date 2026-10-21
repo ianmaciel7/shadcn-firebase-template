@@ -105,3 +105,17 @@ owned components, both Server and Client. Composition and runtime are separate
 axes; a missing `"use client"` directive does not classify a shared module's
 complete import graph. `pnpm check:components` enforces the documented subset
 with regression cases for both boundary and directive-free modules.
+
+## Next.js documentation workflow
+
+Before Next.js changes, read [.agents/rules/nextjs.md](.agents/rules/nextjs.md)
+and the relevant installed `node_modules/next/dist/docs/` guide. The complete
+[Next.js source review](docs/agents/nextjs.md) records the stable and current
+upstream revisions, including error guides. Match guidance to installed
+Next.js 16.4.2, App Router, Cache Components, and Partial Prefetching.
+
+Use native Next.js, TypeScript, and Biome diagnostics before adding custom
+rules. Keep the existing thin-route and component policies distinct from
+framework requirements. Save verified findings in the canonical guides;
+upstream documentation does not authorize dependency upgrades, new agent
+skills, hosting configuration, or migration to another rendering model.

@@ -20,7 +20,8 @@
     "src/components/firebase",
     "src/components/ui",
     "src/messages",
-    "src/lib/highlighter.tsx"
+    "src/lib/highlighter.tsx",
+    "docs/agents/nextjs-sources.json"
   ],
   "words": [
     "actionlint",
@@ -110,6 +111,11 @@
     "webgl",
     "writeln",
     "xyflow",
-    "zizmor"
+    "zizmor",
+    "codemods",
+    "prerender",
+    "prerendered",
+    "prerendering",
+    "Rspack"
   ]
 }

@@ -86,3 +86,16 @@ local adaptations, and behavior verification in the pull request. Documentation
 updates alone do not imply component, dependency, preset, or AI Elements
 migrations. Preserve unrelated working-tree changes and stage only the intended
 files or hunks.
+
+## Next.js documentation and framework changes
+
+Use [the versioned Next.js review](docs/agents/nextjs.md) before changing
+routing, cache scopes, metadata, or server boundaries. Report the installed
+version and source revision, the applicable rendering model, and the checks
+actually run. Keep framework requirements distinct from repository policies.
+
+A documentation refresh alone does not upgrade Next.js, run migration codemods,
+install suggested agent skills, select hosting, or alter Firebase persistence.
+For an authorized upgrade, review the release notes, installed CLI support,
+configuration migrations, package/lockfile diff, and production behavior in a
+focused change. Preserve accepted ADRs and unrelated working-tree changes.
