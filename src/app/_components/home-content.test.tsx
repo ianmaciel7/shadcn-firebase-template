@@ -49,7 +49,7 @@ describe("home session", () => {
       }),
     );
     expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
-      "Hello, Alex.",
+      "Welcome, Alex Smith.",
     );
     expect(
       screen

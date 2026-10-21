@@ -45,9 +45,9 @@ test("registration and persisted authentication redirect", async ({ page }) => {
   await page.getByLabel("Email Address").fill(email);
   await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Create Account" }).click();
-  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page).toHaveURL("/");
   await page.goto("/sign-in");
-  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page).toHaveURL("/");
 });
 
 test("invalid credentials and successful sign-in", async ({
@@ -67,7 +67,7 @@ test("invalid credentials and successful sign-in", async ({
   await expect(page.getByText(/invalid|incorrect/i)).toBeVisible();
   await page.locator("#password").fill(password);
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
-  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page).toHaveURL("/");
 });
 
 test("password recovery sends an emulator reset code and displays failures", async ({
@@ -132,7 +132,7 @@ test("Google popup signs in with the emulator", async ({ page }) => {
     .getByLabel(/email/i)
     .fill(`google-${crypto.randomUUID()}@example.test`);
   await popup.getByRole("button", { name: /sign in/i }).click();
-  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page).toHaveURL("/");
 });
 
 test("profile displays user email and signs out successfully", async ({
@@ -149,6 +149,8 @@ test("profile displays user email and signs out successfully", async ({
   await page.getByLabel("Email Address").fill(email);
   await page.locator("#password").fill(password);
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
+  await expect(page).toHaveURL("/");
+  await page.getByRole("link", { name: "My profile" }).click();
   await expect(page).toHaveURL(/\/profile$/);
   await expect(page.getByText(email)).toBeVisible();
   await page.getByRole("button", { name: "Sign Out" }).click();
