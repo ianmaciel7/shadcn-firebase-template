@@ -4,14 +4,13 @@ files:
   - src/app/**/page.tsx
   - src/app/**/layout.tsx
   - src/app/**/template.tsx
-  - src/app/**/loading.tsx
 ignores:
   - "**/*.test.tsx"
-severity: warning
-message: App Router special files (page, layout, template, loading) must act as thin presentation controllers/glue code; avoid colocating complex client state or side-effects directly inside them.
+severity: error
+message: App Router special files (page, layout, template) must act as thin presentation controllers/glue code; avoid colocating complex client state or side-effects directly inside them.
 note: |
   Per Next.js architecture and repository CODING_STANDARDS.md:
-  - page, layout, and template files should only perform data orchestration, read params, and compose presentation components.
+  - page, layout, and template files should only orchestrate server data, read params, and compose presentation components.
   - Client state, hooks (useState, useEffect), and interactive logic must be extracted into semantic UI components under private _components/ (e.g., _components/*-form-client.tsx) or private _hooks/.
 rule:
   any:
