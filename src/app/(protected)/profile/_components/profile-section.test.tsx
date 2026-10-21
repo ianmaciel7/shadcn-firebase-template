@@ -92,6 +92,7 @@ vi.mock("@/lib/firebase/firestore/user-preferences", () => ({
 describe("ProfileSection", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.currentUser = null;
     mocks.getUI.mockReturnValue({
       get: () => ({
         auth: {
@@ -114,7 +115,10 @@ describe("ProfileSection", () => {
     mocks.getStorage.mockReturnValue("storage");
   });
 
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+  });
 
   it("renders nothing when user is null", () => {
     mocks.currentUser = null;
@@ -361,5 +365,396 @@ describe("ProfileSection", () => {
       screen.getByRole("link", { name: "backToHome" }).getAttribute("href"),
     ).toBe("/");
     expect(screen.queryByRole("button", { name: "signOut" })).toBeNull();
+  });
+
+  it("blocks field edits while saving", async () => {
+    mocks.currentUser = {
+      uid: "user-123",
+      email: "user@example.com",
+      displayName: "Before",
+    };
+    let finishSave!: () => void;
+    mocks.updateProfile.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          finishSave = resolve;
+        }),
+    );
+    render(<ProfileSection />);
+    const name = (await screen.findByLabelText(
+      "displayNameLabel",
+    )) as HTMLInputElement;
+    fireEvent.change(name, { target: { value: "After" } });
+    fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+    await waitFor(() => expect(name.disabled).toBe(true));
+    await act(async () => finishSave());
+    await waitFor(() => expect(name.disabled).toBe(false));
+  });
+
+  it("retains an avatar after a failed save and clears it after a successful retry", async () => {
+    mocks.currentUser = { uid: "user-123", email: "user@example.com" };
+    mocks.uploadBytes.mockRejectedValueOnce(new Error("Upload failed"));
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      render(<ProfileSection />);
+      const input = (await screen.findByLabelText(
+        "profilePhotoChange",
+      )) as HTMLInputElement;
+      const file = new File(["avatar"], "avatar.png", { type: "image/png" });
+      fireEvent.change(input, { target: { files: [file] } });
+      fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+      await waitFor(() =>
+        expect(mocks.toastAdd).toHaveBeenCalledWith({
+          title: "profileSaveError",
+          type: "error",
+        }),
+      );
+      const save = await screen.findByRole("button", { name: "saveProfile" });
+      fireEvent.click(save);
+      await waitFor(() => expect(mocks.updateProfile).toHaveBeenCalled());
+      expect(mocks.uploadBytes).toHaveBeenCalledTimes(2);
+      await screen.findByRole("button", { name: "saveProfile" });
+      fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+      await waitFor(() => expect(mocks.toastAdd).toHaveBeenCalledTimes(3));
+      expect(mocks.uploadBytes).toHaveBeenCalledTimes(2);
+      expect(input.value).toBe("");
+    } finally {
+      log.mockRestore();
+    }
+  });
+  it("waits for the first authentication result before exposing the form", () => {
+    mocks.subscribe.mockImplementation(() => () => {});
+    render(<ProfileSection />);
+    expect(screen.getAllByRole("status")).toHaveLength(1);
+    expect(screen.queryByRole("button", { name: "saveProfile" })).toBeNull();
+    expect(mocks.readPreferences).not.toHaveBeenCalled();
+  });
+
+  it("waits for preferences before displaying editable fields", async () => {
+    mocks.currentUser = { uid: "user-123", email: "user@example.com" };
+    let finish!: (value: object) => void;
+    mocks.readPreferences.mockReturnValue(
+      new Promise((resolve) => {
+        finish = resolve;
+      }),
+    );
+    render(<ProfileSection />);
+    expect(screen.getByRole("status")).toBeTruthy();
+    expect(screen.queryByLabelText("emailLabel")).toBeNull();
+    await act(async () => finish({ theme: "dark" }));
+    expect(await screen.findByLabelText("emailLabel")).toBeTruthy();
+    expect(screen.queryByRole("status")).toBeNull();
+  });
+
+  it("shows an accessible error instead of a form when preferences fail to load", async () => {
+    mocks.currentUser = { uid: "user-123" };
+    mocks.readPreferences.mockRejectedValue(new Error("offline"));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    render(<ProfileSection />);
+    expect((await screen.findByRole("alert")).textContent).toBe(
+      "profileSaveError",
+    );
+    expect(screen.queryByRole("button", { name: "saveProfile" })).toBeNull();
+  });
+
+  it("shows an accessible error when Firebase cannot initialize", async () => {
+    mocks.getUI.mockImplementation(() => {
+      throw new Error("missing configuration");
+    });
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    render(<ProfileSection />);
+    expect((await screen.findByRole("alert")).textContent).toBe(
+      "profileSaveError",
+    );
+    expect(mocks.readPreferences).not.toHaveBeenCalled();
+  });
+
+  it("unsubscribes from authentication when the profile unmounts", () => {
+    const unsubscribe = vi.fn();
+    mocks.subscribe.mockReturnValue(unsubscribe);
+    const { unmount } = render(<ProfileSection />);
+    unmount();
+    expect(unsubscribe).toHaveBeenCalledOnce();
+  });
+
+  it("does not send updates when the saved values are unchanged", async () => {
+    mocks.currentUser = {
+      uid: "user-123",
+      email: "user@example.com",
+      displayName: "Alex",
+    };
+    render(<ProfileSection />);
+    fireEvent.click(await screen.findByRole("button", { name: "saveProfile" }));
+    await waitFor(() =>
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "profileSaved",
+        type: "success",
+      }),
+    );
+    expect(mocks.updateProfile).not.toHaveBeenCalled();
+    expect(mocks.verifyBeforeUpdateEmail).not.toHaveBeenCalled();
+    expect(mocks.uploadBytes).not.toHaveBeenCalled();
+    expect(mocks.writePreferences).not.toHaveBeenCalled();
+  });
+
+  it("does not save an empty required email", async () => {
+    mocks.currentUser = { uid: "user-123", email: "user@example.com" };
+    render(<ProfileSection />);
+    const email = await screen.findByLabelText("emailLabel");
+    fireEvent.change(email, { target: { value: "" } });
+    const form = email.closest("form");
+    if (!form) throw new Error("Profile form not found");
+    await act(async () => fireEvent.submit(form));
+    expect(email.getAttribute("aria-invalid")).toBe("true");
+    expect(mocks.updateProfile).not.toHaveBeenCalled();
+    expect(mocks.writePreferences).not.toHaveBeenCalled();
+    expect(mocks.verifyBeforeUpdateEmail).not.toHaveBeenCalled();
+  });
+
+  it("retains edits and allows retrying after a failed name update", async () => {
+    mocks.currentUser = {
+      uid: "user-123",
+      email: "user@example.com",
+      displayName: "Before",
+    };
+    mocks.updateProfile.mockRejectedValueOnce(new Error("offline"));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    render(<ProfileSection />);
+    const name = (await screen.findByLabelText(
+      "displayNameLabel",
+    )) as HTMLInputElement;
+    fireEvent.change(name, { target: { value: "After" } });
+    fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+    await waitFor(() =>
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "profileSaveError",
+        type: "error",
+      }),
+    );
+    expect(name.value).toBe("After");
+    const retry = await screen.findByRole("button", { name: "saveProfile" });
+    fireEvent.click(retry);
+    await waitFor(() =>
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "profileSaved",
+        type: "success",
+      }),
+    );
+    expect(mocks.updateProfile).toHaveBeenCalledTimes(2);
+  });
+
+  it("requests email verification while retaining the current account identity", async () => {
+    mocks.currentUser = { uid: "user-123", email: "old@example.com" };
+    render(<ProfileSection />);
+    const email = (await screen.findByLabelText(
+      "emailLabel",
+    )) as HTMLInputElement;
+    fireEvent.change(email, { target: { value: "new@example.com" } });
+    fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+    await waitFor(() =>
+      expect(mocks.verifyBeforeUpdateEmail).toHaveBeenCalledWith(
+        mocks.currentUser,
+        "new@example.com",
+      ),
+    );
+    expect(screen.getByText("old@example.com")).toBeTruthy();
+    expect(mocks.updateProfile).not.toHaveBeenCalled();
+    expect(mocks.toastAdd).toHaveBeenCalledWith({
+      title: "emailVerificationSent",
+      type: "success",
+    });
+  });
+
+  it("rejects an avatar larger than 2 MB without uploading it", async () => {
+    mocks.currentUser = { uid: "user-123", email: "user@example.com" };
+    render(<ProfileSection />);
+    const input = await screen.findByLabelText("profilePhotoChange");
+    const file = new File([new Uint8Array(2 * 1024 * 1024 + 1)], "large.png", {
+      type: "image/png",
+    });
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(mocks.toastAdd).toHaveBeenCalledWith({
+      title: "profilePhotoInvalid",
+      type: "error",
+    });
+    fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+    await waitFor(() =>
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "profileSaved",
+        type: "success",
+      }),
+    );
+    expect(mocks.uploadBytes).not.toHaveBeenCalled();
+  });
+
+  it.each(["image/jpeg", "image/webp"])(
+    "accepts a %s avatar and waits for Save before uploading",
+    async (type) => {
+      mocks.currentUser = { uid: "user-123", email: "user@example.com" };
+      render(<ProfileSection />);
+      const file = new File(["avatar"], "avatar", { type });
+      fireEvent.change(await screen.findByLabelText("profilePhotoChange"), {
+        target: { files: [file] },
+      });
+      expect(mocks.uploadBytes).not.toHaveBeenCalled();
+      fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+      await waitFor(() =>
+        expect(mocks.uploadBytes).toHaveBeenCalledWith("avatar-ref", file, {
+          contentType: type,
+        }),
+      );
+      await waitFor(() =>
+        expect(mocks.toastAdd).toHaveBeenCalledWith({
+          title: "profileSaved",
+          type: "success",
+        }),
+      );
+    },
+  );
+
+  it("ignores preferences from an earlier account after the user changes", async () => {
+    const first = {
+      uid: "first",
+      email: "first@example.com",
+      displayName: "First",
+    };
+    const second = {
+      uid: "second",
+      email: "second@example.com",
+      displayName: "Second",
+    };
+    mocks.currentUser = first;
+    let callback!: (user: unknown) => void;
+    let finishFirst!: (value: object) => void;
+    mocks.subscribe.mockImplementation((_auth, listener) => {
+      callback = listener;
+      listener(first);
+      return () => {};
+    });
+    mocks.readPreferences.mockReturnValueOnce(
+      new Promise((resolve) => {
+        finishFirst = resolve;
+      }),
+    );
+    render(<ProfileSection />);
+    mocks.currentUser = second;
+    act(() => callback(second));
+    const name = (await screen.findByLabelText(
+      "displayNameLabel",
+    )) as HTMLInputElement;
+    expect(name.value).toBe("Second");
+    await act(async () => finishFirst({ theme: "dark", locale: "es" }));
+    expect(name.value).toBe("Second");
+    expect(mocks.setTheme).not.toHaveBeenCalledWith("dark");
+  });
+  it("marks Save busy and prevents duplicate requests while a save is pending", async () => {
+    mocks.currentUser = {
+      uid: "user-123",
+      email: "user@example.com",
+      displayName: "Before",
+    };
+    let finish!: () => void;
+    mocks.updateProfile.mockReturnValue(
+      new Promise<void>((resolve) => {
+        finish = resolve;
+      }),
+    );
+    render(<ProfileSection />);
+    fireEvent.change(await screen.findByLabelText("displayNameLabel"), {
+      target: { value: "After" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+    const saving = await screen.findByRole("button", { name: "savingProfile" });
+    expect(saving.getAttribute("aria-busy")).toBe("true");
+    expect(saving.hasAttribute("disabled")).toBe(true);
+    expect(screen.getByRole("status").textContent).toBe("savingProfile");
+    fireEvent.click(saving);
+    expect(mocks.updateProfile).toHaveBeenCalledOnce();
+    await act(async () => finish());
+    const saved = await screen.findByRole("button", { name: "saveProfile" });
+    expect(saved.hasAttribute("disabled")).toBe(false);
+    expect(saved.getAttribute("aria-busy")).toBe("false");
+  });
+
+  it("does not apply a changed theme if saving preferences fails", async () => {
+    mocks.currentUser = { uid: "user-123", email: "user@example.com" };
+    mocks.writePreferences.mockRejectedValueOnce(new Error("offline"));
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    render(<ProfileSection />);
+    fireEvent.click(await screen.findByLabelText("themeLabel"));
+    const dark = await screen.findByRole("option", {
+      name: "themeOptions.dark",
+    });
+    fireEvent.pointerDown(dark);
+    fireEvent.pointerUp(dark);
+    fireEvent.click(dark);
+    fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+    await waitFor(() =>
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "profileSaveError",
+        type: "error",
+      }),
+    );
+    expect(mocks.setTheme).not.toHaveBeenCalledWith("dark");
+    fireEvent.click(await screen.findByRole("button", { name: "saveProfile" }));
+    await waitFor(() =>
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "profileSaved",
+        type: "success",
+      }),
+    );
+    expect(mocks.setTheme).toHaveBeenCalledWith("dark");
+  });
+
+  it("reports email verification errors without displaying success", async () => {
+    mocks.currentUser = { uid: "user-123", email: "old@example.com" };
+    mocks.verifyBeforeUpdateEmail.mockRejectedValueOnce(
+      new Error("requires-recent-login"),
+    );
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    render(<ProfileSection />);
+    const email = (await screen.findByLabelText(
+      "emailLabel",
+    )) as HTMLInputElement;
+    fireEvent.change(email, { target: { value: "new@example.com" } });
+    fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+    await waitFor(() =>
+      expect(mocks.toastAdd).toHaveBeenCalledWith({
+        title: "profileSaveError",
+        type: "error",
+      }),
+    );
+    expect(email.value).toBe("new@example.com");
+    expect(mocks.toastAdd).not.toHaveBeenCalledWith({
+      title: "emailVerificationSent",
+      type: "success",
+    });
+    expect(mocks.updateProfile).not.toHaveBeenCalled();
+  });
+
+  it("keeps the home link available during saving without submitting or signing out", async () => {
+    mocks.currentUser = {
+      uid: "user-123",
+      email: "user@example.com",
+      displayName: "Before",
+    };
+    let finish!: () => void;
+    mocks.updateProfile.mockReturnValue(
+      new Promise<void>((resolve) => {
+        finish = resolve;
+      }),
+    );
+    render(<ProfileSection />);
+    fireEvent.change(await screen.findByLabelText("displayNameLabel"), {
+      target: { value: "After" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
+    await screen.findByRole("button", { name: "savingProfile" });
+    const home = screen.getByRole("link", { name: "backToHome" });
+    expect(home.getAttribute("href")).toBe("/");
+    expect(home.hasAttribute("disabled")).toBe(false);
+    expect(mocks.signOut).not.toHaveBeenCalled();
+    await act(async () => finish());
+    await screen.findByRole("button", { name: "saveProfile" });
   });
 });
