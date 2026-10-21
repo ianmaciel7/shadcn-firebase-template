@@ -77,10 +77,10 @@
   "Home": {
     "stack": "Next.js + shadcn/ui + Firebase",
     "title": "Your next project starts here.",
-    "description": "A simple starting point with authentication, ready-to-use components and everything you need to build.",
+    "description": "Start your project with Next.js, shadcn/ui and Firebase. Sign in or create an account to continue.",
     "welcome": "Welcome, {name}.",
     "friend": "developer",
-    "signedInDescription": "You are on your home page. Start building your application here.",
+    "signedInDescription": "You are signed in. Keep building with Next.js, shadcn/ui and Firebase or manage your profile.",
     "sessionActive": "Signed in",
     "manageAccount": "My profile",
     "signIn": "Sign in",
