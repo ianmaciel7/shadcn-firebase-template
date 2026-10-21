@@ -11,6 +11,14 @@ function HomeContent() {
   const t = useTranslations("Home");
   const { ready, user } = useHomeSession();
 
+  if (!ready) {
+    return (
+      <main className="flex min-h-svh flex-1 items-center justify-center bg-background p-6 text-foreground">
+        <LoadingIndicator label={t("loading")} />
+      </main>
+    );
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground font-sans">
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 sm:items-start">
@@ -22,13 +30,7 @@ function HomeContent() {
           height={20}
           priority
         />
-        {!ready ? (
-          <LoadingIndicator label={t("loading")} />
-        ) : user ? (
-          <AuthenticatedHome user={user} />
-        ) : (
-          <GuestHome />
-        )}
+        {user ? <AuthenticatedHome user={user} /> : <GuestHome />}
       </main>
     </div>
   );
