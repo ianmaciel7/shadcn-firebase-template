@@ -289,3 +289,23 @@ form values, dialogs, pending indicators, and effect cleanup across navigation
 and back/forward. Runtime rules and cache choices are owned by
 [Coding standards](CODING_STANDARDS.md#nextjs-request-data-and-caching); the
 [upstream review](docs/agents/nextjs.md) records the matching official guides.
+
+## React identity, refs, and lifecycle presentation
+
+Keep component types and data keys stable so focus, selection, form input, and
+local UI state survive ordinary updates. Use `useId` for label/control
+associations rather than list identity. Ref forwarding and accessible primitive
+props remain part of a wrapper's public contract in React 19.
+
+A loading boundary needs a useful, accessible fallback. Effects that connect
+media, focus helpers, subscriptions, or browser resources must clean up when
+React hides or replaces their content. Hidden Activity content can preserve DOM
+and state while releasing Effects; review both preserved state and restored
+behavior. Do not assume navigation or temporary fallback means a fresh mount.
+
+Keep hydration output consistent. The existing theme suppression is a scoped
+escape hatch, not permission to suppress arbitrary mismatches. View-transition
+and optimistic UI recipes require an intentional interaction design and browser
+verification; this documentation refresh does not add animations or change
+existing loading states. Runtime rules belong in
+[Coding standards](CODING_STANDARDS.md#react-rendering-hooks-and-identity).

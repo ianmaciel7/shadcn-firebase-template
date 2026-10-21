@@ -119,3 +119,14 @@ rules. Keep the existing thin-route and component policies distinct from
 framework requirements. Save verified findings in the canonical guides;
 upstream documentation does not authorize dependency upgrades, new agent
 skills, hosting configuration, or migration to another rendering model.
+
+## React documentation workflow
+
+For React changes, read [.agents/rules/react.md](.agents/rules/react.md) and
+[the complete official-source review](docs/agents/react.md). Verify installed
+React/React DOM 19.3.1 and Compiler 1.0.0 support before adopting live examples.
+Keep React's rules distinct from stricter repository orchestration conventions.
+Use native Biome diagnostics, the existing guards, and appropriate lifecycle /
+browser tests; do not claim coverage of every upstream ESLint or Compiler rule.
+Persist verified findings with the [save skill](.agents/skills/save/SKILL.md)
+in their canonical guide, preserving accepted ADRs and local changes.

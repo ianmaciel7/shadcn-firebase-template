@@ -33,14 +33,14 @@ When standards conflict, apply them in this order:
 - **State derivation and Effect elimination**:
   - Do not use `useEffect` to copy, derive, or mirror state from props or other state variables. Calculate derived values during rendering or synchronize atomic changes directly in event handlers ([You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect)).
   - Consolidate state variables that always transition together into a single atomic state object rather than maintaining fragmented, dependent `useState` declarations.
-  - When managing external imperatively allocated browser resources (such as `URL.createObjectURL`), manage creation and revocation synchronously in handlers or during unmount cleanup, avoiding cascaded rendering ticks.
-- When a component owns several related stateful behaviors, consider a
-  component-specific hook such as `useProfileSubmit`. The component can keep
-  independent hooks, while the custom hook can compose React hooks and other
-  custom hooks ([Rules of Hooks](https://react.dev/reference/rules/rules-of-hooks#only-call-hooks-at-the-top-level)). Keep
-  this code colocated with its route in a private `_hooks` folder when
-  appropriate ([Next.js private folders](https://nextjs.org/docs/app/getting-started/project-structure#private-folders)). This is a project heuristic, not a framework requirement
-  for every component.
+  - Allocate external resources after commit in the appropriate Effect or in the user event that owns them, never during render. Pair setup with cleanup for replacement, hiding, and unmount as appropriate. An Effect can legitimately synchronize an external resource; avoid blanket rewrites that move necessary synchronization into handlers.
+- React permits composing multiple focused hooks. This repository adds the
+  stricter [component-named orchestration policy](.agents/rules/component-naming.md#component-named-orchestration-hooks)
+  for owned components: put behavior/context orchestration in a separate
+  `use<ComponentName>` hook, which may compose focused hooks internally.
+  Keep route-specific hooks in private `_hooks` folders. The documented
+  single-presentation-hook exception remains; React itself does not require
+  one orchestration hook per component.
 - **Form Architecture and State Propagation**:
   - Compound forms composed with field-component `children` use a single `useForm` and `<FormProvider {...form}>`; nested field components obtain `control` through `useFormContext()`. The repository currently enforces Providers for owned `*-form.tsx` files, although the official shadcn/ui examples do not universally require one.
   - Name standalone field components after their React Hook Form data property (for example `ProfileDisplayNameField` for `Controller name="displayName"`). Prefer built-in `FieldGroup`/`FieldSet` over arbitrary wrapper components.
@@ -454,3 +454,141 @@ installed reference. Image allowlists, script strategy, CSP, telemetry,
 instrumentation, remote cache handlers, and hosting adapters are separate
 configuration decisions. Do not enable experimental flags, run codemods, or
 install upstream agent skills simply because a guide mentions them.
+
+## React rendering, hooks, and identity
+
+The project pins React and React DOM 19.3.1 and uses React Compiler 1.0.0 in
+Next.js. [The official-source review](docs/agents/react.md) covers React,
+React DOM, Compiler, lint references, warnings, and release material. Match new
+APIs to installed exports; the live docs are updated within a major version
+and also contain experimental sections.
+
+### Pure render and immutable inputs
+
+Treat props, state, context, and hook arguments/results as snapshots. Derive
+rendered values from current inputs; update state through setters or reducers
+and make copies before changing shared arrays or objects. Updater functions
+and reducers must be pure. Local mutation of a newly created value is different
+from mutating a value received from another render or caller.
+
+Do not start network writes, subscriptions, timers, DOM changes, or object-URL
+allocation during render. React may restart or abandon render work. A ref does
+not make a render-time side effect safe. Refs hold values that do not drive
+rendering; avoid arbitrary ref reads/writes during render, preserving only
+React's documented predictable initialization patterns.
+
+Declare component types at module scope. Defining a component inside a render
+creates a new identity and can reset child state on every parent update.
+Native Biome `noNestedComponentDefinitions` and `noReactPropAssignments` are
+explicit errors in owned app/component/hook code, including UI extensions.
+The props rule checks direct assignments; it is not a proof of deep
+immutability or all state/context mutations. Keep list keys stable and based
+on data identity. `useId` is for accessibility associations, not list keys.
+Use a deliberate `key` change only when resetting a subtree is intended.
+
+### Hook dependencies and external synchronization
+
+Call state/effect and ordinary custom hooks unconditionally at the top level
+of a component or hook. Do not call them from handlers, loops, nested callbacks,
+or after an early return. React's `use` API has a documented exception for
+conditions and loops, but still belongs inside a component or hook and cannot
+be wrapped in a local `try/catch`. Preserve the stricter route-entrypoint and
+component orchestration policies where they apply.
+
+Calculate derived state during render when possible. Put work caused by a user
+action in that action's handler. Use an Effect to synchronize with an external
+system: Firebase subscriptions, browser listeners, and the current avatar
+preview lifecycle are legitimate examples. A custom hook encapsulates this
+synchronization; it does not make impure render code or redundant state valid.
+
+Declare reactive Effect dependencies accurately. Move object/function creation
+inside the Effect or restructure ownership when that removes a dependency;
+do not suppress dependency checks merely to force a once-only run. Pair each
+subscription, observer, timer, or resource with cleanup, and prevent obsolete
+async results from changing the current subject's state. Test setup/cleanup
+symmetry under Strict Mode and replacement, rather than asserting an Effect
+runs exactly once.
+
+`useEffectEvent` separates non-reactive reads from an Effect while seeing current
+props/state. Call the returned Effect Event only from the allowed local Effect
+logic; do not use it as a dependency-avoidance shortcut, ordinary click handler,
+or callback passed to a child. Its lifecycle rules need review: this project's
+Biome coverage is not claimed to implement every upstream ESLint/Compiler rule.
+
+For external stores, `useSyncExternalStore` needs a stable subscription contract,
+immutable/reused snapshots while unchanged, and matching initial server and
+hydration snapshots. `useIsMobile` currently uses a `false` server snapshot;
+keep viewport behavior tested in a real browser. Do not invent an ad hoc
+render-time store or force every SDK subscription into a new abstraction.
+
+### React 19 refs, context, and controlled inputs
+
+Function components can receive `ref` as a prop in React 19. Preserve a wrapped
+primitive's ref/props contract; the existing native `noReactForwardRef` policy
+prefers this API for owned code. `forwardRef` remains available upstream and
+is unnecessary for these new wrappers; it is not a removed React API.
+Callback refs can return cleanup functions. Avoid accidental return values
+from assignment expressions, and clean up callback-owned registrations when
+React detaches them.
+
+Context provides a value to consumers; it is not a security boundary or a
+replacement for explicit ownership. A React 19 context can be rendered as a
+provider directly, while `.Provider` remains valid. Preserve current providers
+unless changing them has a concrete purpose. Server Components cannot consume
+client context. Pass server-rendered nodes through slots instead of importing
+server implementations into the client graph.
+
+Keep controlled inputs controlled for their entire lifetime and update their
+value from the relevant input event. Use the appropriate `value`/`checked` and
+`defaultValue`/`defaultChecked` contracts; an initial undefined value followed
+by a controlled value is a different contract. Existing React Hook Form
+controllers own profile field state. Do not add another mirror state, nest
+forms, or replace that integration solely because an upstream form Action
+example exists.
+
+### Suspense, Actions, and preserved state
+
+Suspense responds to supported render-time suspension, such as `lazy` or
+reading a stable Promise with `use`; fetching inside an Effect or handler does
+not automatically activate it. Use the framework's supported data mechanisms,
+not a fresh Promise created on each client render. Rejected resources need an
+error boundary; async callbacks and event-handler failures need their own
+appropriate error handling.
+
+A React Action is transition-coordinated work and may run on the client.
+A Server Function is a separate network-callable server surface. `useTransition`
+marks non-urgent updates and provides pending feedback; it does not authorize
+a mutation, cancel obsolete requests, or guarantee custom request ordering.
+The current API requires another `startTransition` for state updates after an
+`await` when those updates should remain transitions. Keep text-input updates
+urgent. `useActionState` queues its actions; `useOptimistic` describes temporary
+UI over a confirmed base value and needs an Action plus a pure reducer/updater.
+These APIs do not replace the existing Firebase/RHF submit workflow by default.
+
+Strict Mode's extra development renders, Effect cycles, and ref callbacks are
+diagnostics, not duplicate production transactions. Activity can retain hidden
+state and DOM while tearing down Effects, then restore them on reveal.
+Suspense can also clean up and rerun layout Effects when content hides/reappears.
+Cleanup is therefore not synonymous with permanent unmount. Preserve and test
+intentional form, dialog, media, and subscription behavior across navigation.
+
+### Compiler and performance boundaries
+
+React Compiler optimizes eligible components/hooks, not every function or every
+build pipeline. Keep correctness independent of memoization. Retain intentional
+`useMemo`, `useCallback`, or `memo` when an integration needs a measured/stated
+identity contract; do not add them routinely or mechanically delete them all.
+They are not resource-lifetime or persistence guarantees.
+
+Do not add `"use memo"` everywhere or silently set `"use no memo"` to hide a
+problem. Compiler directives and options need a specific reason and validation.
+Check third-party mutable APIs and the installed compiler's diagnostics; the
+presence of React Hook Form does not establish that every API it exports is
+compatible with automatic memoization. Preserve the current integration and
+verify actual behavior before changing it.
+
+New APIs described in current docs require installed runtime/type/framework
+support. In this review, `Activity`, `ViewTransition`, `addTransitionType`, `use`,
+and `useEffectEvent` exist in React 19.3.1; `browser` is not an installed export.
+Availability alone is not a request to adopt an animation, browser-only-rendering,
+optimistic-state, or experimental Suspense feature.

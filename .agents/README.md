@@ -61,3 +61,8 @@ The [Next.js maintenance rule](rules/nextjs.md) connects the version-matched
 installed docs to the [complete source review](../docs/agents/nextjs.md).
 Use that reference for App Router, Cache Components, and framework diagnostic
 ownership; existing route and component rules retain their stricter scope.
+
+The [React maintenance rule](rules/react.md) links current official sources to
+installed runtime/Compiler support and canonical guidance. The
+[React review](../docs/agents/react.md) records complete content coverage and
+the separate versioned error catalog.
