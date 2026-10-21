@@ -254,6 +254,7 @@ function profileElements(elements, name) {
 function isInsideProfile(element, ancestors) {
   let index = element.ancestors.length - 1;
   return ancestors.every((name) => {
+    if (index < 0) return false;
     const next = element.ancestors.lastIndexOf(name, index);
     if (next < 0) return false;
     index = next - 1;
