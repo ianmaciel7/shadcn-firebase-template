@@ -19,7 +19,8 @@ const messages = {
   hook: "React/client hooks belong in _components/ or _hooks/, not route entrypoints.",
   branch:
     "Extract conditional, iterative, and error-handling logic out of route entrypoints.",
-  mutation: "Extract conditionals and mutations to a focused component or service.",
+  mutation:
+    "Extract conditionals and mutations to a focused component or service.",
   state: "Mutable local state belongs in a component, hook, or service.",
   event: "Event handlers belong in Client Components, not route entrypoints.",
   browser: "Browser APIs belong in Client Components.",
