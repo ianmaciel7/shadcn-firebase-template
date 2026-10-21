@@ -1,9 +1,11 @@
+import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
-import { Controller } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -11,18 +13,19 @@ import {
 import { isLocale, locales } from "@/i18n/routing";
 import { isThemePreference, themePreferences } from "@/lib/theme";
 import { cn } from "@/lib/utils";
-import type { ProfileClientState } from "../_hooks/use-profile-client";
+import type { ProfileValues } from "../_hooks/use-profile-actions";
 
-export type ProfilePreferenceFieldsProps = ComponentProps<"div"> & {
-  profile: ProfileClientState;
+type ProfilePreferenceFieldsProps = ComponentProps<"div"> & {
+  isBusy?: boolean;
 };
 
 function ProfilePreferenceFields({
   className,
-  profile,
+  isBusy = false,
   ...props
 }: ProfilePreferenceFieldsProps) {
-  const { control, isBusy, t } = profile;
+  const t = useTranslations("Auth");
+  const { control } = useFormContext<ProfileValues>();
 
   return (
     <div className={cn("grid grid-cols-2 gap-3", className)} {...props}>
@@ -46,11 +49,13 @@ function ProfilePreferenceFields({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {locales.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {t(`languageOptions.${option}`)}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {locales.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {t(`languageOptions.${option}`)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </Field>
@@ -74,11 +79,13 @@ function ProfilePreferenceFields({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {themePreferences.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {t(`themeOptions.${option}`)}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {themePreferences.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {t(`themeOptions.${option}`)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </Field>

@@ -40,6 +40,14 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": {
+            "maxAllowedComplexity": 15
+          }
+        }
+      },
       "suspicious": {
         "noReactForwardRef": "error"
       },
@@ -97,6 +105,9 @@
           "correctness": {
             "useExhaustiveDependencies": "off",
             "noUnusedImports": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
           },
           "performance": {
             "noImgElement": "off"

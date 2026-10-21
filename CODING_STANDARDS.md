@@ -25,6 +25,10 @@ When standards conflict, apply them in this order:
   feature-local custom hook would make its purpose and data flow clearer. React
   recommends considering a custom hook for each Effect ([Reusing Logic with
   Custom Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks#when-to-use-custom-hooks)). Remove unnecessary Effects first, and extract a hook only when it creates a useful boundary; do not add one solely to shorten a component.
+- **State derivation and Effect elimination**:
+  - Do not use `useEffect` to copy, derive, or mirror state from props or other state variables. Calculate derived values during rendering or synchronize atomic changes directly in event handlers ([You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect)).
+  - Consolidate state variables that always transition together into a single atomic state object rather than maintaining fragmented, dependent `useState` declarations.
+  - When managing external imperatively allocated browser resources (such as `URL.createObjectURL`), manage creation and revocation synchronously in handlers or during unmount cleanup, avoiding cascaded rendering ticks.
 - When a component owns several related stateful behaviors, consider a
   component-specific hook such as `useProfileClient`. The component can keep
   independent hooks, while the custom hook can compose React hooks and other
@@ -32,6 +36,20 @@ When standards conflict, apply them in this order:
   this code colocated with its route in a private `_hooks` folder when
   appropriate ([Next.js private folders](https://nextjs.org/docs/app/getting-started/project-structure#private-folders)). This is a project heuristic, not a framework requirement
   for every component.
+- **Form Architecture and State Propagation**:
+  - Always wrap composite forms (`*-form.tsx`) using React Hook Form in `<FormProvider {...form}>` (or shadcn `<Form {...form}>`).
+  - Child field components (`*-fields.tsx`, `*-field.tsx`) must obtain form state (`register`, `control`, `formState`) using `useFormContext()` rather than accepting form objects or methods via prop drilling.
+  - Form fields must use the primitives in `@/components/ui/field` (`<Field>`, `<FieldLabel>`, `<FieldError>`).
+  - Enforced automatically via the `require-form-provider` ast-grep rule. Detailed specification in `.agents/rules/form-architecture.md`.
+
+- **Data and Authentication Module Architecture**:
+  - Follow the canonical module taxonomy in [.agents/rules/data-layer-modules.md](.agents/rules/data-layer-modules.md) for data and auth boundaries:
+    - `definitions.ts`: Types, interfaces, and validation schemas (e.g. Zod schemas).
+    - `dto.ts`: Select and structure transferred data crossing system boundaries.
+    - `dal.ts`: Protected data access and authorization boundary (`verifySession()`).
+    - `data.ts`: Low-level database/persistence operations and query execution.
+    - `auth.ts`: Authentication operations answering identity verification ("Who are you?"), such as credential validation, sign-in, sign-up, password recovery, and sign-out.
+    - `session.ts`: Session lifecycle, state, token verification, and cookie persistence ("Are you authenticated and what is your active session?").
 
 ## Next.js App Router
 
@@ -82,6 +100,7 @@ When standards conflict, apply them in this order:
 - Maintain single-responsibility module separation: keep domain types, constants,
   and type guards (such as `theme.ts` and `locale.ts`) in dedicated modules under
   `src/lib/`, decoupled from persistence and database clients (e.g. `src/lib/firebase/firestore/`).
+- **No heavy business logic or state in special files**: Route entry points (`page.tsx`, `layout.tsx`, `template.tsx`, `loading.tsx`) must serve as thin composition and presentation controllers ("glue code"). They should not contain direct business logic calculations, inline client state (`useState`), or direct side-effects (`useEffect`). Extract stateful UI and client interactions into private `_components/` or `_hooks/`, and data manipulation/domain logic into `src/lib/` or dedicated service modules.
 - Use the configured `@/*` path aliases instead of deep relative imports when
   crossing module boundaries.
 - Use Tailwind CSS and the existing design tokens. Avoid inline styles unless a
