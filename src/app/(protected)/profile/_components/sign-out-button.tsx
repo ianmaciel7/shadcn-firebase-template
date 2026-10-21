@@ -17,6 +17,7 @@ function SignOutButton({
 }: SignOutButtonProps) {
   return (
     <Button
+      {...props}
       type="button"
       variant="ghost"
       className={cn(
@@ -24,7 +25,6 @@ function SignOutButton({
         className,
       )}
       disabled={disabled || isSigningOut}
-      {...props}
     >
       {isSigningOut ? (
         <Spinner data-icon="inline-start" />

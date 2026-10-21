@@ -226,6 +226,214 @@ function checkProfilePropDrilling(source, report) {
   visit(source);
 }
 
+function jsxEntries(source) {
+  const elements = [];
+
+  function visit(node, ancestors = []) {
+    if (ts.isJsxElement(node)) {
+      const name = node.openingElement.tagName.getText(source);
+      elements.push({ name, node: node.openingElement, ancestors });
+      for (const child of node.children) visit(child, [...ancestors, name]);
+      return;
+    }
+    if (ts.isJsxSelfClosingElement(node)) {
+      elements.push({ name: node.tagName.getText(source), node, ancestors });
+      return;
+    }
+    ts.forEachChild(node, (child) => visit(child, ancestors));
+  }
+
+  visit(source);
+  return elements;
+}
+
+function profileElements(elements, name) {
+  return elements.filter((element) => element.name === name);
+}
+
+function isInsideProfile(element, ancestors) {
+  let index = element.ancestors.length - 1;
+  return ancestors.every((name) => {
+    if (index < 0) return false;
+    const next = element.ancestors.lastIndexOf(name, index);
+    if (next < 0) return false;
+    index = next - 1;
+    return true;
+  });
+}
+
+function requireProfilePlacement(source, elements, name, parents, report) {
+  const matching = profileElements(elements, name);
+  if (
+    matching.length !== 1 ||
+    !matching.every((element) => isInsideProfile(element, parents))
+  ) {
+    report(source, `${name} must be inside ${parents.join(" and ")}.`);
+  }
+}
+
+function checkProfileCardSafety(source, elements, report) {
+  if (profileElements(elements, "ProfileForm").length !== 1) {
+    report(source, "ProfileCard must compose exactly one ProfileForm.");
+  }
+  for (const region of ["ProfileFormContent", "ProfileFormFooter"]) {
+    requireProfilePlacement(
+      source,
+      elements,
+      region,
+      ["Card", "ProfileForm"],
+      report,
+    );
+  }
+  for (const action of ["ProfileButton", "SignOutButton"]) {
+    requireProfilePlacement(
+      source,
+      elements,
+      action,
+      ["ProfileFormFooter", "Card", "ProfileForm"],
+      report,
+    );
+    for (const button of profileElements(elements, action)) {
+      const typeProp = button.node.attributes.properties.find(
+        (attribute) =>
+          ts.isJsxAttribute(attribute) && attribute.name.text === "type",
+      );
+      if (typeProp) {
+        report(
+          typeProp,
+          `${action} must not accept an override of its fixed type.`,
+        );
+      }
+    }
+  }
+  if (profileElements(elements, "form").length > 0) {
+    report(source, "Do not nest an HTML form inside ProfileForm.");
+  }
+}
+
+function checkProfileProviderSafety(source, elements, report) {
+  const nativeForms = profileElements(elements, "form");
+  if (
+    nativeForms.length !== 1 ||
+    !isInsideProfile(nativeForms[0], ["FormProvider"])
+  ) {
+    report(
+      source,
+      "ProfileForm must provide exactly one HTML form inside FormProvider.",
+    );
+  }
+  if (
+    profileElements(elements, "FieldGroup").length ||
+    profileElements(elements, "Button").length
+  ) {
+    report(
+      source,
+      "ProfileForm must delegate fields and actions to its children.",
+    );
+  }
+}
+
+function checkProfileContentSafety(source, elements, report) {
+  const groups = profileElements(elements, "FieldGroup");
+  if (
+    profileElements(elements, "CardContent").length !== 1 ||
+    groups.length !== 1 ||
+    !isInsideProfile(groups[0], ["CardContent"]) ||
+    profileElements(elements, "form").length
+  ) {
+    report(
+      source,
+      "ProfileFormContent must wrap FieldGroup in CardContent without a nested form.",
+    );
+  }
+}
+
+function checkProfileFooterSafety(source, elements, report) {
+  if (profileElements(elements, "CardFooter").length !== 1) {
+    report(
+      source,
+      "ProfileFormFooter must use the shadcn CardFooter primitive.",
+    );
+  }
+}
+
+function attributePosition(attributes, name) {
+  return attributes.findIndex(
+    (attribute) => ts.isJsxAttribute(attribute) && attribute.name.text === name,
+  );
+}
+
+function spreadAfter(attributes, position) {
+  return attributes.slice(position + 1).some(ts.isJsxSpreadAttribute);
+}
+
+function checkFixedProfileButtonType(
+  button,
+  attributes,
+  stem,
+  expected,
+  report,
+) {
+  const typeIndex = attributePosition(attributes, "type");
+  const typeAttribute = attributes[typeIndex];
+  const typeValue = typeAttribute?.initializer;
+  if (
+    !typeValue ||
+    !ts.isStringLiteral(typeValue) ||
+    typeValue.text !== expected ||
+    spreadAfter(attributes, typeIndex)
+  ) {
+    report(
+      button.node,
+      `${stem} must enforce type="${expected}" after any spread props.`,
+    );
+  }
+}
+
+function checkFixedProfileButtonDisabled(button, attributes, stem, report) {
+  const disabledIndex = attributePosition(attributes, "disabled");
+  if (disabledIndex < 0 || spreadAfter(attributes, disabledIndex)) {
+    report(
+      button.node,
+      `${stem} must preserve disabled state after spread props.`,
+    );
+  }
+}
+
+function checkProfileButtonSafety(source, elements, report, stem) {
+  const expected = stem === "profile-button" ? "submit" : "button";
+  const buttons = profileElements(elements, "Button");
+  if (buttons.length !== 1) {
+    report(source, `${stem} must render exactly one Button.`);
+    return;
+  }
+  const button = buttons[0];
+  const attributes = button.node.attributes.properties;
+  checkFixedProfileButtonType(button, attributes, stem, expected, report);
+  checkFixedProfileButtonDisabled(button, attributes, stem, report);
+}
+
+function checkProfileFormSafety(source, stem, report) {
+  const checks = {
+    "profile-card": checkProfileCardSafety,
+    "profile-form": checkProfileProviderSafety,
+    "profile-form-content": checkProfileContentSafety,
+    "profile-form-footer": checkProfileFooterSafety,
+    "profile-button": (file, elements, addIssue) =>
+      checkProfileButtonSafety(file, elements, addIssue, stem),
+    "sign-out-button": (file, elements, addIssue) =>
+      checkProfileButtonSafety(file, elements, addIssue, stem),
+  };
+  const check = checks[stem];
+  if (
+    !check ||
+    !source.fileName.replaceAll("\\", "/").includes("/profile/_components/")
+  ) {
+    return;
+  }
+  check(source, jsxEntries(source), report);
+}
+
 export function inspectComponent(content, filename) {
   if (!isOwnedComponent(filename)) return [];
   const source = ts.createSourceFile(
@@ -255,6 +463,7 @@ export function inspectComponent(content, filename) {
   checkClientImports(source, report);
   checkFieldControllerNames(source, stem, report);
   checkProfilePropDrilling(source, report);
+  checkProfileFormSafety(source, stem, report);
   return findings;
 }
 
