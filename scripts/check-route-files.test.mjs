@@ -39,6 +39,29 @@ describe("route entrypoint guard", () => {
     );
   });
 
+  it("allows exported arrow-form Next.js generators", () => {
+    for (const generator of [
+      "generateMetadata",
+      "generateViewport",
+      "generateStaticParams",
+    ]) {
+      expectValid(
+        `export const ${generator} = async () => ({ title: "Test" }); export default function Page() { return <div />; }`,
+      );
+    }
+  });
+
+  it("allows default-exported arrow route components", () => {
+    expectValid("export default () => <div />;");
+  });
+
+  it("still rejects non-framework arrow helpers", () => {
+    expectRejected(
+      "export const helper = () => 42; export default function Page() { return <div />; }",
+      /Extract inline/,
+    );
+  });
+
   it("allows a simple template wrapper", () => {
     expectValid(
       "export default function Template({ children }) { return <section>{children}</section>; }",
