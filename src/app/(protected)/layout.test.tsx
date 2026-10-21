@@ -56,14 +56,14 @@ describe("ProtectedLayout", () => {
     expect(screen.queryByText("Protected Content")).toBeNull();
   });
 
-  it("redirects unauthenticated user to /sign-in", () => {
+  it("redirects unauthenticated user to sign-in with return destination", () => {
     mocks.currentUser = null;
     render(
       <ProtectedLayout params={Promise.resolve({})}>
         <div>{"Protected Content"}</div>
       </ProtectedLayout>,
     );
-    expect(mocks.router.replace).toHaveBeenCalledWith("/sign-in");
+    expect(mocks.router.replace).toHaveBeenCalledWith("/sign-in?next=%2F");
     expect(screen.queryByText("Protected Content")).toBeNull();
   });
 
