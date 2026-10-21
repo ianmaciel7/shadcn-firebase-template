@@ -60,6 +60,26 @@ snapshots:
       style: secondary
       start: 5
       end: 15
+  "type PanelProps = Omit<Wrapper<ComponentProps<\"div\">>, \"id\">;":
+    labels:
+    - source: type PanelProps = Omit<Wrapper<ComponentProps<"div">>, "id">;
+      style: primary
+      start: 0
+      end: 61
+    - source: PanelProps
+      style: secondary
+      start: 5
+      end: 15
+  "type PanelProps = Omit<{ forwarded: ComponentProps<\"div\"> }, \"id\">;":
+    labels:
+    - source: "type PanelProps = Omit<{ forwarded: ComponentProps<\"div\"> }, \"id\">;"
+      style: primary
+      start: 0
+      end: 67
+    - source: PanelProps
+      style: secondary
+      start: 5
+      end: 15
   type PanelProps = Wrapper<ComponentProps<"div">>;:
     labels:
     - source: type PanelProps = Wrapper<ComponentProps<"div">>;

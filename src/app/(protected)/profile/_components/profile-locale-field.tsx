@@ -1,6 +1,5 @@
-import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import {
   Select,
@@ -11,13 +10,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { isLocale, locales } from "@/i18n/routing";
-import type { ProfileValues } from "../_hooks/use-profile-actions";
+import { useProfileLocaleField } from "../_hooks/use-profile-locale-field";
 
 type ProfileLocaleFieldProps = ComponentProps<typeof Field>;
 
 function ProfileLocaleField(props: ProfileLocaleFieldProps) {
-  const t = useTranslations("Auth");
-  const { control } = useFormContext<ProfileValues>();
+  const { id, t, control } = useProfileLocaleField();
 
   return (
     <Controller
@@ -25,9 +23,7 @@ function ProfileLocaleField(props: ProfileLocaleFieldProps) {
       control={control}
       render={({ field, fieldState }) => (
         <Field {...props} data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor="profile-language">
-            {t("languageLabel")}
-          </FieldLabel>
+          <FieldLabel htmlFor={id}>{t("languageLabel")}</FieldLabel>
           <Select
             name={field.name}
             value={field.value}
@@ -37,7 +33,7 @@ function ProfileLocaleField(props: ProfileLocaleFieldProps) {
             }}
           >
             <SelectTrigger
-              id="profile-language"
+              id={id}
               className="w-full"
               aria-invalid={fieldState.invalid}
               onBlur={field.onBlur}

@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { expect, test } from "@playwright/test";
+import esMessages from "../src/messages/es.json";
 
 for (const envFile of [".env.local", ".env"]) {
   if (fs.existsSync(envFile)) {
@@ -153,4 +154,43 @@ test("profile displays user email and signs out successfully", async ({
   await expect(page.getByText(email)).toBeVisible();
   await page.getByRole("button", { name: "Sign Out" }).click();
   await expect(page).toHaveURL(/\/sign-in$/);
+});
+
+test("saving the profile language keeps the unprefixed route and translates after refresh", async ({
+  page,
+  request,
+  context,
+}) => {
+  const email = `locale-${crypto.randomUUID()}@example.test`;
+  const created = await request.post(
+    `${emulator}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=emulator-only`,
+    { data: { email, password, returnSecureToken: true } },
+  );
+  expect(created.ok()).toBeTruthy();
+  await page.goto("/sign-in");
+  await page.getByLabel("Email Address").fill(email);
+  await page.locator("#password").fill(password);
+  await page.getByRole("button", { name: "Sign In", exact: true }).click();
+  await expect(page).toHaveURL("http://127.0.0.1:3100/profile");
+  await page.getByLabel("Language", { exact: true }).click();
+  await page
+    .getByRole("option", {
+      name: esMessages.Auth.languageOptions.es,
+      exact: true,
+    })
+    .click();
+  await page.getByRole("button", { name: "Save profile", exact: true }).click();
+  await expect(
+    page.getByText(esMessages.Auth.personalInfoTitle, { exact: true }),
+  ).toBeVisible();
+  await expect(page).toHaveURL("http://127.0.0.1:3100/profile");
+  expect(
+    (await context.cookies()).find((cookie) => cookie.name === "NEXT_LOCALE")
+      ?.value,
+  ).toBe("es");
+  await page.reload();
+  await expect(
+    page.getByText(esMessages.Auth.personalInfoTitle, { exact: true }),
+  ).toBeVisible();
+  await expect(page).toHaveURL("http://127.0.0.1:3100/profile");
 });

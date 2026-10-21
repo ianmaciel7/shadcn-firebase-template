@@ -1,6 +1,5 @@
-import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import {
   Select,
@@ -11,13 +10,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { isThemePreference, themePreferences } from "@/lib/theme";
-import type { ProfileValues } from "../_hooks/use-profile-actions";
+import { useProfileThemeField } from "../_hooks/use-profile-theme-field";
 
 type ProfileThemeFieldProps = ComponentProps<typeof Field>;
 
 function ProfileThemeField(props: ProfileThemeFieldProps) {
-  const t = useTranslations("Auth");
-  const { control } = useFormContext<ProfileValues>();
+  const { id, t, control } = useProfileThemeField();
 
   return (
     <Controller
@@ -25,7 +23,7 @@ function ProfileThemeField(props: ProfileThemeFieldProps) {
       control={control}
       render={({ field, fieldState }) => (
         <Field {...props} data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor="profile-theme">{t("themeLabel")}</FieldLabel>
+          <FieldLabel htmlFor={id}>{t("themeLabel")}</FieldLabel>
           <Select
             name={field.name}
             value={field.value}
@@ -35,7 +33,7 @@ function ProfileThemeField(props: ProfileThemeFieldProps) {
             }}
           >
             <SelectTrigger
-              id="profile-theme"
+              id={id}
               className="w-full"
               aria-invalid={fieldState.invalid}
               onBlur={field.onBlur}

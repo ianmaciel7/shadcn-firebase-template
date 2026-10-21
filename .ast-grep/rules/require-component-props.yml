@@ -71,6 +71,15 @@ utils:
     any:
       - matches: standard-props
       - all:
+          - kind: generic_type
+          - has:
+              field: name
+              regex: '^(Omit|Pick)$'
+          - has:
+              kind: type_arguments
+              has:
+                matches: standard-props
+      - all:
           - any:
               - kind: intersection_type
               - kind: parenthesized_type

@@ -1,15 +1,13 @@
-import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import type { ProfileValues } from "../_hooks/use-profile-actions";
+import { useProfileDisplayNameField } from "../_hooks/use-profile-display-name-field";
 
 type ProfileDisplayNameFieldProps = ComponentProps<typeof Field>;
 
 function ProfileDisplayNameField(props: ProfileDisplayNameFieldProps) {
-  const t = useTranslations("Auth");
-  const { control } = useFormContext<ProfileValues>();
+  const { id, t, control } = useProfileDisplayNameField();
 
   return (
     <Controller
@@ -17,12 +15,10 @@ function ProfileDisplayNameField(props: ProfileDisplayNameFieldProps) {
       control={control}
       render={({ field, fieldState }) => (
         <Field {...props} data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor="profile-name">
-            {t("displayNameLabel")}
-          </FieldLabel>
+          <FieldLabel htmlFor={id}>{t("displayNameLabel")}</FieldLabel>
           <Input
             {...field}
-            id="profile-name"
+            id={id}
             autoComplete="name"
             placeholder={t("notSet")}
             maxLength={100}
