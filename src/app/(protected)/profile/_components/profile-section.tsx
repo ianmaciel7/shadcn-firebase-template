@@ -7,6 +7,7 @@ import {
   ProfileCard,
   ProfileCardContent,
   ProfileCardDescription,
+  ProfileCardFooter,
   ProfileCardHeader,
   ProfileCardTitle,
 } from "./profile-card";
@@ -68,16 +69,18 @@ function ProfileSection() {
             <ProfileThemeField />
           </ProfileFormContent>
         </ProfileCardContent>
-        <ProfileFormFooter>
-          <ProfileButton />
-          <SignOutButton
-            onClick={profile.handleSignOut}
-            disabled={profile.isBusy}
-            isSigningOut={profile.isSigningOut}
-          >
-            {t("signOut")}
-          </SignOutButton>
-        </ProfileFormFooter>
+        <ProfileCardFooter>
+          <ProfileFormFooter>
+            <ProfileButton />
+            <SignOutButton
+              onClick={profile.handleSignOut}
+              disabled={profile.isBusy}
+              isSigningOut={profile.isSigningOut}
+            >
+              {t("signOut")}
+            </SignOutButton>
+          </ProfileFormFooter>
+        </ProfileCardFooter>
       </ProfileForm>
     </ProfileCard>
   );

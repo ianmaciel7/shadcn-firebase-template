@@ -1,10 +1,10 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { CardFooter } from "@/components/ui/card";
 import {
   ProfileCard,
   ProfileCardContent,
   ProfileCardDescription,
+  ProfileCardFooter,
   ProfileCardHeader,
   ProfileCardTitle,
 } from "./profile-card";
@@ -32,7 +32,7 @@ describe("ProfileCard", () => {
           <ProfileCardDescription>{description}</ProfileCardDescription>
         </ProfileCardHeader>
         <ProfileCardContent>{content}</ProfileCardContent>
-        <CardFooter>{footer}</CardFooter>
+        <ProfileCardFooter>{footer}</ProfileCardFooter>
       </ProfileCard>,
     );
 

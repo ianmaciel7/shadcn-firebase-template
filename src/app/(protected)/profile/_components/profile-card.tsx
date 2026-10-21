@@ -3,6 +3,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -13,6 +14,7 @@ type ProfileCardHeaderProps = ComponentProps<typeof CardHeader>;
 type ProfileCardTitleProps = ComponentProps<typeof CardTitle>;
 type ProfileCardDescriptionProps = ComponentProps<typeof CardDescription>;
 type ProfileCardContentProps = ComponentProps<typeof CardContent>;
+type ProfileCardFooterProps = ComponentProps<typeof CardFooter>;
 
 function ProfileCard({ className, ...props }: ProfileCardProps) {
   return (
@@ -36,10 +38,15 @@ function ProfileCardContent(props: ProfileCardContentProps) {
   return <CardContent {...props} />;
 }
 
+function ProfileCardFooter(props: ProfileCardFooterProps) {
+  return <CardFooter {...props} />;
+}
+
 export {
   ProfileCard,
   ProfileCardContent,
   ProfileCardDescription,
+  ProfileCardFooter,
   ProfileCardHeader,
   ProfileCardTitle,
 };

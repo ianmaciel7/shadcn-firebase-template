@@ -92,6 +92,7 @@ const profileCardParts = [
   "ProfileCardTitle",
   "ProfileCardDescription",
   "ProfileCardContent",
+  "ProfileCardFooter",
 ];
 
 function expectedComponentNames(source, stem) {
@@ -326,6 +327,7 @@ function checkProfileCardSafety(source, elements, report) {
     "CardTitle",
     "CardDescription",
     "CardContent",
+    "CardFooter",
   ]) {
     if (profileElements(elements, primitive).length !== 1) {
       report(source, `ProfileCard must wrap exactly one ${primitive}.`);
@@ -370,8 +372,15 @@ function checkProfileSectionSafety(source, elements, report) {
   requireProfilePlacement(
     source,
     elements,
-    "ProfileFormFooter",
+    "ProfileCardFooter",
     ["ProfileForm", "ProfileCard"],
+    report,
+  );
+  requireProfilePlacement(
+    source,
+    elements,
+    "ProfileFormFooter",
+    ["ProfileCardFooter", "ProfileForm", "ProfileCard"],
     report,
   );
   for (const action of ["ProfileButton", "SignOutButton"]) {
@@ -379,7 +388,7 @@ function checkProfileSectionSafety(source, elements, report) {
       source,
       elements,
       action,
-      ["ProfileFormFooter", "ProfileForm", "ProfileCard"],
+      ["ProfileFormFooter", "ProfileCardFooter", "ProfileForm", "ProfileCard"],
       report,
     );
     for (const button of profileElements(elements, action)) {
@@ -442,10 +451,13 @@ function checkProfileContentSafety(source, elements, report) {
 }
 
 function checkProfileFooterSafety(source, elements, report) {
-  if (profileElements(elements, "CardFooter").length !== 1) {
+  if (
+    profileElements(elements, "div").length !== 1 ||
+    profileElements(elements, "CardFooter").length > 0
+  ) {
     report(
       source,
-      "ProfileFormFooter must use the shadcn CardFooter primitive.",
+      "ProfileFormFooter must render a layout div inside ProfileCardFooter.",
     );
   }
 }
