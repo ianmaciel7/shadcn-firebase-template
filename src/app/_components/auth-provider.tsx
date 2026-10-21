@@ -6,8 +6,8 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { type PropsWithChildren, useEffect, useState } from "react";
-import { getFirebaseUI } from "@/lib/firebase/client";
 import { getSafeReturnUrl } from "@/lib/auth/return-url";
+import { getFirebaseUI } from "@/lib/firebase/client";
 
 interface AuthProviderProps extends PropsWithChildren {}
 
@@ -32,7 +32,9 @@ function AuthProvider({ children }: AuthProviderProps) {
     return onAuthStateChanged(store.get().auth, (user) => {
       if (user) {
         setReady(false);
-        const destination = getSafeReturnUrl(new URLSearchParams(window.location.search).get("next"));
+        const destination = getSafeReturnUrl(
+          new URLSearchParams(window.location.search).get("next"),
+        );
         router.replace(destination);
       } else setReady(true);
     });
