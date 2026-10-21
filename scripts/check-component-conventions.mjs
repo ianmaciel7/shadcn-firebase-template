@@ -252,7 +252,13 @@ function profileElements(elements, name) {
 }
 
 function isInsideProfile(element, ancestors) {
-  return ancestors.every((name) => element.ancestors.includes(name));
+  let index = element.ancestors.length - 1;
+  return ancestors.every((name) => {
+    const next = element.ancestors.lastIndexOf(name, index);
+    if (next < 0) return false;
+    index = next - 1;
+    return true;
+  });
 }
 
 function requireProfilePlacement(source, elements, name, parents, report) {
