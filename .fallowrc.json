@@ -4,7 +4,8 @@
     "src/components/**/*.{ts,tsx}",
     "src/hooks/**/*.{ts,tsx}",
     "src/lib/**/*.{ts,tsx}",
-    "src/i18n/**/*.ts"
+    "src/i18n/**/*.ts",
+    "src/app/**/_hooks/**/*.{ts,tsx}"
   ],
   "ignorePatterns": [".ladle/**"],
   "health": {
@@ -12,6 +13,8 @@
       "src/components/ai-elements/**",
       "src/components/firebase/**",
       "src/components/ui/*.tsx",
+      "scripts/emulator/seed.mjs",
+      "scripts/emulator/clear.mjs",
       "**/*.stories.tsx"
     ]
   }

@@ -22,9 +22,9 @@ language, as defined in `.agents/rules/language.md`.
 
 ## Decisions and agent references
 
-- [ADR index](adr/README.md): eight accepted or partially superseded records.
-  They preserve decision history; current versions and commands belong in the
-  guides above.
+- [ADR index](adr/README.md): accepted template architecture decisions.
+  They document the current template architecture; current versions and commands
+  belong in the guides above.
 - [Agent configuration](../.agents/README.md): two configured MCP servers,
   persistent rules, and enabled integrations.
 - [Skill inventory](../.agents/skills/README.md): five installed skills and
@@ -37,9 +37,9 @@ language, as defined in `.agents/rules/language.md`.
 
 Update the guide that owns a changed practice in the same change as its
 implementation. Check cross-references when renaming paths, adding scripts,
-changing locale behavior, or upgrading tools. Read accepted ADRs as records at
-their decision date; do not rewrite them to update a dependency version or
-operational detail. A changed architectural decision needs a new numbered ADR.
+changing locale behavior, or upgrading tools. Keep template ADRs aligned with
+the current architecture; consolidate or renumber them when it improves the
+template, updating cross-references in the same change.
 
 For documentation changes, run:
 

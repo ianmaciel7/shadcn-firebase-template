@@ -27,6 +27,11 @@ coordinate disclosure and remediation with the reporter.
 - Keep secrets in local environment files; never commit `.env*` files or
   credentials.
 - Validate and authorize all untrusted input at the server boundary.
+- Firebase Web SDK access is still untrusted client input: enforce ownership and
+  permitted fields, values, and upload constraints in Firestore and Storage
+  Security Rules, not only in UI validation. Current profile rules scope
+  `users/{uid}` documents and `users/{uid}/avatar` objects to the matching
+  authenticated UID.
 - Prefer server-side handling for sensitive operations and minimize data sent
   to Client Components.
 - Keep dependencies current and review security advisories before upgrades.

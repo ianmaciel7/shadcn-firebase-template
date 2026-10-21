@@ -1,0 +1,17 @@
+id: review-route-special-files-logic
+snapshots:
+  "import { useEffect } from \"react\";\n\nexport default function Layout({ children }: { children: React.ReactNode }) {\n  useEffect(() => {\n    console.log(\"mounted\");\n  }, []);\n  return <div>{children}</div>;\n}\n":
+    labels:
+    - source: |-
+        useEffect(() => {
+            console.log("mounted");
+          }, [])
+      style: primary
+      start: 116
+      end: 170
+  "import { useState } from \"react\";\n\nexport default function Page() {\n  const [count, setCount] = useState(0);\n  return <button onClick={() => setCount(count + 1)}>{count}</button>;\n}\n":
+    labels:
+    - source: useState(0)
+      style: primary
+      start: 96
+      end: 107
