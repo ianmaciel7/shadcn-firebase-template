@@ -38,8 +38,8 @@ function ProfileCardContent(props: ProfileCardContentProps) {
 
 export {
   ProfileCard,
+  ProfileCardContent,
+  ProfileCardDescription,
   ProfileCardHeader,
   ProfileCardTitle,
-  ProfileCardDescription,
-  ProfileCardContent,
 };

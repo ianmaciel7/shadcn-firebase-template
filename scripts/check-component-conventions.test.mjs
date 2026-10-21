@@ -60,7 +60,9 @@ describe("owned component conventions", () => {
 
   it("allows semantic roles, matching exports and Server Components", () => {
     expectValid(
-      compoundCard('"use client"; type ProfileCardProps = ComponentProps<"div">; function ProfileCard(props: ProfileCardProps) { return <Card {...props} />; } export { ProfileCard };'),
+      compoundCard(
+        '"use client"; type ProfileCardProps = ComponentProps<"div">; function ProfileCard(props: ProfileCardProps) { return <Card {...props} />; } export { ProfileCard };',
+      ),
     );
     expectValid(
       "async function IntlProvider({ children }) { return <Provider>{children}</Provider>; } export { IntlProvider };",
@@ -106,7 +108,9 @@ describe("owned component conventions", () => {
 
   it("permits client interaction but rejects server-only imports", () => {
     expectValid(
-      compoundCard('"use client"; import { useState } from "react"; function ProfileCard() { const [open] = useState(false); return <Card {...props} />; } export { ProfileCard };'),
+      compoundCard(
+        '"use client"; import { useState } from "react"; function ProfileCard() { const [open] = useState(false); return <Card {...props} />; } export { ProfileCard };',
+      ),
     );
     expectInvalid(
       '"use client"; import { cookies } from "next/headers"; function ProfileCard() { return <Card />; } export { ProfileCard };',
@@ -166,7 +170,9 @@ describe("owned component conventions", () => {
       /focused field\/form\/button props/,
     );
     expectValid(
-      compoundCard("function ProfileCard() { return <Card {...props} />; } export { ProfileCard };"),
+      compoundCard(
+        "function ProfileCard() { return <Card {...props} />; } export { ProfileCard };",
+      ),
     );
   });
 
@@ -201,7 +207,9 @@ describe("owned component conventions", () => {
 
   it("keeps ProfileCard a native, composable Card wrapper", () => {
     expectValid(
-      compoundCard("function ProfileCard(props) { return <Card {...props} />; } export { ProfileCard };"),
+      compoundCard(
+        "function ProfileCard(props) { return <Card {...props} />; } export { ProfileCard };",
+      ),
     );
     expectInvalid(
       "function ProfileCard() { return <ProfileForm><Card /></ProfileForm>; } export { ProfileCard };",
@@ -264,11 +272,17 @@ describe("owned component conventions", () => {
       );
     }
     expectInvalid(
-      valid.replace("ProfileCardDescription, ProfileCardContent };", "ProfileCardContent };"),
+      valid.replace(
+        "ProfileCardDescription, ProfileCardContent };",
+        "ProfileCardContent };",
+      ),
       /Export exactly the named components/,
     );
     expectInvalid(
-      valid.replace("function ProfileCardTitle(props)", "function OtherTitle(props)"),
+      valid.replace(
+        "function ProfileCardTitle(props)",
+        "function OtherTitle(props)",
+      ),
       /Declare ProfileCardTitle/,
     );
   });

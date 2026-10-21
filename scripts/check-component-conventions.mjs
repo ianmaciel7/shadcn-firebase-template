@@ -120,7 +120,10 @@ function checkPrimaryExport(source, stem, report) {
     names.length !== expected.length ||
     !expected.every((name) => names.includes(name))
   ) {
-    report(source, `Export exactly the named components: ${expected.join(", ")}.`);
+    report(
+      source,
+      `Export exactly the named components: ${expected.join(", ")}.`,
+    );
   }
 }
 
@@ -144,17 +147,25 @@ function checkExportStyle(source, report) {
 }
 
 function checkProps(source, expected, report) {
-  const allowed = (source.fileName.replaceAll("\\", "/").endsWith("/profile/_components/profile-card.tsx")
-    ? profileCardParts
-    : [expected]).map((name) => `${name}Props`);
+  const allowed = (
+    source.fileName
+      .replaceAll("\\", "/")
+      .endsWith("/profile/_components/profile-card.tsx")
+      ? profileCardParts
+      : [expected]
+  ).map((name) => `${name}Props`);
   for (const statement of source.statements) {
     if (
       !ts.isTypeAliasDeclaration(statement) &&
       !ts.isInterfaceDeclaration(statement)
-    ) continue;
+    )
+      continue;
     const name = statement.name.text;
     if (name.endsWith("Props") && !allowed.includes(name)) {
-      report(statement, `Props type must be named one of: ${allowed.join(", ")}.`);
+      report(
+        statement,
+        `Props type must be named one of: ${allowed.join(", ")}.`,
+      );
     }
   }
 }
