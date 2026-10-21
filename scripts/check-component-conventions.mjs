@@ -95,9 +95,14 @@ function checkName(source, stem, report) {
       report(statement, "Owned components must use named exports.");
     }
     if (ts.isFunctionDeclaration(statement) && exported(statement)) {
+      const isDefault = statement.modifiers?.some(
+        (modifier) => modifier.kind === ts.SyntaxKind.DefaultKeyword,
+      );
       report(
         statement,
-        "Use function declaration followed by export { Name }.",
+        isDefault
+          ? "Owned components must use named exports."
+          : "Declare the component locally, then export { Name }.",
       );
     }
   }
