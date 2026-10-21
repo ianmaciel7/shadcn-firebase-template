@@ -86,6 +86,15 @@ function checkName(source, stem, report) {
     );
   }
   const expected = pascalCase(stem);
+  const isLocalFunction = source.statements.some(
+    (statement) =>
+      ts.isFunctionDeclaration(statement) &&
+      statement.name?.text === expected &&
+      !exported(statement),
+  );
+  if (!isLocalFunction) {
+    report(source, "The component must be declared as a local named function.");
+  }
   const names = componentExports(source);
   if (names.length !== 1 || names[0] !== expected) {
     report(source, `Export exactly one named component ${expected}.`);

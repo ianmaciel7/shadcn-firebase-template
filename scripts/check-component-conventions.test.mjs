@@ -107,7 +107,18 @@ describe("owned component conventions", () => {
   it("rejects inline exported component declarations", () => {
     expectInvalid(
       "export function ProfileCard() { return <Card />; }",
-      /function declaration/,
+      /locally/,
+    );
+  });
+
+  it("rejects arrow-function components and imported re-exports", () => {
+    expectInvalid(
+      "const ProfileCard = () => <Card />; export { ProfileCard };",
+      /local named function/,
+    );
+    expectInvalid(
+      'export { ProfileCard } from "./other-component";',
+      /local named function/,
     );
   });
 });
