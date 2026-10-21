@@ -349,7 +349,7 @@ describe("ProfileCard", () => {
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
     render(<ProfileCard />);
     const signOutBtn = await screen.findByRole("button", { name: "signOut" });
-    expect(signOutBtn.closest('[data-slot="card-content"]')).toBeTruthy();
+    expect(signOutBtn.closest('[data-slot="card"]')).toBeTruthy();
     await act(async () => {
       fireEvent.click(signOutBtn);
     });
