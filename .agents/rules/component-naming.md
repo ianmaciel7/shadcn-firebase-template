@@ -90,7 +90,9 @@ A component that uses behavior/context hooks or coordinates multiple hooks must 
 
 Do not use `View` or `Screen` as words in owned component, hook, type, variable, parameter, import-binding or file names. Use the responsibility instead (`ProfileSection`, `useProfileSection`, `useProfileStatus`, `AuthContent`, `AuthFlow`). `useProfileStatus` replaces `useProfileView`; profile rendering consumes `state.status`.
 
-`check:components` scans owned `.ts` and `.tsx` files throughout `src`, including hooks and library modules. CamelCase and kebab-case words are checked, so `AccountScreenState` and `use-account-view.ts` fail; unrelated words such as `Viewport` and `preview` remain valid. Generated registries and test/story files retain their exclusions. Preserve external API export names, but alias their local bindings (`SignInAuthScreen as SignInAuthContent`).
+`check:components` scans owned `.ts` and `.tsx` files throughout `src`, including hooks and library modules. CamelCase, kebab-case and numbered words are checked, so `AccountScreenState`, `AccountScreen2` and `use-account-view.ts` fail; unrelated words such as `Viewport` and `preview` remain valid. Generated registries and test/story files retain their exclusions. Preserve external API export names, but alias their local bindings (`SignInAuthScreen as SignInAuthContent`).
+
+Export aliases, named function/class expressions, enums and type parameters also follow this policy. Re-export external names with a semantic public alias (`AccountScreen as AccountContent`); exporting `AccountContent as AccountScreen` is prohibited. Comments and string content are outside this naming check.
 
 ## General composition contract
 
