@@ -6,7 +6,8 @@ import {
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useTranslations } from "next-intl";
 import { toast } from "@/components/ui/toast";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { localeCookie } from "@/i18n/routing";
 import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase/client";
 import { writeUserPreferences } from "@/lib/firebase/firestore/user-preferences";
 import type { ProfileFormValues, ProfileValues } from "@/lib/profile";
@@ -102,7 +103,6 @@ export function useProfileSubmit({
 }: UseProfileSubmitOptions) {
   const t = useTranslations("Auth");
   const router = useRouter();
-  const pathname = usePathname();
 
   const onSubmit = async (
     values: ProfileFormValues,
@@ -130,7 +130,9 @@ export function useProfileSubmit({
       });
 
       if (values.locale !== activeLocale) {
-        router.replace(pathname, { locale: values.locale });
+        // biome-ignore lint/suspicious/noDocumentCookie: Support browsers without the Cookie Store API; the server reads this non-secret locale cookie.
+        document.cookie = `${localeCookie}=${values.locale}; Path=/; Max-Age=31536000; SameSite=Lax`;
+        router.refresh();
       }
       return savedProfile.values;
     } catch (cause) {

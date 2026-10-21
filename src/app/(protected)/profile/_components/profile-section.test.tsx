@@ -305,7 +305,7 @@ describe("ProfileSection", () => {
     });
   });
 
-  it("saves a changed language preference and replaces the route", async () => {
+  it("saves a changed language preference and refreshes without a locale-prefixed route", async () => {
     mocks.currentUser = { uid: "user-123", email: "user@example.com" };
     render(<ProfileSection />);
 
@@ -325,9 +325,9 @@ describe("ProfileSection", () => {
         theme: "system",
       }),
     );
-    expect(mocks.router.replace).toHaveBeenCalledWith("/profile", {
-      locale: "es",
-    });
+    expect(document.cookie).toContain("NEXT_LOCALE=es");
+    expect(mocks.router.refresh).toHaveBeenCalledOnce();
+    expect(mocks.router.replace).not.toHaveBeenCalled();
     expect(mocks.toastAdd).toHaveBeenCalledWith({
       title: "profileSaved",
       type: "success",
