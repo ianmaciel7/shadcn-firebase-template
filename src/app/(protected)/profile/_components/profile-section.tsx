@@ -1,12 +1,11 @@
 "use client";
 
-import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+
 import { useProfileController } from "../_hooks/use-profile-controller";
+import { ProfileCardContent } from "./profile-card-content";
+import { ProfileCardDescription } from "./profile-card-description";
+import { ProfileCardHeader } from "./profile-card-header";
+import { ProfileCardTitle } from "./profile-card-title";
 import { ProfileAvatarField } from "./profile-avatar-field";
 import { ProfileButton } from "./profile-button";
 import { ProfileCard } from "./profile-card";
@@ -26,14 +25,14 @@ function ProfileSection() {
   if (!profile.authReady || (user && !profile.preferencesReady)) {
     return (
       <ProfileCard>
-        <CardContent>
+        <ProfileCardContent>
           <p
             role="status"
             className="text-center text-sm text-muted-foreground"
           >
             {t("loading")}
           </p>
-        </CardContent>
+        </ProfileCardContent>
       </ProfileCard>
     );
   }
@@ -43,9 +42,9 @@ function ProfileSection() {
   if (!user || !profile.formProps) {
     return (
       <ProfileCard>
-        <CardContent>
+        <ProfileCardContent>
           <p role="alert">{profile.error ?? t("profileSaveError")}</p>
-        </CardContent>
+        </ProfileCardContent>
       </ProfileCard>
     );
   }
@@ -53,17 +52,19 @@ function ProfileSection() {
   return (
     <ProfileCard>
       <ProfileForm key={user.uid} {...profile.formProps}>
-        <CardHeader>
-          <CardTitle>{t("personalInfoTitle")}</CardTitle>
-          <CardDescription>{t("personalInfoDescription")}</CardDescription>
-        </CardHeader>
-        <ProfileFormContent>
-          <ProfileAvatarField {...profile.avatarProps} />
-          <ProfileDisplayNameField />
-          <ProfileEmailField />
-          <ProfileLocaleField />
-          <ProfileThemeField />
-        </ProfileFormContent>
+        <ProfileCardHeader>
+          <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
+          <ProfileCardDescription>{t("personalInfoDescription")}</ProfileCardDescription>
+        </ProfileCardHeader>
+        <ProfileCardContent>
+          <ProfileFormContent>
+            <ProfileAvatarField {...profile.avatarProps} />
+            <ProfileDisplayNameField />
+            <ProfileEmailField />
+            <ProfileLocaleField />
+            <ProfileThemeField />
+          </ProfileFormContent>
+        </ProfileCardContent>
         <ProfileFormFooter>
           <ProfileButton />
           <SignOutButton

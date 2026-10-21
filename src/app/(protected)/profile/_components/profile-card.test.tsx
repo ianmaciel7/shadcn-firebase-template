@@ -1,6 +1,10 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import { CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { CardFooter } from "@/components/ui/card";
+import { ProfileCardContent } from "./profile-card-content";
+import { ProfileCardDescription } from "./profile-card-description";
+import { ProfileCardHeader } from "./profile-card-header";
+import { ProfileCardTitle } from "./profile-card-title";
 import { ProfileCard } from "./profile-card";
 
 describe("ProfileCard", () => {
@@ -10,6 +14,8 @@ describe("ProfileCard", () => {
     const header = "Header";
     const content = "Content";
     const footer = "Footer";
+    const title = "Title";
+    const description = "Description";
 
     render(
       <ProfileCard
@@ -18,8 +24,12 @@ describe("ProfileCard", () => {
         className="custom-profile-card"
         aria-label="Profile details"
       >
-        <CardHeader>{header}</CardHeader>
-        <CardContent>{content}</CardContent>
+        <ProfileCardHeader>
+          {header}
+          <ProfileCardTitle>{title}</ProfileCardTitle>
+          <ProfileCardDescription>{description}</ProfileCardDescription>
+        </ProfileCardHeader>
+        <ProfileCardContent>{content}</ProfileCardContent>
         <CardFooter>{footer}</CardFooter>
       </ProfileCard>,
     );
@@ -37,6 +47,12 @@ describe("ProfileCard", () => {
     expect(card.querySelector('[data-slot="card-content"]')?.textContent).toBe(
       "Content",
     );
+    expect(card.querySelector('[data-slot="card-title"]')?.textContent).toBe(
+      title,
+    );
+    expect(
+      card.querySelector('[data-slot="card-description"]')?.textContent,
+    ).toBe(description);
     expect(card.querySelector('[data-slot="card-footer"]')?.textContent).toBe(
       "Footer",
     );
