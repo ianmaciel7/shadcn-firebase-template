@@ -6,6 +6,16 @@
     "useIgnoreFile": true
   },
   "plugins": [
+    {
+      "path": "./.biome/rules/react/prefer-is-error.grit",
+      "includes": [
+        "**/src/app/**/*.tsx",
+        "**/src/components/**/*.tsx",
+        "!**/src/components/ui/**",
+        "!**/src/components/ai-elements/**",
+        "!**/src/components/firebase/**"
+      ]
+    },
     "./.biome/rules/dom/no-document-write.grit",
     "./.biome/rules/nextjs/prefer-layout-props.grit",
     "./.biome/rules/nextjs/prefer-page-props.grit",

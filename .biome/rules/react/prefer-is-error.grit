@@ -1,0 +1,14 @@
+language js
+
+or {
+  `$state.status === "error"` as $check,
+  `$state.status == "error"` as $check,
+  `$state.status !== "error"` as $check,
+  `$state.status != "error"` as $check,
+  `"error" === $state.status` as $check,
+  `"error" == $state.status` as $check,
+  `"error" !== $state.status` as $check,
+  `"error" != $state.status` as $check
+} where {
+  register_diagnostic(span=$check, message="Expose isError from the hook and use state.isError (or !state.isError) in the component instead of comparing status with error.", severity="error")
+}
