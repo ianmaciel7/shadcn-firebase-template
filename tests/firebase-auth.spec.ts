@@ -154,7 +154,8 @@ test("profile displays user email and signs out successfully", async ({
   await expect(page).toHaveURL(/\/profile$/);
   await expect(page.getByText(email)).toBeVisible();
   await expect(page.getByRole("button", { name: "Sign Out" })).toHaveCount(0);
-  await page.getByRole("link", { name: "Back to Home" }).click();
+  await expect(page.getByRole("link", { name: "Back to Home" })).toHaveCount(0);
+  await page.goto("/");
   await expect(page).toHaveURL("/");
   await page.getByRole("button", { name: "Sign Out" }).click();
   await expect(

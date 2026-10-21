@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
 import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { useProfileController } from "../_hooks/use-profile-controller";
 import { ProfileAvatarField } from "./profile-avatar-field";
@@ -65,15 +63,6 @@ function ProfileSection() {
         <ProfileCardFooter>
           <ProfileFormFooter>
             <ProfileButton />
-            <Link
-              href="/"
-              className={buttonVariants({
-                variant: "link",
-                className: "w-full",
-              })}
-            >
-              {t("backToHome")}
-            </Link>
           </ProfileFormFooter>
         </ProfileCardFooter>
       </ProfileForm>

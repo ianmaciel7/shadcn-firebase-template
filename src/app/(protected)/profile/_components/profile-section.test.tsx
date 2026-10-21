@@ -173,16 +173,13 @@ describe("ProfileSection", () => {
     const saveButton = await screen.findByRole("button", {
       name: "saveProfile",
     });
-    const backLink = screen.getByRole("link", { name: "backToHome" });
     const displayName = screen.getByLabelText("displayNameLabel");
 
     expect(displayName.closest('[data-slot="card-content"]')).toBeTruthy();
     expect(saveButton.closest('[data-slot="card-footer"]')).toBeTruthy();
-    expect(backLink.closest('[data-slot="card-footer"]')).toBeTruthy();
     const form = saveButton.closest("form");
     expect(form).toBeTruthy();
     expect(displayName.closest("form")).toBe(form);
-    expect(backLink.closest("form")).toBe(form);
     expect(
       displayName
         .closest('[data-slot="field-group"]')
@@ -190,7 +187,6 @@ describe("ProfileSection", () => {
     ).toBeTruthy();
     expect(form?.querySelectorAll("form")).toHaveLength(0);
     expect(saveButton.getAttribute("type")).toBe("submit");
-    expect(backLink.getAttribute("href")).toBe("/");
   });
 
   it("uploads a new avatar and updates the auth profile", async () => {
@@ -357,11 +353,11 @@ describe("ProfileSection", () => {
     ).toBe("Dynamic User");
   });
 
-  it("offers a link home instead of signing out from the profile", async () => {
+  it("does not offer navigation or sign out actions in the profile", async () => {
     mocks.currentUser = { uid: "user-123" };
     render(<ProfileSection />);
-    const back = await screen.findByRole("link", { name: "backToHome" });
-    expect(back.getAttribute("href")).toBe("/");
+    await screen.findByRole("button", { name: "saveProfile" });
+    expect(screen.queryByRole("link", { name: "backToHome" })).toBeNull();
     expect(screen.queryByRole("button", { name: "signOut" })).toBeNull();
   });
 });

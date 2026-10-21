@@ -43,8 +43,13 @@ function ProfileCardContent(props: ProfileCardContentProps) {
   return <CardContent {...props} />;
 }
 
-function ProfileCardFooter(props: ProfileCardFooterProps) {
-  return <CardFooter {...props} />;
+function ProfileCardFooter({ className, ...props }: ProfileCardFooterProps) {
+  return (
+    <CardFooter
+      {...props}
+      className={cn("border-0 bg-transparent pt-0", className)}
+    />
+  );
 }
 
 export {
