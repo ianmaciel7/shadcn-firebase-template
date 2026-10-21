@@ -121,4 +121,38 @@ describe("owned component conventions", () => {
       /local named function/,
     );
   });
+  it("matches a field component to its React Hook Form field name", () => {
+    expectValid(
+      'function ProfileDisplayNameField() { return <Controller name="displayName" control={control} render={() => <Field />} />; } export { ProfileDisplayNameField };',
+      "src/app/(protected)/profile/_components/profile-display-name-field.tsx",
+    );
+    expectValid(
+      "function ProfileAvatarField() { return <Avatar />; } export { ProfileAvatarField };",
+      "src/app/(protected)/profile/_components/profile-avatar-field.tsx",
+    );
+    expectInvalid(
+      'function ProfileNameField() { return <Controller name="displayName" control={control} render={() => <Field />} />; } export { ProfileNameField };',
+      /must match Controller name/,
+      "src/app/(protected)/profile/_components/profile-name-field.tsx",
+    );
+    expectInvalid(
+      'function ProfileDisplayNameField() { return <Controller name="email" control={control} render={() => <Field />} />; } export { ProfileDisplayNameField };',
+      /must match Controller name/,
+      "src/app/(protected)/profile/_components/profile-display-name-field.tsx",
+    );
+  });
+
+  it("rejects passing the complete profile controller to a child", () => {
+    expectInvalid(
+      "function ProfileCard() { return <ProfileForm profile={profile} />; } export { ProfileCard };",
+      /focused field\/form\/button props/,
+    );
+    expectInvalid(
+      "function ProfileCard() { return <SignOutButton profile={profile} />; } export { ProfileCard };",
+      /focused field\/form\/button props/,
+    );
+    expectValid(
+      "function ProfileCard() { return <ProfileForm {...profile.formProps} />; } export { ProfileCard };",
+    );
+  });
 });

@@ -1,56 +1,61 @@
-import type { ComponentProps } from "react";
+import { useTranslations } from "next-intl";
+import type { ChangeEventHandler, ComponentProps, RefObject } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import type { ProfileControllerState } from "../_hooks/use-profile-controller";
 
 type ProfileAvatarFieldProps = ComponentProps<"div"> & {
-  profile: ProfileControllerState;
-  user: NonNullable<ProfileControllerState["user"]>;
+  displayName: string | null;
+  email: string | null;
+  photoURL: string | null;
+  avatarPreview: string | null;
+  avatarVersion: number;
+  fileInputRef: RefObject<HTMLInputElement | null>;
+  onFileChange: ChangeEventHandler<HTMLInputElement>;
+  disabled?: boolean;
 };
 
 function ProfileAvatarField({
   className,
-  profile,
-  user,
+  displayName,
+  email,
+  photoURL,
+  avatarPreview,
+  avatarVersion,
+  fileInputRef,
+  onFileChange,
+  disabled,
   ...props
 }: ProfileAvatarFieldProps) {
-  const {
-    avatarPreview,
-    avatarVersion,
-    fileInputRef,
-    handleAvatarChange,
-    isBusy,
-    photoURL,
-    t,
-  } = profile;
+  const t = useTranslations("Auth");
   const avatarSrc = getAvatarSource(avatarPreview, photoURL, avatarVersion);
-  const fallbackInitial = getFallbackInitial(user);
+  const fallbackInitial = (
+    displayName?.charAt(0) ||
+    email?.charAt(0) ||
+    "U"
+  ).toUpperCase();
 
   return (
     <div className={cn("flex items-center gap-4", className)} {...props}>
       <Avatar className="size-16">
         {avatarSrc ? (
-          <AvatarImage
-            src={avatarSrc}
-            alt={user.displayName ?? t("profileTitle")}
-          />
+          <AvatarImage src={avatarSrc} alt={displayName ?? t("profileTitle")} />
         ) : null}
         <AvatarFallback className="text-xl">{fallbackInitial}</AvatarFallback>
       </Avatar>
       <div className="flex min-w-0 flex-col items-start">
         <span className="max-w-full truncate text-sm font-medium">
-          {user.displayName || t("profileTitle")}
+          {displayName || t("profileTitle")}
         </span>
         <span className="max-w-full truncate text-xs text-muted-foreground">
-          {user.email}
+          {email}
         </span>
         <Button
           type="button"
           variant="link"
           size="sm"
           className="h-auto px-0"
-          disabled={isBusy}
+          disabled={disabled}
           onClick={() => fileInputRef.current?.click()}
         >
           {t("profilePhotoChange")}
@@ -61,8 +66,8 @@ function ProfileAvatarField({
           accept="image/jpeg,image/png,image/webp"
           className="sr-only"
           aria-label={t("profilePhotoChange")}
-          disabled={isBusy}
-          onChange={handleAvatarChange}
+          disabled={disabled}
+          onChange={onFileChange}
         />
       </div>
     </div>
@@ -70,22 +75,14 @@ function ProfileAvatarField({
 }
 
 function getAvatarSource(
-  preview: ProfileControllerState["avatarPreview"],
-  photoURL: ProfileControllerState["photoURL"],
-  version: ProfileControllerState["avatarVersion"],
+  preview: string | null,
+  photoURL: string | null,
+  version: number,
 ) {
   if (preview) return preview;
   if (!photoURL || !version) return photoURL ?? undefined;
 
   return `${photoURL}${photoURL.includes("?") ? "&" : "?"}v=${version}`;
-}
-
-function getFallbackInitial(user: NonNullable<ProfileControllerState["user"]>) {
-  return (
-    user.displayName?.charAt(0) ||
-    user.email?.charAt(0) ||
-    "U"
-  ).toUpperCase();
 }
 
 export { ProfileAvatarField };

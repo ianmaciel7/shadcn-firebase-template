@@ -37,10 +37,11 @@ When standards conflict, apply them in this order:
   appropriate ([Next.js private folders](https://nextjs.org/docs/app/getting-started/project-structure#private-folders)). This is a project heuristic, not a framework requirement
   for every component.
 - **Form Architecture and State Propagation**:
-  - Always wrap composite forms (`*-form.tsx`) using React Hook Form in `<FormProvider {...form}>` (or shadcn `<Form {...form}>`).
-  - Child field components (`*-fields.tsx`, `*-field.tsx`) must obtain form state (`register`, `control`, `formState`) using `useFormContext()` rather than accepting form objects or methods via prop drilling.
-  - Form fields must use the primitives in `@/components/ui/field` (`<Field>`, `<FieldLabel>`, `<FieldError>`).
-  - Enforced automatically via the `require-form-provider` ast-grep rule. Detailed specification in `.agents/rules/form-architecture.md`.
+  - Compound forms composed with field-component `children` use a single `useForm` and `<FormProvider {...form}>`; nested field components obtain `control` through `useFormContext()`. The repository currently enforces Providers for owned `*-form.tsx` files, although the official shadcn/ui examples do not universally require one.
+  - Name standalone field components after their React Hook Form data property (for example `ProfileDisplayNameField` for `Controller name="displayName"`). Prefer built-in `FieldGroup`/`FieldSet` over arbitrary wrapper components.
+  - Allow React Hook Form `UseFormProps<Values>` as an appropriate form component contract. Extract `onSubmit` and component presentation props before passing only RHF options into `useForm`.
+  - Form fields use `Field`, `FieldLabel`, `FieldError`, `data-invalid` and `aria-invalid` as documented by shadcn/ui.
+  - See `.agents/rules/form-architecture.md`; run `pnpm check:structure` and `pnpm check:components`.
 
 - **Data and Authentication Module Architecture**:
   - Follow the canonical module taxonomy in [.agents/rules/data-layer-modules.md](.agents/rules/data-layer-modules.md) for data and auth boundaries:

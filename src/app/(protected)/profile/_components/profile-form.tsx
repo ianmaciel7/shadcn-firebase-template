@@ -1,42 +1,46 @@
-import type { ComponentProps } from "react";
-import { FormProvider } from "react-hook-form";
+import { useTranslations } from "next-intl";
+import type { PropsWithChildren } from "react";
+import { FormProvider, type UseFormProps, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { FieldGroup } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
-import type { ProfileControllerState } from "../_hooks/use-profile-controller";
-import { ProfileAvatarField } from "./profile-avatar-field";
-import { ProfilePreferenceFields } from "./profile-preference-fields";
-import { ProfileTextFields } from "./profile-text-fields";
+import type { ProfileValues } from "../_hooks/use-profile-actions";
 
-type ProfileFormProps = ComponentProps<"form"> & {
-  profile: ProfileControllerState;
-  user: NonNullable<ProfileControllerState["user"]>;
-};
+type ProfileFormProps = PropsWithChildren<
+  UseFormProps<ProfileValues> & {
+    className?: string;
+    onSubmit: (values: ProfileValues) => Promise<ProfileValues | undefined>;
+  }
+>;
 
 function ProfileForm({
+  children,
   className,
-  onSubmit: onSubmitProp,
-  profile,
-  user,
-  ...props
+  onSubmit,
+  ...formOptions
 }: ProfileFormProps) {
-  const { form, handleSubmit, isBusy, isSubmitting, onSubmit, t } = profile;
+  const t = useTranslations("Auth");
+  const form = useForm<ProfileValues>(formOptions);
+
+  async function handleSubmit(values: ProfileValues) {
+    const savedValues = await onSubmit(values);
+    if (savedValues) form.reset(savedValues);
+  }
 
   return (
     <FormProvider {...form}>
       <form
-        onSubmit={onSubmitProp ?? handleSubmit(onSubmit)}
         className={cn("flex flex-col gap-5", className)}
-        {...props}
+        onSubmit={form.handleSubmit(handleSubmit)}
       >
-        <FieldGroup className="gap-5">
-          <ProfileAvatarField profile={profile} user={user} />
-          <ProfileTextFields isBusy={isBusy} />
-          <ProfilePreferenceFields isBusy={isBusy} />
-        </FieldGroup>
-        <Button type="submit" className="w-full" disabled={isBusy}>
-          {isSubmitting ? (
+        <FieldGroup className="gap-5">{children}</FieldGroup>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={form.formState.isSubmitting || form.formState.disabled}
+        >
+          {form.formState.isSubmitting ? (
             <>
               <Spinner data-icon="inline-start" />
               {t("savingProfile")}

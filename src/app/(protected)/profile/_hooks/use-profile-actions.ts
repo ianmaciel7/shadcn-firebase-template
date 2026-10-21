@@ -7,7 +7,6 @@ import {
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import type { SubmitHandler } from "react-hook-form";
 import { toast } from "@/components/ui/toast";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase/client";
@@ -97,7 +96,6 @@ async function saveProfile({
 type UseProfileActionsOptions = {
   activeLocale: string;
   avatarFile: File | null;
-  reset: (values: ProfileValues) => void;
   savedValuesRef: { current: ProfileValues | null };
   setAvatarFile: (file: File | null) => void;
   setAvatarVersion: (version: number) => void;
@@ -109,7 +107,6 @@ type UseProfileActionsOptions = {
 export function useProfileActions({
   activeLocale,
   avatarFile,
-  reset,
   savedValuesRef,
   setAvatarFile,
   setAvatarVersion,
@@ -121,11 +118,15 @@ export function useProfileActions({
   const router = useRouter();
   const pathname = usePathname();
   const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const onSubmit: SubmitHandler<ProfileValues> = async (values) => {
+  const onSubmit = async (
+    values: ProfileValues,
+  ): Promise<ProfileValues | undefined> => {
     const previous = savedValuesRef.current;
     if (!user || !previous) return;
 
+    setIsSaving(true);
     try {
       const savedProfile = await saveProfile({
         user,
@@ -137,7 +138,6 @@ export function useProfileActions({
       if (savedProfile.avatarChanged) setAvatarVersion(Date.now());
       if (values.theme !== previous.theme) setTheme(values.theme);
       savedValuesRef.current = savedProfile.values;
-      reset(savedProfile.values);
       setAvatarFile(null);
 
       toast.add({
@@ -150,12 +150,16 @@ export function useProfileActions({
       if (values.locale !== activeLocale) {
         router.replace(pathname, { locale: values.locale });
       }
+      setIsSaving(false);
+      return savedProfile.values;
     } catch (cause) {
       console.error(cause);
       toast.add({
         title: t("profileSaveError"),
         type: "error",
       });
+      setIsSaving(false);
+      return undefined;
     }
   };
 
@@ -174,5 +178,5 @@ export function useProfileActions({
     }
   };
 
-  return { handleSignOut, isSigningOut, onSubmit };
+  return { handleSignOut, isSaving, isSigningOut, onSubmit };
 }
