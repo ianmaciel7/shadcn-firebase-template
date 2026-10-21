@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useTranslations } from "next-intl";
 import { buttonVariants } from "@/components/ui/button";
 
 function HomeScreen({
@@ -17,7 +16,6 @@ function HomeScreen({
   secondaryHref: string;
   secondaryLabel: string;
 }) {
-  const t = useTranslations("Home");
   return (
     <>
       <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
@@ -47,18 +45,6 @@ function HomeScreen({
           })}
         >
           {secondaryLabel}
-        </Link>
-        <Link
-          href="https://nextjs.org/docs"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={buttonVariants({
-            variant: "outline",
-            className:
-              "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
-          })}
-        >
-          {t("nextDocs")}
         </Link>
       </div>
     </>
