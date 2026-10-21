@@ -1,19 +1,27 @@
 # Next.js Route Special Files Logic
 
-This rule enforces architectural separation of concerns for Next.js App Router special files (`page.tsx`, `layout.tsx`, `template.tsx`, `loading.tsx`, `not-found.tsx`, `error.tsx`).
+Repository policy: `page.tsx`, `layout.tsx`, and `template.tsx` stay as
+thin **Server Component** entrypoints. This is stricter than the Next.js API,
+which permits data access in pages/layouts and Client Components in templates.
 
-## Core Principles
+- Allow route parameter and search parameter reads, server-side data
+  orchestration, Next.js generators (`generateMetadata`,
+  `generateViewport`, `generateStaticParams`), static route exports, root
+  document setup, and composition of providers and UI.
+- Reject `"use client"`, React and third-party hooks (`useState`,
+  `useTranslations`, `useRouter`, etc.), direct Firebase SDK imports,
+  browser APIs, JSX event handlers, local mutation, conditional control flow,
+  loops, exception handling, and inline helper/callback functions.
+- Extract UI to colocated `_components/`, client behavior to `_hooks/`,
+  and domain operations to dedicated `src/lib/` modules. Server-side data
+  reads through those modules are allowed in route entrypoints.
+- The mandatory `pnpm check:routes` command scans **all** matching files,
+  including the route-group root and future `template.tsx` files. It runs
+  self-tests and fails CI on violations; `ast-grep` also marks hook violations
+  as errors through `review-route-special-files-logic`.
+- `loading.tsx`, `error.tsx`, and `not-found.tsx` retain their individual
+  Next.js conventions and are outside this three-file enforcement.
 
-1. **Thin Glue Code / Presentation Controllers**:
-   - Special files must only handle routing parameters (`params`, `searchParams`), declare metadata, wrap layout providers, and compose modular presentation components.
-   - They must never contain complex domain business logic, inlined multi-step data processing, or heavy computations.
-
-2. **No Inline Client State or Effects in Route Entry Points**:
-   - Avoid defining `useState` and `useEffect` directly inside `page.tsx`, `layout.tsx`, or `template.tsx`.
-   - When client interactivity or reactive state is required, extract the stateful behavior into semantic components under a colocated private `_components/` directory (e.g., `_components/register-form-client.tsx`, `_components/profile-form.tsx`) or private custom hooks under `_hooks/`.
-
-3. **Data & Domain Logic Segregation**:
-   - Domain operations, database mutations, and SDK integrations belong in dedicated domain/lib modules under `src/lib/` or server-only action files, never hardcoded inline inside route templates or pages.
-
-4. **Automated Enforcement**:
-   - An `ast-grep` structural rule (`review-route-special-files-logic`) scans all special files in `src/app/**/` to prompt reviews whenever `useState` or `useEffect` is directly invoked in them.
+References: [Next.js page](https://nextjs.org/docs/app/api-reference/file-conventions/page),
+[layout](https://nextjs.org/docs/app/api-reference/file-conventions/layout),
+[template](https://nextjs.org/docs/app/api-reference/file-conventions/template).

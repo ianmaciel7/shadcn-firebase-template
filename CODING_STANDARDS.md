@@ -100,7 +100,7 @@ When standards conflict, apply them in this order:
 - Maintain single-responsibility module separation: keep domain types, constants,
   and type guards (such as `theme.ts` and `locale.ts`) in dedicated modules under
   `src/lib/`, decoupled from persistence and database clients (e.g. `src/lib/firebase/firestore/`).
-- **No heavy business logic or state in special files**: Route entry points (`page.tsx`, `layout.tsx`, `template.tsx`, `loading.tsx`) must serve as thin composition and presentation controllers ("glue code"). They should not contain direct business logic calculations, inline client state (`useState`), or direct side-effects (`useEffect`). Extract stateful UI and client interactions into private `_components/` or `_hooks/`, and data manipulation/domain logic into `src/lib/` or dedicated service modules.
+- **Enforced thin route entrypoints**: `page.tsx`, `layout.tsx`, and `template.tsx` are Server Component composition seams in this repository. They can orchestrate server data reads, access route props, declare metadata, and compose UI, but must not embed client hooks, direct Firebase SDK calls, browser APIs, event handlers, state mutation, branching, loops, or helper callbacks. Extract UI into `_components/`, hooks into `_hooks/`, and business logic into dedicated `src/lib/` services. Run `pnpm check:routes` locally; it is mandatory in `verify:fast` and `verify:static` CI. This is a repository policy, not a general Next.js restriction. See [.agents/rules/route-special-files.md](.agents/rules/route-special-files.md).
 - Use the configured `@/*` path aliases instead of deep relative imports when
   crossing module boundaries.
 - Use Tailwind CSS and the existing design tokens. Avoid inline styles unless a
