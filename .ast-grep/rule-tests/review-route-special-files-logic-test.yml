@@ -1,0 +1,29 @@
+id: review-route-special-files-logic
+valid:
+  - |
+    import { ProductList } from "./_components/product-list";
+
+    export default async function Page() {
+      return <ProductList />;
+    }
+  - |
+    export default function Layout({ children }: { children: React.ReactNode }) {
+      return <main>{children}</main>;
+    }
+invalid:
+  - |
+    import { useState } from "react";
+
+    export default function Page() {
+      const [count, setCount] = useState(0);
+      return <button onClick={() => setCount(count + 1)}>{count}</button>;
+    }
+  - |
+    import { useEffect } from "react";
+
+    export default function Layout({ children }: { children: React.ReactNode }) {
+      useEffect(() => {
+        console.log("mounted");
+      }, []);
+      return <div>{children}</div>;
+    }

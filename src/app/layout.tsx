@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { IntlProvider } from "@/components/ui/extensions/intl-provider";
 import { ThemeProvider } from "@/components/ui/extensions/theme-provider";
+import { Toaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
@@ -16,6 +17,15 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+};
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Metadata");
@@ -43,6 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               disableTransitionOnChange
             >
               <TooltipProvider>{children}</TooltipProvider>
+              <Toaster />
             </ThemeProvider>
           </IntlProvider>
         </Suspense>

@@ -10,14 +10,12 @@
     "src/**/*.stories.{ts,tsx}"
   ],
   "project": ["src/**/*.{ts,tsx}"],
-  // ADR 0004 specifies these as part of the accepted i18n design
-  // (path-based navigation helpers and the re-exported routing members), so
-  // they are kept intentionally even though no route uses them yet.
-  "ignoreFiles": ["src/i18n/navigation.ts"],
   "ignoreIssues": {
     "src/i18n/routing.ts": ["exports"],
-    // Vendored Firebase UI reference layer (ADR 0008): never edited here, so an
-    // import that upstream wrote against a different layout stays unresolved.
+    // ADR 0004 specifies these path-based navigation helpers as part of the
+    // accepted i18n design, even though no route uses every export yet.
+    "src/i18n/navigation.ts": ["exports"],
+    // Firebase shadcn registry imports assume their upstream flat layout.
     "src/components/firebase/**": ["unresolved"]
   },
   "ignoreDependencies": [
@@ -31,5 +29,5 @@
     "@stryker-mutator/command-runner"
   ],
   // Host tools installed outside pnpm (see TOOLING.md).
-  "ignoreBinaries": ["semgrep", "gitleaks", "actionlint", "zizmor"]
+  "ignoreBinaries": ["semgrep", "gitleaks", "actionlint", "zizmor", "firebase"]
 }

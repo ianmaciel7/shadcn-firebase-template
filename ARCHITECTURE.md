@@ -20,8 +20,12 @@ configuration and repository documentation.
 │   ├── adr/                 # Accepted architecture decisions
 │   └── agents/              # Instructions for automated contributors
 ├── public/                  # Static assets served by Next.js
+├── scripts/                 # Operational and developer tooling scripts (e.g. emulator seed/clear)
 ├── src/
 │   ├── app/                 # App Router routes, layouts, and global styles
+│   │   ├── (protected)/     # Authenticated route group with client auth guard layout (e.g. /profile)
+│   │   ├── (public)/        # Public authentication routes (sign-in, register, forgot-password)
+│   │   └── _components/     # Route-private components and auth providers
 │   ├── components/          # Reusable application and UI components
 │   ├── hooks/               # Reusable React hooks
 │   ├── i18n/                # Locale routing, navigation, and request config
@@ -53,10 +57,16 @@ files, and `public/` remain at the repository root, as required by the Next.js
 - Shared UI belongs in `src/components`; shared non-UI helpers belong in
   `src/lib`.
 - Route-specific implementation details may be colocated with a route. Use an
-  underscore-prefixed folder such as `_components` or `_lib` when explicitly
-  marking it as non-routable is useful.
-- Use App Router route groups, for example `(marketing)`, to organize related
-  routes or layouts without changing their URLs.
+  underscore-prefixed folder such as `_components`, `_hooks`, or `_lib` when
+  explicitly marking it as non-routable is useful.
+- Use App Router route groups to organize related routes or layouts without
+  changing their URLs:
+  - `(public)` groups unauthenticated identity flows (`/sign-in`, `/register`,
+    `/forgot-password`) under a shared layout and redirects authenticated visitors
+    to `/profile`.
+  - `(protected)` isolates authenticated routes (e.g. `/profile`) behind a
+    client-side layout guard that observes `onAuthStateChanged` and redirects
+    unauthenticated visitors to `/sign-in`.
 
 ## Test boundaries
 
@@ -69,8 +79,8 @@ files, and `public/` remain at the repository root, as required by the Next.js
 - Keep Playwright E2E specifications in root `tests/` with `*.spec.ts`.
   Feature-specific fixtures and helpers stay with their consumer unless shared
   by multiple E2E specifications.
-- Keep route-private test subjects under existing `_components` and `_lib`
-  boundaries; test placement must not alter a route's URL or structure.
+- Keep route-private test subjects under existing `_components`, `_hooks`, and
+  `_lib` boundaries; test placement must not alter a route's URL or structure.
 
 See [ADR 0006](docs/adr/0006-configure-testing.md) for the adopted architecture and [TESTING.md](TESTING.md) for
 commands and implementation conventions.
@@ -113,12 +123,12 @@ The root layout keeps the async `IntlProvider` inside `Suspense`, followed by
 `ThemeProvider` and `TooltipProvider`. The component libraries under
 `src/components/ui` and `src/components/ai-elements` are locally owned source;
 custom providers under `ui/extensions` remain subject to application checks.
-`src/components/firebase` is a read-only vendored reference layer for the Firebase UI
-registry: never edit it by hand, never put application code in it, and change it only
-through the update procedure in [ADR 0008](docs/adr/0008-install-firebase-ui-registry.md).
-The root `tsconfig.json` includes this layer for editor diagnostics;
-`tsconfig.build.json` excludes it from the application typecheck unless an
-application file imports it. The Next.js configuration uses the build config.
+`src/components/firebase` contains Firebase UI registry source used by the app.
+Treat copied components as locally owned shadcn source and review any registry
+update as a source diff; see [ADR 0008](docs/adr/0008-install-firebase-ui-registry.md).
+TypeScript checks the full directory with the application build config. Bulk
+formatting and other broad checks retain targeted exclusions for untouched
+registry source.
 Ladle (`.ladle/`) isolates and documents UI components without requiring the
 Next.js runtime.
 
@@ -126,7 +136,25 @@ Next.js runtime.
 `src/app`, and imports from `src/lib` into routes, components, hooks, or i18n.
 It does not ban all third-party React dependencies in `src/lib`.
 
-No database, authentication provider, or deployment integration is configured.
+Firebase Authentication provides browser authentication on public auth routes and
+client-guarded protected routes (`(protected)/profile`); see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md).
+Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`; Firestore
+operations live in descriptive modules under `src/lib/firebase/firestore/`, such
+as `user-preferences.ts`. The profile route's `useProfileActions` hook coordinates
+its Auth, Storage, and Firestore updates. Profile preferences use
+Firestore at `users/{uid}` with owner and field/value validation rules. Avatar
+Storage rules restrict `users/{uid}/avatar` to its owner and enforce accepted
+image types and the 2 MiB upload limit. These browser SDK modules are not a
+Next.js server-side DAL. Next.js documentation uses `data.ts` for server-side
+data access and `actions.ts` for Server Actions; we reserve those patterns for
+server code, rather than using those names for Firebase client modules
+([Fetching Data](https://nextjs.org/docs/app/getting-started/fetching-data),
+[Mutating Data](https://nextjs.org/docs/app/getting-started/mutating-data),
+[Data Security](https://nextjs.org/docs/app/guides/data-security)). See
+[.agents/rules/data-layer-modules.md](.agents/rules/data-layer-modules.md) for the
+file taxonomy defining `definitions.ts`, `dto.ts`, `dal.ts`, and `data.ts`. The client
+SDK relies on Firebase Security Rules and does not provide server authorization
+for protected routes. No deployment integration is configured.
 Keep [DER.md](DER.md) and [GLOSSARY.md](GLOSSARY.md) pending until the respective
 persistence and product decisions exist.
 
