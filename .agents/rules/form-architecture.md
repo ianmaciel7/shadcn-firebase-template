@@ -58,3 +58,7 @@ The profile components were compared with all maintained UI component modules un
 - [React Hook Form useForm](https://react-hook-form.com/docs/useform)
 - [React Hook Form FormProvider](https://react-hook-form.com/docs/formprovider)
 - [Next.js Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components)
+
+## Direct parent relationships
+
+The JSX guard requires the immediate parent chain, not merely a matching ancestor. Card header/content/footer are direct children of `ProfileForm`; the form is a direct child of `ProfileCard`. Title/description are direct header children, form content is a direct CardContent child, and form footer is a direct CardFooter child. Action buttons are direct form-footer children. An extra element wrapper at any of these boundaries fails the guard because it changes the intended sibling/slot layout.

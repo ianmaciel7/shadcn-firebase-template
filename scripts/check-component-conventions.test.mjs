@@ -427,6 +427,31 @@ describe("owned component conventions", () => {
     );
   });
 
+  it("rejects wrappers between profile regions and their direct parents", () => {
+    const path = "src/app/(protected)/profile/_components/profile-section.tsx";
+    const valid =
+      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };";
+    expectValid(valid, path);
+    const regions = [
+      "<ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader>",
+      "<ProfileCardContent><ProfileFormContent /></ProfileCardContent>",
+      "<ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter>",
+      "<ProfileCardTitle />",
+      "<ProfileCardDescription />",
+      "<ProfileFormContent />",
+      "<ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter>",
+      "<ProfileSaveButton />",
+      "<ProfileSignOutButton />",
+    ];
+    for (const region of regions) {
+      expectInvalid(
+        valid.replace(region, `<div>${region}</div>`),
+        /must be inside/,
+        path,
+      );
+    }
+  });
+
   it("keeps the compound Card parts declared and exported together", () => {
     const valid = compoundCard(
       "function ProfileCard(props) { return <Card {...props} />; } export { ProfileCard };",
