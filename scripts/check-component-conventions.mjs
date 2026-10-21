@@ -86,20 +86,41 @@ function checkFileName(source, stem, report) {
   }
 }
 
+const profileCardParts = [
+  "ProfileCard",
+  "ProfileCardHeader",
+  "ProfileCardTitle",
+  "ProfileCardDescription",
+  "ProfileCardContent",
+];
+
+function expectedComponentNames(source, stem) {
+  const path = source.fileName.replaceAll("\\", "/");
+  if (path.endsWith("/profile/_components/profile-card.tsx")) {
+    return profileCardParts;
+  }
+  return [pascalCase(stem)];
+}
+
 function checkPrimaryExport(source, stem, report) {
-  const expected = pascalCase(stem);
-  const isLocalFunction = source.statements.some(
-    (statement) =>
-      ts.isFunctionDeclaration(statement) &&
-      statement.name?.text === expected &&
-      !exported(statement),
-  );
-  if (!isLocalFunction) {
-    report(source, "The component must be declared as a local named function.");
+  const expected = expectedComponentNames(source, stem);
+  for (const name of expected) {
+    const isLocalFunction = source.statements.some(
+      (statement) =>
+        ts.isFunctionDeclaration(statement) &&
+        statement.name?.text === name &&
+        !exported(statement),
+    );
+    if (!isLocalFunction) {
+      report(source, `Declare ${name} as a local named function.`);
+    }
   }
   const names = componentExports(source);
-  if (names.length !== 1 || names[0] !== expected) {
-    report(source, `Export exactly one named component ${expected}.`);
+  if (
+    names.length !== expected.length ||
+    !expected.every((name) => names.includes(name))
+  ) {
+    report(source, `Export exactly the named components: ${expected.join(", ")}.`);
   }
 }
 
@@ -123,15 +144,17 @@ function checkExportStyle(source, report) {
 }
 
 function checkProps(source, expected, report) {
+  const allowed = (source.fileName.replaceAll("\\", "/").endsWith("/profile/_components/profile-card.tsx")
+    ? profileCardParts
+    : [expected]).map((name) => `${name}Props`);
   for (const statement of source.statements) {
     if (
       !ts.isTypeAliasDeclaration(statement) &&
       !ts.isInterfaceDeclaration(statement)
-    )
-      continue;
+    ) continue;
     const name = statement.name.text;
-    if (name.endsWith("Props") && name !== `${expected}Props`) {
-      report(statement, `Props type must be named ${expected}Props.`);
+    if (name.endsWith("Props") && !allowed.includes(name)) {
+      report(statement, `Props type must be named one of: ${allowed.join(", ")}.`);
     }
   }
 }
@@ -279,7 +302,6 @@ function checkProfileCardSafety(source, elements, report) {
   }
   if (
     profileElements(elements, "ProfileForm").length ||
-    profileElements(elements, "CardHeader").length ||
     profileElements(elements, "ProfileFormContent").length ||
     profileElements(elements, "ProfileFormFooter").length
   ) {
@@ -287,6 +309,16 @@ function checkProfileCardSafety(source, elements, report) {
       source,
       "ProfileCard must accept children; compose profile UI in ProfileSection.",
     );
+  }
+  for (const primitive of [
+    "CardHeader",
+    "CardTitle",
+    "CardDescription",
+    "CardContent",
+  ]) {
+    if (profileElements(elements, primitive).length !== 1) {
+      report(source, `ProfileCard must wrap exactly one ${primitive}.`);
+    }
   }
 }
 
@@ -357,19 +389,6 @@ function checkProfileSectionSafety(source, elements, report) {
     profileElements(elements, "Card").length
   ) {
     report(source, "ProfileSection must delegate native Card and form roots.");
-  }
-}
-
-function checkProfileCardPartSafety(source, elements, report, stem) {
-  const primitives = {
-    "profile-card-header": "CardHeader",
-    "profile-card-content": "CardContent",
-    "profile-card-title": "CardTitle",
-    "profile-card-description": "CardDescription",
-  };
-  const expected = primitives[stem];
-  if (profileElements(elements, expected).length !== 1) {
-    report(source, `${stem} must render exactly one ${expected}.`);
   }
 }
 
@@ -480,14 +499,6 @@ function checkProfileFormSafety(source, stem, report) {
   const checks = {
     "profile-card": checkProfileCardSafety,
     "profile-section": checkProfileSectionSafety,
-    "profile-card-header": (file, elements, addIssue) =>
-      checkProfileCardPartSafety(file, elements, addIssue, stem),
-    "profile-card-content": (file, elements, addIssue) =>
-      checkProfileCardPartSafety(file, elements, addIssue, stem),
-    "profile-card-title": (file, elements, addIssue) =>
-      checkProfileCardPartSafety(file, elements, addIssue, stem),
-    "profile-card-description": (file, elements, addIssue) =>
-      checkProfileCardPartSafety(file, elements, addIssue, stem),
     "profile-form": checkProfileProviderSafety,
     "profile-form-content": checkProfileContentSafety,
     "profile-form-footer": checkProfileFooterSafety,
