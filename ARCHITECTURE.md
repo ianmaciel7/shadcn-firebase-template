@@ -37,7 +37,7 @@ configuration and repository documentation.
 ├── ARCHITECTURE.md
 ├── CODING_STANDARDS.md
 ├── CONTRIBUTING.md
-├── DER.md                   # Entity-relationship diagram (pending persistence)
+├── DER.md                   # Pending product ERD and existing technical stores
 ├── DESIGN.md                # Design system tokens, typography, and UI specs
 ├── GLOSSARY.md
 ├── README.md
@@ -52,8 +52,8 @@ files, and `public/` remain at the repository root, as required by the Next.js
 
 ## Application boundaries
 
-- `src/app` contains routes and Next.js special files only, such as
-  `page.tsx`, `layout.tsx`, `loading.tsx`, and `route.ts`.
+- `src/app` contains route entrypoints and Next.js special files, plus
+  route-private implementation code under underscore-prefixed folders.
 - Shared UI belongs in `src/components`; shared non-UI helpers belong in
   `src/lib`.
 - Route-specific implementation details may be colocated with a route. Use an
@@ -78,8 +78,9 @@ When an unauthenticated user requests a protected route, the client guard redire
   non-JSX modules and `*.test.tsx` for React or JSX integrations.
 - Colocate Ladle stories (`*.stories.tsx`) next to UI primitives under
   `src/components/ui/` for isolated component development and visual inspection.
-- Keep repository-integrity Vitest tests, such as the Firebase reference guard, in
-  `tests/unit/` with `*.test.ts`; they check files outside a single source module.
+- Keep repository tooling guard self-tests beside their scripts, such as
+  `scripts/check-component-conventions.test.mjs`. Do not introduce a global
+  `tests/unit/` hierarchy for application tests.
 - Keep Playwright E2E specifications in root `tests/` with `*.spec.ts`.
   Feature-specific fixtures and helpers stay with their consumer unless shared
   by multiple E2E specifications.
@@ -124,7 +125,8 @@ Compiler. It loads Tailwind through the Turbopack CSS loader and wraps the
 configuration with the `next-intl` plugin.
 
 The root layout keeps the async `IntlProvider` inside `Suspense`, followed by
-`ThemeProvider` and `TooltipProvider`. The component libraries under
+`ThemeProvider` and `TooltipProvider`, with `Toaster` inside `ThemeProvider`.
+The component libraries under
 `src/components/ui` and `src/components/ai-elements` are locally owned source;
 custom providers under `ui/extensions` remain subject to application checks.
 `src/components/firebase` contains Firebase UI registry source used by the app.
@@ -144,8 +146,11 @@ Firebase Authentication provides browser authentication on public auth routes an
 client-guarded protected routes (`(protected)/profile`); see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md).
 Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`; Firestore
 operations live in descriptive modules under `src/lib/firebase/firestore/`, such
-as `user-preferences.ts`. The profile route's `useProfileActions` hook coordinates
-its Auth, Storage, and Firestore updates. Profile preferences use
+as `user-preferences.ts`. The profile route's `useProfileSubmit` hook coordinates
+its Auth, Storage, and Firestore updates; `ProfileForm` owns the form instance,
+submission state, and reset. `ProfileSection` loads the session and composes
+the Card parts. The canonical profile responsibilities live in
+[the form rule](.agents/rules/form-architecture.md). Profile preferences use
 Firestore at `users/{uid}` with owner and field/value validation rules. Avatar
 Storage rules restrict `users/{uid}/avatar` to its owner and enforce accepted
 image types and the 2 MiB upload limit. These browser SDK modules are not a
@@ -168,3 +173,17 @@ Architecture decisions that have lasting consequences are recorded in
 `docs/adr/`; use its [index](docs/adr/README.md) to distinguish historical
 details from current configuration. New ADRs are numbered sequentially and must describe the context,
 decision, and consequences before the related implementation is merged.
+
+## UI distribution boundary
+
+`components.json` selects `base-nova`, Base UI primitives, TypeScript, React
+Server Component support, Lucide, and the `@/*` aliases. Tailwind v4 uses the
+existing CSS entry rather than a separate Tailwind config. The `shadcn` package
+provides the CLI and shared CSS; a dependency upgrade does not replace copied
+files in `src/components/ui`, `src/components/ai-elements`, or
+`src/components/firebase`.
+
+The repository consumes registries; it does not publish a custom registry.
+Monorepo, package-import, React Aria, Radix, alternative form-library, and
+server-action examples in upstream documentation are available references,
+not adopted architecture. See [the upstream applicability map](docs/agents/shadcn.md).

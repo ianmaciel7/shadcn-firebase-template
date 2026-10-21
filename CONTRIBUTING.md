@@ -72,3 +72,17 @@ the final squash commit title follows Conventional Commits. The intended GitHub
 protection settings and their availability are described in
 [ADR 0007](docs/adr/0007-configure-ci.md#main-branch-merge-policy); repository
 settings must be configured separately to enforce this policy.
+
+## shadcn/ui documentation and source changes
+
+Use [the documentation workflow](docs/agents/shadcn.md) to identify the correct
+primitive family and source revision. Keep upstream findings in their canonical
+guide, update the source inventory when refreshing the full reference, and
+distinguish official APIs from project-specific guards. Do not rewrite accepted
+ADRs or external skill references to make them match a new release.
+
+For a component update, include the registry/ref, reviewed CLI diff, preserved
+local adaptations, and behavior verification in the pull request. Documentation
+updates alone do not imply component, dependency, preset, or AI Elements
+migrations. Preserve unrelated working-tree changes and stage only the intended
+files or hunks.

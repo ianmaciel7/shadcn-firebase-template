@@ -5,14 +5,19 @@ TypeScript, Tailwind CSS, shadcn/ui, Biome, and `next-intl`.
 
 ## Getting Started
 
-Use Node.js `^22.19.0 || ^24.5.0` and pnpm `12.11.2`, as declared in
-`package.json`. Install dependencies with the committed lockfile and start the
-development server:
+Use Node.js `^22.22.1 || ^24.5.0` and pnpm `12.14.0`, as declared in
+`package.json`. The intended reproducible setup installs dependencies with
+the committed lockfile and starts the development server:
 
 ```bash
 pnpm install --frozen-lockfile
 pnpm dev
 ```
+
+The current lockfile contains package-manager metadata without the full
+application dependency graph. Before a clean installation can use the frozen
+workflow above, regenerate and review the application lockfile with the pinned
+pnpm version. See [Package management](TOOLING.md#package-management).
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
@@ -51,7 +56,10 @@ See [Testing](TESTING.md) and [Security](SECURITY.md) for details.
 
 ## Current application behavior
 
-The starter exposes `/`. `next-intl` selects `en`, `pt-BR`, or `es` from an
+The starter exposes `/`, public authentication routes (`/sign-in`, `/register`,
+`/forgot-password`), and the client-guarded `/profile` route. Firebase Security
+Rules enforce data ownership; the client guard handles navigation only.
+`next-intl` selects `en`, `pt-BR`, or `es` from an
 explicit request locale or the `NEXT_LOCALE` cookie, falling back to `en`.
 There is no locale route segment or request proxy configured. The root
 `<html lang="en">` is currently static; cookie-based translations do not update
@@ -73,6 +81,7 @@ and the distinction between current guidance and historical decisions.
 - [Entity-relationship diagram](DER.md)
 - [Architecture decision records](docs/adr/README.md)
 - [Agent integrations and skills](.agents/README.md)
+- [shadcn/ui documentation workflow and source inventory](docs/agents/shadcn.md)
 
 ## Validation
 

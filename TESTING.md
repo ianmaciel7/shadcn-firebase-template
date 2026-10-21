@@ -242,3 +242,24 @@ server on port 3000 when one is already running outside CI.
 In the pull request description, state the commands run and the relevant
 manual checks. Call out deliberately untested behavior, the reason it could
 not be exercised, and any known baseline validation failure.
+
+## shadcn/ui update verification
+
+For a documentation refresh, use the documentation checks above and validate
+the source inventory against the recorded upstream revision. Compare stated
+configuration and commands with the local files and CLI help. A fetched source
+inventory establishes documentation coverage, not a passing application build.
+
+When component source changes, run `pnpm verify:fast`, `pnpm check:structure`,
+and the relevant browser suites. Check label/control associations, invalid and
+disabled states, focus entry and return, keyboard operation, and loading/error
+feedback through accessible roles. Verify styled navigation remains a link,
+submit and sign-out remain separate actions, and Base UI Select values reach
+the form correctly. Inspect light/dark, responsive, long-text, and localized
+states in Ladle or the application; visual baselines change only through the
+existing reviewed workflow.
+
+Do not infer accessibility from the component name, generated source, or an axe
+pass alone. Use browser interaction checks for focus, portals, and keyboard
+behavior. Add regression tests for changed application behavior, rather than
+mirroring third-party implementation details.

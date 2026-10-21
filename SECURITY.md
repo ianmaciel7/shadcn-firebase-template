@@ -57,6 +57,27 @@ coordinate disclosure and remediation with the reporter.
 - AI interface components do not configure an AI service, server-side
   authorization, or credentials. A derived application owns those decisions.
 
-This template does not prescribe an authentication provider or data store.
-Projects derived from it must document their own access-control, data-retention,
-and incident-response requirements.
+The template currently uses Firebase Authentication, Firestore preferences, and
+Storage avatars. Projects derived from it must document their own access-control,
+data-retention, and incident-response requirements, including changes to these
+services or their Security Rules.
+
+## Component registry updates
+
+Registry items become executable application source and may introduce package
+dependencies, styles, environment variable placeholders, and additional files.
+Schema validation confirms the payload's shape; it does not establish that the
+source or its dependencies are safe. Review the resolved project changes with
+`shadcn add --dry-run`, `--diff`, or `--view` before installation, following
+[TOOLING.md](TOOLING.md#shadcnui-cli-workflow).
+
+Review the explicit registry or repository, requested version/ref, dependencies,
+file destinations, and any configuration changes. Prefer an immutable commit
+ref for a reviewed GitHub registry update. Keep private registry credentials in
+environment variables and reference placeholders in configuration. Never store
+live credentials in source inventories, examples, or command output. A public
+registry health score is not a security audit.
+
+Client form validation, disabled actions, and route guards do not authorize
+Firebase data access. Preserve the existing Firestore and Storage ownership,
+field/value, MIME type, and upload-size checks when updating UI source.

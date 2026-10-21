@@ -8,10 +8,10 @@ repository. It is not a catalog of every runtime library; `package.json` and
 
 | Category | Tool | Version or status | Purpose | Source of truth |
 | --- | --- | --- | --- | --- |
-| Package management | pnpm | 12.11.2 | Installs dependencies and runs project commands. Do not use npm or Yarn to modify dependencies. | `package.json`, `pnpm-lock.yaml` |
+| Package management | pnpm | 12.14.0 | Installs dependencies and runs project commands. Do not use npm or Yarn to modify dependencies. | `package.json`, `pnpm-lock.yaml` |
 | Application build | Next.js | 16.4.2 | App Router framework, development server, production build, and server runtime. | `package.json`, `next.config.ts` |
 | Bundler | Turbopack | Included with Next.js | Bundles development and production builds; loads Tailwind CSS through `@tailwindcss/turbopack`. | `next.config.ts` |
-| Language | TypeScript | `^5` (5.9.3 locked) | Provides type checking and the `@/*` import alias. | `package.json`, `tsconfig.json`, `pnpm-lock.yaml` |
+| Language | TypeScript | `^5`; inspect the installed version and lockfile | Provides type checking and the `@/*` import alias. | `package.json`, `tsconfig.json`, `pnpm-lock.yaml` |
 | Compiler | React Compiler | 1.0.0 | Optimizes React components through Next.js configuration. | `package.json`, `next.config.ts` |
 | Styling | Tailwind CSS | `^4` | Generates utility CSS and is loaded by Turbopack (and by Vite for Ladle). | `package.json`, `next.config.ts`, `.ladle/vite.config.mjs`, `src/app/globals.css` |
 | Code quality | Biome | 2.5.15 | Formats code, runs lint checks, and organizes imports. | `package.json`, `biome.json` |
@@ -27,7 +27,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Mutation testing | Stryker with the `command` runner | 10.0.0 (see [Known limitations](#known-limitations)) | On-demand mutation analysis of selected logic; runs the unit tests once per mutant. | `stryker.config.json`, `vitest.mutation.config.mts` |
 | Unused code | Knip | 6.41.0 | Finds unused files, exports, and dependencies. | `knip.jsonc` |
 | Architecture boundaries | dependency-cruiser | 18.6.0 | Enforces layering rules and forbids dependency cycles. | `.dependency-cruiser.cjs` |
-| Structural rules | ast-grep | 0.51.0 | Enforces project conventions that need syntax awareness (currently a warning-level hint about manual memoization, per `CODING_STANDARDS.md`). Rules have snapshot tests. | `sgconfig.yml`, `.ast-grep/` |
+| Structural rules | ast-grep | 0.51.0 | Enforces form, prop, Tailwind, and route conventions, with warning-level React review hints. Rules have snapshot tests. | `sgconfig.yml`, `.ast-grep/` |
 | Duplication | jscpd | 5.4.1 | Reports meaningful duplicated code. | `.jscpd.json` |
 | Complexity and health | Fallow | 3.34.0 | Reports complexity, CRAP score (from real coverage), and hotspots. Route-private hooks under `src/app/**/_hooks/` are included. `.ladle/` is excluded on purpose: it is tooling glue that Ladle loads by convention. Vendored `src/components/ui/*.tsx` and `ai-elements` are excluded; custom code under `ui/extensions/` is analyzed. Dead-code, duplication, and architecture analysis stay with Knip, jscpd, and dependency-cruiser. | `.fallowrc.json` |
 | React diagnostics | React Doctor | 0.9.18 | Scans application React code for correctness, performance, and security issues. | `doctor.config.json` |
@@ -43,6 +43,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Codebase graph | Graphify | Host tool | Builds an on-demand knowledge graph; output goes to the ignored `graphify-out/`. | None |
 | Git hooks | Husky + lint-staged + Commitlint | 9.1.7 / 17.6.0 / 21.2.3 | Check staged files with Biome and validate commit messages. | `.husky/`, `package.json`, `commitlint.config.mjs` |
 | Repository integrity | pre-commit | Host tool | Runs file-integrity hooks (large files, case conflicts, JSON/YAML, merge markers). | `.pre-commit-config.yaml` |
+| Agent documentation | Seven installed skills | Project-local `save` plus six external skills | See [.agents/skills/README.md](.agents/skills/README.md) for names, provenance, and entrypoints. | `.agents/skills/`, `skills-lock.json` |
 | Agent configuration | Agents CLI | Repository configuration; CLI is externally provided | Synchronizes reusable agent skills and MCP settings (Serena, Next.js DevTools). | `.agents/agents.json`, `.agents/skills/` |
 
 ## Host prerequisites
@@ -73,8 +74,17 @@ by hand outside the hook may need the same variable.
 
 ## Package management
 
-Use [pnpm](https://pnpm.io/) `12.11.2`, as pinned by the `packageManager`
+Use [pnpm](https://pnpm.io/) `12.14.0`, as pinned by the `packageManager`
 field in `package.json`. The `pnpm-lock.yaml` file is the lockfile of record.
+Inspect its importer
+coverage before asserting that every dependency version is locked; the current
+file contains package-manager dependency metadata rather than the complete
+application dependency graph.
+
+Before relying on `pnpm install --frozen-lockfile` for a clean checkout,
+regenerate the application dependency graph with the pinned pnpm version and
+review the resulting lockfile. Documentation-only work should report this
+baseline limitation without silently resolving or upgrading dependencies.
 
 Do not approve third-party build scripts unless a reviewed dependency needs
 them for documented core functionality. ADR 0007 also prohibits approving tools
@@ -198,7 +208,7 @@ valid and invalid tests, before registering a new custom rule.
 | `require-component-props` | ast-grep | error | Type or interface declarations ending in `*Props$` in app-owned `src/app` and `src/components` | Component prop types in application code should inherit standard element properties directly or through intersections (via `ComponentProps<...>`, `HTMLAttributes<...>`, or `PropsWithChildren`) so components remain composable and support `className` pass-through. Helpers nested in object members, wrapper arguments, or union alternatives do not establish inheritance. |
 | `require-field-data-invalid` | ast-grep | error | `<Field>` rendered inside a Controller consuming `fieldState` in `src/app` and `src/components` | Enforces binding `data-invalid` to `<Field>` when `fieldState` is used, ensuring proper error styling and accessible ARIA attribute propagation per `CODING_STANDARDS.md`. |
 | `require-form-provider` | ast-grep | error | `<form>` elements in composite form orchestrators (`*-form.tsx`) in `src/app` and `src/components` | Enforces wrapping composite forms in `<FormProvider>` or `<Form>` to eliminate prop-drilling of form controls into child field components. |
-| `review-route-special-files-logic` | ast-grep | error | App Router special files (`page.tsx`, `layout.tsx`, `template.tsx`, `loading.tsx`) under `src/app/` using `useState` or `useEffect` | Prompts review of stateful or side-effect logic colocated directly inside route special files. Route entry points should remain thin presentation/glue layers; state and effects must be extracted into semantic client components under `_components/` or private hooks under `_hooks/`. |
+| `review-route-special-files-logic` | ast-grep | error | App Router special files (`page.tsx`, `layout.tsx`, `template.tsx`) under `src/app/` using `useState` or `useEffect` | Rejects direct `useState`/`useEffect` calls inside the three configured route file kinds; the separate route AST guard covers broader violations. Route entry points should remain thin presentation/glue layers; state and effects must be extracted into semantic client components under `_components/` or private hooks under `_hooks/`. |
 | `no-excessive-cognitive-complexity` | Biome | error | Functions in application code under `src/` | Enforces a maximum cognitive complexity of 15 per function (`lint/complexity/noExcessiveCognitiveComplexity`), preventing high cyclomatic branching and unmaintainable stateful procedures. |
 | `no-server-api-in-client-components` | Semgrep | error | `"use client"` files importing `next/headers` | Complements `no-server-only-in-client-components`; fails with a clear message before the framework build error. |
 | `session-cookie-must-be-http-only` | Semgrep | error | a `.set()` call whose cookie name contains session, token, auth or sid, without `httpOnly: true` and `secure: true` | [Next.js authentication guide](https://nextjs.org/docs/app/guides/authentication). Matches by cookie name only, so unrelated cookies (theme, locale) are never flagged. |
@@ -230,8 +240,9 @@ is reintroduced:
   semantic-color and spacing rules): optional preferences; Biome gets native
   rules when upgraded.
 - **i18n** (`next-intl-*`): JSX text is covered by `noJsxLiterals`, keys by
-  typed next-intl, catalogs by `messages.test.ts`. Dynamic keys and toast
-  literals are deferred until the template has toasts.
+  typed next-intl, catalogs by `messages.test.ts`. Dynamic keys and imperative
+  toast messages need explicit review; the template
+  now uses the Base UI toast manager, and those messages must use locale catalogs.
 - **Security** (`next-*` server rules): see "Security checks not adopted".
 
 ### Native Biome rule evaluation history
@@ -257,10 +268,12 @@ Recheck current documentation before adding a replacement rule.
   links; adopt it once locale-prefixed internal links exist).
 - **Security checks not adopted:** unsafe Server Action input handling, missing
   authorization near sensitive operations, and private data in shared caches.
-  The template has no auth, database, or Server Actions to validate rules
-  against, `.parse()` or `throw` does not prove safety, and Next.js already
-  rejects `cookies()` or `headers()` inside `"use cache"`. Gitleaks owns
-  real secrets. Add taint-mode rules once a data access layer exists.
+  Browser Firebase Auth, Firestore preferences, and Storage uploads now exist;
+  there are no application Server Actions or server DAL to validate these
+  particular checks against. `.parse()` or `throw` does not prove safety, and
+  Next.js rejects `cookies()` or `headers()` inside `"use cache"`. Firebase
+  Security Rules own client SDK access control; Gitleaks owns secret detection.
+  Reassess taint-mode rules when server data access is introduced.
 - **Left to TypeScript:** component props, variants, Base UI and Accordion /
   ToggleGroup APIs, and async `params`. No Grit rule duplicates them.
 
@@ -378,3 +391,39 @@ The operational commands for the Firebase Auth Emulator are:
 
 See [Firebase setup](https://firebase.google.com/docs/auth/web/start) and
 [OAuth domain guidance](https://firebase.google.com/docs/auth/web/redirect-best-practices).
+
+## shadcn/ui CLI workflow
+
+The project already has `components.json`. Use the installed CLI for repeatable
+project work; use `pnpm dlx shadcn@latest` only when deliberately evaluating a
+newer CLI. A CLI upgrade does not update copied component source automatically.
+
+```bash
+pnpm exec shadcn --version
+pnpm exec shadcn info --json
+pnpm exec shadcn docs button card field select toast
+pnpm exec shadcn search @shadcn -q "card"
+pnpm exec shadcn view @shadcn/card
+pnpm exec shadcn add card --dry-run
+pnpm exec shadcn add card --diff card.tsx
+pnpm exec shadcn add card --view card.tsx
+pnpm exec shadcn preset resolve --json
+```
+
+`docs` returns documentation and API URLs; read the returned pages. `view`
+inspects registry metadata; `add --dry-run`, `--diff`, and `--view` resolve the
+actual project paths and changes. The latter two imply a dry run. The standalone
+`diff` command is deprecated. Review each affected source file, dependency,
+stylesheet, and import before merging an update, preserving local changes.
+
+`apply` changes an existing preset; `apply <code> --only theme,font` limits it
+to those parts. A new style, base, icon library, or RTL migration requires a
+scoped implementation review. `migrate cn` exists, but this project already
+uses `cn` and re-exports it from `src/lib/utils.ts`; do not run it again just
+to update documentation. Keep `shadcn/tailwind.css`: `eject` copies it into the
+project and removes automatic upstream CSS updates.
+
+No shadcn MCP server or custom registry publisher is configured. The only
+explicit additional registry is `@firebase`. See
+[the source review](docs/agents/shadcn.md) for the full upstream inventory and
+[the persistent rule](.agents/rules/shadcn-ui.md) for the project workflow.

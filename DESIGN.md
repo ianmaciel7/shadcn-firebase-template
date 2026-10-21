@@ -119,10 +119,13 @@ Source of truth: `src/app/globals.css`. Colors are authored there in `oklch()`; 
 | Icons | `lucide` | `components.json` |
 | Tailwind CSS entry | `src/app/globals.css` (Tailwind v4, no config file) | `components.json` |
 | Animations | `tw-animate-css`, `shadcn/tailwind.css` | `globals.css` |
+| Primitive base | Base UI (`@base-ui/react`); use the Base UI component documentation | `components.json`, `src/components/ui/` |
+| Class merging | `cn`; application helper re-exports it | `src/lib/utils.ts`, `package.json` |
+| Direction | `rtl: false`; current locales use LTR | `components.json` |
 | Theme switching | `next-themes`, `attribute="class"`, `defaultTheme="system"`, `enableSystem`, `disableTransitionOnChange` | `src/app/layout.tsx` |
 | `html` classes | Geist + Geist Mono variables, `h-full antialiased` | `src/app/layout.tsx` |
 | `body` classes | `min-h-full flex flex-col` | `src/app/layout.tsx` |
-| Provider stack | `Suspense` > async `IntlProvider` > `ThemeProvider` > `TooltipProvider` | `src/app/layout.tsx` |
+| Provider stack | `Suspense` > async `IntlProvider` > `ThemeProvider` > `TooltipProvider`, with a sibling `Toaster` inside the theme provider | `src/app/layout.tsx` |
 | Component aliases | `@/components`, `@/components/ui`, `@/lib`, `@/hooks`, `@/lib/utils` | `components.json` |
 | Component workshop | Ladle, uses `NextIntlClientProvider` with English messages, theme and tooltip providers; wrapper uses `bg-background p-4 font-sans text-foreground` | `.ladle/components.tsx` |
 
@@ -222,3 +225,43 @@ Base radius `--radius: 0.625rem` (10px). Derived tokens:
 
 - Don't hardcode hex or `oklch()` values in components.
 - Don't add a brand accent without adding the matching token pair (light and dark) in `globals.css`.
+
+## Component composition contracts
+
+Compose the installed primitives and their named parts. Cards use `CardHeader`,
+`CardTitle`, optional `CardDescription`/`CardAction`, `CardContent`, and optional
+`CardFooter`; include parts that have content rather than empty placeholders.
+The installed Card exposes `size="default" | "sm"` and `--card-spacing`.
+Preserve this spacing when a form sits between the Card root and its sections.
+
+Use built-in variants and sizes before adding styles. At application call
+sites, use `className` for layout and intentional documented customization;
+put reusable visual variants in the primitive. Use `cn()` for conditional
+classes, `gap-*` for sibling spacing, and `size-*` for equal dimensions.
+Retain the primitive's state attributes, focus rings, and overlay stacking.
+
+Buttons use `data-icon="inline-start"` or `data-icon="inline-end"` on icons
+and spinners; component styles set their size. Compose pending states with
+`Spinner` and `disabled`; there is no generic `isLoading` Button prop. For
+navigation, style an anchor or Next.js Link with `buttonVariants` so it keeps
+its link role. Base UI Button's `render` prop is for composing button behavior,
+and is not the link recipe.
+
+Use the installed Base UI `toast` manager from `@/components/ui/toast`; the
+root layout already mounts `Toaster`. Radix/React Aria Sonner examples describe
+different variants. Form semantics and validation belong in
+[Coding standards](CODING_STANDARDS.md#form-and-field-architecture-shadcnui--react-hook-form).
+
+The October 2026 upstream AI Elements patterns build on `Trace`, `CodeBlock`,
+`MessageScroller`, `Message`, `Bubble`, `Marker`, and `Attachment`. Existing
+copied AI Elements remain local source; the presence of these primitives does
+not prove every older wrapper was migrated. Audit exports and behavior before
+planning a migration. See [the official source review](docs/agents/shadcn.md).
+
+## Review boundaries
+
+The palette above describes the application theme. Provider-branded Firebase
+buttons have explicit scoped color overrides in `globals.css`; those do not
+change the global semantic palette. Keep any provider branding scoped there.
+`rtl: false` does not establish RTL support; an RTL change also needs direction,
+logical spacing, keyboard, and visual verification.

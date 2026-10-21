@@ -30,7 +30,7 @@ When standards conflict, apply them in this order:
   - Consolidate state variables that always transition together into a single atomic state object rather than maintaining fragmented, dependent `useState` declarations.
   - When managing external imperatively allocated browser resources (such as `URL.createObjectURL`), manage creation and revocation synchronously in handlers or during unmount cleanup, avoiding cascaded rendering ticks.
 - When a component owns several related stateful behaviors, consider a
-  component-specific hook such as `useProfileController`. The component can keep
+  component-specific hook such as `useProfileSubmit`. The component can keep
   independent hooks, while the custom hook can compose React hooks and other
   custom hooks ([Rules of Hooks](https://react.dev/reference/rules/rules-of-hooks#only-call-hooks-at-the-top-level)). Keep
   this code colocated with its route in a private `_hooks` folder when
@@ -110,20 +110,56 @@ When standards conflict, apply them in this order:
 
 ### Form and Field Architecture (shadcn/ui & React Hook Form)
 
-Forms across the application follow the modern shadcn `Field` architecture implemented in `src/components/ui/field.tsx`, orchestrated with `react-hook-form` and schema validation:
+Use `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, and `FieldError`
+from the installed `@/components/ui/field` alongside React Hook Form
+`Controller`. The upstream guide demonstrates a choice of schema validation;
+it does not require a specific schema library or `FormProvider` in every form.
+The profile currently uses RHF defaults, controlled values, and field-level
+rules, without a schema resolver. Add one only when the feature needs it.
 
-- **Canonical composition pattern**: Compose form inputs using `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, and `FieldError` from `@/components/ui/field` alongside React Hook Form's `<Controller>`. Prefer this modular primitive composition over monolithic form context wrappers.
-- **Form state orchestration**: Initialize forms via `useForm` typed with schema inference (e.g., `z.infer<typeof schema>`), providing an explicit validation resolver (`zodResolver` or `standardSchemaResolver`), explicit default values for every field, and reactive validation mode (`mode: "onChange"` or `mode: "onSubmit"`).
-- **Accessibility and state binding**:
-  - Bind `data-invalid={!!fieldState.error}` to the `<Field>` container.
-  - Bind `aria-invalid={!!fieldState.error}` to the interactive control (`<Input>`, `<Textarea>`, `<NativeSelect>`).
-  - Explicitly connect `<FieldLabel htmlFor={id}>` with the control's `id`.
-  - Display validation errors using `<FieldError>{fieldState.error.message}</FieldError>`.
-- **Default values requirement**: Always supply a complete `defaultValues` object matching the form schema shape to prevent React warnings regarding uncontrolled components switching to controlled.
-- **Form taxonomy and naming**: Structure form components according to the taxonomy in `.agents/rules/component-naming.md`:
-  - `*-form.tsx`: Primary interactive orchestrator component handling submission and action callbacks.
-  - `*-fields.tsx`: Composite sections grouping multiple inputs via `<FieldGroup>`.
-  - `*-field.tsx`: Granular, reusable field units (label + input + error/description).
+- Initialize complete defaults for controlled values. When external values
+  change, choose RHF `values` or `reset` deliberately and preserve unsaved edits.
+- Follow [.agents/rules/form-architecture.md](.agents/rules/form-architecture.md)
+  for the single form instance, compound children, Provider boundary, profile
+  operation lock, reset, avatar cleanup, and fixed button action types. These
+  are repository policies rather than universal shadcn/ui requirements.
+- Use `FieldGroup` for field layout and `FieldSet` with `FieldLegend` for
+  semantically related controls. `*-fields.tsx` is available for a real grouped
+  responsibility, not a requirement to wrap every set of inputs.
+- Bind `data-invalid={fieldState.invalid}` on `Field` and
+  `aria-invalid={fieldState.invalid}` on the interactive control; for Select,
+  put the latter on `SelectTrigger`. Connect labels with stable control IDs.
+  Use `FieldError errors={[fieldState.error]}` when invalid, or its supported
+  children API for a specific message.
+- Bind Select through `value` and `onValueChange`; inspect local types for
+  nullable values. Do not copy Radix-only props into Base UI components.
+- Use `InputGroupInput`/`InputGroupTextarea` within `InputGroup`, with
+  `InputGroupAddon` and the matching button component for embedded actions.
+- Use native validation where appropriate. A documentation demo's `noValidate`
+  is a demonstration choice, not a production default. Client validation never
+  replaces Firebase Security Rules or server authorization.
+
+### shadcn/ui API and accessibility
+
+Read [.agents/rules/shadcn-ui.md](.agents/rules/shadcn-ui.md) before UI work and
+use the CLI workflow in [TOOLING.md](TOOLING.md#shadcnui-cli-workflow). Base UI
+uses `render` and presence state attributes; Radix `asChild` and
+`data-state` examples do not establish the local API. For navigation, apply
+`buttonVariants` to a real anchor or Link instead of rendering an anchor
+through Base UI Button, which supplies button semantics.
+
+Keep Select items inside `SelectGroup`, menu items in the corresponding group,
+and Tabs triggers inside `TabsList`. Dialog, Sheet, and Drawer need an
+accessible title; avatars need a fallback. An icon-only action needs a localized
+accessible name. Preserve `ref`, applicable element props, keyboard behavior,
+and focus management when adapting primitives. Use `ComponentProps` of the
+actual primitive, not a prop contract copied from a different base.
+
+Use semantic colors and existing variants. Application classes should primarily
+control layout; shared visual changes belong in the primitive or theme. Use
+the `cn` package directly or the existing `@/lib/utils` re-export rather than
+reintroducing a `clsx`/`tailwind-merge` helper. Preserve intentional registry
+exclusions while keeping application extensions subject to normal checks.
 
 ### Dependency Inversion and Composition in Screen and Presentation Components
 

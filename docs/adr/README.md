@@ -109,3 +109,12 @@ machine. Use the latest CI results as execution evidence.
 Use the next unused four-digit number and an imperative kebab-case filename.
 Record the context, decision, and consequences. If it replaces a decision,
 identify the superseded record and scope, preserving the accepted content.
+
+## shadcn/ui documentation review
+
+The official documentation inventory and applicability review live in
+[docs/agents/shadcn.md](../agents/shadcn.md). CLI maintenance guidance, current
+component contracts, and theme details belong in `TOOLING.md`,
+`CODING_STANDARDS.md`, and `DESIGN.md`. Refreshing these references does not
+change the accepted records above or imply a preset, primitive-family, or
+component-source migration.
