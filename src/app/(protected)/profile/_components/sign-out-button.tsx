@@ -5,11 +5,11 @@ import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import type { ProfileClientState } from "../_hooks/use-profile-client";
 
-export type SignOutButtonProps = ComponentProps<typeof Button> & {
+type SignOutButtonProps = ComponentProps<typeof Button> & {
   profile: ProfileClientState;
 };
 
-export function SignOutButton({
+function SignOutButton({
   profile,
   className,
   disabled,
@@ -31,11 +31,13 @@ export function SignOutButton({
       {...props}
     >
       {isSigningOut ? (
-        <Spinner />
+        <Spinner data-icon="inline-start" />
       ) : (
-        <LogOut className="size-4" aria-hidden="true" />
+        <LogOut data-icon="inline-start" aria-hidden="true" />
       )}
       {t("signOut")}
     </Button>
   );
 }
+
+export { SignOutButton };

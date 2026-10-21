@@ -11,11 +11,9 @@ import type { SubmitHandler } from "react-hook-form";
 import { toast } from "@/components/ui/toast";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase/client";
-import {
-  type ThemePreference,
-  writeUserPreferences,
-} from "@/lib/firebase/firestore/user-preferences";
+import { writeUserPreferences } from "@/lib/firebase/firestore/user-preferences";
 import type { Locale } from "@/lib/locale";
+import type { ThemePreference } from "@/lib/theme";
 
 export type ProfileValues = {
   displayName: string;

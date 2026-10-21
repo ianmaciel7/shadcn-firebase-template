@@ -1,28 +1,34 @@
-import { Controller } from "react-hook-form";
+import { useTranslations } from "next-intl";
+import type { ComponentProps } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 import { Field, FieldLabel } from "@/components/ui/field";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { isLocale, locales } from "@/i18n/routing";
-import {
-  isThemePreference,
-  themePreferences,
-} from "@/lib/firebase/firestore/user-preferences";
-import type { ProfileClientState } from "../_hooks/use-profile-client";
+import { isThemePreference, themePreferences } from "@/lib/theme";
+import { cn } from "@/lib/utils";
+import type { ProfileValues } from "../_hooks/use-profile-actions";
 
-type ProfilePreferenceFieldsProps = { profile: ProfileClientState };
+type ProfilePreferenceFieldsProps = ComponentProps<"div"> & {
+  isBusy?: boolean;
+};
 
-export function ProfilePreferenceFields({
-  profile,
+function ProfilePreferenceFields({
+  className,
+  isBusy = false,
+  ...props
 }: ProfilePreferenceFieldsProps) {
-  const { control, isBusy, t } = profile;
+  const t = useTranslations("Auth");
+  const { control } = useFormContext<ProfileValues>();
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className={cn("grid grid-cols-2 gap-3", className)} {...props}>
       <Controller
         name="locale"
         control={control}
@@ -43,11 +49,13 @@ export function ProfilePreferenceFields({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {locales.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {t(`languageOptions.${option}`)}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {locales.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {t(`languageOptions.${option}`)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </Field>
@@ -71,11 +79,13 @@ export function ProfilePreferenceFields({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {themePreferences.map((option) => (
-                  <SelectItem key={option} value={option}>
-                    {t(`themeOptions.${option}`)}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  {themePreferences.map((option) => (
+                    <SelectItem key={option} value={option}>
+                      {t(`themeOptions.${option}`)}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </Field>
@@ -84,3 +94,5 @@ export function ProfilePreferenceFields({
     </div>
   );
 }
+
+export { ProfilePreferenceFields };

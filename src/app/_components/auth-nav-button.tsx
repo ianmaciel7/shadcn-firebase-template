@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { getFirebaseUI } from "@/lib/firebase/client";
 
-export function AuthNavButton() {
+function AuthNavButton() {
   const t = useTranslations("App");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -39,3 +39,5 @@ export function AuthNavButton() {
     </Link>
   );
 }
+
+export { AuthNavButton };

@@ -1,8 +1,8 @@
 id: require-button-props
 snapshots:
-  'interface SubmitButtonProps { label: string; }':
+  "interface SubmitButtonProps { label: string; }":
     labels:
-    - source: 'interface SubmitButtonProps { label: string; }'
+    - source: "interface SubmitButtonProps { label: string; }"
       style: primary
       start: 0
       end: 46
@@ -10,9 +10,9 @@ snapshots:
       style: secondary
       start: 10
       end: 27
-  'type SignOutButtonProps = { profile: ProfileState };':
+  "type SignOutButtonProps = { profile: ProfileState };":
     labels:
-    - source: 'type SignOutButtonProps = { profile: ProfileState };'
+    - source: "type SignOutButtonProps = { profile: ProfileState };"
       style: primary
       start: 0
       end: 52

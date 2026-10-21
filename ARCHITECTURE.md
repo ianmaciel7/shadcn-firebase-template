@@ -150,7 +150,9 @@ data access and `actions.ts` for Server Actions; we reserve those patterns for
 server code, rather than using those names for Firebase client modules
 ([Fetching Data](https://nextjs.org/docs/app/getting-started/fetching-data),
 [Mutating Data](https://nextjs.org/docs/app/getting-started/mutating-data),
-[Data Security](https://nextjs.org/docs/app/guides/data-security)). The client
+[Data Security](https://nextjs.org/docs/app/guides/data-security)). See
+[.agents/rules/data-layer-modules.md](.agents/rules/data-layer-modules.md) for the
+file taxonomy defining `definitions.ts`, `dto.ts`, `dal.ts`, and `data.ts`. The client
 SDK relies on Firebase Security Rules and does not provide server authorization
 for protected routes. No deployment integration is configured.
 Keep [DER.md](DER.md) and [GLOSSARY.md](GLOSSARY.md) pending until the respective

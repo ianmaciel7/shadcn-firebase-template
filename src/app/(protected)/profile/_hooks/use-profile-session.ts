@@ -21,6 +21,7 @@ export function useProfileSession(reset: UseFormReset<ProfileValues>) {
   const [authReady, setAuthReady] = useState(false);
   const [preferencesReady, setPreferencesReady] = useState(false);
   const [photoURL, setPhotoURL] = useState<string | null>(null);
+  const [avatarVersion, setAvatarVersion] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -87,9 +88,11 @@ export function useProfileSession(reset: UseFormReset<ProfileValues>) {
   return {
     activeLocale,
     authReady,
+    avatarVersion,
     error,
     preferencesReady,
     savedValuesRef,
+    setAvatarVersion,
     setPhotoURL,
     setTheme,
     user,

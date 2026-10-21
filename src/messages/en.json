@@ -15,7 +15,13 @@
     "deployNow": "Deploy Now",
     "documentation": "Documentation",
     "signIn": "Sign In",
-    "openApp": "Open App"
+    "openApp": "Open App",
+    "notFoundTitle": "404",
+    "notFoundMessage": "Page not found",
+    "backHome": "Back to Home",
+    "errorTitle": "Something went wrong!",
+    "errorMessage": "An unexpected error occurred while loading this page.",
+    "tryAgain": "Try again"
   },
   "Theme": {
     "toggle": "Toggle theme",

@@ -1,13 +1,7 @@
-﻿"use client";
+import { ForgotPasswordFormClient } from "./_components/forgot-password-form-client";
 
-import { useRouter } from "next/navigation";
-import { ForgotPasswordAuthScreen } from "@/components/firebase/forgot-password-auth-screen";
+export const instant = false;
 
 export default function ForgotPasswordPage() {
-  const router = useRouter();
-  return (
-    <ForgotPasswordAuthScreen
-      onBackToSignInClick={() => router.push("/sign-in")}
-    />
-  );
+  return <ForgotPasswordFormClient />;
 }

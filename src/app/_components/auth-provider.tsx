@@ -10,7 +10,7 @@ import { getFirebaseUI } from "@/lib/firebase/client";
 
 interface AuthProviderProps extends PropsWithChildren {}
 
-export function AuthProvider({ children }: AuthProviderProps) {
+function AuthProvider({ children }: AuthProviderProps) {
   const locale = useLocale();
   const t = useTranslations("Auth");
   const router = useRouter();
@@ -47,3 +47,5 @@ export function AuthProvider({ children }: AuthProviderProps) {
   if (!ui || !ready) return <p role="status">{t("loading")}</p>;
   return <FirebaseUIProvider ui={ui}>{children}</FirebaseUIProvider>;
 }
+
+export { AuthProvider };

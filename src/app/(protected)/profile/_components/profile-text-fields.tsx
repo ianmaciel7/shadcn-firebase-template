@@ -1,14 +1,33 @@
-import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { useTranslations } from "next-intl";
+import type { ComponentProps } from "react";
+import { useFormContext } from "react-hook-form";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import type { ProfileClientState } from "../_hooks/use-profile-client";
+import { cn } from "@/lib/utils";
+import type { ProfileValues } from "../_hooks/use-profile-actions";
 
-type ProfileTextFieldsProps = { profile: ProfileClientState };
+type ProfileTextFieldsProps = ComponentProps<typeof FieldGroup> & {
+  isBusy?: boolean;
+};
 
-export function ProfileTextFields({ profile }: ProfileTextFieldsProps) {
-  const { errors, isBusy, register, t } = profile;
+function ProfileTextFields({
+  className,
+  isBusy = false,
+  ...props
+}: ProfileTextFieldsProps) {
+  const t = useTranslations("Auth");
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<ProfileValues>();
 
   return (
-    <>
+    <FieldGroup className={cn("gap-4", className)} {...props}>
       <Field>
         <FieldLabel htmlFor="profile-name">{t("displayNameLabel")}</FieldLabel>
         <Input
@@ -34,6 +53,8 @@ export function ProfileTextFields({ profile }: ProfileTextFieldsProps) {
         />
         {errors.email ? <FieldError>{t("profileSaveError")}</FieldError> : null}
       </Field>
-    </>
+    </FieldGroup>
   );
 }
+
+export { ProfileTextFields };

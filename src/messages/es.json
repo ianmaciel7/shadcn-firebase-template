@@ -15,7 +15,13 @@
     "deployNow": "Deploy Now",
     "documentation": "Documentation",
     "signIn": "Iniciar sesión",
-    "openApp": "Abrir aplicación"
+    "openApp": "Abrir aplicación",
+    "notFoundTitle": "404",
+    "notFoundMessage": "Página no encontrada",
+    "backHome": "Volver al inicio",
+    "errorTitle": "¡Algo salió mal!",
+    "errorMessage": "Ocurrió un error inesperado al cargar esta página.",
+    "tryAgain": "Intentar de nuevo"
   },
   "Theme": {
     "toggle": "Alternar tema",
