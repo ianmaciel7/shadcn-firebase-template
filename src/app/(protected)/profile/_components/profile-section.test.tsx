@@ -353,11 +353,13 @@ describe("ProfileSection", () => {
     ).toBe("Dynamic User");
   });
 
-  it("does not offer navigation or sign out actions in the profile", async () => {
+  it("offers a home link without a sign-out action", async () => {
     mocks.currentUser = { uid: "user-123" };
     render(<ProfileSection />);
     await screen.findByRole("button", { name: "saveProfile" });
-    expect(screen.queryByRole("link", { name: "backToHome" })).toBeNull();
+    expect(
+      screen.getByRole("link", { name: "backToHome" }).getAttribute("href"),
+    ).toBe("/");
     expect(screen.queryByRole("button", { name: "signOut" })).toBeNull();
   });
 });

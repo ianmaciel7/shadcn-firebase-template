@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { useProfileController } from "../_hooks/use-profile-controller";
 import { ProfileAvatarField } from "./profile-avatar-field";
@@ -63,6 +65,16 @@ function ProfileSection() {
         <ProfileCardFooter>
           <ProfileFormFooter>
             <ProfileButton />
+            <Button
+              variant="link"
+              size="sm"
+              nativeButton={false}
+              role="link"
+              render={<Link href="/" />}
+              className="w-full"
+            >
+              <span className="text-xs">{t("backToHome")}</span>
+            </Button>
           </ProfileFormFooter>
         </ProfileCardFooter>
       </ProfileForm>
