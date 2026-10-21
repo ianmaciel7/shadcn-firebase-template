@@ -43,7 +43,10 @@ describe("ProtectedLayout", () => {
     });
   });
 
-  afterEach(cleanup);
+  afterEach(() => {
+    cleanup();
+    window.history.replaceState(null, "", "/");
+  });
 
   it("renders loading indicator before auth resolves", () => {
     mocks.subscribe.mockReturnValue(() => {});
@@ -56,14 +59,17 @@ describe("ProtectedLayout", () => {
     expect(screen.queryByText("Protected Content")).toBeNull();
   });
 
-  it("redirects unauthenticated user to /sign-in", () => {
+  it("redirects unauthenticated user to sign-in with return destination", () => {
     mocks.currentUser = null;
+    window.history.replaceState(null, "", "/profile?tab=security");
     render(
       <ProtectedLayout params={Promise.resolve({})}>
         <div>{"Protected Content"}</div>
       </ProtectedLayout>,
     );
-    expect(mocks.router.replace).toHaveBeenCalledWith("/sign-in");
+    expect(mocks.router.replace).toHaveBeenCalledWith(
+      `/sign-in?next=${encodeURIComponent("/profile?tab=security")}`,
+    );
     expect(screen.queryByText("Protected Content")).toBeNull();
   });
 

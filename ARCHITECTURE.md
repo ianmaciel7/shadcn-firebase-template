@@ -68,6 +68,10 @@ files, and `public/` remain at the repository root, as required by the Next.js
     client-side layout guard that observes `onAuthStateChanged` and redirects
     unauthenticated visitors to `/sign-in`.
 
+## Authentication navigation
+
+When an unauthenticated user requests a protected route, the client guard redirects to `/sign-in?next=<encoded-path-and-query>`. Once authenticated, the public authentication provider sends the user to that destination, or `/profile` if no valid destination was supplied. The return URL validator accepts only application-relative paths and rejects external URLs and authentication-screen loops; query strings are preserved. Route protection in the UI is not a substitute for Firebase Security Rules or authorization at the data source.
+
 ## Test boundaries
 
 - Colocate Vitest tests with the `src/` code they verify: use `*.test.ts` for
