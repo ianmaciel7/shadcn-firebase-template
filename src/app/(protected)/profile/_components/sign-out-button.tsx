@@ -3,10 +3,10 @@ import type { ComponentProps } from "react";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
-import type { ProfileClientState } from "../_hooks/use-profile-client";
+import type { ProfileControllerState } from "../_hooks/use-profile-controller";
 
 type SignOutButtonProps = ComponentProps<typeof Button> & {
-  profile: ProfileClientState;
+  profile: ProfileControllerState;
 };
 
 function SignOutButton({

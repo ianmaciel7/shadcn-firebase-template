@@ -5,9 +5,9 @@ import type { ComponentProps } from "react";
 import { ForgotPasswordAuthScreen } from "@/components/firebase/forgot-password-auth-screen";
 import { getAuthNavigationUrl } from "@/lib/auth/return-url";
 
-type ForgotPasswordFormClientProps = ComponentProps<"div">;
+type ForgotPasswordAuthFlowProps = ComponentProps<"div">;
 
-function ForgotPasswordFormClient(props: ForgotPasswordFormClientProps) {
+function ForgotPasswordAuthFlow(props: ForgotPasswordAuthFlowProps) {
   const router = useRouter();
   return (
     <div {...props}>
@@ -20,4 +20,4 @@ function ForgotPasswordFormClient(props: ForgotPasswordFormClientProps) {
   );
 }
 
-export { ForgotPasswordFormClient };
+export { ForgotPasswordAuthFlow };

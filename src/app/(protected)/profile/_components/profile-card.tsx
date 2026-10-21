@@ -9,14 +9,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { useProfileClient } from "../_hooks/use-profile-client";
+import { useProfileController } from "../_hooks/use-profile-controller";
 import { ProfileForm } from "./profile-form";
 import { SignOutButton } from "./sign-out-button";
 
-type ProfileClientProps = ComponentProps<"div">;
+type ProfileCardProps = ComponentProps<"div">;
 
-function ProfileClient({ className, ...props }: ProfileClientProps) {
-  const profile = useProfileClient();
+function ProfileCard({ className, ...props }: ProfileCardProps) {
+  const profile = useProfileController();
   const { authReady, error, preferencesReady, savedValuesReady, t, user } =
     profile;
 
@@ -62,4 +62,4 @@ function ProfileClient({ className, ...props }: ProfileClientProps) {
   );
 }
 
-export { ProfileClient };
+export { ProfileCard };

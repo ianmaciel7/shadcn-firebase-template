@@ -1,32 +1,58 @@
-# Component Naming Conventions
+# Component Architecture and Naming
 
-This rule establishes official, canonical component and file naming standards for UI and feature components throughout the repository, adhering to shadcn/ui architectural conventions.
+These are **repository conventions**, not filename rules prescribed by Next.js or shadcn/ui.
 
-## General File & Component Mapping
+## Three independent dimensions
 
-- **File naming**: Use `kebab-case.tsx` (e.g., `profile-avatar-field.tsx`, `account-danger-card.tsx`).
-- **Export & Component naming**: Use `PascalCase` matching the file name (e.g., `ProfileAvatarField`, `AccountDangerCard`).
-- **Component Props**: Name props as `<ComponentName>Props` extending standard element or base component props.
-- **Export style**: Declare components using `function ComponentName(...) { ... }` and export explicitly with named export `export { ComponentName }`. Do not use inline `export function` or `export default function` in `_components/` or `src/components/`. Next.js route entry points (`page.tsx`, `layout.tsx`, `error.tsx`, `not-found.tsx`) remain the only files using `export default function`.
-- **Route Client Seams**: Never create pseudo-pages like `*-page-client.tsx` at the route root. Extract interactive client logic into semantic UI components in `_components/` following shadcn and feature-driven conventions (e.g., `register-form-client.tsx`, `forgot-password-form-client.tsx`, `sign-in-form-client.tsx`).
+| Dimension | Convention | Examples |
+| --- | --- | --- |
+| Runtime | Server by default; `"use client"` on a client module boundary, not in its name | `ProfileCard` may be a Client Component |
+| Responsibility | Describe the composition or behavior, not its runtime | `ProfileCard`, `ProfileForm`, `ProfileAvatarField`, `SignOutButton`, `AuthProvider`, `ProtectedGate`, `SignInAuthFlow` |
+| Placement | Colocate route components in private `_components/`, hooks in `_hooks/` and shared components in `src/components/` | App Router private folders do not become routes |
 
-## Suffix Taxonomy & Semantic Roles
+The shadcn primitives live under `src/components/ui/`; Firebase registry output
+lives under `src/components/firebase/`; generated AI Elements live under
+`src/components/ai-elements/`. Those folders are vendor-owned and excluded
+from application naming checks. Application-owned extensions under
+`src/components/ui/extensions/` **are** checked.
 
-Components must be categorized and suffixed according to their structural role in the user interface:
+## Component file contracts
 
-| Suffix / Pattern | Purpose & Semantic Role | Examples | Typical Underlying Primitives |
-| :--- | :--- | :--- | :--- |
-| `*-field.tsx` | Individual form field or input group (input/control + label + description/actions) | `profile-avatar-field.tsx`, `user-email-field.tsx` | `<Field>`, `<Input>`, `<Avatar>`, `<Label>` |
-| `*-fields.tsx` | Grouped composite section of form inputs | `profile-text-fields.tsx`, `profile-preference-fields.tsx` | `<FieldGroup>`, multiple `*-field` components |
-| `*-form.tsx` | Interactive `<form>` orchestrator handling submission, validation, and field groups | `profile-form.tsx`, `login-form.tsx` | `<form>`, `<Button type="submit">` |
-| `*-card.tsx` | Self-contained visual card surface grouping related content or actions | `account-danger-card.tsx`, `billing-summary-card.tsx` | `<Card>`, `<CardHeader>`, `<CardContent>` |
-| `*-dialog.tsx` | Modal overlay / alert dialog triggering confirmation or focused sub-flows | `delete-account-dialog.tsx`, `crop-avatar-dialog.tsx` | `<Dialog>`, `<AlertDialog>` |
-| `*-header.tsx` | Top-level section or page banner/header displaying titles, status, or breadcrumbs | `profile-header.tsx`, `dashboard-header.tsx` | `<header>`, typography, breadcrumb primitives |
-| `*-button.tsx` | Specialized, reusable actionable button with localized state/behavior | `sign-out-button.tsx`, `delete-account-button.tsx` | `<Button>` |
-| `*-table.tsx` / `*-list.tsx` | Data display collections, grids, and item lists | `sessions-table.tsx`, `activity-list.tsx` | `<Table>`, `<Item>`, `<ItemGroup>` |
+- Use `kebab-case.tsx` and one matching PascalCase named export:
+  `profile-card.tsx` defines `function ProfileCard()` and
+  `export { ProfileCard }`. Do not use `export default` or
+  `export function` in owned reusable components.
+- Use `ProfileCardProps` for props of `ProfileCard`; inherit React/HTML
+  component props according to the existing component-props rule.
+- Prefer semantic roles: `*-field`, `*-fields`, `*-form`, `*-card`,
+  `*-dialog`, `*-header`, `*-button`, `*-table`, `*-list`, `*-provider`,
+  `*-gate`, `*-flow`, or `*-content`. This is **not** a closed list.
+  `Flow` specifically denotes navigation or application flow wiring.
+- Prohibit generic runtime/implementation suffixes: `-client`,
+  `-server`, `-component`, `-ui`. The Next.js `"use client"` directive
+  defines the actual client boundary, including transitive imports.
+  Components inside the client graph do not each need their own directive.
+- Server Components can fetch data and render Client Components; only
+  browser-interactive entrypoints need explicit client boundaries.
+  A `"use client"` module must not directly import server-only APIs
+  (`next/headers`, `next/cache`, `next/server`, `next-intl/server`,
+  `server-only` or `firebase-admin`). These are provable errors;
+  the guard does not attempt to infer the complete transitive import graph.
+- Next.js `page.tsx`, `layout.tsx` and `template.tsx` use their mandatory
+  framework exports and remain outside this naming guard. The separate
+  `pnpm check:routes` enforces our thin-route architecture policy.
 
-## Placement Conventions
+## CI enforcement
 
-- **Shared UI primitives**: Place in `src/components/ui/` (e.g., `button.tsx`, `field.tsx`, `item.tsx`).
-- **Feature/Route-specific components**: Place in private `_components/` folders colocated with their route (e.g., `src/app/(protected)/profile/_components/`).
-- **Shared feature components**: Place in `src/components/<feature>/` when genuinely shared across multiple routes.
+`pnpm check:components` runs self-tests and validates all owned
+`src/app/**/_components/**/*.tsx` and `src/components/**/*.tsx` files,
+except generated registry trees and test/story files. It is included in
+`verify:fast` and `verify:static`, making it mandatory in CI.
+
+## Official references
+
+- [Next.js Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components)
+- [Next.js use client directive](https://nextjs.org/docs/app/api-reference/directives/use-client)
+- [Next.js private folders/project structure](https://nextjs.org/docs/app/getting-started/project-structure)
+- [shadcn/ui components.json](https://ui.shadcn.com/docs/components-json)
+- [shadcn/ui Card composition](https://ui.shadcn.com/docs/components/base/card)

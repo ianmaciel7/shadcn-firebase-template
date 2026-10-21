@@ -5,7 +5,7 @@ import { type ProfileValues, useProfileActions } from "./use-profile-actions";
 import { useProfileAvatar } from "./use-profile-avatar";
 import { useProfileSession } from "./use-profile-session";
 
-export function useProfileClient() {
+export function useProfileController() {
   const t = useTranslations("Auth");
   const locale = useLocale();
   const activeLocale = isLocale(locale) ? locale : defaultLocale;
@@ -65,4 +65,4 @@ export function useProfileClient() {
   };
 }
 
-export type ProfileClientState = ReturnType<typeof useProfileClient>;
+export type ProfileControllerState = ReturnType<typeof useProfileController>;
