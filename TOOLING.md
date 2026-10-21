@@ -41,7 +41,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Continuous integration | GitHub Actions | Pinned by commit SHA | Runs `static`, `build`, `e2e`, `security`, and `pr-title` jobs in parallel on pull requests, pushes to `main`, and manual dispatch, plus a `ci-result` aggregate (see TESTING.md). | `.github/workflows/ci.yml` |
 | Workflow linting | actionlint, zizmor | Host tools | Lint and audit the GitHub Actions workflows. | `package.json` (`check:workflows`) |
 | Codebase graph | Graphify | Host tool | Builds an on-demand knowledge graph; output goes to the ignored `graphify-out/`. | None |
-| Git hooks | Husky + lint-staged + Commitlint | 9.1.7 / 16.4.0 / 21.2.3 | Check staged files with Biome and validate commit messages. | `.husky/`, `package.json`, `commitlint.config.mjs` |
+| Git hooks | Husky + lint-staged + Commitlint | 9.1.7 / 17.6.0 / 21.2.3 | Check staged files with Biome and validate commit messages. | `.husky/`, `package.json`, `commitlint.config.mjs` |
 | Repository integrity | pre-commit | Host tool | Runs file-integrity hooks (large files, case conflicts, JSON/YAML, merge markers). | `.pre-commit-config.yaml` |
 | Agent configuration | Agents CLI | Repository configuration; CLI is externally provided | Synchronizes reusable agent skills and MCP settings (Serena, Next.js DevTools). | `.agents/agents.json`, `.agents/skills/` |
 
@@ -52,7 +52,7 @@ outside pnpm and are only needed for the commands noted next to them:
 
 | Tool | Needed for | Check |
 | --- | --- | --- |
-| Node.js `^22.19.0 \|\| ^24.5.0` | Everything (`engines` in `package.json`) | `node --version` |
+| Node.js `^22.22.1 \|\| ^24.5.0` | Everything (`engines` in `package.json`) | `node --version` |
 | Git | Biome VCS integration, hooks, Fallow hotspots | `git --version` |
 | Playwright browsers | `test:browser`, `test:e2e`, `test:a11y`, `test:visual` | `pnpm exec playwright install chromium` |
 | pre-commit | Repository-integrity checks in the Git hook | `pre-commit --version` |
