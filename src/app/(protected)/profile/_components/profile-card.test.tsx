@@ -166,6 +166,24 @@ describe("ProfileCard", () => {
     expect(screen.getByLabelText("themeLabel")).toBeTruthy();
   });
 
+  it("keeps form fields in CardContent and buttons in CardFooter", async () => {
+    mocks.currentUser = { uid: "user-123", email: "user@example.com" };
+    render(<ProfileCard />);
+
+    const saveButton = await screen.findByRole("button", {
+      name: "saveProfile",
+    });
+    const signOutButton = screen.getByRole("button", { name: "signOut" });
+    const displayName = screen.getByLabelText("displayNameLabel");
+
+    expect(displayName.closest('[data-slot="card-content"]')).toBeTruthy();
+    expect(saveButton.closest('[data-slot="card-footer"]')).toBeTruthy();
+    expect(signOutButton.closest('[data-slot="card-footer"]')).toBeTruthy();
+    expect(saveButton.closest("form")).toBeTruthy();
+    expect(saveButton.getAttribute("type")).toBe("submit");
+    expect(signOutButton.getAttribute("type")).toBe("button");
+  });
+
   it("uploads a new avatar and updates the auth profile", async () => {
     mocks.currentUser = {
       uid: "user-123",
