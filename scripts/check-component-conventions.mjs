@@ -367,15 +367,7 @@ function spreadAfter(attributes, position) {
   return attributes.slice(position + 1).some(ts.isJsxSpreadAttribute);
 }
 
-function checkProfileButtonSafety(source, elements, report, stem) {
-  const expected = stem === "profile-button" ? "submit" : "button";
-  const buttons = profileElements(elements, "Button");
-  if (buttons.length !== 1) {
-    report(source, `${stem} must render exactly one Button.`);
-    return;
-  }
-  const button = buttons[0];
-  const attributes = button.node.attributes.properties;
+function checkFixedProfileButtonType(button, attributes, stem, expected, report) {
   const typeIndex = attributePosition(attributes, "type");
   const typeAttribute = attributes[typeIndex];
   const typeValue = typeAttribute?.initializer;
@@ -390,6 +382,9 @@ function checkProfileButtonSafety(source, elements, report, stem) {
       `${stem} must enforce type="${expected}" after any spread props.`,
     );
   }
+}
+
+function checkFixedProfileButtonDisabled(button, attributes, stem, report) {
   const disabledIndex = attributePosition(attributes, "disabled");
   if (disabledIndex < 0 || spreadAfter(attributes, disabledIndex)) {
     report(
@@ -397,6 +392,19 @@ function checkProfileButtonSafety(source, elements, report, stem) {
       `${stem} must preserve disabled state after spread props.`,
     );
   }
+}
+
+function checkProfileButtonSafety(source, elements, report, stem) {
+  const expected = stem === "profile-button" ? "submit" : "button";
+  const buttons = profileElements(elements, "Button");
+  if (buttons.length !== 1) {
+    report(source, `${stem} must render exactly one Button.`);
+    return;
+  }
+  const button = buttons[0];
+  const attributes = button.node.attributes.properties;
+  checkFixedProfileButtonType(button, attributes, stem, expected, report);
+  checkFixedProfileButtonDisabled(button, attributes, stem, report);
 }
 
 function checkProfileFormSafety(source, stem, report) {
