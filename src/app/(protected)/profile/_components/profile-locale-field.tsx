@@ -25,7 +25,9 @@ function ProfileLocaleField(props: ProfileLocaleFieldProps) {
       control={control}
       render={({ field, fieldState }) => (
         <Field {...props} data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor="profile-language">{t("languageLabel")}</FieldLabel>
+          <FieldLabel htmlFor="profile-language">
+            {t("languageLabel")}
+          </FieldLabel>
           <Select
             name={field.name}
             value={field.value}

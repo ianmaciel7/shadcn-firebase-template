@@ -1,10 +1,6 @@
 import { useTranslations } from "next-intl";
 import type { PropsWithChildren } from "react";
-import {
-  FormProvider,
-  useForm,
-  type UseFormProps,
-} from "react-hook-form";
+import { FormProvider, type UseFormProps, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { FieldGroup } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/spinner";

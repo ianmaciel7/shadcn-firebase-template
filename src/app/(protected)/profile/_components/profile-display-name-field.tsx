@@ -17,7 +17,9 @@ function ProfileDisplayNameField(props: ProfileDisplayNameFieldProps) {
       control={control}
       render={({ field, fieldState }) => (
         <Field {...props} data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor="profile-name">{t("displayNameLabel")}</FieldLabel>
+          <FieldLabel htmlFor="profile-name">
+            {t("displayNameLabel")}
+          </FieldLabel>
           <Input
             {...field}
             id="profile-name"

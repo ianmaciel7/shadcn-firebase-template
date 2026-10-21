@@ -18,7 +18,9 @@ export function useProfileSession() {
   const activeUserIdRef = useRef<string | null>(null);
 
   const [user, setUser] = useState<User | null>(null);
-  const [defaultValues, setDefaultValues] = useState<ProfileValues | null>(null);
+  const [defaultValues, setDefaultValues] = useState<ProfileValues | null>(
+    null,
+  );
   const [authReady, setAuthReady] = useState(false);
   const [preferencesReady, setPreferencesReady] = useState(false);
   const [photoURL, setPhotoURL] = useState<string | null>(null);

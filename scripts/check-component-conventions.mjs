@@ -169,7 +169,6 @@ function checkClientImports(source, report) {
   }
 }
 
-
 function checkFieldControllerNames(source, stem, report) {
   if (!stem.endsWith("-field")) return;
 

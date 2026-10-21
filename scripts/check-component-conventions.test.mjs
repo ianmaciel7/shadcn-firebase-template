@@ -127,7 +127,7 @@ describe("owned component conventions", () => {
       "src/app/(protected)/profile/_components/profile-display-name-field.tsx",
     );
     expectValid(
-      'function ProfileAvatarField() { return <Avatar />; } export { ProfileAvatarField };',
+      "function ProfileAvatarField() { return <Avatar />; } export { ProfileAvatarField };",
       "src/app/(protected)/profile/_components/profile-avatar-field.tsx",
     );
     expectInvalid(
@@ -144,16 +144,15 @@ describe("owned component conventions", () => {
 
   it("rejects passing the complete profile controller to a child", () => {
     expectInvalid(
-      'function ProfileCard() { return <ProfileForm profile={profile} />; } export { ProfileCard };',
+      "function ProfileCard() { return <ProfileForm profile={profile} />; } export { ProfileCard };",
       /focused field\/form\/button props/,
     );
     expectInvalid(
-      'function ProfileCard() { return <SignOutButton profile={profile} />; } export { ProfileCard };',
+      "function ProfileCard() { return <SignOutButton profile={profile} />; } export { ProfileCard };",
       /focused field\/form\/button props/,
     );
     expectValid(
-      'function ProfileCard() { return <ProfileForm {...profile.formProps} />; } export { ProfileCard };',
+      "function ProfileCard() { return <ProfileForm {...profile.formProps} />; } export { ProfileCard };",
     );
   });
-
 });

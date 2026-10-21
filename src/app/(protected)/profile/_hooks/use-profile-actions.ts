@@ -120,7 +120,9 @@ export function useProfileActions({
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  const onSubmit = async (values: ProfileValues): Promise<ProfileValues | undefined> => {
+  const onSubmit = async (
+    values: ProfileValues,
+  ): Promise<ProfileValues | undefined> => {
     const previous = savedValuesRef.current;
     if (!user || !previous) return;
 

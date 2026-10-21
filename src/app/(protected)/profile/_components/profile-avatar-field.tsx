@@ -29,7 +29,11 @@ function ProfileAvatarField({
 }: ProfileAvatarFieldProps) {
   const t = useTranslations("Auth");
   const avatarSrc = getAvatarSource(avatarPreview, photoURL, avatarVersion);
-  const fallbackInitial = (displayName?.charAt(0) || email?.charAt(0) || "U").toUpperCase();
+  const fallbackInitial = (
+    displayName?.charAt(0) ||
+    email?.charAt(0) ||
+    "U"
+  ).toUpperCase();
 
   return (
     <div className={cn("flex items-center gap-4", className)} {...props}>
