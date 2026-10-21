@@ -78,7 +78,7 @@ describe("authentication routes", () => {
   });
 
   it("preserves the requested destination throughout registration and recovery", () => {
-    const next = "?next=%2Fprofile%3Ftab%3Dsecurity";
+    const next = `?next=${encodeURIComponent("/profile?tab=security")}`;
     window.history.replaceState(null, "", `/sign-in${next}`);
     const { unmount } = render(<SignInPage />);
     fireEvent.click(screen.getByRole("button", { name: "register" }));
@@ -105,7 +105,7 @@ describe("authentication routes", () => {
     window.history.replaceState(
       null,
       "",
-      "/sign-in?next=https%3A%2F%2Fevil.example",
+      `/sign-in?next=${encodeURIComponent("https://evil.example")}`,
     );
     render(<SignInPage />);
     fireEvent.click(screen.getByRole("button", { name: "register" }));

@@ -68,7 +68,7 @@ describe("ProtectedLayout", () => {
       </ProtectedLayout>,
     );
     expect(mocks.router.replace).toHaveBeenCalledWith(
-      "/sign-in?next=%2Fprofile%3Ftab%3Dsecurity",
+      `/sign-in?next=${encodeURIComponent("/profile?tab=security")}`,
     );
     expect(screen.queryByText("Protected Content")).toBeNull();
   });
