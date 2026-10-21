@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { getFirebaseUI } from "@/lib/firebase/client";
 
-export function useAuthNav() {
+export function useAuthNavButton() {
   const t = useTranslations("App");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 

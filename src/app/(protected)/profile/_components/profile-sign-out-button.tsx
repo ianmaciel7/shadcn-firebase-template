@@ -3,7 +3,7 @@ import type { ComponentProps } from "react";
 import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/ui/extensions/loading";
 import { cn } from "@/lib/utils";
-import { useProfileSignOut } from "../_hooks/use-profile-sign-out";
+import { useProfileSignOutButton } from "../_hooks/use-profile-sign-out-button";
 
 type ProfileSignOutButtonProps = Omit<
   ComponentProps<typeof Button>,
@@ -16,7 +16,8 @@ function ProfileSignOutButton({
   children,
   ...props
 }: ProfileSignOutButtonProps) {
-  const { t, handleSignOut, isSigningOut, isDisabled } = useProfileSignOut();
+  const { t, handleSignOut, isSigningOut, isDisabled } =
+    useProfileSignOutButton();
 
   return (
     <Button

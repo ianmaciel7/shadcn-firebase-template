@@ -1,16 +1,13 @@
-import { useTranslations } from "next-intl";
-import { type ComponentProps, useId } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import type { ComponentProps } from "react";
+import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import type { ProfileValues } from "@/lib/profile";
+import { useProfileEmailField } from "../_hooks/use-profile-email-field";
 
 type ProfileEmailFieldProps = ComponentProps<typeof Field>;
 
 function ProfileEmailField(props: ProfileEmailFieldProps) {
-  const id = useId();
-  const t = useTranslations("Auth");
-  const { control } = useFormContext<ProfileValues>();
+  const { id, t, control } = useProfileEmailField();
 
   return (
     <Controller

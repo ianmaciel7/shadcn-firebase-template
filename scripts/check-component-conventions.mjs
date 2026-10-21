@@ -633,6 +633,65 @@ function isStateHookCall(node) {
   );
 }
 
+function hookImportNames(source) {
+  const names = new Map();
+  for (const statement of source.statements) {
+    if (!ts.isImportDeclaration(statement)) continue;
+    const bindings = statement.importClause?.namedBindings;
+    if (!bindings || !ts.isNamedImports(bindings)) continue;
+    for (const element of bindings.elements) {
+      names.set(element.name.text, (element.propertyName ?? element.name).text);
+    }
+  }
+  return names;
+}
+
+function checkComponentHook(component, source, report) {
+  const names = hookImportNames(source);
+  const hooks = [];
+  function visit(node) {
+    if (ts.isCallExpression(node)) {
+      const expression = node.expression;
+      const localName = ts.isIdentifier(expression)
+        ? expression.text
+        : ts.isPropertyAccessExpression(expression)
+          ? expression.name.text
+          : "";
+      const name = names.get(localName) ?? localName;
+      if (/^use[A-Z]/.test(name)) hooks.push({ name, node });
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(component);
+  if (!hooks.length) return;
+  const presentationHooks = new Set([
+    "useTranslations",
+    "useFormatter",
+    "useId",
+  ]);
+  if (hooks.length === 1 && presentationHooks.has(hooks[0].name)) return;
+  const expected = `use${component.name.text}`;
+  if (hooks.length !== 1 || hooks[0].name !== expected) {
+    report(
+      component,
+      `${component.name.text} must delegate hook coordination to ${expected} in a separate hook module; call only that component hook.`,
+    );
+    return;
+  }
+  if (
+    !names.has(
+      ts.isIdentifier(hooks[0].node.expression)
+        ? hooks[0].node.expression.text
+        : "",
+    )
+  ) {
+    report(
+      component,
+      `${expected} must be imported from a separate hook module.`,
+    );
+  }
+}
+
 function checkHookResponsibilities(source, report) {
   for (const statement of source.statements) checkHookImport(statement, report);
   function hasLogic(node) {
@@ -696,8 +755,10 @@ function checkHookResponsibilities(source, report) {
     if (
       ts.isFunctionDeclaration(statement) &&
       /^[A-Z]/.test(statement.name?.text ?? "")
-    )
+    ) {
+      checkComponentHook(statement, source, report);
       visit(statement);
+    }
   }
 }
 

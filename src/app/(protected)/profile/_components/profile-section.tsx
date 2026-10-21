@@ -1,10 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { Loading } from "@/components/ui/extensions/loading";
-import { useProfileSession } from "../_hooks/use-profile-session";
+import { useProfileSection } from "../_hooks/use-profile-section";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
-import { useProfileView } from "../_hooks/use-profile-view";
 import { ProfileAvatarField } from "./profile-avatar-field";
 import {
   ProfileCard,
@@ -27,9 +25,7 @@ import { ProfileSignOutButton } from "./profile-sign-out-button";
 import { ProfileThemeField } from "./profile-theme-field";
 
 function ProfileSection() {
-  const profile = useProfileSession();
-  const view = useProfileView(profile);
-  const t = useTranslations("Auth");
+  const { profile, view, t } = useProfileSection();
 
   if (view.status === "loading") {
     return (

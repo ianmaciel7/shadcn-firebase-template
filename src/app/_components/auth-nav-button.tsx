@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { useAuthNav } from "../_hooks/use-auth-nav";
+import { useAuthNavButton } from "../_hooks/use-auth-nav-button";
 
 function AuthNavButton() {
-  const { href, label } = useAuthNav();
+  const { href, label } = useAuthNavButton();
 
   return (
     <Link

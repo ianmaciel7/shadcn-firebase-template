@@ -118,7 +118,7 @@ describe("owned component conventions", () => {
   it("permits client interaction but rejects server-only imports", () => {
     expectValid(
       compoundCard(
-        '"use client"; import { useCardState } from "../_hooks/use-card-state"; function ProfileCard() { const { open } = useCardState(); return <Card {...props} />; } export { ProfileCard };',
+        '"use client"; import { useProfileCard } from "../_hooks/use-profile-card"; function ProfileCard() { const { open } = useProfileCard(); return <Card {...props} />; } export { ProfileCard };',
       ),
     );
     expectInvalid(
@@ -180,13 +180,71 @@ describe("owned component conventions", () => {
       path,
     );
     expectValid(
-      component(
-        'const { status, message } = useSessionView(); if (status === "loading") return <Loading />; if (status === "error") return <p>{message}</p>;',
-      ),
+      'import { useSessionPanel } from "../_hooks/use-session-panel"; ' +
+        component(
+          'const { status, message } = useSessionPanel(); if (status === "loading") return <Loading />; if (status === "error") return <p>{message}</p>;',
+        ),
       path,
     );
     expectValid(
       "function SessionPanel({ children, disabled }) { return <Button disabled={disabled || pending}>{children ?? label}</Button>; } export { SessionPanel };",
+      path,
+    );
+  });
+
+  it("requires the component-named orchestration hook, including aliased calls", () => {
+    const path = "src/app/_components/session-panel.tsx";
+    const render = (imports, calls) =>
+      `${imports} function SessionPanel() { ${calls} return <div />; } export { SessionPanel };`;
+    expectInvalid(
+      render(
+        'import { useSession, useSessionView } from "../_hooks/session";',
+        "const session = useSession(); const view = useSessionView(session);",
+      ),
+      /useSessionPanel/,
+      path,
+    );
+    expectInvalid(
+      render(
+        'import { useSession } from "../_hooks/session";',
+        "useSession();",
+      ),
+      /useSessionPanel/,
+      path,
+    );
+    expectInvalid(
+      render(
+        'import { useSession as readSession } from "../_hooks/session";',
+        "readSession();",
+      ),
+      /useSessionPanel/,
+      path,
+    );
+    expectInvalid(
+      render(
+        'import { useSessionPanel } from "../_hooks/use-session-panel"; import { useTranslations } from "next-intl";',
+        'useSessionPanel(); useTranslations("Auth");',
+      ),
+      /call only that component hook/,
+      path,
+    );
+    expectInvalid(
+      render("", "useSessionPanel();"),
+      /separate hook module/,
+      path,
+    );
+    expectValid(
+      render(
+        'import { useSessionPanel as usePanel } from "../_hooks/use-session-panel";',
+        "usePanel();",
+      ),
+      path,
+    );
+    expectValid(
+      render(
+        'import { useTranslations } from "next-intl";',
+        'const t = useTranslations("Auth");',
+      ),
       path,
     );
   });

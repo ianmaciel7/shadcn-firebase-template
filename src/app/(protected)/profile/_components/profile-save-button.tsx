@@ -1,10 +1,8 @@
-import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
-import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/ui/extensions/loading";
-import type { ProfileFormValues } from "@/lib/profile";
 import { cn } from "@/lib/utils";
+import { useProfileSaveButton } from "../_hooks/use-profile-save-button";
 
 type ProfileSaveButtonProps = Omit<
   ComponentProps<typeof Button>,
@@ -17,9 +15,7 @@ function ProfileSaveButton({
   children,
   ...props
 }: ProfileSaveButtonProps) {
-  const t = useTranslations("Auth");
-  const { formState } = useFormContext<ProfileFormValues>();
-  const isSubmitting = formState.isSubmitting;
+  const { t, isSubmitting, isDisabled } = useProfileSaveButton();
 
   return (
     <Button
@@ -27,7 +23,7 @@ function ProfileSaveButton({
       type="submit"
       aria-busy={isSubmitting}
       className={cn("w-full", className)}
-      disabled={disabled || isSubmitting || formState.disabled}
+      disabled={disabled || isDisabled}
     >
       {isSubmitting ? (
         <Loading>{children ?? t("savingProfile")}</Loading>

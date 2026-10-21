@@ -1,14 +1,14 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { useAuthNavigation } from "@/app/_hooks/use-auth-navigation";
 import { GoogleSignInButton } from "@/components/firebase/google-sign-in-button";
 import { SignInAuthScreen } from "@/components/firebase/sign-in-auth-screen";
+import { useSignInAuthFlow } from "../_hooks/use-sign-in-auth-flow";
 
 type SignInAuthFlowProps = ComponentProps<"div">;
 
 function SignInAuthFlow(props: SignInAuthFlowProps) {
-  const { goToRegister, goToForgotPassword } = useAuthNavigation();
+  const { goToRegister, goToForgotPassword } = useSignInAuthFlow();
   return (
     <div {...props}>
       <SignInAuthScreen

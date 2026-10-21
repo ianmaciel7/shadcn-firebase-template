@@ -7,7 +7,7 @@ import { getFirebaseUI } from "@/lib/firebase/client";
 import type { ProfileFormValues } from "@/lib/profile";
 import { useProfileFormState } from "./use-profile-form-state";
 
-export function useProfileSignOut() {
+export function useProfileSignOutButton() {
   const t = useTranslations("Auth");
   const router = useRouter();
   const { formState } = useFormContext<ProfileFormValues>();
