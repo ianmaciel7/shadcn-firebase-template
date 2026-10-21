@@ -55,15 +55,15 @@ function ProfileForm({ children, className, ...props }: ProfileFormProps) {
 
 type ProfileFormContentProps = ComponentProps<typeof FieldGroup>;
 
-function ProfileFormContent(props: ProfileFormContentProps) {
-  return <FieldGroup {...props} />;
+function ProfileFormContent({ className, ...props }: ProfileFormContentProps) {
+  return <FieldGroup className={cn("gap-4", className)} {...props} />;
 }
 
 type ProfileFormFooterProps = ComponentProps<"div">;
 
 function ProfileFormFooter({ className, ...props }: ProfileFormFooterProps) {
   return (
-    <div className={cn("flex w-full flex-col gap-2", className)} {...props} />
+    <div className={cn("flex w-full flex-col gap-4", className)} {...props} />
   );
 }
 

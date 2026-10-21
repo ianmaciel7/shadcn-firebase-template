@@ -47,11 +47,9 @@ function ProfileSignOutButton({
       onClick={handleSignOut}
       type="button"
       aria-busy={isSigningOut}
-      variant="ghost"
-      className={cn(
-        "w-full text-muted-foreground hover:text-destructive",
-        className,
-      )}
+      variant="link"
+      size="sm"
+      className={cn("w-full text-xs", className)}
       disabled={
         disabled || isSigningOut || formState.isSubmitting || formState.disabled
       }
