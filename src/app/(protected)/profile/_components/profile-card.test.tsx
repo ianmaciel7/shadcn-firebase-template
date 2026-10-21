@@ -179,7 +179,16 @@ describe("ProfileCard", () => {
     expect(displayName.closest('[data-slot="card-content"]')).toBeTruthy();
     expect(saveButton.closest('[data-slot="card-footer"]')).toBeTruthy();
     expect(signOutButton.closest('[data-slot="card-footer"]')).toBeTruthy();
-    expect(saveButton.closest("form")).toBeTruthy();
+    const form = saveButton.closest("form");
+    expect(form).toBeTruthy();
+    expect(displayName.closest("form")).toBe(form);
+    expect(signOutButton.closest("form")).toBe(form);
+    expect(
+      displayName.closest('[data-slot="field-group"]')?.closest(
+        '[data-slot="card-content"]',
+      ),
+    ).toBeTruthy();
+    expect(form?.querySelectorAll("form")).toHaveLength(0);
     expect(saveButton.getAttribute("type")).toBe("submit");
     expect(signOutButton.getAttribute("type")).toBe("button");
   });
