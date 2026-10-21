@@ -1,8 +1,7 @@
 /** Accept only application-relative destinations after authentication. */
 export function getSafeReturnUrl(value: string | null | undefined): string {
   if (
-    !value ||
-    !value.startsWith("/") ||
+    !value?.startsWith("/") ||
     value.startsWith("//") ||
     value.includes("\\") ||
     Array.from(value).some(
