@@ -837,7 +837,7 @@ function hasBannedNamingTerm(name) {
   return name
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
     .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
-    .split(/[^A-Za-z0-9]+/)
+    .split(/[^A-Za-z]+/)
     .some((word) => /^(view|screen)$/i.test(word));
 }
 
@@ -854,6 +854,12 @@ function isOwnedNamingFile(filename) {
 }
 
 const namedDeclarationKinds = new Set([
+  ts.SyntaxKind.ExportSpecifier,
+  ts.SyntaxKind.NamespaceExport,
+  ts.SyntaxKind.FunctionExpression,
+  ts.SyntaxKind.ClassExpression,
+  ts.SyntaxKind.EnumDeclaration,
+  ts.SyntaxKind.TypeParameter,
   ts.SyntaxKind.ImportSpecifier,
   ts.SyntaxKind.ImportClause,
   ts.SyntaxKind.NamespaceImport,

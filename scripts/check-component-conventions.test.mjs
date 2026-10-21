@@ -293,6 +293,42 @@ describe("owned component conventions", () => {
     );
   });
 
+  it("rejects banned words in exported aliases and named expressions", () => {
+    const file = "src/lib/account.ts";
+    for (const code of [
+      "export { AccountContent as AccountScreen };",
+      'export { AccountContent as AccountView } from "external";',
+      'export * as AccountView from "external";',
+      "const AccountContent = function AccountScreen() {};",
+      "const AccountContent = class AccountView {};",
+      "enum AccountScreen { Ready }",
+      "type AccountState<Screen> = Screen;",
+      "const AccountScreen2 = true;",
+      "const view2 = true;",
+    ]) {
+      const findings = inspectNaming(code, file);
+      assert.ok(findings.length, code);
+      assert.match(findings[0].message, /Do not use View or Screen/);
+      assert.equal(findings[0].line, 1);
+      assert.ok(findings[0].column > 0);
+    }
+    assert.ok(
+      inspectNaming("export const status = true;", "src/lib/account-view2.ts")
+        .length,
+    );
+  });
+
+  it("allows external names aliased to semantic names and unrelated words", () => {
+    for (const code of [
+      'export { AccountScreen as AccountContent } from "external";',
+      'import { AccountView as AccountContent } from "external";',
+      "const preview2 = true; const viewport = true;",
+      'const label = "Screen View"; // Screen and View in prose are allowed.',
+    ]) {
+      assert.deepEqual(inspectNaming(code, "src/lib/account.ts"), [], code);
+    }
+  });
+
   it("rejects inline exported component declarations", () => {
     expectInvalid(
       "export function ProfileCard() { return <Card />; }",
