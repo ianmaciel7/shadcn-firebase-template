@@ -8,11 +8,7 @@ import type { ProfileValues } from "../_hooks/use-profile-actions";
 
 type ProfileButtonProps = Omit<ComponentProps<typeof Button>, "type">;
 
-function ProfileButton({
-  className,
-  disabled,
-  ...props
-}: ProfileButtonProps) {
+function ProfileButton({ className, disabled, ...props }: ProfileButtonProps) {
   const t = useTranslations("Auth");
   const { formState } = useFormContext<ProfileValues>();
   const isSubmitting = formState.isSubmitting;

@@ -158,7 +158,8 @@ describe("owned component conventions", () => {
 
   it("enforces fixed submit and sign-out button types after prop spreads", () => {
     const submit = "src/app/(protected)/profile/_components/profile-button.tsx";
-    const signOut = "src/app/(protected)/profile/_components/sign-out-button.tsx";
+    const signOut =
+      "src/app/(protected)/profile/_components/sign-out-button.tsx";
     expectValid(
       'function ProfileButton() { return <Button {...props} type="submit" disabled={disabled} />; } export { ProfileButton };',
       submit,
@@ -208,7 +209,8 @@ describe("owned component conventions", () => {
 
   it("keeps FieldGroup in ProfileFormContent rather than ProfileForm", () => {
     const form = "src/app/(protected)/profile/_components/profile-form.tsx";
-    const content = "src/app/(protected)/profile/_components/profile-form-content.tsx";
+    const content =
+      "src/app/(protected)/profile/_components/profile-form-content.tsx";
     expectValid(
       "function ProfileForm() { return <FormProvider><form>{children}</form></FormProvider>; } export { ProfileForm };",
       form,
