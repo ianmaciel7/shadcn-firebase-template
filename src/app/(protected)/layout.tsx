@@ -25,7 +25,8 @@ export default function ProtectedLayout({ children }: LayoutProps<"/">) {
     return onAuthStateChanged(store.get().auth, (user) => {
       if (!user) {
         setReady(false);
-        router.replace("/sign-in");
+        const destination = window.location.pathname + window.location.search;
+        router.replace(`/sign-in?next=${encodeURIComponent(destination)}`);
       } else {
         setReady(true);
       }
