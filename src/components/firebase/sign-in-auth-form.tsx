@@ -1,5 +1,7 @@
 "use client";
 
+import { Loading } from "@/components/ui/extensions/loading";
+
 import type { SignInAuthFormSchema } from "@firebase-oss/ui-core";
 import {
   useSignInAuthFormAction,
@@ -77,8 +79,16 @@ export function SignInAuthForm(props: SignInAuthFormProps) {
           )}
         />
         <Policies />
-        <Button type="submit" disabled={ui.state !== "idle"}>
-          {getTranslation(ui, "labels", "signIn")}
+        <Button
+          type="submit"
+          disabled={ui.state !== "idle"}
+          aria-busy={ui.state !== "idle"}
+        >
+          {ui.state !== "idle" ? (
+            <Loading>{getTranslation(ui, "labels", "signIn")}</Loading>
+          ) : (
+            getTranslation(ui, "labels", "signIn")
+          )}
         </Button>
         {form.formState.errors.root && <FieldError>{form.formState.errors.root.message}</FieldError>}
         {props.onSignUpClick ? (

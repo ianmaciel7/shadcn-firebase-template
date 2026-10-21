@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import { Loading } from "@/components/ui/extensions/loading";
 import type { ProfileFormValues } from "@/lib/profile";
 import { cn } from "@/lib/utils";
 
@@ -30,10 +30,7 @@ function ProfileSaveButton({
       disabled={disabled || isSubmitting || formState.disabled}
     >
       {isSubmitting ? (
-        <>
-          <Spinner data-icon="inline-start" />
-          {children ?? t("savingProfile")}
-        </>
+        <Loading>{children ?? t("savingProfile")}</Loading>
       ) : (
         (children ?? t("saveProfile"))
       )}

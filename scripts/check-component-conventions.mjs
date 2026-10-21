@@ -563,6 +563,144 @@ function checkProfileFormSafety(source, stem, report) {
   check(source, jsxEntries(source), report);
 }
 
+const statefulHooks = new Set([
+  "useState",
+  "useReducer",
+  "useEffect",
+  "useLayoutEffect",
+  "useSyncExternalStore",
+]);
+
+function checkStateHookImport(bindings, report) {
+  if (!bindings || !ts.isNamedImports(bindings)) return;
+  for (const element of bindings.elements) {
+    if (element.isTypeOnly) continue;
+    if (statefulHooks.has((element.propertyName ?? element.name).text)) {
+      report(
+        element,
+        "Move state and effects into a responsibility-specific custom hook; keep components declarative.",
+      );
+    }
+  }
+}
+
+function checkHookImport(statement, report) {
+  if (
+    !ts.isImportDeclaration(statement) ||
+    !ts.isStringLiteral(statement.moduleSpecifier)
+  )
+    return;
+  const module = statement.moduleSpecifier.text;
+  const clause = statement.importClause;
+  if (clause?.isTypeOnly) return;
+  const bindings = clause?.namedBindings;
+  const valueImport =
+    !bindings ||
+    !ts.isNamedImports(bindings) ||
+    bindings.elements.some((element) => !element.isTypeOnly);
+  if (valueImport && /^(firebase\/|@\/lib\/firebase\/)/.test(module)) {
+    report(
+      statement,
+      "Move Firebase/session operations into a responsibility-specific custom hook or data module.",
+    );
+  }
+  if (module === "react") checkStateHookImport(bindings, report);
+}
+
+function isAsyncWorkflow(node, source) {
+  if (
+    ts.isFunctionDeclaration(node) &&
+    source.statements.includes(node) &&
+    /^[A-Z]/.test(node.name?.text ?? "")
+  )
+    return false;
+  if (
+    !ts.isFunctionDeclaration(node) &&
+    !ts.isArrowFunction(node) &&
+    !ts.isFunctionExpression(node)
+  )
+    return false;
+  return node.modifiers?.some(
+    (modifier) => modifier.kind === ts.SyntaxKind.AsyncKeyword,
+  );
+}
+
+function isStateHookCall(node) {
+  return (
+    ts.isCallExpression(node) &&
+    ts.isPropertyAccessExpression(node.expression) &&
+    statefulHooks.has(node.expression.name.text)
+  );
+}
+
+function checkHookResponsibilities(source, report) {
+  for (const statement of source.statements) checkHookImport(statement, report);
+  function hasLogic(node) {
+    if (
+      ts.isBinaryExpression(node) &&
+      [
+        ts.SyntaxKind.AmpersandAmpersandToken,
+        ts.SyntaxKind.BarBarToken,
+        ts.SyntaxKind.QuestionQuestionToken,
+      ].includes(node.operatorToken.kind)
+    )
+      return true;
+    let found = false;
+    ts.forEachChild(node, (child) => {
+      if (hasLogic(child)) found = true;
+    });
+    return found;
+  }
+  function visit(node) {
+    if (ts.isIfStatement(node) && hasLogic(node.expression)) {
+      report(
+        node.expression,
+        "Derive compound loading/auth/error decisions in a custom hook; render a named state or discriminated status.",
+      );
+    }
+    if (
+      ts.isVariableDeclaration(node) &&
+      node.initializer &&
+      hasLogic(node.initializer)
+    ) {
+      report(
+        node.initializer,
+        "Derive compound state in a responsibility-specific custom hook instead of component locals.",
+      );
+    }
+    if (
+      ts.isBinaryExpression(node) &&
+      node.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken &&
+      /error/i.test(node.left.getText(source))
+    ) {
+      report(
+        node,
+        "Resolve error-message fallbacks in a custom hook, not in component rendering.",
+      );
+    }
+    if (isAsyncWorkflow(node, source)) {
+      report(
+        node,
+        "Move asynchronous workflow handlers into a responsibility-specific custom hook.",
+      );
+    }
+    if (isStateHookCall(node)) {
+      report(
+        node,
+        "Move state and effects into a responsibility-specific custom hook; keep components declarative.",
+      );
+    }
+    ts.forEachChild(node, visit);
+  }
+  for (const statement of source.statements) {
+    if (
+      ts.isFunctionDeclaration(statement) &&
+      /^[A-Z]/.test(statement.name?.text ?? "")
+    )
+      visit(statement);
+  }
+}
+
 export function inspectComponent(content, filename) {
   if (!isOwnedComponent(filename)) return [];
   const source = ts.createSourceFile(
@@ -590,6 +728,7 @@ export function inspectComponent(content, filename) {
   checkExportStyle(source, report);
   checkProps(source, pascalCase(stem), report);
   checkClientImports(source, report);
+  checkHookResponsibilities(source, report);
   checkFieldControllerNames(source, stem, report);
   checkProfilePropDrilling(source, report);
   checkProfileFormSafety(source, stem, report);

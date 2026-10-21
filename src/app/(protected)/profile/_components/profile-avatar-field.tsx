@@ -1,40 +1,28 @@
-import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
-import { useFormContext, useWatch } from "react-hook-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import type { ProfileFormValues } from "@/lib/profile";
 import { cn } from "@/lib/utils";
-import { useProfileAvatar } from "../_hooks/use-profile-avatar";
-import { useProfileSessionContext } from "../_hooks/use-profile-session-context";
+import { useProfileAvatarField } from "../_hooks/use-profile-avatar-field";
 
 type ProfileAvatarFieldProps = ComponentProps<"div">;
 
 function ProfileAvatarField({ className, ...props }: ProfileAvatarFieldProps) {
-  const t = useTranslations("Auth");
-  const { user, photoURL, avatarVersion } = useProfileSessionContext();
-  const { control, setValue, formState } = useFormContext<ProfileFormValues>();
-  const avatarFile = useWatch({ control, name: "avatarFile" });
-  const { avatarPreview, fileInputRef, handleAvatarChange } = useProfileAvatar(
-    avatarFile,
-    (file) => setValue("avatarFile", file, { shouldDirty: true }),
-  );
-  const displayName = user?.displayName ?? null;
-  const email = user?.email ?? null;
-  const disabled = formState.disabled || formState.isSubmitting;
-  const avatarSrc = getAvatarSource(avatarPreview, photoURL, avatarVersion);
-  const fallbackInitial = (
-    displayName?.charAt(0) ||
-    email?.charAt(0) ||
-    "U"
-  ).toUpperCase();
+  const {
+    t,
+    displayName,
+    email,
+    disabled,
+    avatarSrc,
+    avatarAlt,
+    fallbackInitial,
+    fileInputRef,
+    handleAvatarChange,
+  } = useProfileAvatarField();
 
   return (
     <div className={cn("flex items-center gap-4", className)} {...props}>
       <Avatar className="size-16">
-        {avatarSrc ? (
-          <AvatarImage src={avatarSrc} alt={displayName ?? t("profileTitle")} />
-        ) : null}
+        {avatarSrc ? <AvatarImage src={avatarSrc} alt={avatarAlt} /> : null}
         <AvatarFallback className="text-xl">{fallbackInitial}</AvatarFallback>
       </Avatar>
       <div className="flex min-w-0 flex-col items-start">
@@ -66,17 +54,6 @@ function ProfileAvatarField({ className, ...props }: ProfileAvatarFieldProps) {
       </div>
     </div>
   );
-}
-
-function getAvatarSource(
-  preview: string | null,
-  photoURL: string | null,
-  version: number,
-) {
-  if (preview) return preview;
-  if (!photoURL || !version) return photoURL ?? undefined;
-
-  return `${photoURL}${photoURL.includes("?") ? "&" : "?"}v=${version}`;
 }
 
 export { ProfileAvatarField };

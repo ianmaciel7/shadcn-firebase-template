@@ -1,21 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
+import { useAuthNavigation } from "@/app/_hooks/use-auth-navigation";
 import { ForgotPasswordAuthScreen } from "@/components/firebase/forgot-password-auth-screen";
-import { getAuthNavigationUrl } from "@/lib/auth/return-url";
 
 type ForgotPasswordAuthFlowProps = ComponentProps<"div">;
 
 function ForgotPasswordAuthFlow(props: ForgotPasswordAuthFlowProps) {
-  const router = useRouter();
+  const { goToSignIn } = useAuthNavigation();
   return (
     <div {...props}>
-      <ForgotPasswordAuthScreen
-        onBackToSignInClick={() =>
-          router.push(getAuthNavigationUrl("/sign-in", window.location.search))
-        }
-      />
+      <ForgotPasswordAuthScreen onBackToSignInClick={goToSignIn} />
     </div>
   );
 }

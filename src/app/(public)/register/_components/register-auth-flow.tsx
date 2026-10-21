@@ -1,22 +1,17 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
+import { useAuthNavigation } from "@/app/_hooks/use-auth-navigation";
 import { GoogleSignInButton } from "@/components/firebase/google-sign-in-button";
 import { SignUpAuthScreen } from "@/components/firebase/sign-up-auth-screen";
-import { getAuthNavigationUrl } from "@/lib/auth/return-url";
 
 type RegisterAuthFlowProps = ComponentProps<"div">;
 
 function RegisterAuthFlow(props: RegisterAuthFlowProps) {
-  const router = useRouter();
+  const { goToSignIn } = useAuthNavigation();
   return (
     <div {...props}>
-      <SignUpAuthScreen
-        onSignInClick={() =>
-          router.push(getAuthNavigationUrl("/sign-in", window.location.search))
-        }
-      >
+      <SignUpAuthScreen onSignInClick={goToSignIn}>
         {process.env.NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED === "true" ? (
           <GoogleSignInButton />
         ) : null}

@@ -118,7 +118,7 @@ describe("owned component conventions", () => {
   it("permits client interaction but rejects server-only imports", () => {
     expectValid(
       compoundCard(
-        '"use client"; import { useState } from "react"; function ProfileCard() { const [open] = useState(false); return <Card {...props} />; } export { ProfileCard };',
+        '"use client"; import { useCardState } from "../_hooks/use-card-state"; function ProfileCard() { const { open } = useCardState(); return <Card {...props} />; } export { ProfileCard };',
       ),
     );
     expectInvalid(
@@ -128,6 +128,66 @@ describe("owned component conventions", () => {
     expectInvalid(
       '"use client"; import "server-only"; function ProfileCard() { return <Card />; } export { ProfileCard };',
       /server-only/,
+    );
+  });
+
+  it("requires focused hooks for session decisions, effects and async workflows", () => {
+    const path = "src/app/_components/session-panel.tsx";
+    const component = (body) =>
+      `function SessionPanel() { ${body} return <div />; } export { SessionPanel };`;
+    for (const condition of [
+      "!profile.authReady || (user && !profile.preferencesReady)",
+      "!user && !profile.error",
+      "!user || !profile.defaultValues",
+    ]) {
+      expectInvalid(
+        component(`if (${condition}) return null;`),
+        /custom hook/,
+        path,
+      );
+    }
+    expectInvalid(
+      component('const message = profile.error ?? t("profileSaveError");'),
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      component(
+        "const loading = !profile.authReady || !profile.preferencesReady;",
+      ),
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      'import { useEffect as effect } from "react"; ' +
+        component("effect(() => {});"),
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      `import React from "react"; ${component("React.useState(false);")}`,
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      `import { signOut } from "firebase/auth"; ${component("")}`,
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      component("async function handleSubmit() { await save(); }"),
+      /custom hook/,
+      path,
+    );
+    expectValid(
+      component(
+        'const { status, message } = useSessionView(); if (status === "loading") return <Loading />; if (status === "error") return <p>{message}</p>;',
+      ),
+      path,
+    );
+    expectValid(
+      "function SessionPanel({ children, disabled }) { return <Button disabled={disabled || pending}>{children ?? label}</Button>; } export { SessionPanel };",
+      path,
     );
   });
 

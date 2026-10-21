@@ -70,3 +70,12 @@ Use `src/components/ui/card.tsx`, `button.tsx` and `field.tsx` as reference impl
 The TypeScript AST guard checks literal Controller names against owned `*-field.tsx` filenames and prevents whole-controller `profile` props on the profile components listed above. These checks cannot judge all component responsibilities and do not inspect dynamic Controller names.
 
 References: [shadcn/ui Field](https://ui.shadcn.com/docs/components/field), [shadcn/ui React Hook Form](https://ui.shadcn.com/docs/forms/react-hook-form), [React Hook Form FormProvider](https://react-hook-form.com/docs/formprovider).
+
+## Component behavior and custom hooks
+
+Owned components keep rendering, translations, primitive prop forwarding and simple UI composition. Place stateful effects, Firebase operations and asynchronous workflow handlers in responsibility-specific custom hooks. Components may call several focused hooks; do not restore a single controller that owns every field and action.
+
+- Expose discriminated view states for session screens (`loading`, `hidden`, `error`, `ready`). Components render `view.status` and an already resolved error message, rather than deriving readiness from user, authentication and preferences flags.
+- Keep responsibilities local: `useProfileView` derives screen state, `useProfileForm` coordinates form lifecycle, `useProfileAvatarField` prepares avatar data, and `useProfileSignOut` handles logout. Auth provider, gate, navigation button and auth flow navigation have separate hooks.
+- `check:components` rejects React state/effect imports (including aliases), namespace state/effect calls, Firebase value imports, async workflow functions, compound `if` conditions/derived locals and error fallbacks inside owned component functions. Async Server Components, simple discriminated-state branches, translations, form context and presentation props such as `disabled={disabled || pending}` remain valid.
+- The guard checks syntax, not arbitrary semantic equivalence or the ideal number of hooks. Generated Firebase/UI registries and Next.js special files retain their existing scope exclusions. Module-level setup is outside component branch analysis.

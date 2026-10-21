@@ -1,8 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Loading } from "@/components/ui/extensions/loading";
 import { useProfileSession } from "../_hooks/use-profile-session";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
+import { useProfileView } from "../_hooks/use-profile-view";
 import { ProfileAvatarField } from "./profile-avatar-field";
 import {
   ProfileCard,
@@ -26,31 +28,28 @@ import { ProfileThemeField } from "./profile-theme-field";
 
 function ProfileSection() {
   const profile = useProfileSession();
-  const { user } = profile;
+  const view = useProfileView(profile);
   const t = useTranslations("Auth");
 
-  if (!profile.authReady || (user && !profile.preferencesReady)) {
+  if (view.status === "loading") {
     return (
       <ProfileCard>
         <ProfileCardContent>
-          <p
-            role="status"
-            className="text-center text-sm text-muted-foreground"
-          >
+          <Loading className="w-full text-sm text-muted-foreground">
             {t("loading")}
-          </p>
+          </Loading>
         </ProfileCardContent>
       </ProfileCard>
     );
   }
 
-  if (!user && !profile.error) return null;
+  if (view.status === "hidden") return null;
 
-  if (!user || !profile.defaultValues) {
+  if (view.status === "error") {
     return (
       <ProfileCard>
         <ProfileCardContent>
-          <p role="alert">{profile.error ?? t("profileSaveError")}</p>
+          <p role="alert">{view.message}</p>
         </ProfileCardContent>
       </ProfileCard>
     );
@@ -59,7 +58,7 @@ function ProfileSection() {
   return (
     <ProfileSessionContext value={profile}>
       <ProfileCard>
-        <ProfileForm key={user.uid}>
+        <ProfileForm key={view.userId}>
           <ProfileCardHeader>
             <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
             <ProfileCardDescription>
