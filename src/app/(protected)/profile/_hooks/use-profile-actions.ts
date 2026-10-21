@@ -150,6 +150,7 @@ export function useProfileActions({
       if (values.locale !== activeLocale) {
         router.replace(pathname, { locale: values.locale });
       }
+      setIsSaving(false);
       return savedProfile.values;
     } catch (cause) {
       console.error(cause);
@@ -157,9 +158,8 @@ export function useProfileActions({
         title: t("profileSaveError"),
         type: "error",
       });
-      return undefined;
-    } finally {
       setIsSaving(false);
+      return undefined;
     }
   };
 
