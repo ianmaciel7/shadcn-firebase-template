@@ -78,6 +78,7 @@ When standards conflict, apply them in this order:
 
 - Consult [DESIGN.md](DESIGN.md) for tokens and component conventions. Update
   that reference when changing fonts, theme tokens, or `components.json`.
+- The owned-component naming and Next.js Client/Server boundary guard is enforced by `pnpm check:components` (included in CI); registry-generated UI is excluded. See [.agents/rules/component-naming.md](.agents/rules/component-naming.md).
 - Follow the component taxonomy and file naming conventions in
   [.agents/rules/component-naming.md](.agents/rules/component-naming.md) for UI
   and feature components (such as `*-field.tsx`, `*-fields.tsx`, `*-form.tsx`,
