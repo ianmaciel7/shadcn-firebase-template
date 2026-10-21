@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from "react";
 import { FormProvider, type UseFormProps, useForm } from "react-hook-form";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { ProfileValues } from "../_hooks/use-profile-actions";
 
@@ -26,10 +27,11 @@ function ProfileForm({
   return (
     <FormProvider {...form}>
       <form
+        data-slot="profile-form"
         className={cn("w-full", className)}
         onSubmit={form.handleSubmit(handleSubmit)}
       >
-        {children}
+        <Card>{children}</Card>
       </form>
     </FormProvider>
   );

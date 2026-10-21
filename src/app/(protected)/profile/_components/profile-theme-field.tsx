@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import type { ComponentProps } from "react";
+import { useId, type ComponentProps } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import {
@@ -16,6 +16,7 @@ import type { ProfileValues } from "../_hooks/use-profile-actions";
 type ProfileThemeFieldProps = ComponentProps<typeof Field>;
 
 function ProfileThemeField(props: ProfileThemeFieldProps) {
+  const id = useId();
   const t = useTranslations("Auth");
   const { control } = useFormContext<ProfileValues>();
 
@@ -25,7 +26,7 @@ function ProfileThemeField(props: ProfileThemeFieldProps) {
       control={control}
       render={({ field, fieldState }) => (
         <Field {...props} data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor="profile-theme">{t("themeLabel")}</FieldLabel>
+          <FieldLabel htmlFor={id}>{t("themeLabel")}</FieldLabel>
           <Select
             name={field.name}
             value={field.value}
@@ -35,7 +36,7 @@ function ProfileThemeField(props: ProfileThemeFieldProps) {
             }}
           >
             <SelectTrigger
-              id="profile-theme"
+              id={id}
               className="w-full"
               aria-invalid={fieldState.invalid}
               onBlur={field.onBlur}

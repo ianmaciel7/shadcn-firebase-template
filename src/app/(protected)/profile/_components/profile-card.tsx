@@ -2,7 +2,6 @@
 
 import type { ComponentProps } from "react";
 import {
-  Card,
   CardDescription,
   CardHeader,
   CardTitle,
@@ -36,15 +35,9 @@ function ProfileCard({ className, ...props }: ProfileCardProps) {
     );
   }
 
-  if (!user) {
-    return profile.error ? (
-      <div className={cn("mx-auto w-full max-w-sm", className)} {...props}>
-        <p role="alert">{profile.error}</p>
-      </div>
-    ) : null;
-  }
+  if (!user && !profile.error) return null;
 
-  if (!profile.formProps) {
+  if (!user || !profile.formProps) {
     return (
       <div className={cn("mx-auto w-full max-w-sm", className)} {...props}>
         <p role="alert">{profile.error ?? t("profileSaveError")}</p>
@@ -55,29 +48,27 @@ function ProfileCard({ className, ...props }: ProfileCardProps) {
   return (
     <div className={cn("mx-auto w-full max-w-sm", className)} {...props}>
       <ProfileForm key={user.uid} {...profile.formProps}>
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("personalInfoTitle")}</CardTitle>
-            <CardDescription>{t("personalInfoDescription")}</CardDescription>
-          </CardHeader>
-          <ProfileFormContent>
-            <ProfileAvatarField {...profile.avatarProps} />
-            <ProfileDisplayNameField />
-            <ProfileEmailField />
-            <ProfileLocaleField />
-            <ProfileThemeField />
-          </ProfileFormContent>
-          <ProfileFormFooter>
-            <ProfileButton />
-            <SignOutButton
-              onClick={profile.handleSignOut}
-              disabled={profile.isBusy}
-              isSigningOut={profile.isSigningOut}
-            >
-              {t("signOut")}
-            </SignOutButton>
-          </ProfileFormFooter>
-        </Card>
+        <CardHeader>
+          <CardTitle>{t("personalInfoTitle")}</CardTitle>
+          <CardDescription>{t("personalInfoDescription")}</CardDescription>
+        </CardHeader>
+        <ProfileFormContent>
+          <ProfileAvatarField {...profile.avatarProps} />
+          <ProfileDisplayNameField />
+          <ProfileEmailField />
+          <ProfileLocaleField />
+          <ProfileThemeField />
+        </ProfileFormContent>
+        <ProfileFormFooter>
+          <ProfileButton />
+          <SignOutButton
+            onClick={profile.handleSignOut}
+            disabled={profile.isBusy}
+            isSigningOut={profile.isSigningOut}
+          >
+            {t("signOut")}
+          </SignOutButton>
+        </ProfileFormFooter>
       </ProfileForm>
     </div>
   );

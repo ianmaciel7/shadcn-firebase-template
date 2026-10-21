@@ -7,7 +7,7 @@ type ProfileFormContentProps = ComponentProps<typeof CardContent>;
 function ProfileFormContent({ children, ...props }: ProfileFormContentProps) {
   return (
     <CardContent {...props}>
-      <FieldGroup className="gap-5">{children}</FieldGroup>
+      <FieldGroup>{children}</FieldGroup>
     </CardContent>
   );
 }
