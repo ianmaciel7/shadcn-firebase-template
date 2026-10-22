@@ -72,7 +72,7 @@ describe("owned component conventions", () => {
   it("selects private components and project-owned extensions", () => {
     assert.equal(isOwnedComponent(profile), true);
     assert.equal(
-      isOwnedComponent("src/app/_components/home-content.tsx"),
+      isOwnedComponent("src/app/_components/home-section-client.tsx"),
       true,
     );
     assert.equal(
@@ -143,6 +143,41 @@ describe("owned component conventions", () => {
       "function ProfileCard() { return <Card />; } export { ProfileCard };",
       /kebab-case/,
       "src/app/_components/ProfileCard.tsx",
+    );
+    expectInvalid(
+      "function AccountPresentation() { return <div />; } export { AccountPresentation };",
+      /Name by semantic role, never by Component\/UI\/Presentation/,
+      "src/app/_components/account-presentation.tsx",
+    );
+    expectInvalid(
+      "function AccountScreen() { return <div />; } export { AccountScreen };",
+      /must not end with a screen or page term/,
+      "src/app/_components/account-screen.tsx",
+    );
+    expectInvalid(
+      "function AccountView() { return <div />; } export { AccountView };",
+      /must not end with a screen or page term/,
+      "src/app/_components/account-view.tsx",
+    );
+    expectInvalid(
+      "function UserPage() { return <div />; } export { UserPage };",
+      /must not end with a screen or page term/,
+      "src/app/_components/user-page.tsx",
+    );
+    expectInvalid(
+      "function CheckoutPresentation() { return <div />; } export { CheckoutPresentation };",
+      /Name by semantic role, never by Component\/UI\/Presentation/,
+      "src/app/_components/checkout-presentation-client.tsx",
+    );
+    expectInvalid(
+      '"use client"; function CheckoutPage() { return <div />; } export { CheckoutPage };',
+      /must not end with a screen or page term/,
+      "src/app/_components/checkout-page-client.tsx",
+    );
+    expectInvalid(
+      'import "server-only"; function CheckoutPage() { return <div />; } export { CheckoutPage };',
+      /must not end with a screen or page term/,
+      "src/app/_components/checkout-page-server.tsx",
     );
   });
 
@@ -287,6 +322,7 @@ describe("owned component conventions", () => {
     for (const [file, code] of [
       [component, "function AccountView() {}"],
       [component, "function AccountScreen() {}"],
+      [component, "function AccountPresentation() {}"],
       [hook, "export function useAccountView() {}"],
       [hook, "const screen = getState();"],
       [hook, "const { view } = useAccount();"],

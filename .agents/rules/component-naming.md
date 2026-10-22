@@ -24,8 +24,10 @@ from application naming checks. Application-owned extensions under
   component props according to the existing component-props rule.
 - Prefer semantic roles: `*-field`, `*-fields`, `*-form`, `*-card`,
   `*-dialog`, `*-header`, `*-button`, `*-table`, `*-list`, `*-provider`,
-  `*-gate`, `*-flow`, or `*-content`. This is **not** a closed list.
+  `*-gate`, `*-flow`, `*-hero`, `*-section`, or `*-content`. This is **not** a closed list.
   `Flow` specifically denotes navigation or application flow wiring.
+- Do not name route-private components after screen or page terms (`-page`, `-screen`, `-view`);
+  name by semantic role. Prohibit generic implementation terms (`View`, `Screen`, `Presentation`) in component identifiers.
 - Reserve `-client.tsx` for browser integrations and `-server.tsx` for server
   integrations. Presentation components keep no suffix, including interactive
   presentation that declares `"use client"`. Keep semantic exports and prop
@@ -39,7 +41,7 @@ from application naming checks. Application-owned extensions under
   entrypoints import `"server-only"`. Interactive presentation also uses client
   boundaries where required. Unsuffixed does not mean server-compatible.
   Do not use `"use server"` to classify ordinary Server Components.
-  Prohibit generic implementation suffixes `-component` and `-ui`.
+  Prohibit generic implementation suffixes `-component`, `-ui`, and `-presentation`.
 - Server Components can fetch data and render Client Components; only
   browser-interactive entrypoints need explicit client boundaries.
   A `"use client"` module must not directly import server-only APIs
