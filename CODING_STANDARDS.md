@@ -136,7 +136,9 @@ Use separate named exports from one family module. `account-card.tsx` declares
 `AccountCard` plus any actual parts named `AccountCardHeader`,
 `AccountCardContent`, etc. The root matches the filename, every part is a local
 named function with the same root prefix, and each props type matches its part.
-Unrelated components belong in their own modules. The exact profile families
+Component value exports preserve their local function names; export aliases and
+component re-exports cannot satisfy the filename contract. Type-only exports
+are exempt. Unrelated components belong in their own modules. The exact profile families
 retain their additional safety checks.
 
 ```tsx

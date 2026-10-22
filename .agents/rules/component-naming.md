@@ -19,6 +19,7 @@ from application naming checks. Application-owned extensions under
 ## Component file contracts
 
 - Use `kebab-case.tsx` and a matching PascalCase family root. Every owned component module may also export related parts prefixed by the root name, such as `AccountCardHeader` in `account-card.tsx`. Declare each as a local named function and export the parts together. Simple components retain one export. The profile Card and Form families have additional exact-part safety checks. Do not use `export default` or `export function` in owned reusable components.
+- Component value exports must preserve the local function name. Aliases such as `OtherCard as AccountCard` and component re-exports cannot satisfy the filename contract, even when an unused matching local function exists. Type-only exports are exempt.
 - Use `ProfileCardProps` for props of `ProfileCard`; inherit React/HTML
   component props according to the existing component-props rule.
 - Prefer semantic roles: `*-field`, `*-fields`, `*-form`, `*-card`,
