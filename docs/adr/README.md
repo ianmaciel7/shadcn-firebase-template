@@ -124,3 +124,13 @@ component contracts, and theme details belong in `TOOLING.md`,
 `CODING_STANDARDS.md`, and `DESIGN.md`. Refreshing these references does not
 change the accepted records above or imply a preset, primitive-family, or
 component-source migration.
+
+- [ADR 0011: Record authenticated usage](0011-record-authenticated-usage.md)
+  adds append-only usage records to the protected screen and profile-save guards.
+
+- [ADR 0012: Use native Firebase logging](0012-use-native-firebase-logging.md)
+  supersedes ADR 0011's Firestore usage storage with Cloud Functions and native
+  Cloud Logging; the screen and functionality guards remain.
+
+- [ADR 0013: Capture Next.js server errors](0013-capture-nextjs-server-errors.md)
+  adds native request error instrumentation with structured JSON stderr output.

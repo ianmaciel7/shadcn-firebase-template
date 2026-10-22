@@ -44,6 +44,11 @@ vi.mock("@/i18n/navigation", () => ({
   useRouter: () => mocks.router,
 }));
 
+vi.mock("@/lib/usage/guard", () => ({
+  withUsageGuard: async (_event: unknown, operation: () => Promise<unknown>) =>
+    operation(),
+}));
+
 const translate = (key: string) => key;
 
 vi.mock("next-intl", () => ({
