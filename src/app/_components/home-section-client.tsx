@@ -100,5 +100,4 @@ function HomeSection(props: HomeSectionProps) {
   );
 }
 
-export type { HomeSectionProps };
 export { HomeSection };

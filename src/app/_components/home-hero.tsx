@@ -66,13 +66,6 @@ function HomeHeroActions({ className, ...props }: HomeHeroActionsProps) {
   );
 }
 
-export type {
-  HomeHeroActionsProps,
-  HomeHeroDescriptionProps,
-  HomeHeroHeaderProps,
-  HomeHeroProps,
-  HomeHeroTitleProps,
-};
 export {
   HomeHero,
   HomeHeroActions,
