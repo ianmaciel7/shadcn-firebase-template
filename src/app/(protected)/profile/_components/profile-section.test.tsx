@@ -153,6 +153,9 @@ describe("ProfileSection", () => {
     expect(
       (screen.getByLabelText("emailLabel") as HTMLInputElement).value,
     ).toBe("user@example.com");
+    expect(screen.getByText("profilePhotoTitle")).toBeTruthy();
+    expect(screen.queryByText("Ada Lovelace")).toBeNull();
+    expect(screen.queryByText("user@example.com")).toBeNull();
   });
 
   it("renders language and theme preferences", async () => {
@@ -170,6 +173,8 @@ describe("ProfileSection", () => {
     expect(screen.getByLabelText("themeLabel").textContent).toContain(
       "themeOptions.system",
     );
+    expect(screen.queryByText("preferencesDescription")).toBeNull();
+    expect(screen.queryByText("preferencesTitle")).toBeNull();
   });
 
   it("does not render an empty card while profile preferences load", async () => {
@@ -213,9 +218,14 @@ describe("ProfileSection", () => {
     render(<ProfileSection />);
 
     const file = new File(["avatar"], "avatar.png", { type: "image/png" });
-    fireEvent.change(await screen.findByLabelText("profilePhotoChange"), {
-      target: { files: [file] },
-    });
+    fireEvent.change(
+      await screen.findByLabelText("profilePhotoChange", {
+        selector: "input",
+      }),
+      {
+        target: { files: [file] },
+      },
+    );
     fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
 
     await waitFor(() =>
@@ -224,7 +234,6 @@ describe("ProfileSection", () => {
       }),
     );
     expect(mocks.updateProfile).toHaveBeenCalledWith(mocks.currentUser, {
-      displayName: null,
       photoURL: "https://example.com/avatar.png",
     });
     expect(mocks.toastAdd).toHaveBeenCalledWith({
@@ -238,9 +247,14 @@ describe("ProfileSection", () => {
     render(<ProfileSection />);
 
     const file = new File(["test"], "test.txt", { type: "text/plain" });
-    fireEvent.change(await screen.findByLabelText("profilePhotoChange"), {
-      target: { files: [file] },
-    });
+    fireEvent.change(
+      await screen.findByLabelText("profilePhotoChange", {
+        selector: "input",
+      }),
+      {
+        target: { files: [file] },
+      },
+    );
 
     expect(mocks.toastAdd).toHaveBeenCalledWith({
       title: "profilePhotoInvalid",
@@ -400,9 +414,9 @@ describe("ProfileSection", () => {
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
       render(<ProfileSection />);
-      const input = (await screen.findByLabelText(
-        "profilePhotoChange",
-      )) as HTMLInputElement;
+      const input = (await screen.findByLabelText("profilePhotoChange", {
+        selector: "input",
+      })) as HTMLInputElement;
       const file = new File(["avatar"], "avatar.png", { type: "image/png" });
       fireEvent.change(input, { target: { files: [file] } });
       fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));

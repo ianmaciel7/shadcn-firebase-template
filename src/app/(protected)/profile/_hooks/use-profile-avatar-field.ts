@@ -26,8 +26,6 @@ export function useProfileAvatarField() {
   const avatarAlt = displayName ?? t("profileTitle");
   return {
     t,
-    displayName,
-    email,
     disabled,
     avatarSrc,
     avatarAlt,
