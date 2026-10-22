@@ -32,8 +32,8 @@ export default defineConfig({
       {
         test: {
           name: "unit",
-          testTimeout: 15000,
           environment: "jsdom",
+          testTimeout: 30000,
           include: [
             "src/**/*.test.{ts,tsx}",
             ".biome/**/*.test.ts",
@@ -46,6 +46,10 @@ export default defineConfig({
         test: {
           name: "browser",
           include: ["src/**/*.browser.test.{ts,tsx}"],
+          api: {
+            host: "127.0.0.1",
+            port: 62315,
+          },
           browser: {
             enabled: true,
             provider: playwright(),

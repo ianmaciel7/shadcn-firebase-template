@@ -80,6 +80,12 @@ vi.mock("@/lib/firebase/client", () => ({
   getFirebaseUI: mocks.getUI,
 }));
 
+vi.mock("@/lib/toast", () => ({
+  toast: {
+    add: mocks.toastAdd,
+  },
+}));
+
 vi.mock("@/components/ui/toast", () => ({
   toast: {
     add: mocks.toastAdd,

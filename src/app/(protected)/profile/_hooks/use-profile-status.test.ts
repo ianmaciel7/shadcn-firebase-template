@@ -61,7 +61,7 @@ describe("useProfileStatus", () => {
 
   it.each([
     { error: "Session unavailable", expected: "Session unavailable" },
-    { error: null, expected: "profileSaveError" },
+    { error: null, expected: "profileLoadError" },
   ])(
     "resolves a missing-defaults error in the hook: $expected",
     ({ error, expected }) => {

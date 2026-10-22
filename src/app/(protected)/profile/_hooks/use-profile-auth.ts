@@ -25,13 +25,13 @@ export function useProfileAuth() {
         },
         (cause) => {
           console.error(cause);
-          setError(t("profileSaveError"));
+          setError(t("profileLoadError"));
           setAuthReady(true);
         },
       );
     } catch (cause) {
       console.error(cause);
-      setError(t("profileSaveError"));
+      setError(t("profileLoadError"));
       setAuthReady(true);
     }
   }, [router, t]);

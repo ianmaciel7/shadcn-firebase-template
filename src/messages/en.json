@@ -74,6 +74,7 @@
     "profileSaved": "Profile saved",
     "emailVerificationSent": "Check your new email to confirm the change.",
     "profileSaveError": "Could not save the profile. Please try again.",
+    "profileLoadError": "Could not load the profile. Please try again.",
     "signingOut": "Signing out…"
   },
   "Home": {
