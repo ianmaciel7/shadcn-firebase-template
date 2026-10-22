@@ -1,4 +1,5 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { act } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ProtectedGate } from "./protected-gate";
 
@@ -104,6 +105,55 @@ describe("ProtectedGate", () => {
     );
     await waitFor(() => expect(screen.getByRole("alert")).toBeTruthy());
     expect(screen.queryByText("Protected Content")).toBeNull();
+  });
+
+  it("ignores a logging acknowledgment after sign-out", async () => {
+    let acknowledge: (() => void) | undefined;
+    mocks.recordUsage.mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        acknowledge = resolve;
+      }),
+    );
+    mocks.currentUser = { uid: "user-123" };
+    render(
+      <ProtectedGate>
+        <div>{"Protected Content"}</div>
+      </ProtectedGate>,
+    );
+    const onAuthChange = mocks.subscribe.mock.calls[0][1];
+    await act(async () => {
+      onAuthChange(null);
+      acknowledge?.();
+    });
+    expect(screen.queryByText("Protected Content")).toBeNull();
+    expect(mocks.router.replace).toHaveBeenCalled();
+  });
+
+  it("ignores an obsolete logging failure after a newer session succeeds", async () => {
+    let rejectOld: ((cause: Error) => void) | undefined;
+    mocks.recordUsage.mockReturnValueOnce(
+      new Promise<void>((_resolve, reject) => {
+        rejectOld = reject;
+      }),
+    );
+    mocks.currentUser = { uid: "user-123" };
+    render(
+      <ProtectedGate>
+        <div>{"Protected Content"}</div>
+      </ProtectedGate>,
+    );
+    const onAuthChange = mocks.subscribe.mock.calls[0][1];
+    await act(async () => {
+      onAuthChange({ uid: "user-456" });
+    });
+    await waitFor(() =>
+      expect(screen.getByText("Protected Content")).toBeTruthy(),
+    );
+    await act(async () => {
+      rejectOld?.(new Error("obsolete request"));
+    });
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(screen.getByText("Protected Content")).toBeTruthy();
   });
 
   it("shows configuration error when getFirebaseUI throws", () => {
