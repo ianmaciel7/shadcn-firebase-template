@@ -23,6 +23,11 @@ language, as defined in `.agents/rules/language.md`.
 | [Next.js reference](agents/nextjs.md) | Complete stable/current docs and error-message inventory, compatibility, and lookup workflow | Official source revisions, installed Next.js, current config |
 | [shadcn/ui reference](agents/shadcn.md) | Official documentation coverage, source inventory, and lookup workflow | Official source revision and current local configuration |
 
+## Application operations
+
+- [Logging](logging.md): Next.js server errors, authenticated Firebase usage
+  events, Cloud Logging queries, and deployment requirements.
+
 ## Decisions and agent references
 
 - [ADR index](adr/README.md): accepted template architecture decisions.

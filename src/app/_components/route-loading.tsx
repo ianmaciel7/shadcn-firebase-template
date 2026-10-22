@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { LoadingIndicator } from "@/components/loading/loading-indicator";
+import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
 
 function RouteLoading() {
   const t = useTranslations("Home");

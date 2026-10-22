@@ -1,3 +1,4 @@
+import "server-only";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import type * as React from "react";

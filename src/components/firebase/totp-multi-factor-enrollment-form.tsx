@@ -20,7 +20,7 @@ import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/loading/loading-indicator";
+import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
 type TotpMultiFactorSecretGenerationFormProps = {

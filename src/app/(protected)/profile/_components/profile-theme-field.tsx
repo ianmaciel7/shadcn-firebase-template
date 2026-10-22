@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentProps } from "react";
 import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";

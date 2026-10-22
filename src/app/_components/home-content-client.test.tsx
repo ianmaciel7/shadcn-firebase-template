@@ -8,7 +8,7 @@ import {
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import en from "@/messages/en.json";
-import { HomeContent } from "./home-content";
+import { HomeContent } from "./home-content-client";
 
 const mocks = vi.hoisted(() => ({
   subscribe: vi.fn(),

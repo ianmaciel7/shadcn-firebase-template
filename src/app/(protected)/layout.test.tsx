@@ -2,7 +2,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import ProtectedLayout from "./layout";
 
-vi.mock("./_components/protected-gate", () => ({
+vi.mock("./_components/protected-gate-client", () => ({
   ProtectedGate: ({ children }: { children: React.ReactNode }) => (
     <section data-testid="protected-gate">{children}</section>
   ),

@@ -7,7 +7,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ProfileSection } from "./profile-section";
+import { ProfileSection } from "./profile-section-client";
 
 const mocks = vi.hoisted(() => ({
   router: { replace: vi.fn(), push: vi.fn(), refresh: vi.fn() },
@@ -42,6 +42,11 @@ vi.mock("@/i18n/navigation", () => ({
   ),
   usePathname: () => "/profile",
   useRouter: () => mocks.router,
+}));
+
+vi.mock("@/lib/usage/guard", () => ({
+  withUsageGuard: async (_event: unknown, operation: () => Promise<unknown>) =>
+    operation(),
 }));
 
 const translate = (key: string) => key;

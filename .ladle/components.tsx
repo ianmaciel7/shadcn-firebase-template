@@ -1,6 +1,6 @@
 import type { GlobalProvider } from "@ladle/react";
 import { NextIntlClientProvider } from "next-intl";
-import { ThemeProvider } from "@/components/ui/extensions/theme-provider";
+import { ThemeProvider } from "@/components/ui/extensions/theme-provider-client";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import messages from "@/messages/en.json";
 import "./ladle.css";

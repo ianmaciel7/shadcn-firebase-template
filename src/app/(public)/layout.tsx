@@ -1,4 +1,4 @@
-import { AuthProvider } from "@/app/_components/auth-provider";
+import { AuthProvider } from "@/app/_components/auth-provider-client";
 
 export default function PublicLayout({ children }: LayoutProps<"/">) {
   return (

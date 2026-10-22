@@ -54,7 +54,7 @@ files, and `public/` remain at the repository root, as required by the Next.js
 
 - `src/app` contains route entrypoints and Next.js special files, plus
   route-private implementation code under underscore-prefixed folders.
-- Shared UI belongs in `src/components`; shared non-UI helpers belong in
+- Shared application UI belongs in `src/components/ui/extensions`; shared non-UI helpers belong in
   `src/lib`.
 - Route-specific implementation details may be colocated with a route. Use an
   underscore-prefixed folder such as `_components`, `_hooks`, or `_lib` when
@@ -257,3 +257,66 @@ Server/Client import-graph membership and of compound-component anatomy.
 [Coding standards](CODING_STANDARDS.md#react-rendering-hooks-and-identity) own
 the behavioral rules; [the React review](docs/agents/react.md) records sources
 and stable/experimental boundaries.
+
+## Owned component placement
+
+Place shared application components in `src/components/ui/extensions/` and
+route-private components in `src/app/**/_components/`. For example,
+`LoadingIndicator` belongs alongside `Loading` in `ui/extensions` because both
+route components and Firebase UI consume it. Do not create parallel application
+component folders such as `src/components/loading/`.
+
+`pnpm check:components` rejects JavaScript and TypeScript source files (including
+colocated tests and barrel files) outside the `ui`, `firebase`, and `ai-elements`
+registry trees under `src/components`. Existing registry trees remain allowed;
+their generated source retains its existing exclusions. This is repository
+policy, not a Next.js requirement.
+
+Owned components use `-client.tsx` for browser integrations, `-server.tsx` for
+server integrations, and no suffix for presentation. Presentation may still be
+interactive and declare `"use client"`; names do not define React runtime.
+Integrations may delegate persistence, session or browser access to hooks.
+Presentation can compose an integration child without becoming an integration.
+Semantic exports, Next.js special files and registry source retain their names.
+See [ADR 0016](docs/adr/0016-name-components-by-integration-responsibility.md)
+and [the integration convention](CODING_STANDARDS.md#integration-filename-convention).
+
+## Usage records
+
+The protected gate calls `recordUsage` on pathname changes before releasing
+children. Profile saves call `withUsageGuard` before starting the operation.
+The Firebase callable validates authentication and an allowlist of screen and
+functionality names, then emits structured `INFO` entries using the native
+`firebase-functions/logger` SDK. Cloud Logging supplies the timestamp and
+severity. No usage documents are written to Firestore; legacy `usageLogs`
+documents are denied to browser clients.
+
+The server derives `uid` from verified callable authentication. Event fields are
+`event`, `schemaVersion`, `eventId`, `uid`, `type`, and `name`; query strings, form
+values, email addresses, and tokens are excluded. The callable response releases
+the guard; failures and the 15-second client timeout block access or execution.
+Sign-out stays independent. Logging acknowledgment confirms handler execution,
+not durable ingestion into Cloud Logging.
+
+These remain client-reported usage attempts, not authoritative proof that a
+screen was viewed or a mutation succeeded. Modified clients can bypass the UI
+guard or submit permitted events for their own identity. Firebase resource rules
+still authorize profile data. Authoritative mutation auditing requires logging
+inside server-owned operations. New functionalities must use `withUsageGuard`
+and extend the server allowlist. Development remounts can generate duplicates.
+See [logging operations](docs/logging.md) for deployment and log controls.
+
+## Next.js server error logging
+
+`src/instrumentation.ts` exports Next.js's native `onRequestError` hook. It
+emits one structured JSON line to stderr for captured server request errors,
+with severity, an event identifier, framework route template, route type, router
+kind, and an optional numeric React error digest. Raw error values, stacks,
+request paths, query strings, and headers are excluded from this custom entry.
+Next.js can also emit its own diagnostic output; this hook does not sanitize or
+replace framework logging.
+
+Cloud Run automatically collects container stderr into Cloud Logging when the
+application is hosted there. Local execution prints JSON to the terminal; other
+hosting platforms require their own log collection or forwarding. This branch
+configures neither a hosting provider nor a Cloud Logging exporter.
