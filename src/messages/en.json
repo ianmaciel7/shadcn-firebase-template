@@ -30,7 +30,7 @@
     "system": "System"
   },
   "Auth": {
-    "loading": "Loading authentication…",
+    "loading": "Loading…",
     "configurationError": "Firebase authentication is not configured. Check the application configuration.",
     "profileTitle": "User Profile",
     "profileDescription": "Manage your session and account details.",
@@ -61,13 +61,36 @@
       "pt-BR": "Português (Brasil)",
       "es": "Español"
     },
-    "themeOptions": { "light": "Light", "dark": "Dark", "system": "System" },
+    "themeOptions": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
     "savingPreferences": "Saving preferences…",
     "preferencesSaved": "Preferences saved",
     "saveProfile": "Save profile",
     "savingProfile": "Saving profile…",
     "profileSaved": "Profile saved",
     "emailVerificationSent": "Check your new email to confirm the change.",
-    "profileSaveError": "Could not save the profile. Please try again."
+    "profileSaveError": "Could not save the profile. Please try again.",
+    "signingOut": "Signing out…"
+  },
+  "Home": {
+    "stack": "Next.js + shadcn/ui + Firebase",
+    "title": "Your next project starts here.",
+    "description": "Start your project with Next.js, shadcn/ui and Firebase. Sign in or create an account to continue.",
+    "welcome": "Welcome, {name}.",
+    "friend": "developer",
+    "signedInDescription": "You are signed in. Keep building with Next.js, shadcn/ui and Firebase or manage your profile.",
+    "sessionActive": "Signed in",
+    "manageAccount": "My profile",
+    "signIn": "Sign in",
+    "getStarted": "Create account",
+    "loading": "Loading…",
+    "shadcnDocs": "shadcn/ui",
+    "firebaseDocs": "Firebase",
+    "source": "GitHub",
+    "signingOut": "Signing out…",
+    "signOutError": "Unable to sign out. Please try again."
   }
 }

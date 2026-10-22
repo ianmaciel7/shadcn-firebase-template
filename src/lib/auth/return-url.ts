@@ -9,7 +9,7 @@ export function getSafeReturnUrl(value: string | null | undefined): string {
         character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127,
     )
   ) {
-    return "/profile";
+    return "/";
   }
 
   try {
@@ -18,11 +18,11 @@ export function getSafeReturnUrl(value: string | null | undefined): string {
       url.origin !== "https://app.local" ||
       /^\/(?:sign-in|register|forgot-password)(?:\/|$)/.test(url.pathname)
     ) {
-      return "/profile";
+      return "/";
     }
     return url.pathname + url.search + url.hash;
   } catch {
-    return "/profile";
+    return "/";
   }
 }
 
@@ -32,7 +32,7 @@ export function getAuthNavigationUrl(
   search: string,
 ): string {
   const destination = getSafeReturnUrl(new URLSearchParams(search).get("next"));
-  return destination === "/profile"
+  return destination === "/"
     ? pathname
     : `${pathname}?next=${encodeURIComponent(destination)}`;
 }

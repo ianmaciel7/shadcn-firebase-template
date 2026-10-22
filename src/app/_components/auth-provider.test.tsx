@@ -55,7 +55,7 @@ describe("AuthProvider", () => {
       </AuthProvider>,
     );
     act(() => mocks.subscribe.mock.calls[0][1]({ uid: "user" }));
-    expect(mocks.router.replace).toHaveBeenCalledWith("/profile");
+    expect(mocks.router.replace).toHaveBeenCalledWith("/");
     expect(screen.queryByText("Screen")).toBeNull();
   });
 
@@ -75,8 +75,8 @@ describe("AuthProvider", () => {
 
   it.each([
     ["/profile?tab=security", "/profile?tab=security"],
-    ["https://evil.example", "/profile"],
-    ["/sign-in", "/profile"],
+    ["https://evil.example", "/"],
+    ["/sign-in", "/"],
   ])("redirects safely after sign-in with next=%s", (next, destination) => {
     window.history.replaceState(
       null,

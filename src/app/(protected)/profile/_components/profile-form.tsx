@@ -3,27 +3,23 @@ import { FormProvider } from "react-hook-form";
 import { FieldGroup } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { useProfileForm } from "../_hooks/use-profile-form";
-import { ProfileFormStateContext } from "../_hooks/use-profile-form-state";
 
 type ProfileFormProps = Omit<ComponentProps<"form">, "onSubmit">;
 
 function ProfileForm({ children, className, ...props }: ProfileFormProps) {
-  const { form, handleSubmit, isSigningOut, setIsSigningOut } =
-    useProfileForm();
+  const { form, handleSubmit } = useProfileForm();
 
   return (
-    <ProfileFormStateContext value={{ isSigningOut, setIsSigningOut }}>
-      <FormProvider {...form}>
-        <form
-          {...props}
-          data-slot="profile-form"
-          className={cn("flex w-full flex-col gap-(--card-spacing)", className)}
-          onSubmit={form.handleSubmit(handleSubmit)}
-        >
-          {children}
-        </form>
-      </FormProvider>
-    </ProfileFormStateContext>
+    <FormProvider {...form}>
+      <form
+        {...props}
+        data-slot="profile-form"
+        className={cn("flex w-full flex-col gap-(--card-spacing)", className)}
+        onSubmit={form.handleSubmit(handleSubmit)}
+      >
+        {children}
+      </form>
+    </FormProvider>
   );
 }
 

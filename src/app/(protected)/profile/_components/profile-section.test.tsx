@@ -153,6 +153,9 @@ describe("ProfileSection", () => {
     expect(
       (screen.getByLabelText("emailLabel") as HTMLInputElement).value,
     ).toBe("user@example.com");
+    expect(screen.getByText("profilePhotoTitle")).toBeTruthy();
+    expect(screen.queryByText("Ada Lovelace")).toBeNull();
+    expect(screen.queryByText("user@example.com")).toBeNull();
   });
 
   it("renders language and theme preferences", async () => {
@@ -164,6 +167,24 @@ describe("ProfileSection", () => {
       expect(screen.getByLabelText("languageLabel")).toBeTruthy();
     });
     expect(screen.getByLabelText("themeLabel")).toBeTruthy();
+    expect(screen.getByLabelText("languageLabel").textContent).toContain(
+      "languageOptions.en",
+    );
+    expect(screen.getByLabelText("themeLabel").textContent).toContain(
+      "themeOptions.system",
+    );
+    expect(screen.queryByText("preferencesDescription")).toBeNull();
+    expect(screen.queryByText("preferencesTitle")).toBeNull();
+  });
+
+  it("does not render an empty card while profile preferences load", async () => {
+    mocks.currentUser = { uid: "user-123" };
+    mocks.readPreferences.mockReturnValue(new Promise(() => {}));
+
+    const { container } = render(<ProfileSection />);
+
+    await screen.findByRole("status");
+    expect(container.querySelector('[data-slot="card"]')).toBeNull();
   });
 
   it("keeps form fields in CardContent and buttons in CardFooter", async () => {
@@ -173,16 +194,13 @@ describe("ProfileSection", () => {
     const saveButton = await screen.findByRole("button", {
       name: "saveProfile",
     });
-    const signOutButton = screen.getByRole("button", { name: "signOut" });
     const displayName = screen.getByLabelText("displayNameLabel");
 
     expect(displayName.closest('[data-slot="card-content"]')).toBeTruthy();
     expect(saveButton.closest('[data-slot="card-footer"]')).toBeTruthy();
-    expect(signOutButton.closest('[data-slot="card-footer"]')).toBeTruthy();
     const form = saveButton.closest("form");
     expect(form).toBeTruthy();
     expect(displayName.closest("form")).toBe(form);
-    expect(signOutButton.closest("form")).toBe(form);
     expect(
       displayName
         .closest('[data-slot="field-group"]')
@@ -190,7 +208,6 @@ describe("ProfileSection", () => {
     ).toBeTruthy();
     expect(form?.querySelectorAll("form")).toHaveLength(0);
     expect(saveButton.getAttribute("type")).toBe("submit");
-    expect(signOutButton.getAttribute("type")).toBe("button");
   });
 
   it("uploads a new avatar and updates the auth profile", async () => {
@@ -201,9 +218,14 @@ describe("ProfileSection", () => {
     render(<ProfileSection />);
 
     const file = new File(["avatar"], "avatar.png", { type: "image/png" });
-    fireEvent.change(await screen.findByLabelText("profilePhotoChange"), {
-      target: { files: [file] },
-    });
+    fireEvent.change(
+      await screen.findByLabelText("profilePhotoChange", {
+        selector: "input",
+      }),
+      {
+        target: { files: [file] },
+      },
+    );
     fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
 
     await waitFor(() =>
@@ -212,7 +234,6 @@ describe("ProfileSection", () => {
       }),
     );
     expect(mocks.updateProfile).toHaveBeenCalledWith(mocks.currentUser, {
-      displayName: null,
       photoURL: "https://example.com/avatar.png",
     });
     expect(mocks.toastAdd).toHaveBeenCalledWith({
@@ -226,9 +247,14 @@ describe("ProfileSection", () => {
     render(<ProfileSection />);
 
     const file = new File(["test"], "test.txt", { type: "text/plain" });
-    fireEvent.change(await screen.findByLabelText("profilePhotoChange"), {
-      target: { files: [file] },
-    });
+    fireEvent.change(
+      await screen.findByLabelText("profilePhotoChange", {
+        selector: "input",
+      }),
+      {
+        target: { files: [file] },
+      },
+    );
 
     expect(mocks.toastAdd).toHaveBeenCalledWith({
       title: "profilePhotoInvalid",
@@ -292,7 +318,6 @@ describe("ProfileSection", () => {
     await waitFor(() =>
       expect(mocks.updateProfile).toHaveBeenCalledWith(mocks.currentUser, {
         displayName: "New Name",
-        photoURL: undefined,
       }),
     );
     expect(mocks.verifyBeforeUpdateEmail).toHaveBeenCalledWith(
@@ -357,64 +382,30 @@ describe("ProfileSection", () => {
     ).toBe("Dynamic User");
   });
 
-  it("signs out and redirects to /sign-in on click", async () => {
-    mocks.currentUser = { uid: "user-123" };
-    mocks.signOut.mockResolvedValue(undefined);
-    render(<ProfileSection />);
-    const signOutBtn = await screen.findByRole("button", { name: "signOut" });
-    expect(signOutBtn.closest('[data-slot="card"]')).toBeTruthy();
-    await act(async () => {
-      fireEvent.click(signOutBtn);
-    });
-    expect(mocks.signOut).toHaveBeenCalled();
-    expect(mocks.router.replace).toHaveBeenCalledWith("/sign-in");
-  });
-
-  it("shows error toast when sign out fails", async () => {
-    mocks.currentUser = { uid: "user-123" };
-    mocks.signOut.mockRejectedValue(new Error("sign out failed"));
-    const log = vi.spyOn(console, "error").mockImplementation(() => {});
-    render(<ProfileSection />);
-    const signOutBtn = await screen.findByRole("button", { name: "signOut" });
-    expect(signOutBtn.closest('[data-slot="card"]')).toBeTruthy();
-    await act(async () => {
-      fireEvent.click(signOutBtn);
-    });
-    expect(mocks.toastAdd).toHaveBeenCalledWith({
-      title: "profileSaveError",
-      type: "error",
-    });
-    log.mockRestore();
-  });
-  it("blocks logout and field edits while saving", async () => {
+  it("keeps the home link available during saving without submitting or signing out", async () => {
     mocks.currentUser = {
       uid: "user-123",
       email: "user@example.com",
       displayName: "Before",
     };
-    let finishSave!: () => void;
-    mocks.updateProfile.mockImplementation(
-      () =>
-        new Promise<void>((resolve) => {
-          finishSave = resolve;
-        }),
+    let finish!: () => void;
+    mocks.updateProfile.mockReturnValue(
+      new Promise<void>((resolve) => {
+        finish = resolve;
+      }),
     );
     render(<ProfileSection />);
-    const name = (await screen.findByLabelText(
-      "displayNameLabel",
-    )) as HTMLInputElement;
-    fireEvent.change(name, { target: { value: "After" } });
+    fireEvent.change(await screen.findByLabelText("displayNameLabel"), {
+      target: { value: "After" },
+    });
     fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));
-    await waitFor(() => expect(name.disabled).toBe(true));
-    const signOut = screen.getByRole("button", {
-      name: "signOut",
-    }) as HTMLButtonElement;
-    expect(signOut.disabled).toBe(true);
-    fireEvent.click(signOut);
+    await screen.findByRole("button", { name: "savingProfile" });
+    const home = screen.getByRole("link", { name: "backToHome" });
+    expect(home.getAttribute("href")).toBe("/");
+    expect(home.hasAttribute("disabled")).toBe(false);
     expect(mocks.signOut).not.toHaveBeenCalled();
-    await act(async () => finishSave());
-    await waitFor(() => expect(name.disabled).toBe(false));
-    expect(signOut.disabled).toBe(false);
+    await act(async () => finish());
+    await screen.findByRole("button", { name: "saveProfile" });
   });
 
   it("retains an avatar after a failed save and clears it after a successful retry", async () => {
@@ -423,9 +414,9 @@ describe("ProfileSection", () => {
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
       render(<ProfileSection />);
-      const input = (await screen.findByLabelText(
-        "profilePhotoChange",
-      )) as HTMLInputElement;
+      const input = (await screen.findByLabelText("profilePhotoChange", {
+        selector: "input",
+      })) as HTMLInputElement;
       const file = new File(["avatar"], "avatar.png", { type: "image/png" });
       fireEvent.change(input, { target: { files: [file] } });
       fireEvent.click(screen.getByRole("button", { name: "saveProfile" }));

@@ -1,4 +1,8 @@
-import { initializeUI } from "@firebase-oss/ui-core";
+import {
+  initializeUI,
+  providerPopupStrategy,
+  providerRedirectStrategy,
+} from "@firebase-oss/ui-core";
 import type { FirebaseOptions } from "firebase/app";
 import { getApp, getApps, initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
@@ -40,7 +44,20 @@ function getEmulatorUrl(): string | undefined {
     );
   }
 
-  return url.replace(/\/$/, "");
+  const emulatorUrl = url.replace(/\/$/, "");
+
+  if (isElectronBrowser() && typeof window !== "undefined") {
+    return window.location.origin;
+  }
+
+  return emulatorUrl;
+}
+
+function isElectronBrowser() {
+  return (
+    typeof navigator !== "undefined" &&
+    navigator.userAgent.includes("Electron/")
+  );
 }
 
 function getValidatedFirebaseConfig(): FirebaseOptions {
@@ -55,6 +72,12 @@ function getValidatedFirebaseConfig(): FirebaseOptions {
   }
 
   return config;
+}
+
+function getOAuthProviderStrategy() {
+  return isElectronBrowser()
+    ? providerRedirectStrategy()
+    : providerPopupStrategy();
 }
 
 function connectFirebaseAuthEmulator(auth: ReturnType<typeof getAuth>) {
@@ -86,7 +109,11 @@ export function getFirebaseAuth() {
 export function getFirebaseUI() {
   const app = getFirebaseApp(getValidatedFirebaseConfig());
   const auth = getFirebaseAuthForApp(app);
-  globalThis.firebaseUIStore ??= initializeUI({ app, auth });
+  globalThis.firebaseUIStore ??= initializeUI({
+    app,
+    auth,
+    behaviors: [getOAuthProviderStrategy()],
+  });
   return globalThis.firebaseUIStore;
 }
 

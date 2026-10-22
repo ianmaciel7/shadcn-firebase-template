@@ -16,8 +16,12 @@ describe("Loading", () => {
     expect(status.textContent).toBe(message);
     expect(status.getAttribute("aria-live")).toBe("polite");
     expect(status.className).toContain("custom-loading");
+    expect(status.className).toContain("text-inherit");
     const spinner = status.querySelector('[data-slot="spinner"]');
     expect(spinner?.getAttribute("aria-hidden")).toBe("true");
     expect(spinner?.hasAttribute("aria-label")).toBe(false);
+    expect(spinner?.getAttribute("class")).toContain(
+      "motion-reduce:animate-none",
+    );
   });
 });

@@ -1,16 +1,15 @@
 import type { ComponentProps } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Field, FieldContent, FieldTitle } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { useProfileAvatarField } from "../_hooks/use-profile-avatar-field";
 
-type ProfileAvatarFieldProps = ComponentProps<"div">;
+type ProfileAvatarFieldProps = ComponentProps<typeof Field>;
 
 function ProfileAvatarField({ className, ...props }: ProfileAvatarFieldProps) {
   const {
     t,
-    displayName,
-    email,
     disabled,
     avatarSrc,
     avatarAlt,
@@ -20,39 +19,47 @@ function ProfileAvatarField({ className, ...props }: ProfileAvatarFieldProps) {
   } = useProfileAvatarField();
 
   return (
-    <div className={cn("flex items-center gap-4", className)} {...props}>
-      <Avatar className="size-16">
-        {avatarSrc ? <AvatarImage src={avatarSrc} alt={avatarAlt} /> : null}
-        <AvatarFallback className="text-xl">{fallbackInitial}</AvatarFallback>
-      </Avatar>
-      <div className="flex min-w-0 flex-col items-start">
-        <span className="max-w-full truncate text-sm font-medium">
-          {displayName || t("profileTitle")}
-        </span>
-        <span className="max-w-full truncate text-xs text-muted-foreground">
-          {email}
-        </span>
+    <Field
+      orientation="horizontal"
+      className={cn("items-center gap-4", className)}
+      {...props}
+    >
+      <Button
+        type="button"
+        variant="ghost"
+        className="size-16 rounded-full p-0"
+        aria-label={t("profilePhotoChange")}
+        disabled={disabled}
+        onClick={() => fileInputRef.current?.click()}
+      >
+        <Avatar className="size-16 transition-opacity group-hover/button:opacity-70">
+          {avatarSrc ? <AvatarImage src={avatarSrc} alt={avatarAlt} /> : null}
+          <AvatarFallback className="text-xl">{fallbackInitial}</AvatarFallback>
+        </Avatar>
+      </Button>
+      <FieldContent className="self-center">
+        <FieldTitle>{t("profilePhotoTitle")}</FieldTitle>
         <Button
           type="button"
           variant="link"
           size="sm"
-          className="h-auto px-0"
+          className="h-auto w-fit px-0 leading-snug"
           disabled={disabled}
           onClick={() => fileInputRef.current?.click()}
         >
           {t("profilePhotoChange")}
         </Button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          className="sr-only"
-          aria-label={t("profilePhotoChange")}
-          disabled={disabled}
-          onChange={handleAvatarChange}
-        />
-      </div>
-    </div>
+      </FieldContent>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="sr-only"
+        aria-label={t("profilePhotoChange")}
+        disabled={disabled}
+        onChange={handleAvatarChange}
+      />
+    </Field>
   );
 }
 

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { IntlProvider } from "@/components/ui/extensions/intl-provider";
 import { ThemeProvider } from "@/components/ui/extensions/theme-provider";
 import { Toaster } from "@/components/ui/toast";
@@ -44,7 +45,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geist.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Suspense fallback={null}>
+        <Suspense
+          fallback={
+            <div className="flex min-h-svh items-center justify-center">
+              <LoadingIndicator />
+            </div>
+          }
+        >
           <IntlProvider>
             <ThemeProvider
               attribute="class"

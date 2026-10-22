@@ -2,6 +2,7 @@
 
 import { useUI, type OAuthButtonProps, useSignInWithProvider } from "@firebase-oss/ui-react";
 import { Button } from "@/components/ui/button";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 
 export type { OAuthButtonProps };
 
@@ -15,13 +16,18 @@ export function OAuthButton({ provider, children, themed, onSignIn }: OAuthButto
       <Button
         type="button"
         disabled={ui.state !== "idle"}
+        aria-busy={ui.state !== "idle"}
         onClick={callback}
         data-provider={provider.providerId}
         data-themed={themed}
         className="w-full"
         variant={themed ? "default" : "outline"}
       >
-        {children}
+        {ui.state !== "idle" ? (
+          <LoadingIndicator label={children} className="text-inherit" />
+        ) : (
+          children
+        )}
       </Button>
       {error && <div className="text-destructive text-left text-xs">{error}</div>}
     </div>

@@ -38,7 +38,11 @@ function ProfileLocaleField(props: ProfileLocaleFieldProps) {
               aria-invalid={fieldState.invalid}
               onBlur={field.onBlur}
             >
-              <SelectValue />
+              <SelectValue>
+                {(value) =>
+                  isLocale(value) ? t(`languageOptions.${value}`) : undefined
+                }
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>

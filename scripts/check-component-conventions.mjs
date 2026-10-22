@@ -370,6 +370,31 @@ function checkProfileCardSafety(source, elements, report) {
   }
 }
 
+function checkProfileSectionAction(source, elements, action, report) {
+  const buttons = profileElements(elements, action);
+  if (action === "ProfileSignOutButton" && buttons.length === 0) return;
+
+  requireProfilePlacement(
+    source,
+    elements,
+    action,
+    ["ProfileFormFooter", "ProfileCardFooter", "ProfileForm", "ProfileCard"],
+    report,
+  );
+  for (const button of buttons) {
+    const typeProp = button.node.attributes.properties.find(
+      (attribute) =>
+        ts.isJsxAttribute(attribute) && attribute.name.text === "type",
+    );
+    if (typeProp) {
+      report(
+        typeProp,
+        `${action} must not accept an override of its fixed type.`,
+      );
+    }
+  }
+}
+
 function checkProfileSectionSafety(source, elements, report) {
   if (profileElements(elements, "ProfileCard").length === 0) {
     report(source, "ProfileSection must compose ProfileCard.");
@@ -419,25 +444,7 @@ function checkProfileSectionSafety(source, elements, report) {
     report,
   );
   for (const action of ["ProfileSaveButton", "ProfileSignOutButton"]) {
-    requireProfilePlacement(
-      source,
-      elements,
-      action,
-      ["ProfileFormFooter", "ProfileCardFooter", "ProfileForm", "ProfileCard"],
-      report,
-    );
-    for (const button of profileElements(elements, action)) {
-      const typeProp = button.node.attributes.properties.find(
-        (attribute) =>
-          ts.isJsxAttribute(attribute) && attribute.name.text === "type",
-      );
-      if (typeProp) {
-        report(
-          typeProp,
-          `${action} must not accept an override of its fixed type.`,
-        );
-      }
-    }
+    checkProfileSectionAction(source, elements, action, report);
   }
   if (
     profileElements(elements, "form").length ||

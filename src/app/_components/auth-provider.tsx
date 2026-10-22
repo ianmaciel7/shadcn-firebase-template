@@ -12,7 +12,7 @@ function AuthProvider({ children }: AuthProviderProps) {
   const { t } = state;
 
   if (state.isError) return <p role="alert">{t("configurationError")}</p>;
-  if (state.status === "loading")
+  if (state.isLoading)
     return (
       <Loading className="w-full text-sm text-muted-foreground">
         {t("loading")}

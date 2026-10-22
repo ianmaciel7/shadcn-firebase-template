@@ -6,18 +6,17 @@ import { useProfileSubmit } from "./use-profile-submit";
 
 export function useProfileForm() {
   const session = useProfileSessionContext();
-  const [isSigningOut, setIsSigningOut] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { onSubmit } = useProfileSubmit(session);
   const form = useForm<ProfileFormValues>({
     defaultValues: { ...session.defaultValues, avatarFile: null },
     values: { ...session.defaultValues, avatarFile: null },
     resetOptions: { keepDirtyValues: true },
-    disabled: isSigningOut || isSaving,
+    disabled: isSaving,
   });
 
   function handleSubmit(values: ProfileFormValues) {
-    if (isSigningOut || isSaving) return;
+    if (isSaving) return;
     setIsSaving(true);
     return onSubmit(values)
       .then((savedValues) => {
@@ -31,5 +30,5 @@ export function useProfileForm() {
       .finally(() => setIsSaving(false));
   }
 
-  return { form, handleSubmit, isSigningOut, setIsSigningOut };
+  return { form, handleSubmit };
 }

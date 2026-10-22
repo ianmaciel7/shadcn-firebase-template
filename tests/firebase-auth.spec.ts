@@ -22,6 +22,7 @@ const emulator =
   rawHost.startsWith("http://") || rawHost.startsWith("https://")
     ? rawHost.replace(/\/$/, "")
     : `http://${rawHost}`.replace(/\/$/, "");
+const authTestOrigin = `http://${new URL(emulator).hostname}:3100`;
 
 const project =
   process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.GCLOUD_PROJECT;
@@ -46,9 +47,9 @@ test("registration and persisted authentication redirect", async ({ page }) => {
   await page.getByLabel("Email Address").fill(email);
   await page.getByLabel("Password", { exact: true }).fill(password);
   await page.getByRole("button", { name: "Create Account" }).click();
-  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page).toHaveURL("/");
   await page.goto("/sign-in");
-  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page).toHaveURL("/");
 });
 
 test("invalid credentials and successful sign-in", async ({
@@ -68,7 +69,7 @@ test("invalid credentials and successful sign-in", async ({
   await expect(page.getByText(/invalid|incorrect/i)).toBeVisible();
   await page.locator("#password").fill(password);
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
-  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page).toHaveURL("/");
 });
 
 test("password recovery sends an emulator reset code and displays failures", async ({
@@ -117,7 +118,7 @@ test("navigation and translated screens", async ({ page, context }) => {
   await page.getByRole("button", { name: /back to sign in/i }).click();
   await expect(page).toHaveURL(/\/sign-in$/);
   await context.addCookies([
-    { name: "NEXT_LOCALE", value: "pt-BR", url: "http://127.0.0.1:3100" },
+    { name: "NEXT_LOCALE", value: "pt-BR", url: authTestOrigin },
   ]);
   await page.reload();
   await expect(page.getByLabel("Endereço de e-mail")).toBeVisible();
@@ -133,7 +134,35 @@ test("Google popup signs in with the emulator", async ({ page }) => {
     .getByLabel(/email/i)
     .fill(`google-${crypto.randomUUID()}@example.test`);
   await popup.getByRole("button", { name: /sign in/i }).click();
-  await expect(page).toHaveURL(/\/profile$/);
+  await expect(page).toHaveURL("/");
+});
+
+test("Google redirect signs in when the browser identifies as Electron", async ({
+  browser,
+}) => {
+  const electronContext = await browser.newContext({
+    userAgent: "Mozilla/5.0 Electron/42.0.0",
+  });
+  const electronPage = await electronContext.newPage();
+
+  try {
+    await electronPage.goto(`${authTestOrigin}/sign-in`);
+    const redirect = electronPage.waitForURL(/\/emulator\/auth\/handler/);
+    await electronPage
+      .getByRole("button", { name: "Sign in with Google" })
+      .click();
+    await redirect;
+    await electronPage
+      .getByRole("button", { name: /add new account/i })
+      .click();
+    await electronPage
+      .getByLabel(/email/i)
+      .fill(`electron-${crypto.randomUUID()}@example.test`);
+    await electronPage.getByRole("button", { name: /sign in/i }).click();
+    await expect(electronPage).toHaveURL(`${authTestOrigin}/`);
+  } finally {
+    await electronContext.close();
+  }
 });
 
 test("profile displays user email and signs out successfully", async ({
@@ -150,10 +179,17 @@ test("profile displays user email and signs out successfully", async ({
   await page.getByLabel("Email Address").fill(email);
   await page.locator("#password").fill(password);
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
+  await expect(page).toHaveURL("/");
+  await page.getByRole("link", { name: "My profile" }).click();
   await expect(page).toHaveURL(/\/profile$/);
   await expect(page.getByText(email)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Sign Out" })).toHaveCount(0);
+  await page.getByRole("link", { name: "Back to Home" }).click();
+  await expect(page).toHaveURL("/");
   await page.getByRole("button", { name: "Sign Out" }).click();
-  await expect(page).toHaveURL(/\/sign-in$/);
+  await expect(
+    page.getByRole("link", { name: "Sign in", exact: true }),
+  ).toBeVisible();
 });
 
 test("saving the profile language keeps the unprefixed route and translates after refresh", async ({
@@ -171,7 +207,9 @@ test("saving the profile language keeps the unprefixed route and translates afte
   await page.getByLabel("Email Address").fill(email);
   await page.locator("#password").fill(password);
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
-  await expect(page).toHaveURL("http://127.0.0.1:3100/profile");
+  await expect(page).toHaveURL("/");
+  await page.getByRole("link", { name: "My profile" }).click();
+  await expect(page).toHaveURL(`${authTestOrigin}/profile`);
   await page.getByLabel("Language", { exact: true }).click();
   await page
     .getByRole("option", {
@@ -183,7 +221,7 @@ test("saving the profile language keeps the unprefixed route and translates afte
   await expect(
     page.getByText(esMessages.Auth.personalInfoTitle, { exact: true }),
   ).toBeVisible();
-  await expect(page).toHaveURL("http://127.0.0.1:3100/profile");
+  await expect(page).toHaveURL(`${authTestOrigin}/profile`);
   expect(
     (await context.cookies()).find((cookie) => cookie.name === "NEXT_LOCALE")
       ?.value,
@@ -192,5 +230,5 @@ test("saving the profile language keeps the unprefixed route and translates afte
   await expect(
     page.getByText(esMessages.Auth.personalInfoTitle, { exact: true }),
   ).toBeVisible();
-  await expect(page).toHaveURL("http://127.0.0.1:3100/profile");
+  await expect(page).toHaveURL(`${authTestOrigin}/profile`);
 });
