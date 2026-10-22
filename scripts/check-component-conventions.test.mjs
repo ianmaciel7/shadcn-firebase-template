@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   inspectComponent,
+  inspectComponentPlacement,
+  inspectComponentRuntime,
   inspectNaming,
   isOwnedComponent,
 } from "./check-component-conventions.mjs";
@@ -80,16 +82,19 @@ describe("owned component conventions", () => {
     );
   });
 
-  it("rejects runtime suffixes in component names", () => {
-    expectInvalid(
-      "function ProfileClient() { return <Card />; } export { ProfileClient };",
-      /semantic role/,
-      "src/app/(protected)/profile/_components/profile-client.tsx",
+  it("allows runtime filename suffixes without changing semantic exports", () => {
+    expectValid(
+      '"use client"; function Account(props) { return <div {...props} />; } export { Account };',
+      "src/app/_components/account-client.tsx",
+    );
+    expectValid(
+      'import "server-only"; function Account(props) { return <div {...props} />; } export { Account };',
+      "src/app/_components/account-server.tsx",
     );
     expectInvalid(
-      "function AccountServer() { return <div />; } export { AccountServer };",
+      "function AccountUi() { return <div />; } export { AccountUi };",
       /semantic role/,
-      "src/app/_components/account-server.tsx",
+      "src/app/_components/account-ui.tsx",
     );
   });
 
@@ -244,6 +249,7 @@ describe("owned component conventions", () => {
     expectValid(
       render(
         'import { useTranslations } from "next-intl";',
+        "type BrowserStore = typeof window.localStorage;",
         'const t = useTranslations("Auth");',
       ),
       path,
@@ -591,5 +597,258 @@ describe("owned component conventions", () => {
       /delegate the Card root to ProfileCard/,
       path,
     );
+  });
+});
+
+describe("component placement", () => {
+  it("rejects standalone and nested shared application files, including Windows paths", () => {
+    for (const file of [
+      "src/components/loading/loading-indicator.tsx",
+      "src/components/loading-indicator.tsx",
+      "src/components/loading/loading.test.tsx",
+      "src/components/loading/index.ts",
+      "src/components/loading/indicator.jsx",
+      "src\\components\\loading\\loading-indicator.tsx",
+    ]) {
+      assert.match(
+        inspectComponentPlacement(file)[0]?.message ?? "",
+        /ui\/extensions/,
+      );
+    }
+  });
+
+  it("allows extensions, route-private files and existing registry trees", () => {
+    for (const file of [
+      "src/components/ui/extensions/loading-indicator.tsx",
+      "src/components/ui/extensions/loading.test.tsx",
+      "src/app/_components/route-loading.tsx",
+      "src/app/(protected)/profile/_components/profile-section.tsx",
+      "src/components/ui/spinner.tsx",
+      "src/components/firebase/oauth-button.tsx",
+      "src/components/ai-elements/message.tsx",
+      "src/hooks/use-loading.ts",
+    ])
+      assert.deepEqual(inspectComponentPlacement(file), []);
+  });
+});
+
+describe("component integration naming", () => {
+  const file = (stem) => `src/components/ui/extensions/${stem}.tsx`;
+  const messages = (content, stem, modules) =>
+    inspectComponentRuntime(content, file(stem), modules)
+      .map((issue) => issue.message)
+      .join(" ");
+
+  it("allows presentation with use client, state, form context, and local hooks without suffixes", () => {
+    for (const content of [
+      '"use client"; import { useState } from "react";',
+      '"use client"; import { Controller } from "react-hook-form";',
+      '"use client"; import { useField } from "./use-field";',
+      'import { useTranslations } from "next-intl";',
+      'import type { User } from "firebase/auth";',
+      'import type { Controller } from "react-hook-form";',
+    ])
+      assert.equal(messages(content, "account"), "");
+    assert.match(
+      messages('"use client"; function Account() {}', "account-client"),
+      /Presentation components must not/,
+    );
+  });
+
+  it("requires client integration naming and a client boundary", () => {
+    for (const content of [
+      '"use client"; import { signOut } from "firebase/auth";',
+      '"use client"; import { ThemeProvider } from "next-themes";',
+      '"use client"; import { useRouter as useNavigation } from "next/navigation";',
+      '"use client"; localStorage.getItem("theme");',
+      '"use client"; globalThis.localStorage.getItem("theme");',
+      '"use client"; URL.createObjectURL(file);',
+      '"use client"; fetch("https://example.com");',
+    ]) {
+      assert.match(messages(content, "account"), /-client.tsx/);
+      assert.equal(messages(content, "account-client"), "");
+    }
+    assert.match(
+      messages('import { signOut } from "firebase/auth";', "account-client"),
+      /declare "use client"/,
+    );
+    assert.equal(
+      messages('import { redirect } from "next/navigation";', "account"),
+      "",
+    );
+  });
+
+  it("recognizes browser navigation hooks, including aliases of useParams", () => {
+    for (const hook of [
+      "useRouter",
+      "useParams",
+      "usePathname",
+      "useSearchParams",
+      "useSelectedLayoutSegment",
+      "useSelectedLayoutSegments",
+    ]) {
+      const content = `"use client"; import { ${hook} as useRoute } from "next/navigation";`;
+      assert.match(messages(content, "account"), /-client.tsx/);
+      assert.equal(messages(content, "account-client"), "");
+    }
+    assert.equal(
+      messages('import type { useParams } from "next/navigation";', "account"),
+      "",
+    );
+    assert.equal(messages('import type { Stats } from "fs";', "account"), "");
+  });
+
+  it("requires server integration naming and server-only protection", () => {
+    for (const content of [
+      'import { getLocale } from "next-intl/server";',
+      'import { readFile } from "node:fs";',
+      'import { readFile } from "fs";',
+      'import { readFile } from "fs/promises";',
+      'import { test } from "node:test";',
+      'fetch("https://example.com");',
+    ]) {
+      assert.match(messages(content, "account"), /-server.tsx/);
+      assert.equal(
+        messages(`import "server-only";${content}`, "account-server"),
+        "",
+      );
+    }
+    assert.match(
+      messages("function Account() {}", "account-server"),
+      /import "server-only"/,
+    );
+    assert.match(
+      messages('"use client"; import "server-only";', "account-server"),
+      /cannot declare/,
+    );
+  });
+
+  it("follows hook implementations and ignores type imports and component children", () => {
+    const modules = new Map([
+      [
+        "src/components/ui/extensions/use-account.ts",
+        'import { load } from "@/lib/account"; export function useAccount() { return load(); }',
+      ],
+      [
+        "src/lib/account.ts",
+        'import { onAuthStateChanged } from "firebase/auth";',
+      ],
+      [
+        "src/components/ui/extensions/pure-hook.ts",
+        'import type { User } from "firebase/auth";',
+      ],
+      [
+        "src/components/ui/extensions/details-client.tsx",
+        '"use client"; localStorage.getItem("x");',
+      ],
+    ]);
+    assert.match(
+      messages(
+        '"use client"; import { useAccount } from "./use-account";',
+        "account",
+        modules,
+      ),
+      /-client.tsx/,
+    );
+    assert.equal(
+      messages(
+        '"use client"; import { useAccount } from "./use-account";',
+        "account-client",
+        modules,
+      ),
+      "",
+    );
+    assert.equal(
+      messages(
+        '"use client"; import { pure } from "./pure-hook";',
+        "account",
+        modules,
+      ),
+      "",
+    );
+    assert.equal(
+      messages(
+        'import { Details } from "./details-client";',
+        "account",
+        modules,
+      ),
+      "",
+    );
+  });
+
+  it("handles helper cycles and re-exports, including server integration evidence", () => {
+    const modules = new Map([
+      [
+        "src/components/ui/extensions/use-account.ts",
+        'export { load } from "@/lib/account";',
+      ],
+      [
+        "src/lib/account.ts",
+        'import "../components/ui/extensions/use-account"; import { readFile } from "fs/promises";',
+      ],
+    ]);
+    assert.match(
+      messages('import { load } from "./use-account";', "account", modules),
+      /-server.tsx/,
+    );
+    assert.equal(
+      messages(
+        'import "server-only"; import { load } from "./use-account";',
+        "account-server",
+        modules,
+      ),
+      "",
+    );
+  });
+
+  it("excludes registry source, framework files and tests", () => {
+    for (const path of [
+      "src/app/error.tsx",
+      "src/components/firebase/oauth-button.tsx",
+      "src/components/ui/button.tsx",
+      file("account-client.test"),
+    ])
+      assert.deepEqual(
+        inspectComponentRuntime(
+          '"use client"; localStorage.getItem("x");',
+          path,
+        ),
+        [],
+      );
+  });
+});
+
+describe("runtime suffixes preserve semantic safety checks", () => {
+  it("keeps exact profile form families and field/property matching", () => {
+    expectInvalid(
+      '"use client"; function ProfileForm(props) { return <form {...props} />; } export { ProfileForm };',
+      /ProfileFormContent/,
+      "src/app/(protected)/profile/_components/profile-form-client.tsx",
+    );
+    expectInvalid(
+      '"use client"; function ProfileEmailField(props) { return <Controller name="displayName" {...props} />; } export { ProfileEmailField };',
+      /match Controller/,
+      "src/app/(protected)/profile/_components/profile-email-field-client.tsx",
+    );
+  });
+
+  it("rejects imports of local server component files from client boundaries", () => {
+    expectInvalid(
+      '"use client"; import { Account } from "./account-server"; function Details(props) { return <div {...props} />; } export { Details };',
+      /server-only/,
+      "src/app/_components/details-client.tsx",
+    );
+  });
+});
+
+describe("Node integration client boundary protection", () => {
+  it("rejects bare and prefixed built-ins in client boundaries", () => {
+    for (const module of ["fs", "fs/promises", "node:fs", "node:test"]) {
+      expectInvalid(
+        `"use client"; import * as api from "${module}"; function Details(props) { return <div {...props} />; } export { Details };`,
+        /server-only/,
+        "src/app/_components/details-client.tsx",
+      );
+    }
   });
 });

@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import { LoadingIndicator } from "@/components/loading/loading-indicator";
+import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
 import { cn } from "@/lib/utils";
 
 type LoadingProps = Omit<ComponentProps<typeof LoadingIndicator>, "label">;

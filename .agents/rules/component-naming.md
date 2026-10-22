@@ -8,7 +8,7 @@ These are **repository conventions**, not filename rules prescribed by Next.js o
 | --- | --- | --- |
 | Runtime | Import graphs determine membership; `"use client"` declares a boundary, while a shared module can compile in both graphs | `ProfileCard` may participate in a client subtree without its own directive |
 | Responsibility | Describe the composition or behavior, not its runtime | `ProfileCard`, `ProfileForm`, `ProfileAvatarField`, `AuthProvider`, `ProtectedGate`, `SignInAuthFlow` |
-| Placement | Colocate route components in private `_components/`, hooks in `_hooks/` and shared components in `src/components/` | App Router private folders do not become routes |
+| Placement | Colocate route components in private `_components/`, hooks in `_hooks/` and shared components in `src/components/ui/extensions/` | App Router private folders do not become routes |
 
 The shadcn primitives live under `src/components/ui/`; Firebase registry output
 lives under `src/components/firebase/`; generated AI Elements live under
@@ -25,10 +25,20 @@ from application naming checks. Application-owned extensions under
   `*-dialog`, `*-header`, `*-button`, `*-table`, `*-list`, `*-provider`,
   `*-gate`, `*-flow`, or `*-content`. This is **not** a closed list.
   `Flow` specifically denotes navigation or application flow wiring.
-- Prohibit generic runtime/implementation suffixes: `-client`,
-  `-server`, `-component`, `-ui`. The Next.js `"use client"` directive
-  defines the actual client boundary, including transitive imports.
-  Components inside the client graph do not each need their own directive.
+- Reserve `-client.tsx` for browser integrations and `-server.tsx` for server
+  integrations. Presentation components keep no suffix, including interactive
+  presentation that declares `"use client"`. Keep semantic exports and prop
+  types unchanged, such as `ProfileForm` and `ProfileFormProps`.
+- Integrations own application data, persistence, authentication, navigation or
+  platform access, directly or through focused hooks/helpers. Examples include
+  Firebase, browser storage, object URLs, theme persistence and external fetches.
+  React state, Effects, events, React Hook Form context, translations, or the
+  presence/name of a custom hook alone do not justify an integration suffix.
+- Browser integration entrypoints declare `"use client"`; server integration
+  entrypoints import `"server-only"`. Interactive presentation also uses client
+  boundaries where required. Unsuffixed does not mean server-compatible.
+  Do not use `"use server"` to classify ordinary Server Components.
+  Prohibit generic implementation suffixes `-component` and `-ui`.
 - Server Components can fetch data and render Client Components; only
   browser-interactive entrypoints need explicit client boundaries.
   A `"use client"` module must not directly import server-only APIs
@@ -45,6 +55,24 @@ from application naming checks. Application-owned extensions under
 `src/app/**/_components/**/*.tsx` and `src/components/**/*.tsx` files,
 except generated registry trees and test/story files. It is included in
 `verify:fast` and `verify:static`, making it mandatory in CI.
+
+Integration checks follow static runtime imports/re-exports through local `.ts`
+hooks/helpers (`@/` and relative imports), with cycle protection. They stop at
+component imports: composing an integration child does not classify its parent.
+Type-only imports, React UI hooks, React Hook Form and client directives alone
+are not integration evidence. Known evidence includes Firebase, next-themes,
+browser navigation hooks (including `useParams`), browser globals/object URLs, fetch calls, server APIs,
+Node built-ins (both bare and `node:` imports) and explicit `client-only`/`server-only` markers. Fetch is classified
+using the owning component boundary, not whether its URL is external.
+
+The guard requires matching suffixes and boundaries for recognized integrations
+and rejects `-client` on presentation-only modules. Unknown browser SDKs can use
+`client-only` in their adapter to declare the dependency explicitly. This is a
+conservative module-level syntax check, not symbol-level data-flow analysis.
+Dynamic imports, computed browser access, aliases of globals, third-party SDK
+internals and hooks implemented in `.tsx` require manual review. Next.js remains
+responsible for the complete Server/Client graph. Native boundary checks and
+existing composition/form/field guards remain active.
 
 ## Official references
 
@@ -100,6 +128,22 @@ Export aliases, named function/class expressions, enums and type parameters also
 owns the explanation, examples, and Server/Client distinctions for all owned
 components. [Guard coverage](../../CODING_STANDARDS.md#composition-guard-coverage)
 defines the automatically enforced subset and its limitations. A module without
-`"use client"` may still belong to a client import graph; do not add directives
-to every transitive child or invent parts for simple components. Compound parts
-use separate named exports instead of static properties on the root function.
+`"use client"` may still belong to a client import graph. Presentation modules
+keep unsuffixed names, whether interactive or compatible with both environments.
+Integration responsibilities determine suffixes; directives determine boundaries.
+Do not invent parts for simple components. Compound parts use separate named
+exports instead of static properties on the root function.
+
+## Owned component placement
+
+Place shared application components in `src/components/ui/extensions/` and
+route-private components in `src/app/**/_components/`. For example,
+`LoadingIndicator` belongs alongside `Loading` in `ui/extensions` because both
+route components and Firebase UI consume it. Do not create parallel application
+component folders such as `src/components/loading/`.
+
+`pnpm check:components` rejects JavaScript and TypeScript source files (including
+colocated tests and barrel files) outside the `ui`, `firebase`, and `ai-elements`
+registry trees under `src/components`. Existing registry trees remain allowed;
+their generated source retains its existing exclusions. This is repository
+policy, not a Next.js requirement.

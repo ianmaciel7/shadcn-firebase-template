@@ -19,7 +19,7 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
 - `useProfileController` is removed. `ProfileSection` uses `useProfileSection` to compose session and status hooks with translations; it does not assemble field or button props.
 - `ProfileForm` delegates its React Hook Form lifecycle and operation lock to `useProfileForm`, which uses `useProfileSubmit` for persistence. `ProfileValues` and `ProfileFormValues` live in `src/lib/profile.ts`.
 - `ProfileAvatarField` uses `useProfileAvatarField` for field state and avatar display data, with `useProfileAvatar` handling validation and preview. Only the selected `File` lives in React Hook Form so submission can upload it; preview URLs are released on replacement, successful reset and unmount. Failed saves retain the selection for retry.
-- `ProfileFormContent` and `ProfileFormFooter` are colocated exports in `profile-form.tsx`; AST safety checks inspect each function independently.
+- `ProfileFormContent` and `ProfileFormFooter` are colocated exports in `profile-form-client.tsx`; AST safety checks inspect each function independently.
 
 ## Profile form action safety (repository guard)
 
@@ -37,7 +37,7 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
 
 ## Repository verification
 
-- `pnpm check:structure` applies `require-form-provider` to owned `*-form.tsx` files; here forms with nested fields intentionally use a Provider. This is a *repository guard*, not an official shadcn/ui requirement for every form.
+- `pnpm check:structure` applies `require-form-provider` to owned `*-form.tsx`, `*-form-client.tsx`, and `*-form-server.tsx` files; here forms with nested fields intentionally use a Provider. This is a *repository guard*, not an official shadcn/ui requirement for every form.
 - `pnpm check:components` validates a matching family root and related named parts, filename semantics and literal Controller-name-to-field-name matching, plus the profile controller prop boundary.
 
 ## Native primitive audit

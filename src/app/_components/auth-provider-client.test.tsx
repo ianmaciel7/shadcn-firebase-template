@@ -1,6 +1,6 @@
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { AuthProvider } from "./auth-provider";
+import { AuthProvider } from "./auth-provider-client";
 
 const mocks = vi.hoisted(() => ({
   replace: vi.fn(),

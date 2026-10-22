@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentProps } from "react";
 import { FormProvider } from "react-hook-form";
 import { FieldGroup } from "@/components/ui/field";

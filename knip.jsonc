@@ -19,6 +19,8 @@
     "src/components/firebase/**": ["unresolved"]
   },
   "ignoreDependencies": [
+    // Next.js resolves this boundary marker internally; no npm package is required.
+    "server-only",
     // Referenced only from CSS, which Knip does not follow.
     "shadcn",
     "tailwindcss",

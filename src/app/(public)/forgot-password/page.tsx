@@ -1,4 +1,4 @@
-import { ForgotPasswordAuthFlow } from "./_components/forgot-password-auth-flow";
+import { ForgotPasswordAuthFlow } from "./_components/forgot-password-auth-flow-client";
 
 export const instant = false;
 

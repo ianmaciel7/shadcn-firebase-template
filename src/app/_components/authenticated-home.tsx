@@ -2,7 +2,7 @@ import type { User } from "firebase/auth";
 import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 import { HomePresentation } from "./home-presentation";
-import { HomeSignOutButton } from "./home-sign-out-button";
+import { HomeSignOutButton } from "./home-sign-out-button-client";
 
 type AuthenticatedHomeProps = ComponentProps<"div"> & {
   user: Pick<User, "displayName" | "email">;

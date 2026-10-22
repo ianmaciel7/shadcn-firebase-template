@@ -6,7 +6,7 @@ import { Loading } from "@/components/ui/extensions/loading";
 import { FieldGroup } from "@/components/ui/field";
 import { useProfileSection } from "../_hooks/use-profile-section";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
-import { ProfileAvatarField } from "./profile-avatar-field";
+import { ProfileAvatarField } from "./profile-avatar-field-client";
 import {
   ProfileCard,
   ProfileCardContent,
@@ -21,7 +21,7 @@ import {
   ProfileForm,
   ProfileFormContent,
   ProfileFormFooter,
-} from "./profile-form";
+} from "./profile-form-client";
 import { ProfileLocaleField } from "./profile-locale-field";
 import { ProfileSaveButton } from "./profile-save-button";
 import { ProfileThemeField } from "./profile-theme-field";

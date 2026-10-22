@@ -1,11 +1,13 @@
 import { readdirSync, readFileSync } from "node:fs";
+import { isBuiltin } from "node:module";
 import { basename, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
 import { checkComponentComposition } from "./check-component-composition.mjs";
 
 const kebabCase = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
-const environmentSuffix = /-(client|server|component|ui)$/;
+const environmentSuffix = /-(component|ui)$/;
+const semanticStem = (stem) => stem.replace(/-(client|server)$/, "");
 const serverImports =
   /^(next\/(headers|cache|server)|next-intl\/server|server-only|firebase-admin)(\/|$)/;
 
@@ -82,10 +84,7 @@ function checkFileName(source, stem, report) {
     report(source, "Component filename must be kebab-case.");
   }
   if (environmentSuffix.test(stem)) {
-    report(
-      source,
-      "Name by semantic role, never by Client/Server/Component/UI.",
-    );
+    report(source, "Name by semantic role, never by Component/UI.");
   }
 }
 
@@ -106,14 +105,16 @@ const profileFormParts = [
 ];
 
 function expectedComponentNames(source, stem) {
-  const path = source.fileName.replaceAll("\\", "/");
+  const path = source.fileName
+    .replaceAll("\\", "/")
+    .replace(/-(client|server)\.tsx$/, ".tsx");
   if (path.endsWith("/profile/_components/profile-card.tsx")) {
     return profileCardParts;
   }
   if (path.endsWith("/profile/_components/profile-form.tsx")) {
     return profileFormParts;
   }
-  const root = pascalCase(stem);
+  const root = pascalCase(semanticStem(stem));
   const parts = componentExports(source).filter(
     (name) => name.startsWith(root) && /^[A-Z]/.test(name.slice(root.length)),
   );
@@ -218,8 +219,223 @@ function isServerRuntimeImport(statement) {
     ts.isImportDeclaration(statement) &&
     isRuntimeImport(statement) &&
     ts.isStringLiteral(statement.moduleSpecifier) &&
-    serverImports.test(statement.moduleSpecifier.text)
+    (serverImports.test(statement.moduleSpecifier.text) ||
+      isBuiltin(statement.moduleSpecifier.text) ||
+      /-server(?:\.[cm]?[jt]sx?)?$/.test(statement.moduleSpecifier.text))
   );
+}
+
+function isTypeOnlyReexport(statement) {
+  if (!ts.isExportDeclaration(statement) || !statement.exportClause)
+    return false;
+  return (
+    ts.isNamedExports(statement.exportClause) &&
+    statement.exportClause.elements.length > 0 &&
+    statement.exportClause.elements.every((part) => part.isTypeOnly)
+  );
+}
+
+function runtimeDependencySpecifier(statement) {
+  if (
+    (!ts.isImportDeclaration(statement) &&
+      !ts.isExportDeclaration(statement)) ||
+    statement.isTypeOnly ||
+    !statement.moduleSpecifier ||
+    !ts.isStringLiteral(statement.moduleSpecifier)
+  )
+    return null;
+  if (ts.isImportDeclaration(statement) && !isRuntimeImport(statement))
+    return null;
+  if (isTypeOnlyReexport(statement)) return null;
+  return statement.moduleSpecifier.text;
+}
+
+function browserNavigationImport(statement, specifier) {
+  if (
+    !["next/navigation", "@/i18n/navigation", "next-intl/navigation"].includes(
+      specifier,
+    ) ||
+    !ts.isImportDeclaration(statement)
+  )
+    return false;
+  const bindings = statement.importClause?.namedBindings;
+  return (
+    bindings &&
+    ts.isNamedImports(bindings) &&
+    bindings.elements.some(
+      (part) =>
+        !part.isTypeOnly &&
+        /^(useRouter|useParams|usePathname|useSearchParams|useSelectedLayoutSegments?)$/.test(
+          (part.propertyName ?? part.name).text,
+        ),
+    )
+  );
+}
+
+function helperModuleTarget(filename, specifier, modules) {
+  let base;
+  if (specifier.startsWith("@/")) base = `src/${specifier.slice(2)}`;
+  else if (specifier.startsWith("."))
+    base = relative(".", resolve(filename, "..", specifier))
+      .split(sep)
+      .join("/");
+  else return null;
+  return [base, `${base}.ts`, `${base}/index.ts`].find(
+    (file) => modules.has(file) && !file.endsWith(".tsx"),
+  );
+}
+
+function isBrowserProperty(node, source) {
+  if (!ts.isPropertyAccessExpression(node)) return false;
+  const owner = node.expression.getText(source);
+  if (
+    /^(window|document|navigator|localStorage|sessionStorage|indexedDB)$/.test(
+      owner,
+    )
+  )
+    return true;
+  if (owner === "globalThis")
+    return /^(window|document|navigator|localStorage|sessionStorage|indexedDB)$/.test(
+      node.name.text,
+    );
+  return (
+    owner === "URL" &&
+    /^(createObjectURL|revokeObjectURL)$/.test(node.name.text)
+  );
+}
+
+function integrationSyntax(source) {
+  const result = { client: false, server: false, fetch: false };
+  function visit(node) {
+    if (ts.isTypeNode(node)) return;
+    if (isBrowserProperty(node, source)) result.client = true;
+    if (
+      ts.isCallExpression(node) &&
+      /^(fetch|globalThis\.fetch)$/.test(node.expression.getText(source))
+    )
+      result.fetch = true;
+    ts.forEachChild(node, visit);
+  }
+  visit(source);
+  return result;
+}
+
+function dependencyIntegrations(statement, specifier) {
+  return {
+    server: serverImports.test(specifier) || isBuiltin(specifier),
+    client:
+      /^(firebase(?:\/|$)|@firebase-oss\/ui-(?:react|core)(?:\/|$)|next-themes(?:\/|$)|client-only$)/.test(
+        specifier,
+      ) || browserNavigationImport(statement, specifier),
+    fetch: false,
+  };
+}
+
+function mergeIntegrations(result, child) {
+  for (const key of Object.keys(result)) result[key] ||= child[key];
+}
+
+// Follow hooks/helpers, but stop at component imports: composing an integration
+// component does not make its presenter an integration component.
+function componentIntegrations(source, filename, modules, visited = new Set()) {
+  if (visited.has(filename))
+    return { client: false, server: false, fetch: false };
+  visited.add(filename);
+  const result = integrationSyntax(source);
+  for (const statement of source.statements) {
+    const specifier = runtimeDependencySpecifier(statement);
+    if (!specifier) continue;
+    mergeIntegrations(result, dependencyIntegrations(statement, specifier));
+    const target = helperModuleTarget(filename, specifier, modules);
+    if (!target) continue;
+    const child = componentIntegrations(
+      ts.createSourceFile(
+        target,
+        modules.get(target),
+        ts.ScriptTarget.Latest,
+        true,
+      ),
+      target,
+      modules,
+      visited,
+    );
+    mergeIntegrations(result, child);
+  }
+  return result;
+}
+
+function hasServerOnlyMarker(source) {
+  return source.statements.some(
+    (statement) =>
+      ts.isImportDeclaration(statement) &&
+      statement.moduleSpecifier.text === "server-only" &&
+      !statement.importClause,
+  );
+}
+
+function integrationKinds(integration, clientBoundary) {
+  return {
+    client: integration.client || (integration.fetch && clientBoundary),
+    server: integration.server || (integration.fetch && !clientBoundary),
+  };
+}
+
+function integrationNameMessages(stem, client, server) {
+  const messages = [];
+  if (client && !stem.endsWith("-client"))
+    messages.push(
+      "Browser integration components must use a -client.tsx filename.",
+    );
+  if (server && !stem.endsWith("-server"))
+    messages.push(
+      "Server integration components must use a -server.tsx filename.",
+    );
+  if (stem.endsWith("-client") && !client)
+    messages.push(
+      "Presentation components must not use the -client suffix; UI state, events, hooks and use client alone are not integrations.",
+    );
+  return messages;
+}
+
+function integrationBoundaryMessages(source, stem, clientBoundary, client) {
+  const messages = [];
+  if (client && !clientBoundary)
+    messages.push('Browser integration components must declare "use client".');
+  if (stem.endsWith("-server") && clientBoundary)
+    messages.push('A -server.tsx component cannot declare "use client".');
+  if (stem.endsWith("-server") && !hasServerOnlyMarker(source))
+    messages.push('A -server.tsx component must import "server-only".');
+  return messages;
+}
+
+export function inspectComponentRuntime(
+  content,
+  filename,
+  modules = new Map(),
+) {
+  if (!isOwnedComponent(filename)) return [];
+  filename = filename.replaceAll("\\", "/");
+  const source = ts.createSourceFile(
+    filename,
+    content,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  const stem = basename(filename, ".tsx");
+  const clientBoundary = isClientBoundary(source);
+  const integration = componentIntegrations(source, filename, modules);
+  const { client, server } = integrationKinds(integration, clientBoundary);
+  const messages = [
+    ...integrationNameMessages(stem, client, server),
+    ...integrationBoundaryMessages(source, stem, clientBoundary, client),
+  ];
+  return messages.map((message) => ({
+    file: filename,
+    line: 1,
+    column: 1,
+    message,
+  }));
 }
 
 function checkClientImports(source, report) {
@@ -801,6 +1017,25 @@ function checkHookResponsibilities(source, report) {
   }
 }
 
+export function inspectComponentPlacement(filename) {
+  const path = filename.replaceAll("\\", "/");
+  if (
+    !path.startsWith("src/components/") ||
+    !/\.[cm]?[jt]sx?$/.test(path) ||
+    /^src\/components\/(ui|firebase|ai-elements)\//.test(path)
+  )
+    return [];
+  return [
+    {
+      file: filename,
+      line: 1,
+      column: 1,
+      message:
+        "Place shared application components in src/components/ui/extensions/ or route-private components in src/app/**/_components/; other src/components directories are reserved for registry source.",
+    },
+  ];
+}
+
 export function inspectComponent(content, filename) {
   if (!isOwnedComponent(filename)) return [];
   const source = ts.createSourceFile(
@@ -822,8 +1057,9 @@ export function inspectComponent(content, filename) {
       message,
     });
   };
-  const stem = basename(filename, ".tsx");
-  checkFileName(source, stem, report);
+  const fileStem = basename(filename.replaceAll("\\", "/"), ".tsx");
+  const stem = semanticStem(fileStem);
+  checkFileName(source, fileStem, report);
   checkPrimaryExport(source, stem, report);
   checkExportStyle(source, report);
   checkProps(source, pascalCase(stem), report);
@@ -926,11 +1162,21 @@ function scan(directory) {
 
 export function checkComponents(root) {
   const files = scan(join(root, "src"));
+  const modules = new Map(
+    files
+      .filter((file) => /\.[cm]?[jt]sx?$/.test(file))
+      .map((file) => [
+        relative(root, file).split(sep).join("/"),
+        readFileSync(file, "utf8"),
+      ]),
+  );
   return files.flatMap((file) => {
     const path = relative(root, file).split(sep).join("/");
-    if (!/\.tsx?$/.test(path)) return [];
-    const content = readFileSync(file, "utf8");
+    if (!/\.[cm]?[jt]sx?$/.test(path)) return [];
+    const content = modules.get(path);
     return [
+      ...inspectComponentPlacement(path),
+      ...inspectComponentRuntime(content, path, modules),
       ...inspectNaming(content, path),
       ...inspectComponent(content, path),
     ];

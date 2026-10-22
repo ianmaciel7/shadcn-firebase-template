@@ -567,3 +567,8 @@ not a statement that ESLint is installed here. Keep Biome, React Doctor,
 Compiler, and behavior-test responsibilities explicit before proposing another
 lint stack. CSpell excludes only the generated React source inventory's
 upstream identifiers; the explanatory review and canonical Markdown stay checked.
+
+Next.js resolves the `server-only` boundary marker internally, so installing its
+npm package is optional. `knip.jsonc` has a targeted dependency exception for
+this framework marker; it does not suppress unresolved application imports.
+Ladle imports the owned theme integration from `theme-provider-client.tsx`.

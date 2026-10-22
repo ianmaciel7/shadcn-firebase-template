@@ -1,4 +1,4 @@
-import { ProfileSection } from "./_components/profile-section";
+import { ProfileSection } from "./_components/profile-section-client";
 
 export const instant = false;
 

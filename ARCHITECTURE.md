@@ -54,7 +54,7 @@ files, and `public/` remain at the repository root, as required by the Next.js
 
 - `src/app` contains route entrypoints and Next.js special files, plus
   route-private implementation code under underscore-prefixed folders.
-- Shared UI belongs in `src/components`; shared non-UI helpers belong in
+- Shared application UI belongs in `src/components/ui/extensions`; shared non-UI helpers belong in
   `src/lib`.
 - Route-specific implementation details may be colocated with a route. Use an
   underscore-prefixed folder such as `_components`, `_hooks`, or `_lib` when
@@ -257,6 +257,29 @@ Server/Client import-graph membership and of compound-component anatomy.
 [Coding standards](CODING_STANDARDS.md#react-rendering-hooks-and-identity) own
 the behavioral rules; [the React review](docs/agents/react.md) records sources
 and stable/experimental boundaries.
+
+## Owned component placement
+
+Place shared application components in `src/components/ui/extensions/` and
+route-private components in `src/app/**/_components/`. For example,
+`LoadingIndicator` belongs alongside `Loading` in `ui/extensions` because both
+route components and Firebase UI consume it. Do not create parallel application
+component folders such as `src/components/loading/`.
+
+`pnpm check:components` rejects JavaScript and TypeScript source files (including
+colocated tests and barrel files) outside the `ui`, `firebase`, and `ai-elements`
+registry trees under `src/components`. Existing registry trees remain allowed;
+their generated source retains its existing exclusions. This is repository
+policy, not a Next.js requirement.
+
+Owned components use `-client.tsx` for browser integrations, `-server.tsx` for
+server integrations, and no suffix for presentation. Presentation may still be
+interactive and declare `"use client"`; names do not define React runtime.
+Integrations may delegate persistence, session or browser access to hooks.
+Presentation can compose an integration child without becoming an integration.
+Semantic exports, Next.js special files and registry source retain their names.
+See [ADR 0016](docs/adr/0016-name-components-by-integration-responsibility.md)
+and [the integration convention](CODING_STANDARDS.md#integration-filename-convention).
 
 ## Usage records
 

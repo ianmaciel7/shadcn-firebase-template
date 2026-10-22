@@ -2,7 +2,11 @@ id: require-form-provider
 language: tsx
 files:
   - src/app/**/_components/*-form.tsx
+  - src/app/**/_components/*-form-client.tsx
+  - src/app/**/_components/*-form-server.tsx
   - src/components/**/*-form.tsx
+  - src/components/**/*-form-client.tsx
+  - src/components/**/*-form-server.tsx
 ignores:
   - "**/*.test.tsx"
   - "**/*.stories.tsx"

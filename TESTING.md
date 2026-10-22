@@ -360,6 +360,15 @@ from the narrative error guides. Record source scope, installed API support,
 and actual behavior-test results separately, following
 [the review workflow](docs/agents/react.md).
 
+## Integration naming regressions
+
+`pnpm check:components` verifies browser/server integration suffixes, required
+boundaries and presentation filenames without suffixes. Regression cases cover interactive UI
+and form-context hooks without integration suffixes, browser storage, Firebase,
+server requests, transitive helper imports, type-only imports, and composition
+of integration children. Full source scans exercise the same classifier.
+The naming rule documents syntax limits; Next.js still validates module graphs.
+
 ## Application logging validation
 
 Logging changes need both the colocated Vitest guard/instrumentation tests and

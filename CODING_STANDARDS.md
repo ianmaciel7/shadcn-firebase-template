@@ -42,7 +42,7 @@ When standards conflict, apply them in this order:
   single-presentation-hook exception remains; React itself does not require
   one orchestration hook per component.
 - **Form Architecture and State Propagation**:
-  - Compound forms composed with field-component `children` use a single `useForm` and `<FormProvider {...form}>`; nested field components obtain `control` through `useFormContext()`. The repository currently enforces Providers for owned `*-form.tsx` files, although the official shadcn/ui examples do not universally require one.
+  - Compound forms composed with field-component `children` use a single `useForm` and `<FormProvider {...form}>`; nested field components obtain `control` through `useFormContext()`. The repository currently enforces Providers for owned `*-form.tsx`, `*-form-client.tsx`, and `*-form-server.tsx` files, although the official shadcn/ui examples do not universally require one.
   - Name standalone field components after their React Hook Form data property (for example `ProfileDisplayNameField` for `Controller name="displayName"`). Prefer built-in `FieldGroup`/`FieldSet` over arbitrary wrapper components.
   - Allow React Hook Form `UseFormProps<Values>` as an appropriate form component contract. Extract `onSubmit` and component presentation props before passing only RHF options into `useForm`.
   - Form fields use `Field`, `FieldLabel`, `FieldError`, `data-invalid` and `aria-invalid` as documented by shadcn/ui.
@@ -64,7 +64,7 @@ When standards conflict, apply them in this order:
   - Adding `"use client"` transforms the entire module into a Client Component boundary, rendering it and all its imports in the client bundle.
   - Framework server exports such as `metadata`, `generateMetadata`, and `generateStaticParams` cannot be exported from a `"use client"` route module. Ordinary browser data-fetching functions are different; their allowed APIs depend on the import graph.
   - Server Components cannot use client state/effect/navigation hooks (`useState`, `useEffect`, `useRouter`) or DOM event handlers (`onClick`). This does not prohibit every API whose name begins with `use`; for example, React supports `use` in synchronous Server Components.
-  - Therefore, keep route entrypoint files (`page.tsx`) as Server Components by default. Whenever interactivity or client hooks are required, never create a generic `*-page-client.tsx` at the route root. Instead, extract the client logic into a semantically named UI component in a private `_components/` directory (e.g., following shadcn conventions such as `_components/register-auth-flow.tsx`, `_components/sign-in-auth-flow.tsx`, or `_components/forgot-password-auth-flow.tsx`) and render it from the server `page.tsx`.
+  - Therefore, keep route entrypoint files (`page.tsx`) as Server Components by default. Whenever interactivity or client hooks are required, never create a generic `*-page-client.tsx` at the route root. Instead, extract the client logic into a semantically named UI component in a private `_components/` directory (e.g., following shadcn conventions such as `_components/register-auth-flow-client.tsx`, `_components/sign-in-auth-flow-client.tsx`, or `_components/forgot-password-auth-flow-client.tsx`) and render it from the server `page.tsx`.
 - Use the generated `PageProps`, `LayoutProps`, and `RouteContext` helpers for
   route parameters rather than hand-written equivalents:
   - **Route entrypoint parameters (`page.tsx`)**: When a page does not consume `params`
@@ -173,7 +173,8 @@ the primitive. Forward remaining standard props instead of copying a small
 selection such as `id` and `title` and silently dropping everything else.
 
 Server/Client describes module graphs and rendering, independently of compound
-anatomy. It is not a third component naming taxonomy:
+anatomy. Filename suffixes identify integration responsibilities; directives and imports establish
+the actual boundary:
 
 | Situation | Meaning |
 | --- | --- |
@@ -299,7 +300,7 @@ Components throughout the application—regardless of whether they are Server Co
   - Do not hardcode high-level infrastructure, application routing (`useRouter`, `redirect`, `Link`), external API clients, or environment-dependent SDKs inside reusable or presentation components.
   - Presentational and domain UI components must receive their actions, dynamic slots, and data abstractions via props (e.g., explicit callbacks, `children`, or injected interfaces) rather than instantiating or coupling to concrete implementations directly.
 - **Zero route coupling in presentation screens**: Screen and auth form components must remain purely presentational and never import Next.js navigation hooks (`useRouter`, `redirect`, `Link`) or hardcode application routes (such as `/register`, `/sign-in`, or `/forgot-password`). Decouple them by defining explicit callback props (e.g., `onSignUpClick?: () => void`, `onForgotPasswordClick?: () => void`, `onSignIn?: (credential: UserCredential) => void`).
-- **Route-private composition roots**: Route-level private components (such as `src/app/(public)/sign-in/_components/sign-in-auth-flow.tsx` and `src/app/(public)/register/_components/register-auth-flow.tsx`) act as composition roots. They connect Next.js navigation hooks (`router.push(...)`) to the screen's callback props and assemble feature-specific dependencies.
+- **Route-private composition roots**: Route-level private components (such as `src/app/(public)/sign-in/_components/sign-in-auth-flow-client.tsx` and `src/app/(public)/register/_components/register-auth-flow-client.tsx`) act as composition roots. They connect Next.js navigation hooks (`router.push(...)`) to the screen's callback props and assemble feature-specific dependencies.
 - **Provider and addon injection via `children` slots**: Presentation screens and shared surfaces must not hardcode third-party identity providers (e.g., Google, GitHub, or SAML) or concrete third-party services. Instead, expose extensible `children` slots so that provider buttons (e.g., `<GoogleSignInButton />`) or custom actions can be injected at the composition root, conditioned on environment variables (such as `NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED`).
 - **Logic abstraction via custom hooks or service interfaces**: Isolate business logic, validation schemas, and lifecycle effects behind specialized hooks or pure service functions (such as `useUI()`, `useSignInAuthFormSchema()`, `useSignInAuthFormAction()`, and `useOnUserAuthenticated()`). This keeps presentation components focused on rendering state, layout, and event propagation without direct coupling to underlying SDK operations.
 
@@ -592,3 +593,58 @@ support. In this review, `Activity`, `ViewTransition`, `addTransitionType`, `use
 and `useEffectEvent` exist in React 19.3.1; `browser` is not an installed export.
 Availability alone is not a request to adopt an animation, browser-only-rendering,
 optimistic-state, or experimental Suspense feature.
+
+## Owned component placement
+
+Place shared application components in `src/components/ui/extensions/` and
+route-private components in `src/app/**/_components/`. For example,
+`LoadingIndicator` belongs alongside `Loading` in `ui/extensions` because both
+route components and Firebase UI consume it. Do not create parallel application
+component folders such as `src/components/loading/`.
+
+`pnpm check:components` rejects JavaScript and TypeScript source files (including
+colocated tests and barrel files) outside the `ui`, `firebase`, and `ai-elements`
+registry trees under `src/components`. Existing registry trees remain allowed;
+their generated source retains its existing exclusions. This is repository
+policy, not a Next.js requirement.
+
+Placement does not classify runtime. `IntlProvider` in `intl-provider-server.tsx` is an async Server
+Component using server-only translation APIs; `ThemeProvider` in `theme-provider-client.tsx` declares
+`"use client"`; `LoadingIndicator` has no directive and can be used in either
+rendering graph. Keep those boundaries even when the files share a directory.
+The existing direct server-import guard complements placement checks; Next.js
+validates the complete module graph.
+
+## Integration filename convention
+
+| Responsibility | Owned component filename | Actual runtime boundary | Examples |
+| --- | --- | --- | --- |
+| Browser integration | `name-client.tsx` | `"use client"` | Firebase Auth, browser storage, navigation, theme persistence, browser requests |
+| Server integration | `name-server.tsx` | `import "server-only"` | Server requests, database access, secrets, Firebase Admin |
+| Presentation | `name.tsx` | `"use client"` when interactive; otherwise follows its dependencies | Fields, cards, loading UI, stateful controls and form context adapters |
+
+These are integration-versus-presentation responsibilities, not three exclusive
+React runtimes. Presentation components can be Client Components without a
+`-client` suffix. State, events, Effects, React Hook Form and custom hooks alone
+do not establish an integration. A filename without a suffix does not guarantee that a component
+can run on the server. Shared presentation is the subset compatible with both.
+
+Integrations may delegate their environment access to focused hooks/helpers;
+review those implementations. `ProfileForm` persists through `useProfileSubmit`,
+so it remains in `profile-form-client.tsx`. `ProfileEmailField` uses only form
+context and translations, so it lives in `profile-email-field.tsx` while keeping
+`"use client"`. `ProfileAvatarField` accesses browser object URLs through its
+hook and keeps `profile-avatar-field-client.tsx`. `LoadingIndicator` remains
+without a suffix and compatible with either graph.
+
+Exports and orchestration hooks keep semantic names without suffixes. Colocated
+tests/stories follow the component stem. A fetch alone does not determine
+runtime: the component boundary determines where that request executes.
+Composing an integration component does not make presentation an integration.
+Mandatory Next.js filenames, registry output, hooks and non-component modules
+retain their existing contracts. Integrations stay in their current route or
+shared extension placement; no new container directory is required.
+
+See [the naming rule](.agents/rules/component-naming.md#ci-enforcement) for
+executable coverage and limits. [ADR 0016](docs/adr/0016-name-components-by-integration-responsibility.md)
+supersedes the broader runtime naming policy from ADR 0015.
