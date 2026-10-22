@@ -1,4 +1,5 @@
 import { readdirSync, readFileSync } from "node:fs";
+import { isBuiltin } from "node:module";
 import { basename, join, relative, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
@@ -219,6 +220,7 @@ function isServerRuntimeImport(statement) {
     isRuntimeImport(statement) &&
     ts.isStringLiteral(statement.moduleSpecifier) &&
     (serverImports.test(statement.moduleSpecifier.text) ||
+      isBuiltin(statement.moduleSpecifier.text) ||
       /-server(?:\.[cm]?[jt]sx?)?$/.test(statement.moduleSpecifier.text))
   );
 }
@@ -259,7 +261,7 @@ function browserNavigationImport(statement, specifier) {
     bindings.elements.some(
       (part) =>
         !part.isTypeOnly &&
-        /^(useRouter|usePathname|useSearchParams|useSelectedLayoutSegments?)$/.test(
+        /^(useRouter|useParams|usePathname|useSearchParams|useSelectedLayoutSegments?)$/.test(
           (part.propertyName ?? part.name).text,
         ),
     )
@@ -319,8 +321,7 @@ function componentIntegrations(source, filename, modules, visited = new Set()) {
   for (const statement of source.statements) {
     const specifier = runtimeDependencySpecifier(statement);
     if (!specifier) continue;
-    result.server ||=
-      serverImports.test(specifier) || specifier.startsWith("node:");
+    result.server ||= serverImports.test(specifier) || isBuiltin(specifier);
     result.client ||=
       /^(firebase(?:\/|$)|@firebase-oss\/ui-(?:react|core)(?:\/|$)|next-themes(?:\/|$)|client-only$)/.test(
         specifier,

@@ -61,8 +61,8 @@ hooks/helpers (`@/` and relative imports), with cycle protection. They stop at
 component imports: composing an integration child does not classify its parent.
 Type-only imports, React UI hooks, React Hook Form and client directives alone
 are not integration evidence. Known evidence includes Firebase, next-themes,
-browser navigation hooks, browser globals/object URLs, fetch calls, server APIs,
-Node imports and explicit `client-only`/`server-only` markers. Fetch is classified
+browser navigation hooks (including `useParams`), browser globals/object URLs, fetch calls, server APIs,
+Node built-ins (both bare and `node:` imports) and explicit `client-only`/`server-only` markers. Fetch is classified
 using the owning component boundary, not whether its URL is external.
 
 The guard requires matching suffixes and boundaries for recognized integrations

@@ -678,10 +678,33 @@ describe("component integration naming", () => {
     );
   });
 
+  it("recognizes browser navigation hooks, including aliases of useParams", () => {
+    for (const hook of [
+      "useRouter",
+      "useParams",
+      "usePathname",
+      "useSearchParams",
+      "useSelectedLayoutSegment",
+      "useSelectedLayoutSegments",
+    ]) {
+      const content = `"use client"; import { ${hook} as useRoute } from "next/navigation";`;
+      assert.match(messages(content, "account"), /-client.tsx/);
+      assert.equal(messages(content, "account-client"), "");
+    }
+    assert.equal(
+      messages('import type { useParams } from "next/navigation";', "account"),
+      "",
+    );
+    assert.equal(messages('import type { Stats } from "fs";', "account"), "");
+  });
+
   it("requires server integration naming and server-only protection", () => {
     for (const content of [
       'import { getLocale } from "next-intl/server";',
       'import { readFile } from "node:fs";',
+      'import { readFile } from "fs";',
+      'import { readFile } from "fs/promises";',
+      'import { test } from "node:test";',
       'fetch("https://example.com");',
     ]) {
       assert.match(messages(content, "account"), /-server.tsx/);
@@ -761,7 +784,7 @@ describe("component integration naming", () => {
       ],
       [
         "src/lib/account.ts",
-        'import "../components/ui/extensions/use-account"; import { readFile } from "node:fs";',
+        'import "../components/ui/extensions/use-account"; import { readFile } from "fs/promises";',
       ],
     ]);
     assert.match(
@@ -815,5 +838,17 @@ describe("runtime suffixes preserve semantic safety checks", () => {
       /server-only/,
       "src/app/_components/details-client.tsx",
     );
+  });
+});
+
+describe("Node integration client boundary protection", () => {
+  it("rejects bare and prefixed built-ins in client boundaries", () => {
+    for (const module of ["fs", "fs/promises", "node:fs", "node:test"]) {
+      expectInvalid(
+        `"use client"; import * as api from "${module}"; function Details(props) { return <div {...props} />; } export { Details };`,
+        /server-only/,
+        "src/app/_components/details-client.tsx",
+      );
+    }
   });
 });
