@@ -5,6 +5,27 @@ const events = {
   function_use: new Set(["profile.update"]),
 };
 
+function hasEventFields(data) {
+  return (
+    data !== null &&
+    typeof data === "object" &&
+    !Array.isArray(data) &&
+    Object.keys(data).length === 2 &&
+    Object.hasOwn(data, "type") &&
+    Object.hasOwn(data, "name")
+  );
+}
+
+function isAllowedEvent(data) {
+  return (
+    hasEventFields(data) &&
+    typeof data.type === "string" &&
+    typeof data.name === "string" &&
+    Object.hasOwn(events, data.type) &&
+    events[data.type].has(data.name)
+  );
+}
+
 // Callable authentication is verified by Firebase before this handler runs.
 function createUsageLogHandler({ logger, HttpsError }) {
   return (request) => {
@@ -12,18 +33,7 @@ function createUsageLogHandler({ logger, HttpsError }) {
       throw new HttpsError("unauthenticated", "Authentication required.");
     }
     const data = request.data;
-    if (
-      !data ||
-      typeof data !== "object" ||
-      Array.isArray(data) ||
-      Object.keys(data).length !== 2 ||
-      !Object.hasOwn(data, "type") ||
-      !Object.hasOwn(data, "name") ||
-      typeof data.type !== "string" ||
-      typeof data.name !== "string" ||
-      !Object.hasOwn(events, data.type) ||
-      !events[data.type].has(data.name)
-    ) {
+    if (!isAllowedEvent(data)) {
       throw new HttpsError("invalid-argument", "Unsupported usage event.");
     }
 

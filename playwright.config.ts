@@ -55,6 +55,12 @@ export default defineConfig({
   webServer: authEmulator
     ? {
         command: `pnpm dev --hostname ${authTestHost} --port 3100`,
+        env: {
+          NEXT_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST:
+            process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST ||
+            process.env.FUNCTIONS_EMULATOR_HOST ||
+            "127.0.0.1:5001",
+        },
         url: authTestBaseUrl,
         reuseExistingServer: false,
         timeout: 120_000,

@@ -37,7 +37,7 @@
     "test:coverage": "vitest run --project unit --coverage",
     "test:browser": "vitest run --project browser",
     "test:e2e": "playwright test --grep-invert \"@a11y|@visual\"",
-    "test:auth": "firebase emulators:exec --only auth,firestore \"playwright test --project=auth-emulator\"",
+    "test:auth": "firebase emulators:exec --only auth,firestore,functions \"playwright test --project=auth-emulator\"",
     "emulator": "firebase emulators:start --only auth,firestore,database,storage,hosting,pubsub,functions,extensions",
     "emulator:seed": "node scripts/emulator/seed.mjs",
     "emulator:clear": "node scripts/emulator/clear.mjs",
