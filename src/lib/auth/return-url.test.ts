@@ -13,6 +13,9 @@ describe("getSafeReturnUrl", () => {
     ["/sign-in", "/"],
     ["/register?next=/profile", "/"],
     ["/forgot-password", "/"],
+    ["/Sign-In", "/"],
+    ["/REGISTER?next=/profile", "/"],
+    ["/Forgot-Password", "/"],
     ["/%2e%2e/sign-in", "/"],
   ])("resolves %s to %s", (input, expected) => {
     expect(getSafeReturnUrl(input)).toBe(expected);

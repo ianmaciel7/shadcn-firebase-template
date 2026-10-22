@@ -182,6 +182,7 @@ describe("getFirebaseUI", () => {
   });
 
   it("connects browser Storage to the local emulator using public configuration", async () => {
+    vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("NEXT_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST", "127.0.0.1:9199");
     const storage = { app: mocks.app };
     mocks.getStorage.mockReturnValue(storage);
@@ -196,6 +197,7 @@ describe("getFirebaseUI", () => {
   });
 
   it("connects Database and Functions to their public emulator endpoints", async () => {
+    vi.stubEnv("NODE_ENV", "development");
     vi.stubEnv("NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_HOST", "127.0.0.1:9000");
     vi.stubEnv(
       "NEXT_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST",
@@ -221,6 +223,31 @@ describe("getFirebaseUI", () => {
       "127.0.0.1",
       5001,
     );
+  });
+
+  it("does not connect Storage, Database, or Functions emulators outside development", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("NEXT_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST", "127.0.0.1:9199");
+    vi.stubEnv("NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_HOST", "127.0.0.1:9000");
+    vi.stubEnv(
+      "NEXT_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST",
+      "127.0.0.1:5001",
+    );
+    const storage = { app: mocks.app };
+    const database = { app: mocks.app };
+    const functions = { app: mocks.app };
+    mocks.getStorage.mockReturnValue(storage);
+    mocks.getDatabase.mockReturnValue(database);
+    mocks.getFunctions.mockReturnValue(functions);
+
+    const { getFirebaseStorage, getFirebaseDatabase, getFirebaseFunctions } =
+      await import("./client");
+    expect(getFirebaseStorage()).toBe(storage);
+    expect(getFirebaseDatabase()).toBe(database);
+    expect(getFirebaseFunctions()).toBe(functions);
+    expect(mocks.connectStorageEmulator).not.toHaveBeenCalled();
+    expect(mocks.connectDatabaseEmulator).not.toHaveBeenCalled();
+    expect(mocks.connectFunctionsEmulator).not.toHaveBeenCalled();
   });
 
   it("provides get for Hosting, PubSub, and Extensions", async () => {

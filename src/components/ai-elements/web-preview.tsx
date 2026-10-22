@@ -138,6 +138,16 @@ const WebPreviewNavigationButton = ({
   </TooltipProvider>
 );
 
+const isAllowedUrlScheme = (value: string): boolean => {
+  if (!value) return false;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+};
+
 type WebPreviewUrlProps = ComponentProps<typeof Input>;
 
 const WebPreviewUrl = ({
@@ -165,7 +175,10 @@ const WebPreviewUrl = ({
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") {
         const target = event.target as HTMLInputElement;
-        setUrl(target.value);
+        const candidate = target.value.trim();
+        if (candidate === "" || isAllowedUrlScheme(candidate)) {
+          setUrl(candidate);
+        }
       }
       onKeyDown?.(event);
     },
@@ -195,14 +208,16 @@ const WebPreviewBody = ({
   ...props
 }: WebPreviewBodyProps) => {
   const { url } = useWebPreview();
+  const effectiveSrc = (src ?? url)?.trim();
+  const safeSrc =
+    effectiveSrc && isAllowedUrlScheme(effectiveSrc) ? effectiveSrc : undefined;
 
   return (
     <div className="flex-1">
       <iframe
         className={cn("size-full", className)}
-        // oxlint-disable-next-line eslint-plugin-react(iframe-missing-sandbox)
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
-        src={(src ?? url) || undefined}
+        sandbox="allow-scripts allow-forms allow-popups allow-presentation"
+        src={safeSrc}
         title="Preview"
         {...props}
       />

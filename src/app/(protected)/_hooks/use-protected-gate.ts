@@ -56,7 +56,7 @@ export function useProtectedGate() {
   return {
     t,
     isLoading: readyPath !== pathname,
-    hasError: error !== null,
+    isError: error !== null,
     errorKey: error ?? "configurationError",
   };
 }

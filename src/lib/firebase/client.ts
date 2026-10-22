@@ -132,6 +132,8 @@ function getEmulatorEndpoint(host: string, defaultPort: number) {
 }
 
 function connectFirestoreIfNeeded(firestore: ReturnType<typeof getFirestore>) {
+  if (process.env.NODE_ENV !== "development") return;
+
   const host = process.env.FIRESTORE_EMULATOR_HOST?.trim();
   if (!host || globalThis.firebaseFirestoreEmulatorConnected) return;
 
@@ -148,6 +150,8 @@ export function getFirebaseFirestore() {
 
 export function getFirebaseDatabase() {
   const database = getDatabase(getFirebaseApp(getValidatedFirebaseConfig()));
+  if (process.env.NODE_ENV !== "development") return database;
+
   const host = (
     process.env.NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_HOST ||
     process.env.FIREBASE_DATABASE_EMULATOR_HOST
@@ -164,6 +168,8 @@ export function getFirebaseDatabase() {
 
 export function getFirebaseFunctions() {
   const functions = getFunctions(getFirebaseApp(getValidatedFirebaseConfig()));
+  if (process.env.NODE_ENV !== "development") return functions;
+
   const host = (
     process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST ||
     process.env.FUNCTIONS_EMULATOR_HOST
@@ -180,6 +186,8 @@ export function getFirebaseFunctions() {
 
 export function getFirebaseStorage() {
   const storage = getStorage(getFirebaseApp(getValidatedFirebaseConfig()));
+  if (process.env.NODE_ENV !== "development") return storage;
+
   const host = (
     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST ||
     process.env.FIREBASE_STORAGE_EMULATOR_HOST

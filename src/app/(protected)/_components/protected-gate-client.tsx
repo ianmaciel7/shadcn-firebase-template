@@ -7,9 +7,9 @@ import { useProtectedGate } from "../_hooks/use-protected-gate";
 type ProtectedGateProps = PropsWithChildren;
 
 function ProtectedGate({ children }: ProtectedGateProps) {
-  const { t, isLoading, hasError, errorKey } = useProtectedGate();
+  const { t, isLoading, isError, errorKey } = useProtectedGate();
 
-  if (hasError) {
+  if (isError) {
     return (
       <main className="flex min-h-svh flex-1 items-center justify-center p-6 md:p-10">
         <p role="alert">{t(errorKey)}</p>
@@ -29,7 +29,7 @@ function ProtectedGate({ children }: ProtectedGateProps) {
 
   return (
     <main className="flex min-h-svh flex-1 items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">{children}</div>
+      {children}
     </main>
   );
 }

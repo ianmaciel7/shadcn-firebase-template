@@ -12,8 +12,7 @@ import {
 } from "lucide-react";
 import type * as React from "react";
 import { Button } from "@/components/ui/button";
-
-const toast = ToastPrimitive.createToastManager();
+import { toast } from "@/lib/toast";
 
 function ToastProvider({ ...props }: ToastPrimitive.Provider.Props) {
   return <ToastPrimitive.Provider {...props} />;

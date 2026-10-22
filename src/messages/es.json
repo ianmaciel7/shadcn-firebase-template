@@ -74,6 +74,7 @@
     "profileSaved": "Perfil guardado",
     "emailVerificationSent": "Revisa tu nuevo correo para confirmar el cambio.",
     "profileSaveError": "No se pudo guardar el perfil. Inténtalo de nuevo.",
+    "profileLoadError": "No se pudo cargar el perfil. Vuelva a intentarlo.",
     "signingOut": "Cerrando sesión…"
   },
   "Home": {
