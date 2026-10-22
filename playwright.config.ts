@@ -13,6 +13,14 @@ const authEmulator =
   process.argv.includes("--project=auth-emulator");
 if (authEmulator) process.env.PLAYWRIGHT_AUTH_EMULATOR = "true";
 
+const authEmulatorEndpoint = (
+  process.env.FIREBASE_AUTH_EMULATOR_HOST ||
+  process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST ||
+  "127.0.0.1:9099"
+).replace(/^https?:\/\//, "");
+const authTestHost = new URL(`http://${authEmulatorEndpoint}`).hostname;
+const authTestBaseUrl = `http://${authTestHost}:3100`;
+
 export default defineConfig({
   testDir: "./tests",
   // tests/unit holds Vitest files, which Playwright's default match would also pick up.
@@ -34,7 +42,7 @@ export default defineConfig({
     toHaveScreenshot: { maxDiffPixelRatio: 0.01 },
   },
   use: {
-    baseURL: authEmulator ? "http://127.0.0.1:3100" : "http://127.0.0.1:3000",
+    baseURL: authEmulator ? authTestBaseUrl : "http://127.0.0.1:3000",
     screenshot: "only-on-failure",
     trace: "on-first-retry",
   },
@@ -46,8 +54,8 @@ export default defineConfig({
   ],
   webServer: authEmulator
     ? {
-        command: "pnpm dev --hostname 127.0.0.1 --port 3100",
-        url: "http://127.0.0.1:3100",
+        command: `pnpm dev --hostname ${authTestHost} --port 3100`,
+        url: authTestBaseUrl,
         reuseExistingServer: false,
         timeout: 120_000,
       }

@@ -363,9 +363,12 @@ In Authentication, enable Email/Password. Enable Google and set
 `NEXT_PUBLIC_FIREBASE_GOOGLE_ENABLED=true` only if Google sign-in is desired;
 configure the project support email and OAuth consent screen as required by the
 Console. Add each development and deployment hostname to Authentication's
-authorized domains, including `localhost` if needed. Google popup sign-in uses
+authorized domains, including `localhost` if needed. Google sign-in uses
 Firebase's configured `authDomain`; review Firebase's OAuth domain guidance if
-using a custom domain. Redirect sign-in is not enabled.
+using a custom domain. FirebaseUI uses its default popup provider strategy in
+ordinary browsers and its supported redirect provider strategy when the browser
+user agent identifies Electron (`Electron/`), avoiding Electron popup relay
+incompatibility without a separate OAuth implementation.
 
 Review the password-reset and email-verification email templates and authorized
 continue URLs in the Console. Firebase sends password-reset emails through the
@@ -382,10 +385,14 @@ must mock Firebase or use the Auth Emulator; CI must not need production keys.
 Real provider configuration, OAuth popup behavior, email delivery, and MFA need
 verification against a configured Firebase project or emulator as appropriate.
 For local emulator development, define `FIREBASE_AUTH_EMULATOR_HOST` (for example,
-`127.0.0.1:9099`) in `.env` with a local project ID. Auth emulator use is limited to
-development. In-code default fallback values are removed; environment configuration in
-`.env` is required. For production, omit emulator variables and configure the real Web
-app values at build time. Browser code that uses Realtime Database or callable Cloud
+`localhost:9099`) in `.env` with a local project ID. For Electron redirect OAuth,
+Next proxies the Auth Emulator handler and Auth REST endpoints through the app origin
+in development; the variable remains the actual emulator endpoint, not the Next.js
+port. Keep the app and configured emulator on a consistent loopback hostname (for
+example, `localhost`, not a mixture of `localhost` and `127.0.0.1`). Auth emulator
+use is limited to development. In-code default fallback values are removed; environment
+configuration in `.env` is required. For production, omit emulator variables and
+configure the real Web app values at build time. Browser code that uses Realtime Database or callable Cloud
 Functions must use `NEXT_PUBLIC_FIREBASE_DATABASE_EMULATOR_HOST` and
 `NEXT_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST`, respectively. Configure
 `NEXT_PUBLIC_FIREBASE_DATABASE_URL` when using Realtime Database outside the emulator.

@@ -18,6 +18,7 @@ original date. Read current operational details in the
 | [0007](0007-configure-ci.md) | Accepted | Continuous integration, quality tooling, custom rules catalog, layered verification, and Git hooks |
 | [0008](0008-install-firebase-ui-registry.md) | Accepted (amended) | Dynamic cross-platform installer and locally owned source model for `@firebase` registry |
 | [0009](0009-integrate-firebase-authentication.md) | Accepted (amended) | Browser Firebase Authentication, emulator configuration, protected profile route, and dynamic navigation |
+| [0010](0010-use-redirect-oauth-in-electron.md) | Accepted | Environment-aware FirebaseUI OAuth strategy for Electron |
 
 ## Current operational clarifications
 
@@ -99,6 +100,11 @@ original date. Read current operational details in the
     server authorization.
   - Vitest unit/component coverage must satisfy the strict `>= 70%` threshold, and end-to-end
     authentication flows run against the Playwright Firebase Auth Emulator suite.
+
+- **ADR 0010: Electron OAuth strategy**:
+  - FirebaseUI preserves its popup strategy in ordinary browsers and uses its supported redirect
+    strategy only for Electron user agents. In development, Next proxies the Auth Emulator handler
+    through the app origin to avoid cross-origin browser storage and relay conflicts.
 
 These clarifications describe the checked-in configuration. They do not claim
 that a hosted run succeeded or that all tooling is installed on a contributor's

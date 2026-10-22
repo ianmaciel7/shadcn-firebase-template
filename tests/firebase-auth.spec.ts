@@ -22,6 +22,7 @@ const emulator =
   rawHost.startsWith("http://") || rawHost.startsWith("https://")
     ? rawHost.replace(/\/$/, "")
     : `http://${rawHost}`.replace(/\/$/, "");
+const authTestOrigin = `http://${new URL(emulator).hostname}:3100`;
 
 const project =
   process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.GCLOUD_PROJECT;
@@ -117,7 +118,7 @@ test("navigation and translated screens", async ({ page, context }) => {
   await page.getByRole("button", { name: /back to sign in/i }).click();
   await expect(page).toHaveURL(/\/sign-in$/);
   await context.addCookies([
-    { name: "NEXT_LOCALE", value: "pt-BR", url: "http://127.0.0.1:3100" },
+    { name: "NEXT_LOCALE", value: "pt-BR", url: authTestOrigin },
   ]);
   await page.reload();
   await expect(page.getByLabel("Endereço de e-mail")).toBeVisible();
@@ -134,6 +135,34 @@ test("Google popup signs in with the emulator", async ({ page }) => {
     .fill(`google-${crypto.randomUUID()}@example.test`);
   await popup.getByRole("button", { name: /sign in/i }).click();
   await expect(page).toHaveURL("/");
+});
+
+test("Google redirect signs in when the browser identifies as Electron", async ({
+  browser,
+}) => {
+  const electronContext = await browser.newContext({
+    userAgent: "Mozilla/5.0 Electron/42.0.0",
+  });
+  const electronPage = await electronContext.newPage();
+
+  try {
+    await electronPage.goto(`${authTestOrigin}/sign-in`);
+    const redirect = electronPage.waitForURL(/\/emulator\/auth\/handler/);
+    await electronPage
+      .getByRole("button", { name: "Sign in with Google" })
+      .click();
+    await redirect;
+    await electronPage
+      .getByRole("button", { name: /add new account/i })
+      .click();
+    await electronPage
+      .getByLabel(/email/i)
+      .fill(`electron-${crypto.randomUUID()}@example.test`);
+    await electronPage.getByRole("button", { name: /sign in/i }).click();
+    await expect(electronPage).toHaveURL(`${authTestOrigin}/`);
+  } finally {
+    await electronContext.close();
+  }
 });
 
 test("profile displays user email and signs out successfully", async ({

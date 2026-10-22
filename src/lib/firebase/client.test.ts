@@ -12,6 +12,10 @@ const mocks = vi.hoisted(() => ({
   getFunctions: vi.fn(),
   initializeApp: vi.fn(),
   initializeUI: vi.fn(),
+  popupStrategy: { strategy: "popup" },
+  redirectStrategy: { strategy: "redirect" },
+  providerPopupStrategy: vi.fn(),
+  providerRedirectStrategy: vi.fn(),
   connectAuthEmulator: vi.fn(),
   connectDatabaseEmulator: vi.fn(),
   connectFirestoreEmulator: vi.fn(),
@@ -30,7 +34,11 @@ vi.mock("firebase/auth", () => ({
   connectAuthEmulator: mocks.connectAuthEmulator,
   getAuth: mocks.getAuth,
 }));
-vi.mock("@firebase-oss/ui-core", () => ({ initializeUI: mocks.initializeUI }));
+vi.mock("@firebase-oss/ui-core", () => ({
+  initializeUI: mocks.initializeUI,
+  providerPopupStrategy: mocks.providerPopupStrategy,
+  providerRedirectStrategy: mocks.providerRedirectStrategy,
+}));
 vi.mock("firebase/firestore", () => ({
   connectFirestoreEmulator: mocks.connectFirestoreEmulator,
   getFirestore: mocks.getFirestore,
@@ -70,6 +78,8 @@ describe("getFirebaseUI", () => {
     mocks.getAuth.mockReturnValue(mocks.auth);
     mocks.initializeApp.mockReturnValue(mocks.app);
     mocks.initializeUI.mockReturnValue(mocks.store);
+    mocks.providerPopupStrategy.mockReturnValue(mocks.popupStrategy);
+    mocks.providerRedirectStrategy.mockReturnValue(mocks.redirectStrategy);
     globalThis.firebaseUIStore = undefined;
     globalThis.firebaseAuthEmulatorConnected = false;
     globalThis.firebaseDatabaseEmulatorConnected = false;
@@ -79,6 +89,7 @@ describe("getFirebaseUI", () => {
 
   afterEach(() => {
     vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
     globalThis.firebaseUIStore = undefined;
     globalThis.firebaseAuthEmulatorConnected = false;
     globalThis.firebaseDatabaseEmulatorConnected = false;
@@ -126,6 +137,26 @@ describe("getFirebaseUI", () => {
     expect(mocks.initializeUI).toHaveBeenCalledWith({
       app: mocks.app,
       auth: mocks.auth,
+      behaviors: [mocks.popupStrategy],
+    });
+  });
+
+  it("uses redirect OAuth in Electron browsers", async () => {
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "localhost:9099");
+    vi.stubGlobal("navigator", { userAgent: "Mozilla/5.0 Electron/42.0.0" });
+    vi.stubGlobal("window", { location: { origin: "http://localhost:3000" } });
+
+    const { getFirebaseUI } = await import("./client");
+    expect(getFirebaseUI()).toBe(mocks.store);
+    expect(mocks.connectAuthEmulator).toHaveBeenCalledWith(
+      mocks.auth,
+      "http://localhost:3000",
+    );
+    expect(mocks.initializeUI).toHaveBeenCalledWith({
+      app: mocks.app,
+      auth: mocks.auth,
+      behaviors: [mocks.redirectStrategy],
     });
   });
 
