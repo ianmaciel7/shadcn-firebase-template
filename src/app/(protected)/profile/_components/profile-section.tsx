@@ -30,13 +30,9 @@ function ProfileSection() {
 
   if (state.isLoading) {
     return (
-      <ProfileCard>
-        <ProfileCardContent>
-          <Loading className="w-full text-sm text-muted-foreground">
-            {t("loading")}
-          </Loading>
-        </ProfileCardContent>
-      </ProfileCard>
+      <Loading className="w-full text-sm text-muted-foreground">
+        {t("loading")}
+      </Loading>
     );
   }
 

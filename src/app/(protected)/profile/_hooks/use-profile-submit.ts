@@ -60,8 +60,8 @@ async function saveProfile({
   const avatarChanged = Boolean(avatarFile);
   if (nameChanged || avatarChanged) {
     await updateProfile(authUser, {
-      displayName: displayName || null,
-      photoURL,
+      ...(nameChanged ? { displayName: displayName || null } : {}),
+      ...(avatarChanged ? { photoURL } : {}),
     });
   }
   if (preferencesChanged) {

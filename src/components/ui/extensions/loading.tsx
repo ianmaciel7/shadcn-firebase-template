@@ -1,20 +1,16 @@
 import type { ComponentProps } from "react";
-import { Spinner } from "@/components/ui/spinner";
+import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { cn } from "@/lib/utils";
 
-type LoadingProps = ComponentProps<"span">;
+type LoadingProps = Omit<ComponentProps<typeof LoadingIndicator>, "label">;
 
 function Loading({ className, children, ...props }: LoadingProps) {
   return (
-    <span
+    <LoadingIndicator
       {...props}
-      role="status"
-      aria-live="polite"
-      className={cn("inline-flex items-center justify-center gap-2", className)}
-    >
-      <Spinner role="presentation" aria-hidden="true" aria-label={undefined} />
-      {children}
-    </span>
+      label={children}
+      className={cn("text-inherit", className)}
+    />
   );
 }
 

@@ -172,6 +172,16 @@ describe("ProfileSection", () => {
     );
   });
 
+  it("does not render an empty card while profile preferences load", async () => {
+    mocks.currentUser = { uid: "user-123" };
+    mocks.readPreferences.mockReturnValue(new Promise(() => {}));
+
+    const { container } = render(<ProfileSection />);
+
+    await screen.findByRole("status");
+    expect(container.querySelector('[data-slot="card"]')).toBeNull();
+  });
+
   it("keeps form fields in CardContent and buttons in CardFooter", async () => {
     mocks.currentUser = { uid: "user-123", email: "user@example.com" };
     render(<ProfileSection />);
@@ -294,7 +304,6 @@ describe("ProfileSection", () => {
     await waitFor(() =>
       expect(mocks.updateProfile).toHaveBeenCalledWith(mocks.currentUser, {
         displayName: "New Name",
-        photoURL: undefined,
       }),
     );
     expect(mocks.verifyBeforeUpdateEmail).toHaveBeenCalledWith(
