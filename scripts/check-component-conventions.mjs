@@ -6,7 +6,8 @@ import ts from "typescript";
 import { checkComponentComposition } from "./check-component-composition.mjs";
 
 const kebabCase = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
-const environmentSuffix = /-(component|ui)$/;
+const environmentSuffix = /-(component|ui|presentation)$/;
+const screenStem = /(^|-)(screen|view|page)$/;
 const semanticStem = (stem) => stem.replace(/-(client|server)$/, "");
 const serverImports =
   /^(next\/(headers|cache|server)|next-intl\/server|server-only|firebase-admin)(\/|$)/;
@@ -84,7 +85,16 @@ function checkFileName(source, stem, report) {
     report(source, "Component filename must be kebab-case.");
   }
   if (environmentSuffix.test(stem)) {
-    report(source, "Name by semantic role, never by Component/UI.");
+    report(
+      source,
+      "Name by semantic role, never by Component/UI/Presentation.",
+    );
+  }
+  if (screenStem.test(stem)) {
+    report(
+      source,
+      `Component name "${stem}" must not end with a screen or page term (-screen, -view, -page); name by semantic role such as -section, -card, -form, -flow, or -hero.`,
+    );
   }
 }
 
@@ -1108,7 +1118,7 @@ function hasBannedNamingTerm(name) {
     .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
     .replace(/([A-Z])([A-Z][a-z])/g, "$1 $2")
     .split(/[^A-Za-z]+/)
-    .some((word) => /^(view|screen)$/i.test(word));
+    .some((word) => /^(view|screen|presentation)$/i.test(word));
 }
 
 function isOwnedNamingFile(filename) {
@@ -1164,7 +1174,7 @@ export function inspectNaming(content, filename) {
       file: filename,
       line: position.line + 1,
       column: position.character + 1,
-      message: `Do not use View or Screen as naming terms (${name}); choose a concrete responsibility such as Status, Section, Content or Flow.`,
+      message: `Do not use View or Screen (or Presentation) as naming terms (${name}); choose a concrete responsibility such as Status, Section, Content or Flow.`,
     });
   }
   if (hasBannedNamingTerm(basename(filename).replace(/\.tsx?$/, "")))

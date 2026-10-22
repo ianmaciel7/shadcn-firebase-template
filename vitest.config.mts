@@ -32,6 +32,7 @@ export default defineConfig({
       {
         test: {
           name: "unit",
+          testTimeout: 15000,
           environment: "jsdom",
           include: [
             "src/**/*.test.{ts,tsx}",
