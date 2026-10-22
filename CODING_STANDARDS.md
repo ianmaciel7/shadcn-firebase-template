@@ -173,7 +173,7 @@ the primitive. Forward remaining standard props instead of copying a small
 selection such as `id` and `title` and silently dropping everything else.
 
 Server/Client describes module graphs and rendering, independently of compound
-anatomy. Filename suffixes document intended runtime; directives and imports establish
+anatomy. Filename suffixes identify integration responsibilities; directives and imports establish
 the actual boundary:
 
 | Situation | Meaning |
@@ -615,23 +615,36 @@ rendering graph. Keep those boundaries even when the files share a directory.
 The existing direct server-import guard complements placement checks; Next.js
 validates the complete module graph.
 
-## Runtime filename convention
+## Integration filename convention
 
-| Intended runtime | Owned component filename | Required boundary | Use |
+| Responsibility | Owned component filename | Actual runtime boundary | Examples |
 | --- | --- | --- | --- |
-| Server-only | `name-server.tsx` | `import "server-only"` | Server data fetching, database access, secrets, Firebase Admin |
-| Client | `name-client.tsx` | `"use client"` | State, Effects, event handlers, browser APIs, Firebase browser workflows |
-| Shared | `name.tsx` | No exclusive runtime dependency | Presentation and composition compatible with either graph |
+| Browser integration | `name-client.tsx` | `"use client"` | Firebase Auth, browser storage, navigation, theme persistence, browser requests |
+| Server integration | `name-server.tsx` | `import "server-only"` | Server requests, database access, secrets, Firebase Admin |
+| Presentation | `name.tsx` | `"use client"` when interactive; otherwise follows its dependencies | Fields, cards, loading UI, stateful controls and form context adapters |
 
-Exports keep semantic names (`ProfileForm`, not `ProfileFormClient`), and
-component-named hooks keep their current names. Tests and stories follow the
-component stem, such as `profile-section-client.test.tsx`. A fetch alone does
-not determine runtime: choose its execution environment and dependencies.
-Shared UI can compose client components without itself requiring a suffix.
-Mandatory Next.js files (`page.tsx`, `layout.tsx`, `error.tsx`, and other route
-conventions), registry output, hooks and non-component modules retain their
-existing naming contracts. This policy replaces the previous runtime-suffix
-prohibition; it is a repository convention, not a Next.js requirement.
+These are integration-versus-presentation responsibilities, not three exclusive
+React runtimes. Presentation components can be Client Components without a
+`-client` suffix. State, events, Effects, React Hook Form and custom hooks alone
+do not establish an integration. A filename without a suffix does not guarantee that a component
+can run on the server. Shared presentation is the subset compatible with both.
+
+Integrations may delegate their environment access to focused hooks/helpers;
+review those implementations. `ProfileForm` persists through `useProfileSubmit`,
+so it remains in `profile-form-client.tsx`. `ProfileEmailField` uses only form
+context and translations, so it lives in `profile-email-field.tsx` while keeping
+`"use client"`. `ProfileAvatarField` accesses browser object URLs through its
+hook and keeps `profile-avatar-field-client.tsx`. `LoadingIndicator` remains
+without a suffix and compatible with either graph.
+
+Exports and orchestration hooks keep semantic names without suffixes. Colocated
+tests/stories follow the component stem. A fetch alone does not determine
+runtime: the component boundary determines where that request executes.
+Composing an integration component does not make presentation an integration.
+Mandatory Next.js filenames, registry output, hooks and non-component modules
+retain their existing contracts. Integrations stay in their current route or
+shared extension placement; no new container directory is required.
 
 See [the naming rule](.agents/rules/component-naming.md#ci-enforcement) for
-executable coverage and its limits, and [ADR 0012](docs/adr/0012-adopt-component-runtime-suffixes.md).
+executable coverage and limits. [ADR 0013](docs/adr/0013-name-components-by-integration-responsibility.md)
+supersedes the broader runtime naming policy from ADR 0012.

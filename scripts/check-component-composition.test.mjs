@@ -36,7 +36,7 @@ describe("component composition across server and client graphs", () => {
       "src/app/account/_components/account-card.tsx": adapter(
         "return <Surface />;",
       ),
-      "src/components/ui/extensions/client/account-card-client.tsx": `"use client";${adapter("return <Surface />;")}`,
+      "src/components/ui/extensions/client/account-card.tsx": `"use client";${adapter("return <Surface />;")}`,
       "src/components/ui/extensions/account-card.tsx": adapter(
         "return <Surface />;",
       ),
@@ -301,7 +301,7 @@ describe("component composition across server and client graphs", () => {
 });
 
 describe("repository runtime naming enforcement", () => {
-  it("reports an unsuffixed client component during a full source scan", () => {
+  it("reports an unsuffixed browser integration during a full source scan", () => {
     const root = mkdtempSync(join(tmpdir(), "component-runtime-"));
     const file = "src/components/ui/extensions/account-card.tsx";
     try {
@@ -309,7 +309,7 @@ describe("repository runtime naming enforcement", () => {
       mkdirSync(dirname(target), { recursive: true });
       writeFileSync(
         target,
-        `"use client";${adapter("return <Surface {...props} />;")}`,
+        `"use client"; import { ThemeProvider } from "next-themes";${adapter("return <Surface {...props} />;")}`,
       );
       const findings = checkComponents(root);
       assert.equal(findings.length, 1);

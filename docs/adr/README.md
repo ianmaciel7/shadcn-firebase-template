@@ -20,7 +20,8 @@ original date. Read current operational details in the
 | [0009](0009-integrate-firebase-authentication.md) | Accepted (amended) | Browser Firebase Authentication, emulator configuration, protected profile route, and dynamic navigation |
 | [0010](0010-use-redirect-oauth-in-electron.md) | Accepted | Environment-aware FirebaseUI OAuth strategy for Electron |
 | [0011](0011-consolidate-owned-component-placement.md) | Accepted | Shared application components in UI extensions and route-private components in private folders |
-| [0012](0012-adopt-component-runtime-suffixes.md) | Accepted | Client/server filename suffixes with shared presentation names |
+| [0012](0012-adopt-component-runtime-suffixes.md) | Superseded in classification by 0013 | Client/server filename suffixes with shared presentation names |
+| [0013](0013-name-components-by-integration-responsibility.md) | Accepted | Integration suffixes independent of presentation runtime |
 
 ## Current operational clarifications
 

@@ -272,9 +272,11 @@ registry trees under `src/components`. Existing registry trees remain allowed;
 their generated source retains its existing exclusions. This is repository
 policy, not a Next.js requirement.
 
-Owned components document runtime intent with `-client.tsx`, `-server.tsx`, or
-no suffix for shared presentation. Client files declare `"use client"` and
-server-only files import `"server-only"`; names alone do not establish runtime.
-Semantic exports and hook names remain unchanged. Next.js special files and
-registry source retain their filenames. See [ADR 0012](docs/adr/0012-adopt-component-runtime-suffixes.md)
-and [the runtime convention](CODING_STANDARDS.md#runtime-filename-convention).
+Owned components use `-client.tsx` for browser integrations, `-server.tsx` for
+server integrations, and no suffix for presentation. Presentation may still be
+interactive and declare `"use client"`; names do not define React runtime.
+Integrations may delegate persistence, session or browser access to hooks.
+Presentation can compose an integration child without becoming an integration.
+Semantic exports, Next.js special files and registry source retain their names.
+See [ADR 0013](docs/adr/0013-name-components-by-integration-responsibility.md)
+and [the integration convention](CODING_STANDARDS.md#integration-filename-convention).

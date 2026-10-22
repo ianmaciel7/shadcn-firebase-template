@@ -223,23 +223,149 @@ function isServerRuntimeImport(statement) {
   );
 }
 
-function hasClientRuntimeImport(source) {
-  return source.statements.some((statement) => {
-    if (!ts.isImportDeclaration(statement) || !isRuntimeImport(statement))
-      return false;
-    const module = statement.moduleSpecifier.text;
-    if (
-      /^(react-hook-form|next-themes|next\/navigation|client-only)(\/|$)/.test(
-        module,
-      )
-    )
-      return true;
-    return /(?:^|\/)use-[^/]+$/.test(module);
-  });
+function runtimeDependencySpecifier(statement) {
+  if (
+    (!ts.isImportDeclaration(statement) &&
+      !ts.isExportDeclaration(statement)) ||
+    statement.isTypeOnly ||
+    !statement.moduleSpecifier ||
+    !ts.isStringLiteral(statement.moduleSpecifier)
+  )
+    return null;
+  if (ts.isImportDeclaration(statement) && !isRuntimeImport(statement))
+    return null;
+  if (
+    ts.isExportDeclaration(statement) &&
+    statement.exportClause &&
+    ts.isNamedExports(statement.exportClause) &&
+    statement.exportClause.elements.every((part) => part.isTypeOnly)
+  )
+    return null;
+  return statement.moduleSpecifier.text;
 }
 
-export function inspectComponentRuntime(content, filename) {
+function browserNavigationImport(statement, specifier) {
+  if (
+    !["next/navigation", "@/i18n/navigation", "next-intl/navigation"].includes(
+      specifier,
+    ) ||
+    !ts.isImportDeclaration(statement)
+  )
+    return false;
+  const bindings = statement.importClause?.namedBindings;
+  return (
+    bindings &&
+    ts.isNamedImports(bindings) &&
+    bindings.elements.some(
+      (part) =>
+        !part.isTypeOnly &&
+        /^(useRouter|usePathname|useSearchParams|useSelectedLayoutSegments?)$/.test(
+          (part.propertyName ?? part.name).text,
+        ),
+    )
+  );
+}
+
+function helperModuleTarget(filename, specifier, modules) {
+  let base;
+  if (specifier.startsWith("@/")) base = `src/${specifier.slice(2)}`;
+  else if (specifier.startsWith("."))
+    base = relative(".", resolve(filename, "..", specifier))
+      .split(sep)
+      .join("/");
+  else return null;
+  return [base, `${base}.ts`, `${base}/index.ts`].find(
+    (file) => modules.has(file) && !file.endsWith(".tsx"),
+  );
+}
+
+function integrationSyntax(source) {
+  const result = { client: false, server: false, fetch: false };
+  function visit(node) {
+    if (ts.isTypeNode(node)) return;
+    if (ts.isPropertyAccessExpression(node)) {
+      const owner = node.expression.getText(source);
+      if (
+        /^(window|document|navigator|localStorage|sessionStorage|indexedDB)$/.test(
+          owner,
+        ) ||
+        (owner === "globalThis" &&
+          /^(window|document|navigator|localStorage|sessionStorage|indexedDB)$/.test(
+            node.name.text,
+          )) ||
+        (owner === "URL" &&
+          /^(createObjectURL|revokeObjectURL)$/.test(node.name.text))
+      )
+        result.client = true;
+    }
+    if (
+      ts.isCallExpression(node) &&
+      /^(fetch|globalThis\.fetch)$/.test(node.expression.getText(source))
+    )
+      result.fetch = true;
+    ts.forEachChild(node, visit);
+  }
+  visit(source);
+  return result;
+}
+
+// Follow hooks/helpers, but stop at component imports: composing an integration
+// component does not make its presenter an integration component.
+function componentIntegrations(source, filename, modules, visited = new Set()) {
+  if (visited.has(filename))
+    return { client: false, server: false, fetch: false };
+  visited.add(filename);
+  const result = integrationSyntax(source);
+  for (const statement of source.statements) {
+    const specifier = runtimeDependencySpecifier(statement);
+    if (!specifier) continue;
+    result.server ||=
+      serverImports.test(specifier) || specifier.startsWith("node:");
+    result.client ||=
+      /^(firebase(?:\/|$)|@firebase-oss\/ui-(?:react|core)(?:\/|$)|next-themes(?:\/|$)|client-only$)/.test(
+        specifier,
+      ) || browserNavigationImport(statement, specifier);
+    const target = helperModuleTarget(filename, specifier, modules);
+    if (!target) continue;
+    const child = componentIntegrations(
+      ts.createSourceFile(
+        target,
+        modules.get(target),
+        ts.ScriptTarget.Latest,
+        true,
+      ),
+      target,
+      modules,
+      visited,
+    );
+    for (const key of Object.keys(result)) result[key] ||= child[key];
+  }
+  return result;
+}
+
+function hasServerOnlyMarker(source) {
+  return source.statements.some(
+    (statement) =>
+      ts.isImportDeclaration(statement) &&
+      statement.moduleSpecifier.text === "server-only" &&
+      !statement.importClause,
+  );
+}
+
+function integrationKinds(integration, clientBoundary) {
+  return {
+    client: integration.client || (integration.fetch && clientBoundary),
+    server: integration.server || (integration.fetch && !clientBoundary),
+  };
+}
+
+export function inspectComponentRuntime(
+  content,
+  filename,
+  modules = new Map(),
+) {
   if (!isOwnedComponent(filename)) return [];
+  filename = filename.replaceAll("\\", "/");
   const source = ts.createSourceFile(
     filename,
     content,
@@ -247,28 +373,28 @@ export function inspectComponentRuntime(content, filename) {
     true,
     ts.ScriptKind.TSX,
   );
-  const stem = basename(filename.replaceAll("\\", "/"), ".tsx");
-  const client = isClientBoundary(source);
-  const server = source.statements.some(isServerRuntimeImport);
-  const needsClient = client || hasClientRuntimeImport(source);
+  const stem = basename(filename, ".tsx");
+  const clientBoundary = isClientBoundary(source);
+  const integration = componentIntegrations(source, filename, modules);
+  const { client, server } = integrationKinds(integration, clientBoundary);
   const messages = [];
-  if (needsClient && !stem.endsWith("-client"))
-    messages.push("Client components must use a -client.tsx filename.");
+  if (client && !stem.endsWith("-client"))
+    messages.push(
+      "Browser integration components must use a -client.tsx filename.",
+    );
   if (server && !stem.endsWith("-server"))
-    messages.push("Server-only components must use a -server.tsx filename.");
+    messages.push(
+      "Server integration components must use a -server.tsx filename.",
+    );
   if (stem.endsWith("-client") && !client)
-    messages.push('A -client.tsx component must declare "use client".');
-  if (stem.endsWith("-server") && client)
+    messages.push(
+      "Presentation components must not use the -client suffix; UI state, events, hooks and use client alone are not integrations.",
+    );
+  if (client && !clientBoundary)
+    messages.push('Browser integration components must declare "use client".');
+  if (stem.endsWith("-server") && clientBoundary)
     messages.push('A -server.tsx component cannot declare "use client".');
-  if (
-    stem.endsWith("-server") &&
-    !source.statements.some(
-      (statement) =>
-        ts.isImportDeclaration(statement) &&
-        statement.moduleSpecifier.text === "server-only" &&
-        !statement.importClause,
-    )
-  )
+  if (stem.endsWith("-server") && !hasServerOnlyMarker(source))
     messages.push('A -server.tsx component must import "server-only".');
   return messages.map((message) => ({
     file: filename,
@@ -1002,13 +1128,21 @@ function scan(directory) {
 
 export function checkComponents(root) {
   const files = scan(join(root, "src"));
+  const modules = new Map(
+    files
+      .filter((file) => /\.[cm]?[jt]sx?$/.test(file))
+      .map((file) => [
+        relative(root, file).split(sep).join("/"),
+        readFileSync(file, "utf8"),
+      ]),
+  );
   return files.flatMap((file) => {
     const path = relative(root, file).split(sep).join("/");
     if (!/\.[cm]?[jt]sx?$/.test(path)) return [];
-    const content = readFileSync(file, "utf8");
+    const content = modules.get(path);
     return [
       ...inspectComponentPlacement(path),
-      ...inspectComponentRuntime(content, path),
+      ...inspectComponentRuntime(content, path, modules),
       ...inspectNaming(content, path),
       ...inspectComponent(content, path),
     ];

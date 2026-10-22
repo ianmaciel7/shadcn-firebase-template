@@ -15,16 +15,16 @@ import {
   ProfileCardHeader,
   ProfileCardTitle,
 } from "./profile-card";
-import { ProfileDisplayNameField } from "./profile-display-name-field-client";
-import { ProfileEmailField } from "./profile-email-field-client";
+import { ProfileDisplayNameField } from "./profile-display-name-field";
+import { ProfileEmailField } from "./profile-email-field";
 import {
   ProfileForm,
   ProfileFormContent,
   ProfileFormFooter,
 } from "./profile-form-client";
-import { ProfileLocaleField } from "./profile-locale-field-client";
-import { ProfileSaveButton } from "./profile-save-button-client";
-import { ProfileThemeField } from "./profile-theme-field-client";
+import { ProfileLocaleField } from "./profile-locale-field";
+import { ProfileSaveButton } from "./profile-save-button";
+import { ProfileThemeField } from "./profile-theme-field";
 
 function ProfileSection() {
   const { profile, state, t } = useProfileSection();

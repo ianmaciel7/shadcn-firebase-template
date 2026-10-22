@@ -249,6 +249,7 @@ describe("owned component conventions", () => {
     expectValid(
       render(
         'import { useTranslations } from "next-intl";',
+        "type BrowserStore = typeof window.localStorage;",
         'const t = useTranslations("Auth");',
       ),
       path,
@@ -631,44 +632,64 @@ describe("component placement", () => {
   });
 });
 
-describe("component runtime naming", () => {
+describe("component integration naming", () => {
   const file = (stem) => `src/components/ui/extensions/${stem}.tsx`;
-  const messages = (content, stem) =>
-    inspectComponentRuntime(content, file(stem))
+  const messages = (content, stem, modules) =>
+    inspectComponentRuntime(content, file(stem), modules)
       .map((issue) => issue.message)
       .join(" ");
 
-  it("requires the client suffix for boundaries and client hook consumers", () => {
+  it("allows presentation with use client, state, form context, and local hooks without suffixes", () => {
+    for (const content of [
+      '"use client"; import { useState } from "react";',
+      '"use client"; import { Controller } from "react-hook-form";',
+      '"use client"; import { useField } from "./use-field";',
+      'import { useTranslations } from "next-intl";',
+      'import type { User } from "firebase/auth";',
+      'import type { Controller } from "react-hook-form";',
+    ])
+      assert.equal(messages(content, "account"), "");
     assert.match(
-      messages('"use client"; function Account() {}', "account"),
-      /-client.tsx/,
+      messages('"use client"; function Account() {}', "account-client"),
+      /Presentation components must not/,
     );
+  });
+
+  it("requires client integration naming and a client boundary", () => {
+    for (const content of [
+      '"use client"; import { signOut } from "firebase/auth";',
+      '"use client"; import { ThemeProvider } from "next-themes";',
+      '"use client"; import { useRouter as useNavigation } from "next/navigation";',
+      '"use client"; localStorage.getItem("theme");',
+      '"use client"; globalThis.localStorage.getItem("theme");',
+      '"use client"; URL.createObjectURL(file);',
+      '"use client"; fetch("https://example.com");',
+    ]) {
+      assert.match(messages(content, "account"), /-client.tsx/);
+      assert.equal(messages(content, "account-client"), "");
+    }
     assert.match(
-      messages(
-        'import { useAccount } from "../_hooks/use-account";',
-        "account",
-      ),
-      /-client.tsx/,
-    );
-    assert.match(
-      messages('import { Controller } from "react-hook-form";', "account"),
-      /-client.tsx/,
-    );
-    assert.match(
-      messages("function Account() {}", "account-client"),
+      messages('import { signOut } from "firebase/auth";', "account-client"),
       /declare "use client"/,
     );
     assert.equal(
-      messages('"use client"; function Account() {}', "account-client"),
+      messages('import { redirect } from "next/navigation";', "account"),
       "",
     );
   });
 
-  it("requires server suffixes and server-only protection", () => {
-    assert.match(
-      messages('import { getLocale } from "next-intl/server";', "account"),
-      /-server.tsx/,
-    );
+  it("requires server integration naming and server-only protection", () => {
+    for (const content of [
+      'import { getLocale } from "next-intl/server";',
+      'import { readFile } from "node:fs";',
+      'fetch("https://example.com");',
+    ]) {
+      assert.match(messages(content, "account"), /-server.tsx/);
+      assert.equal(
+        messages(`import "server-only";${content}`, "account-server"),
+        "",
+      );
+    }
     assert.match(
       messages("function Account() {}", "account-server"),
       /import "server-only"/,
@@ -677,39 +698,100 @@ describe("component runtime naming", () => {
       messages('"use client"; import "server-only";', "account-server"),
       /cannot declare/,
     );
+  });
+
+  it("follows hook implementations and ignores type imports and component children", () => {
+    const modules = new Map([
+      [
+        "src/components/ui/extensions/use-account.ts",
+        'import { load } from "@/lib/account"; export function useAccount() { return load(); }',
+      ],
+      [
+        "src/lib/account.ts",
+        'import { onAuthStateChanged } from "firebase/auth";',
+      ],
+      [
+        "src/components/ui/extensions/pure-hook.ts",
+        'import type { User } from "firebase/auth";',
+      ],
+      [
+        "src/components/ui/extensions/details-client.tsx",
+        '"use client"; localStorage.getItem("x");',
+      ],
+    ]);
+    assert.match(
+      messages(
+        '"use client"; import { useAccount } from "./use-account";',
+        "account",
+        modules,
+      ),
+      /-client.tsx/,
+    );
     assert.equal(
       messages(
-        'import "server-only"; import { getLocale } from "next-intl/server";',
-        "account-server",
+        '"use client"; import { useAccount } from "./use-account";',
+        "account-client",
+        modules,
+      ),
+      "",
+    );
+    assert.equal(
+      messages(
+        '"use client"; import { pure } from "./pure-hook";',
+        "account",
+        modules,
+      ),
+      "",
+    );
+    assert.equal(
+      messages(
+        'import { Details } from "./details-client";',
+        "account",
+        modules,
       ),
       "",
     );
   });
 
-  it("allows shared presentation, type-only imports and excludes registry/route files", () => {
+  it("handles helper cycles and re-exports, including server integration evidence", () => {
+    const modules = new Map([
+      [
+        "src/components/ui/extensions/use-account.ts",
+        'export { load } from "@/lib/account";',
+      ],
+      [
+        "src/lib/account.ts",
+        'import "../components/ui/extensions/use-account"; import { readFile } from "node:fs";',
+      ],
+    ]);
+    assert.match(
+      messages('import { load } from "./use-account";', "account", modules),
+      /-server.tsx/,
+    );
     assert.equal(
       messages(
-        'import type { User } from "firebase/auth"; function Account() {}',
-        "account",
+        'import "server-only"; import { load } from "./use-account";',
+        "account-server",
+        modules,
       ),
       "",
     );
-    assert.equal(
-      messages('import type { Controller } from "react-hook-form";', "account"),
-      "",
-    );
-    assert.equal(
-      messages('import { useTranslations } from "next-intl";', "account"),
-      "",
-    );
+  });
+
+  it("excludes registry source, framework files and tests", () => {
     for (const path of [
       "src/app/error.tsx",
       "src/components/firebase/oauth-button.tsx",
       "src/components/ui/button.tsx",
       file("account-client.test"),
-    ]) {
-      assert.deepEqual(inspectComponentRuntime('"use client";', path), []);
-    }
+    ])
+      assert.deepEqual(
+        inspectComponentRuntime(
+          '"use client"; localStorage.getItem("x");',
+          path,
+        ),
+        [],
+      );
   });
 });
 

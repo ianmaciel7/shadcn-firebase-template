@@ -25,11 +25,18 @@ from application naming checks. Application-owned extensions under
   `*-dialog`, `*-header`, `*-button`, `*-table`, `*-list`, `*-provider`,
   `*-gate`, `*-flow`, or `*-content`. This is **not** a closed list.
   `Flow` specifically denotes navigation or application flow wiring.
-- Use `-client.tsx` for owned client components, `-server.tsx` for owned
-  server-only components, and no runtime suffix for shared presentation.
-  Keep semantic exports and prop types unchanged: `ProfileForm` and
-  `ProfileFormProps` live in `profile-form-client.tsx`.
-- Client files declare `"use client"`; server files import `"server-only"`.
+- Reserve `-client.tsx` for browser integrations and `-server.tsx` for server
+  integrations. Presentation components keep no suffix, including interactive
+  presentation that declares `"use client"`. Keep semantic exports and prop
+  types unchanged, such as `ProfileForm` and `ProfileFormProps`.
+- Integrations own application data, persistence, authentication, navigation or
+  platform access, directly or through focused hooks/helpers. Examples include
+  Firebase, browser storage, object URLs, theme persistence and external fetches.
+  React state, Effects, events, React Hook Form context, translations, or the
+  presence/name of a custom hook alone do not justify an integration suffix.
+- Browser integration entrypoints declare `"use client"`; server integration
+  entrypoints import `"server-only"`. Interactive presentation also uses client
+  boundaries where required. Unsuffixed does not mean server-compatible.
   Do not use `"use server"` to classify ordinary Server Components.
   Prohibit generic implementation suffixes `-component` and `-ui`.
 - Server Components can fetch data and render Client Components; only
@@ -46,16 +53,26 @@ from application naming checks. Application-owned extensions under
 
 `pnpm check:components` runs self-tests and validates all owned
 `src/app/**/_components/**/*.tsx` and `src/components/**/*.tsx` files,
-except generated registry trees and test/story files. Runtime naming checks require suffixes for client boundaries, local `use-*`
-hook imports, React Hook Form, next-themes, navigation and client-only imports,
-and direct server-only API imports. Type-only imports do not classify runtime.
-They verify client directives and server-only markers. This is a syntax guard;
-Next.js remains responsible for the complete module graph. Manual review must
-classify async server fetching, indirect SDK dependencies and browser APIs.
-Registry output and mandatory Next.js filenames retain their exclusions.
-
-It is included in
+except generated registry trees and test/story files. It is included in
 `verify:fast` and `verify:static`, making it mandatory in CI.
+
+Integration checks follow static runtime imports/re-exports through local `.ts`
+hooks/helpers (`@/` and relative imports), with cycle protection. They stop at
+component imports: composing an integration child does not classify its parent.
+Type-only imports, React UI hooks, React Hook Form and client directives alone
+are not integration evidence. Known evidence includes Firebase, next-themes,
+browser navigation hooks, browser globals/object URLs, fetch calls, server APIs,
+Node imports and explicit `client-only`/`server-only` markers. Fetch is classified
+using the owning component boundary, not whether its URL is external.
+
+The guard requires matching suffixes and boundaries for recognized integrations
+and rejects `-client` on presentation-only modules. Unknown browser SDKs can use
+`client-only` in their adapter to declare the dependency explicitly. This is a
+conservative module-level syntax check, not symbol-level data-flow analysis.
+Dynamic imports, computed browser access, aliases of globals, third-party SDK
+internals and hooks implemented in `.tsx` require manual review. Next.js remains
+responsible for the complete Server/Client graph. Native boundary checks and
+existing composition/form/field guards remain active.
 
 ## Official references
 
@@ -73,7 +90,7 @@ Use `src/components/ui/card.tsx`, `button.tsx` and `field.tsx` as reference impl
 - Forward applicable `className` and `...props` to the underlying component; use `cn(..., className)` for application-specific styles. Do not blindly spread HTML attributes into `useForm`.
 - Use `children` for genuine component composition, as in `Card` and `FieldGroup`. A compound `ProfileForm` can accept independently declared field components via `children` and provide `FormProvider` context.
 - Keep application-owned Card adapters **composable**: `ProfileCard`, `ProfileCardHeader`, `ProfileCardTitle`, `ProfileCardDescription` and `ProfileCardContent` each forward native Card primitive props and `children`; `ProfileSection` assembles data-backed form content and handles loading/error states. `ProfileFormContent` provides `FieldGroup`, not a second `CardContent`. The form content/footer remain children of the same native `<form>`. Do not confuse an application view that renders a Card with a Card primitive wrapper.
-- Fields connected via `Controller name="displayName"` must use the semantically matching component/file name `ProfileDisplayNameField` / `profile-display-name-field-client.tsx`. The component may expose a friendly display label without renaming the Firebase field.
+- Fields connected via `Controller name="displayName"` must use the semantically matching component/file name `ProfileDisplayNameField` / `profile-display-name-field.tsx`. The component may expose a friendly display label without renaming the Firebase field.
 - Prefer narrow component props; do not hand `ProfileForm` or `ProfileAvatarField` the entire profile controller as a `profile` prop.
 - `FieldGroup`, `FieldSet`, `Field` and `Controller` are real primitives/API integrations; do not introduce arbitrary *Fields wrapper components solely for visual grouping.
 - The family-root and root-prefixed-part convention applies to every owned module, including Server and Client Components. The profile Card and Form retain exact-part guards on top of the general contract. Upstream shadcn/ui files also export related primitives together; generated registries remain unchanged.
@@ -111,12 +128,11 @@ Export aliases, named function/class expressions, enums and type parameters also
 owns the explanation, examples, and Server/Client distinctions for all owned
 components. [Guard coverage](../../CODING_STANDARDS.md#composition-guard-coverage)
 defines the automatically enforced subset and its limitations. A module without
-`"use client"` may still belong to a client import graph. Shared transitive
-dependencies keep their unsuffixed names and need no directive. Owned modules
-with client-specific responsibilities use `-client.tsx` and declare the
-directive, even when imported by another client component. Do not invent parts
-for simple components. Compound parts
-use separate named exports instead of static properties on the root function.
+`"use client"` may still belong to a client import graph. Presentation modules
+keep unsuffixed names, whether interactive or compatible with both environments.
+Integration responsibilities determine suffixes; directives determine boundaries.
+Do not invent parts for simple components. Compound parts use separate named
+exports instead of static properties on the root function.
 
 ## Owned component placement
 
