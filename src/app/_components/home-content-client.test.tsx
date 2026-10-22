@@ -42,7 +42,7 @@ describe("home session", () => {
     expect(screen.queryByRole("link", { name: en.Home.getStarted })).toBeNull();
     expect(screen.queryByRole("heading", { level: 1 })).toBeNull();
     expect(screen.getByRole("status").textContent).toBe(en.Home.loading);
-    expect(screen.queryByRole("img", { name: "Next.js logo" })).toBeNull();
+    expect(screen.queryByRole("presentation")).toBeNull();
     act(() => mocks.subscribe.mock.calls[0][1](null));
     expect(
       screen
@@ -53,7 +53,7 @@ describe("home session", () => {
       screen.getByRole("link", { name: en.Home.signIn }).getAttribute("href"),
     ).toBe("/sign-in");
     expect(screen.queryByRole("status")).toBeNull();
-    expect(screen.getByRole("img", { name: "Next.js logo" })).toBeDefined();
+    expect(screen.getByRole("presentation")).toBeDefined();
   });
   it("personalizes the home and returns to visitor actions after sign out", () => {
     const { unmount } = renderHome();

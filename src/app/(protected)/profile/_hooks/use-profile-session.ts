@@ -51,7 +51,7 @@ export function useProfileSession() {
       })
       .catch((cause) => {
         console.error(cause);
-        if (active) setError(t("profileSaveError"));
+        if (active) setError(t("profileLoadError"));
       })
       .finally(() => {
         if (active) setReadyUid(uid);

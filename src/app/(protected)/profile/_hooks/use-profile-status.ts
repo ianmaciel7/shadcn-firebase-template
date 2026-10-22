@@ -26,7 +26,7 @@ export function useProfileStatus(
       isLoading: false as const,
       isHidden: false as const,
       status: "error" as const,
-      message: error ?? t("profileSaveError"),
+      message: error ?? t("profileLoadError"),
     };
   return {
     isError: false as const,

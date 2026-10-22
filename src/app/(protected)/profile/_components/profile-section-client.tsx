@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Loading } from "@/components/ui/extensions/loading";
 import { FieldGroup } from "@/components/ui/field";
 import { useProfileSection } from "../_hooks/use-profile-section";
@@ -73,16 +73,16 @@ function ProfileSection() {
           <ProfileCardFooter>
             <ProfileFormFooter>
               <ProfileSaveButton />
-              <Button
-                variant="link"
-                size="sm"
-                nativeButton={false}
-                role="link"
-                render={<Link href="/" />}
-                className="w-full text-xs"
+              <Link
+                href="/"
+                className={buttonVariants({
+                  variant: "link",
+                  size: "sm",
+                  className: "w-full text-xs",
+                })}
               >
                 {t("backToHome")}
-              </Button>
+              </Link>
             </ProfileFormFooter>
           </ProfileCardFooter>
         </ProfileForm>
