@@ -1,6 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ProtectedGate } from "./protected-gate";
+import { ProtectedGate } from "./protected-gate-client";
 
 const mocks = vi.hoisted(() => ({
   router: { replace: vi.fn() },

@@ -16,7 +16,7 @@ import { useForm, FormProvider, Controller } from "react-hook-form";
 import { Policies } from "@/components/firebase/policies";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/loading/loading-indicator";
+import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 

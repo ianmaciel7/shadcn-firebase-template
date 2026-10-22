@@ -8,7 +8,7 @@ These are **repository conventions**, not filename rules prescribed by Next.js o
 | --- | --- | --- |
 | Runtime | Import graphs determine membership; `"use client"` declares a boundary, while a shared module can compile in both graphs | `ProfileCard` may participate in a client subtree without its own directive |
 | Responsibility | Describe the composition or behavior, not its runtime | `ProfileCard`, `ProfileForm`, `ProfileAvatarField`, `AuthProvider`, `ProtectedGate`, `SignInAuthFlow` |
-| Placement | Colocate route components in private `_components/`, hooks in `_hooks/` and shared components in `src/components/` | App Router private folders do not become routes |
+| Placement | Colocate route components in private `_components/`, hooks in `_hooks/` and shared components in `src/components/ui/extensions/` | App Router private folders do not become routes |
 
 The shadcn primitives live under `src/components/ui/`; Firebase registry output
 lives under `src/components/firebase/`; generated AI Elements live under
@@ -25,10 +25,13 @@ from application naming checks. Application-owned extensions under
   `*-dialog`, `*-header`, `*-button`, `*-table`, `*-list`, `*-provider`,
   `*-gate`, `*-flow`, or `*-content`. This is **not** a closed list.
   `Flow` specifically denotes navigation or application flow wiring.
-- Prohibit generic runtime/implementation suffixes: `-client`,
-  `-server`, `-component`, `-ui`. The Next.js `"use client"` directive
-  defines the actual client boundary, including transitive imports.
-  Components inside the client graph do not each need their own directive.
+- Use `-client.tsx` for owned client components, `-server.tsx` for owned
+  server-only components, and no runtime suffix for shared presentation.
+  Keep semantic exports and prop types unchanged: `ProfileForm` and
+  `ProfileFormProps` live in `profile-form-client.tsx`.
+- Client files declare `"use client"`; server files import `"server-only"`.
+  Do not use `"use server"` to classify ordinary Server Components.
+  Prohibit generic implementation suffixes `-component` and `-ui`.
 - Server Components can fetch data and render Client Components; only
   browser-interactive entrypoints need explicit client boundaries.
   A `"use client"` module must not directly import server-only APIs
@@ -43,7 +46,15 @@ from application naming checks. Application-owned extensions under
 
 `pnpm check:components` runs self-tests and validates all owned
 `src/app/**/_components/**/*.tsx` and `src/components/**/*.tsx` files,
-except generated registry trees and test/story files. It is included in
+except generated registry trees and test/story files. Runtime naming checks require suffixes for client boundaries, local `use-*`
+hook imports, React Hook Form, next-themes, navigation and client-only imports,
+and direct server-only API imports. Type-only imports do not classify runtime.
+They verify client directives and server-only markers. This is a syntax guard;
+Next.js remains responsible for the complete module graph. Manual review must
+classify async server fetching, indirect SDK dependencies and browser APIs.
+Registry output and mandatory Next.js filenames retain their exclusions.
+
+It is included in
 `verify:fast` and `verify:static`, making it mandatory in CI.
 
 ## Official references
@@ -62,7 +73,7 @@ Use `src/components/ui/card.tsx`, `button.tsx` and `field.tsx` as reference impl
 - Forward applicable `className` and `...props` to the underlying component; use `cn(..., className)` for application-specific styles. Do not blindly spread HTML attributes into `useForm`.
 - Use `children` for genuine component composition, as in `Card` and `FieldGroup`. A compound `ProfileForm` can accept independently declared field components via `children` and provide `FormProvider` context.
 - Keep application-owned Card adapters **composable**: `ProfileCard`, `ProfileCardHeader`, `ProfileCardTitle`, `ProfileCardDescription` and `ProfileCardContent` each forward native Card primitive props and `children`; `ProfileSection` assembles data-backed form content and handles loading/error states. `ProfileFormContent` provides `FieldGroup`, not a second `CardContent`. The form content/footer remain children of the same native `<form>`. Do not confuse an application view that renders a Card with a Card primitive wrapper.
-- Fields connected via `Controller name="displayName"` must use the semantically matching component/file name `ProfileDisplayNameField` / `profile-display-name-field.tsx`. The component may expose a friendly display label without renaming the Firebase field.
+- Fields connected via `Controller name="displayName"` must use the semantically matching component/file name `ProfileDisplayNameField` / `profile-display-name-field-client.tsx`. The component may expose a friendly display label without renaming the Firebase field.
 - Prefer narrow component props; do not hand `ProfileForm` or `ProfileAvatarField` the entire profile controller as a `profile` prop.
 - `FieldGroup`, `FieldSet`, `Field` and `Controller` are real primitives/API integrations; do not introduce arbitrary *Fields wrapper components solely for visual grouping.
 - The family-root and root-prefixed-part convention applies to every owned module, including Server and Client Components. The profile Card and Form retain exact-part guards on top of the general contract. Upstream shadcn/ui files also export related primitives together; generated registries remain unchanged.
@@ -100,6 +111,23 @@ Export aliases, named function/class expressions, enums and type parameters also
 owns the explanation, examples, and Server/Client distinctions for all owned
 components. [Guard coverage](../../CODING_STANDARDS.md#composition-guard-coverage)
 defines the automatically enforced subset and its limitations. A module without
-`"use client"` may still belong to a client import graph; do not add directives
-to every transitive child or invent parts for simple components. Compound parts
+`"use client"` may still belong to a client import graph. Shared transitive
+dependencies keep their unsuffixed names and need no directive. Owned modules
+with client-specific responsibilities use `-client.tsx` and declare the
+directive, even when imported by another client component. Do not invent parts
+for simple components. Compound parts
 use separate named exports instead of static properties on the root function.
+
+## Owned component placement
+
+Place shared application components in `src/components/ui/extensions/` and
+route-private components in `src/app/**/_components/`. For example,
+`LoadingIndicator` belongs alongside `Loading` in `ui/extensions` because both
+route components and Firebase UI consume it. Do not create parallel application
+component folders such as `src/components/loading/`.
+
+`pnpm check:components` rejects JavaScript and TypeScript source files (including
+colocated tests and barrel files) outside the `ui`, `firebase`, and `ai-elements`
+registry trees under `src/components`. Existing registry trees remain allowed;
+their generated source retains its existing exclusions. This is repository
+policy, not a Next.js requirement.

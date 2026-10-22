@@ -36,7 +36,7 @@ describe("component composition across server and client graphs", () => {
       "src/app/account/_components/account-card.tsx": adapter(
         "return <Surface />;",
       ),
-      "src/components/account-card.tsx": `"use client";${adapter("return <Surface />;")}`,
+      "src/components/ui/extensions/client/account-card-client.tsx": `"use client";${adapter("return <Surface />;")}`,
       "src/components/ui/extensions/account-card.tsx": adapter(
         "return <Surface />;",
       ),
@@ -297,5 +297,26 @@ describe("component composition across server and client graphs", () => {
       '"use client"; import {} from "server-only"; function AccountCard() { return <div />; } export { AccountCard };',
       /server-only/,
     );
+  });
+});
+
+describe("repository runtime naming enforcement", () => {
+  it("reports an unsuffixed client component during a full source scan", () => {
+    const root = mkdtempSync(join(tmpdir(), "component-runtime-"));
+    const file = "src/components/ui/extensions/account-card.tsx";
+    try {
+      const target = join(root, file);
+      mkdirSync(dirname(target), { recursive: true });
+      writeFileSync(
+        target,
+        `"use client";${adapter("return <Surface {...props} />;")}`,
+      );
+      const findings = checkComponents(root);
+      assert.equal(findings.length, 1);
+      assert.equal(findings[0].file, file);
+      assert.match(findings[0].message, /-client.tsx/);
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });

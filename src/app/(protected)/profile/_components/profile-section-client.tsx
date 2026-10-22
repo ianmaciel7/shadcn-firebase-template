@@ -6,7 +6,7 @@ import { Loading } from "@/components/ui/extensions/loading";
 import { FieldGroup } from "@/components/ui/field";
 import { useProfileSection } from "../_hooks/use-profile-section";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
-import { ProfileAvatarField } from "./profile-avatar-field";
+import { ProfileAvatarField } from "./profile-avatar-field-client";
 import {
   ProfileCard,
   ProfileCardContent,
@@ -15,16 +15,16 @@ import {
   ProfileCardHeader,
   ProfileCardTitle,
 } from "./profile-card";
-import { ProfileDisplayNameField } from "./profile-display-name-field";
-import { ProfileEmailField } from "./profile-email-field";
+import { ProfileDisplayNameField } from "./profile-display-name-field-client";
+import { ProfileEmailField } from "./profile-email-field-client";
 import {
   ProfileForm,
   ProfileFormContent,
   ProfileFormFooter,
-} from "./profile-form";
-import { ProfileLocaleField } from "./profile-locale-field";
-import { ProfileSaveButton } from "./profile-save-button";
-import { ProfileThemeField } from "./profile-theme-field";
+} from "./profile-form-client";
+import { ProfileLocaleField } from "./profile-locale-field-client";
+import { ProfileSaveButton } from "./profile-save-button-client";
+import { ProfileThemeField } from "./profile-theme-field-client";
 
 function ProfileSection() {
   const { profile, state, t } = useProfileSection();

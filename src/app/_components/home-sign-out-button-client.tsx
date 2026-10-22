@@ -1,8 +1,8 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { buttonVariants } from "@/components/ui/button";
+import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
 import { useHomeSignOutButton } from "../_hooks/use-home-sign-out-button";
 
 type HomeSignOutButtonProps = ComponentProps<"div">;

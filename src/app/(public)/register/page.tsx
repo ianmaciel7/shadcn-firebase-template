@@ -1,4 +1,4 @@
-import { RegisterAuthFlow } from "./_components/register-auth-flow";
+import { RegisterAuthFlow } from "./_components/register-auth-flow-client";
 
 export const instant = false;
 

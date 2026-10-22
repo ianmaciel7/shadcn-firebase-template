@@ -5,7 +5,8 @@ import ts from "typescript";
 import { checkComponentComposition } from "./check-component-composition.mjs";
 
 const kebabCase = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/;
-const environmentSuffix = /-(client|server|component|ui)$/;
+const environmentSuffix = /-(component|ui)$/;
+const semanticStem = (stem) => stem.replace(/-(client|server)$/, "");
 const serverImports =
   /^(next\/(headers|cache|server)|next-intl\/server|server-only|firebase-admin)(\/|$)/;
 
@@ -82,10 +83,7 @@ function checkFileName(source, stem, report) {
     report(source, "Component filename must be kebab-case.");
   }
   if (environmentSuffix.test(stem)) {
-    report(
-      source,
-      "Name by semantic role, never by Client/Server/Component/UI.",
-    );
+    report(source, "Name by semantic role, never by Component/UI.");
   }
 }
 
@@ -106,14 +104,16 @@ const profileFormParts = [
 ];
 
 function expectedComponentNames(source, stem) {
-  const path = source.fileName.replaceAll("\\", "/");
+  const path = source.fileName
+    .replaceAll("\\", "/")
+    .replace(/-(client|server)\.tsx$/, ".tsx");
   if (path.endsWith("/profile/_components/profile-card.tsx")) {
     return profileCardParts;
   }
   if (path.endsWith("/profile/_components/profile-form.tsx")) {
     return profileFormParts;
   }
-  const root = pascalCase(stem);
+  const root = pascalCase(semanticStem(stem));
   const parts = componentExports(source).filter(
     (name) => name.startsWith(root) && /^[A-Z]/.test(name.slice(root.length)),
   );
@@ -218,8 +218,64 @@ function isServerRuntimeImport(statement) {
     ts.isImportDeclaration(statement) &&
     isRuntimeImport(statement) &&
     ts.isStringLiteral(statement.moduleSpecifier) &&
-    serverImports.test(statement.moduleSpecifier.text)
+    (serverImports.test(statement.moduleSpecifier.text) ||
+      /-server(?:\.[cm]?[jt]sx?)?$/.test(statement.moduleSpecifier.text))
   );
+}
+
+function hasClientRuntimeImport(source) {
+  return source.statements.some((statement) => {
+    if (!ts.isImportDeclaration(statement) || !isRuntimeImport(statement))
+      return false;
+    const module = statement.moduleSpecifier.text;
+    if (
+      /^(react-hook-form|next-themes|next\/navigation|client-only)(\/|$)/.test(
+        module,
+      )
+    )
+      return true;
+    return /(?:^|\/)use-[^/]+$/.test(module);
+  });
+}
+
+export function inspectComponentRuntime(content, filename) {
+  if (!isOwnedComponent(filename)) return [];
+  const source = ts.createSourceFile(
+    filename,
+    content,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX,
+  );
+  const stem = basename(filename.replaceAll("\\", "/"), ".tsx");
+  const client = isClientBoundary(source);
+  const server = source.statements.some(isServerRuntimeImport);
+  const needsClient = client || hasClientRuntimeImport(source);
+  const messages = [];
+  if (needsClient && !stem.endsWith("-client"))
+    messages.push("Client components must use a -client.tsx filename.");
+  if (server && !stem.endsWith("-server"))
+    messages.push("Server-only components must use a -server.tsx filename.");
+  if (stem.endsWith("-client") && !client)
+    messages.push('A -client.tsx component must declare "use client".');
+  if (stem.endsWith("-server") && client)
+    messages.push('A -server.tsx component cannot declare "use client".');
+  if (
+    stem.endsWith("-server") &&
+    !source.statements.some(
+      (statement) =>
+        ts.isImportDeclaration(statement) &&
+        statement.moduleSpecifier.text === "server-only" &&
+        !statement.importClause,
+    )
+  )
+    messages.push('A -server.tsx component must import "server-only".');
+  return messages.map((message) => ({
+    file: filename,
+    line: 1,
+    column: 1,
+    message,
+  }));
 }
 
 function checkClientImports(source, report) {
@@ -801,6 +857,25 @@ function checkHookResponsibilities(source, report) {
   }
 }
 
+export function inspectComponentPlacement(filename) {
+  const path = filename.replaceAll("\\", "/");
+  if (
+    !path.startsWith("src/components/") ||
+    !/\.[cm]?[jt]sx?$/.test(path) ||
+    /^src\/components\/(ui|firebase|ai-elements)\//.test(path)
+  )
+    return [];
+  return [
+    {
+      file: filename,
+      line: 1,
+      column: 1,
+      message:
+        "Place shared application components in src/components/ui/extensions/ or route-private components in src/app/**/_components/; other src/components directories are reserved for registry source.",
+    },
+  ];
+}
+
 export function inspectComponent(content, filename) {
   if (!isOwnedComponent(filename)) return [];
   const source = ts.createSourceFile(
@@ -822,8 +897,9 @@ export function inspectComponent(content, filename) {
       message,
     });
   };
-  const stem = basename(filename, ".tsx");
-  checkFileName(source, stem, report);
+  const fileStem = basename(filename.replaceAll("\\", "/"), ".tsx");
+  const stem = semanticStem(fileStem);
+  checkFileName(source, fileStem, report);
   checkPrimaryExport(source, stem, report);
   checkExportStyle(source, report);
   checkProps(source, pascalCase(stem), report);
@@ -928,9 +1004,11 @@ export function checkComponents(root) {
   const files = scan(join(root, "src"));
   return files.flatMap((file) => {
     const path = relative(root, file).split(sep).join("/");
-    if (!/\.tsx?$/.test(path)) return [];
+    if (!/\.[cm]?[jt]sx?$/.test(path)) return [];
     const content = readFileSync(file, "utf8");
     return [
+      ...inspectComponentPlacement(path),
+      ...inspectComponentRuntime(content, path),
       ...inspectNaming(content, path),
       ...inspectComponent(content, path),
     ];

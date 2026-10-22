@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type { ComponentProps } from "react";
-import { LoadingIndicator } from "@/components/loading/loading-indicator";
+import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
 import { useHomeContent } from "../_hooks/use-home-content";
 import { AuthenticatedHome } from "./authenticated-home";
 import { GuestHome } from "./guest-home";

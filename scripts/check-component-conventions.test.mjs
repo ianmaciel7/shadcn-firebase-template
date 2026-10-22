@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   inspectComponent,
+  inspectComponentPlacement,
+  inspectComponentRuntime,
   inspectNaming,
   isOwnedComponent,
 } from "./check-component-conventions.mjs";
@@ -80,16 +82,19 @@ describe("owned component conventions", () => {
     );
   });
 
-  it("rejects runtime suffixes in component names", () => {
-    expectInvalid(
-      "function ProfileClient() { return <Card />; } export { ProfileClient };",
-      /semantic role/,
-      "src/app/(protected)/profile/_components/profile-client.tsx",
+  it("allows runtime filename suffixes without changing semantic exports", () => {
+    expectValid(
+      '"use client"; function Account(props) { return <div {...props} />; } export { Account };',
+      "src/app/_components/account-client.tsx",
+    );
+    expectValid(
+      'import "server-only"; function Account(props) { return <div {...props} />; } export { Account };',
+      "src/app/_components/account-server.tsx",
     );
     expectInvalid(
-      "function AccountServer() { return <div />; } export { AccountServer };",
+      "function AccountUi() { return <div />; } export { AccountUi };",
       /semantic role/,
-      "src/app/_components/account-server.tsx",
+      "src/app/_components/account-ui.tsx",
     );
   });
 
@@ -590,6 +595,143 @@ describe("owned component conventions", () => {
       "function ProfileForm() { return <FormProvider><form><Card>{children}</Card></form></FormProvider>; } export { ProfileForm };",
       /delegate the Card root to ProfileCard/,
       path,
+    );
+  });
+});
+
+describe("component placement", () => {
+  it("rejects standalone and nested shared application files, including Windows paths", () => {
+    for (const file of [
+      "src/components/loading/loading-indicator.tsx",
+      "src/components/loading-indicator.tsx",
+      "src/components/loading/loading.test.tsx",
+      "src/components/loading/index.ts",
+      "src/components/loading/indicator.jsx",
+      "src\\components\\loading\\loading-indicator.tsx",
+    ]) {
+      assert.match(
+        inspectComponentPlacement(file)[0]?.message ?? "",
+        /ui\/extensions/,
+      );
+    }
+  });
+
+  it("allows extensions, route-private files and existing registry trees", () => {
+    for (const file of [
+      "src/components/ui/extensions/loading-indicator.tsx",
+      "src/components/ui/extensions/loading.test.tsx",
+      "src/app/_components/route-loading.tsx",
+      "src/app/(protected)/profile/_components/profile-section.tsx",
+      "src/components/ui/spinner.tsx",
+      "src/components/firebase/oauth-button.tsx",
+      "src/components/ai-elements/message.tsx",
+      "src/hooks/use-loading.ts",
+    ])
+      assert.deepEqual(inspectComponentPlacement(file), []);
+  });
+});
+
+describe("component runtime naming", () => {
+  const file = (stem) => `src/components/ui/extensions/${stem}.tsx`;
+  const messages = (content, stem) =>
+    inspectComponentRuntime(content, file(stem))
+      .map((issue) => issue.message)
+      .join(" ");
+
+  it("requires the client suffix for boundaries and client hook consumers", () => {
+    assert.match(
+      messages('"use client"; function Account() {}', "account"),
+      /-client.tsx/,
+    );
+    assert.match(
+      messages(
+        'import { useAccount } from "../_hooks/use-account";',
+        "account",
+      ),
+      /-client.tsx/,
+    );
+    assert.match(
+      messages('import { Controller } from "react-hook-form";', "account"),
+      /-client.tsx/,
+    );
+    assert.match(
+      messages("function Account() {}", "account-client"),
+      /declare "use client"/,
+    );
+    assert.equal(
+      messages('"use client"; function Account() {}', "account-client"),
+      "",
+    );
+  });
+
+  it("requires server suffixes and server-only protection", () => {
+    assert.match(
+      messages('import { getLocale } from "next-intl/server";', "account"),
+      /-server.tsx/,
+    );
+    assert.match(
+      messages("function Account() {}", "account-server"),
+      /import "server-only"/,
+    );
+    assert.match(
+      messages('"use client"; import "server-only";', "account-server"),
+      /cannot declare/,
+    );
+    assert.equal(
+      messages(
+        'import "server-only"; import { getLocale } from "next-intl/server";',
+        "account-server",
+      ),
+      "",
+    );
+  });
+
+  it("allows shared presentation, type-only imports and excludes registry/route files", () => {
+    assert.equal(
+      messages(
+        'import type { User } from "firebase/auth"; function Account() {}',
+        "account",
+      ),
+      "",
+    );
+    assert.equal(
+      messages('import type { Controller } from "react-hook-form";', "account"),
+      "",
+    );
+    assert.equal(
+      messages('import { useTranslations } from "next-intl";', "account"),
+      "",
+    );
+    for (const path of [
+      "src/app/error.tsx",
+      "src/components/firebase/oauth-button.tsx",
+      "src/components/ui/button.tsx",
+      file("account-client.test"),
+    ]) {
+      assert.deepEqual(inspectComponentRuntime('"use client";', path), []);
+    }
+  });
+});
+
+describe("runtime suffixes preserve semantic safety checks", () => {
+  it("keeps exact profile form families and field/property matching", () => {
+    expectInvalid(
+      '"use client"; function ProfileForm(props) { return <form {...props} />; } export { ProfileForm };',
+      /ProfileFormContent/,
+      "src/app/(protected)/profile/_components/profile-form-client.tsx",
+    );
+    expectInvalid(
+      '"use client"; function ProfileEmailField(props) { return <Controller name="displayName" {...props} />; } export { ProfileEmailField };',
+      /match Controller/,
+      "src/app/(protected)/profile/_components/profile-email-field-client.tsx",
+    );
+  });
+
+  it("rejects imports of local server component files from client boundaries", () => {
+    expectInvalid(
+      '"use client"; import { Account } from "./account-server"; function Details(props) { return <div {...props} />; } export { Details };',
+      /server-only/,
+      "src/app/_components/details-client.tsx",
     );
   });
 });

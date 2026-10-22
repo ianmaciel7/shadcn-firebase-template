@@ -1,3 +1,5 @@
+"use client";
+
 import type { ComponentProps } from "react";
 import { Controller } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -9,27 +11,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { isLocale, locales } from "@/i18n/routing";
-import { useProfileLocaleField } from "../_hooks/use-profile-locale-field";
+import { isThemePreference, themePreferences } from "@/lib/theme";
+import { useProfileThemeField } from "../_hooks/use-profile-theme-field";
 
-type ProfileLocaleFieldProps = ComponentProps<typeof Field>;
+type ProfileThemeFieldProps = ComponentProps<typeof Field>;
 
-function ProfileLocaleField(props: ProfileLocaleFieldProps) {
-  const { id, t, control } = useProfileLocaleField();
+function ProfileThemeField(props: ProfileThemeFieldProps) {
+  const { id, t, control } = useProfileThemeField();
 
   return (
     <Controller
-      name="locale"
+      name="theme"
       control={control}
       render={({ field, fieldState }) => (
         <Field {...props} data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor={id}>{t("languageLabel")}</FieldLabel>
+          <FieldLabel htmlFor={id}>{t("themeLabel")}</FieldLabel>
           <Select
             name={field.name}
             value={field.value}
             disabled={field.disabled}
             onValueChange={(value) => {
-              if (isLocale(value)) field.onChange(value);
+              if (isThemePreference(value)) field.onChange(value);
             }}
           >
             <SelectTrigger
@@ -40,15 +42,17 @@ function ProfileLocaleField(props: ProfileLocaleFieldProps) {
             >
               <SelectValue>
                 {(value) =>
-                  isLocale(value) ? t(`languageOptions.${value}`) : undefined
+                  isThemePreference(value)
+                    ? t(`themeOptions.${value}`)
+                    : undefined
                 }
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                {locales.map((option) => (
+                {themePreferences.map((option) => (
                   <SelectItem key={option} value={option}>
-                    {t(`languageOptions.${option}`)}
+                    {t(`themeOptions.${option}`)}
                   </SelectItem>
                 ))}
               </SelectGroup>
@@ -61,4 +65,4 @@ function ProfileLocaleField(props: ProfileLocaleFieldProps) {
   );
 }
 
-export { ProfileLocaleField };
+export { ProfileThemeField };

@@ -2,7 +2,7 @@
 
 import { useUI, type OAuthButtonProps, useSignInWithProvider } from "@firebase-oss/ui-react";
 import { Button } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/loading/loading-indicator";
+import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
 
 export type { OAuthButtonProps };
 
