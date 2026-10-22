@@ -30,6 +30,7 @@
     "system": "Sistema"
   },
   "Auth": {
+    "usageLogError": "Não foi possível registrar o acesso. Verifique sua conexão e recarregue para tentar novamente.",
     "loading": "Carregando…",
     "configurationError": "A autenticação do Firebase não está configurada. Verifique a configuração da aplicação.",
     "profileTitle": "Perfil do Usuário",

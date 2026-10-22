@@ -646,5 +646,5 @@ retain their existing contracts. Integrations stay in their current route or
 shared extension placement; no new container directory is required.
 
 See [the naming rule](.agents/rules/component-naming.md#ci-enforcement) for
-executable coverage and limits. [ADR 0013](docs/adr/0013-name-components-by-integration-responsibility.md)
-supersedes the broader runtime naming policy from ADR 0012.
+executable coverage and limits. [ADR 0016](docs/adr/0016-name-components-by-integration-responsibility.md)
+supersedes the broader runtime naming policy from ADR 0015.

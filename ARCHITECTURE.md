@@ -278,5 +278,45 @@ interactive and declare `"use client"`; names do not define React runtime.
 Integrations may delegate persistence, session or browser access to hooks.
 Presentation can compose an integration child without becoming an integration.
 Semantic exports, Next.js special files and registry source retain their names.
-See [ADR 0013](docs/adr/0013-name-components-by-integration-responsibility.md)
+See [ADR 0016](docs/adr/0016-name-components-by-integration-responsibility.md)
 and [the integration convention](CODING_STANDARDS.md#integration-filename-convention).
+
+## Usage records
+
+The protected gate calls `recordUsage` on pathname changes before releasing
+children. Profile saves call `withUsageGuard` before starting the operation.
+The Firebase callable validates authentication and an allowlist of screen and
+functionality names, then emits structured `INFO` entries using the native
+`firebase-functions/logger` SDK. Cloud Logging supplies the timestamp and
+severity. No usage documents are written to Firestore; legacy `usageLogs`
+documents are denied to browser clients.
+
+The server derives `uid` from verified callable authentication. Event fields are
+`event`, `schemaVersion`, `eventId`, `uid`, `type`, and `name`; query strings, form
+values, email addresses, and tokens are excluded. The callable response releases
+the guard; failures and the 15-second client timeout block access or execution.
+Sign-out stays independent. Logging acknowledgment confirms handler execution,
+not durable ingestion into Cloud Logging.
+
+These remain client-reported usage attempts, not authoritative proof that a
+screen was viewed or a mutation succeeded. Modified clients can bypass the UI
+guard or submit permitted events for their own identity. Firebase resource rules
+still authorize profile data. Authoritative mutation auditing requires logging
+inside server-owned operations. New functionalities must use `withUsageGuard`
+and extend the server allowlist. Development remounts can generate duplicates.
+See [logging operations](docs/logging.md) for deployment and log controls.
+
+## Next.js server error logging
+
+`src/instrumentation.ts` exports Next.js's native `onRequestError` hook. It
+emits one structured JSON line to stderr for captured server request errors,
+with severity, an event identifier, framework route template, route type, router
+kind, and an optional numeric React error digest. Raw error values, stacks,
+request paths, query strings, and headers are excluded from this custom entry.
+Next.js can also emit its own diagnostic output; this hook does not sanitize or
+replace framework logging.
+
+Cloud Run automatically collects container stderr into Cloud Logging when the
+application is hosted there. Local execution prints JSON to the terminal; other
+hosting platforms require their own log collection or forwarding. This branch
+configures neither a hosting provider nor a Cloud Logging exporter.

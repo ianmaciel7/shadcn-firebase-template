@@ -11,6 +11,7 @@ import { localeCookie } from "@/i18n/routing";
 import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase/client";
 import { writeUserPreferences } from "@/lib/firebase/firestore/user-preferences";
 import type { ProfileFormValues, ProfileValues } from "@/lib/profile";
+import { withUsageGuard } from "@/lib/usage/guard";
 
 type SavedProfile = {
   values: ProfileValues;
@@ -111,12 +112,16 @@ export function useProfileSubmit({
     if (!user || !previous) return;
 
     try {
-      const savedProfile = await saveProfile({
-        user,
-        previous,
-        values,
-        avatarFile: values.avatarFile,
-      });
+      const savedProfile = await withUsageGuard(
+        { type: "function_use", name: "profile.update" },
+        () =>
+          saveProfile({
+            user,
+            previous,
+            values,
+            avatarFile: values.avatarFile,
+          }),
+      );
       setPhotoURL(savedProfile.photoURL);
       if (savedProfile.avatarChanged) setAvatarVersion(Date.now());
       if (values.theme !== previous.theme) setTheme(values.theme);

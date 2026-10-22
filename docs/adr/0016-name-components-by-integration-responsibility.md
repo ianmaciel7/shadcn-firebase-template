@@ -1,11 +1,11 @@
-# ADR 0013: Name components by integration responsibility
+# ADR 0016: Name components by integration responsibility
 
 - **Status**: Accepted
 - **Date**: 2026-10-22
 
 ## Context
 
-ADR 0012 applied runtime suffixes to all owned client components. The user
+ADR 0015 applied runtime suffixes to all owned client components. The user
 clarified that suffixes should identify integrations with an execution
 environment, while UI and form-context presentation should keep filenames without suffixes.
 Classifying every local hook import as an integration was too broad.
@@ -27,7 +27,7 @@ static local TypeScript helper dependencies and stopping at component imports.
 Keep existing composition, field, form and framework-boundary checks. Document
 unsupported syntax and require review rather than claiming full graph analysis.
 
-This supersedes ADR 0012's classification policy. Preserve ADR 0012 as history.
+This supersedes ADR 0015's classification policy. Preserve ADR 0015 as history.
 
 ## Consequences
 

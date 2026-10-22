@@ -1,4 +1,4 @@
-# ADR 0012: Adopt component runtime suffixes
+# ADR 0015: Adopt component runtime suffixes
 
 - **Status**: Accepted
 - **Date**: 2026-10-22

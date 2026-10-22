@@ -1,4 +1,4 @@
-# ADR 0011: Consolidate owned component placement
+# ADR 0014: Consolidate owned component placement
 
 - **Status**: Accepted
 - **Date**: 2026-10-22

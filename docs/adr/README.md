@@ -19,9 +19,12 @@ original date. Read current operational details in the
 | [0008](0008-install-firebase-ui-registry.md) | Accepted (amended) | Dynamic cross-platform installer and locally owned source model for `@firebase` registry |
 | [0009](0009-integrate-firebase-authentication.md) | Accepted (amended) | Browser Firebase Authentication, emulator configuration, protected profile route, and dynamic navigation |
 | [0010](0010-use-redirect-oauth-in-electron.md) | Accepted | Environment-aware FirebaseUI OAuth strategy for Electron |
-| [0011](0011-consolidate-owned-component-placement.md) | Accepted | Shared application components in UI extensions and route-private components in private folders |
-| [0012](0012-adopt-component-runtime-suffixes.md) | Superseded in classification by 0013 | Client/server filename suffixes with shared presentation names |
-| [0013](0013-name-components-by-integration-responsibility.md) | Accepted | Integration suffixes independent of presentation runtime |
+| [0011](0011-record-authenticated-usage.md) | Superseded in storage by 0012 | Authenticated usage records |
+| [0012](0012-use-native-firebase-logging.md) | Accepted | Native Firebase usage logging |
+| [0013](0013-capture-nextjs-server-errors.md) | Accepted | Next.js server error logging |
+| [0014](0014-consolidate-owned-component-placement.md) | Accepted | Shared application components in UI extensions and route-private components in private folders |
+| [0015](0015-adopt-component-runtime-suffixes.md) | Superseded in classification by 0016 | Client/server filename suffixes with shared presentation names |
+| [0016](0016-name-components-by-integration-responsibility.md) | Accepted | Integration suffixes independent of presentation runtime |
 
 ## Current operational clarifications
 
@@ -127,3 +130,13 @@ component contracts, and theme details belong in `TOOLING.md`,
 `CODING_STANDARDS.md`, and `DESIGN.md`. Refreshing these references does not
 change the accepted records above or imply a preset, primitive-family, or
 component-source migration.
+
+- [ADR 0011: Record authenticated usage](0011-record-authenticated-usage.md)
+  adds append-only usage records to the protected screen and profile-save guards.
+
+- [ADR 0012: Use native Firebase logging](0012-use-native-firebase-logging.md)
+  supersedes ADR 0011's Firestore usage storage with Cloud Functions and native
+  Cloud Logging; the screen and functionality guards remain.
+
+- [ADR 0013: Capture Next.js server errors](0013-capture-nextjs-server-errors.md)
+  adds native request error instrumentation with structured JSON stderr output.

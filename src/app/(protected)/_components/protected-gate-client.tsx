@@ -7,12 +7,12 @@ import { useProtectedGate } from "../_hooks/use-protected-gate";
 type ProtectedGateProps = PropsWithChildren;
 
 function ProtectedGate({ children }: ProtectedGateProps) {
-  const { t, isLoading, hasError } = useProtectedGate();
+  const { t, isLoading, hasError, errorKey } = useProtectedGate();
 
   if (hasError) {
     return (
       <main className="flex min-h-svh flex-1 items-center justify-center p-6 md:p-10">
-        <p role="alert">{t("configurationError")}</p>
+        <p role="alert">{t(errorKey)}</p>
       </main>
     );
   }

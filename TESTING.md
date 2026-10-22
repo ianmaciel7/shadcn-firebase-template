@@ -224,10 +224,15 @@ not yet on a hosted runner; check the first scheduled run.
 ## First-time setup
 
 For browser authentication journeys, install the Firebase CLI and Chromium,
-then run `pnpm test:auth`. This starts the Auth Emulator with the local project
+install the Functions dependencies with `npm --prefix functions ci`, then run
+`pnpm test:auth`. This starts the Auth, Firestore, and Functions emulators with the local project
 and settings configured in `.env` (such as `FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099`
 and `NEXT_PUBLIC_FIREBASE_PROJECT_ID=local-test`) and a development server on port 3100.
-Both ports must be free. The test configuration supplies non-production Web
+Ports 9099, 8080, 5001, and 3100 must be free. The auth test server receives
+`NEXT_PUBLIC_FIREBASE_FUNCTIONS_EMULATOR_HOST` (default `127.0.0.1:5001`) so
+protected-screen and profile-save usage guards call the local Functions emulator.
+Set that variable when using a custom Functions emulator endpoint.
+The test configuration supplies non-production Web
 SDK values; no Firebase account or production credentials are needed. This
 suite is separate from the production-build Playwright suite and requires the
 Firebase CLI on PATH. It tests the emulator, not actual Google consent or email
@@ -363,3 +368,14 @@ and form-context hooks without integration suffixes, browser storage, Firebase,
 server requests, transitive helper imports, type-only imports, and composition
 of integration children. Full source scans exercise the same classifier.
 The naming rule documents syntax limits; Next.js still validates module graphs.
+
+## Application logging validation
+
+Logging changes need both the colocated Vitest guard/instrumentation tests and
+`pnpm test:logging` for callable authentication, event
+validation, and identity handling. Both `verify:fast` and `verify:static` include
+this command, so the existing CI static job runs the callable tests. A production
+Next.js build and a deployed Cloud Logging smoke test remain separate checks; mocked logger tests do not
+prove provider ingestion or IAM configuration. Native SWC loading failures can
+prevent Next.js type generation and leave `LayoutProps` unresolved in TypeScript;
+report the environment failure rather than treating those checks as passed.
