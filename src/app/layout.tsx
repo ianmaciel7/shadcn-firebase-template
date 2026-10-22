@@ -47,12 +47,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <Suspense
           fallback={
-            <main
-              lang="en"
-              className="flex min-h-svh items-center justify-center"
-            >
+            <div className="flex min-h-svh items-center justify-center">
               <LoadingIndicator />
-            </main>
+            </div>
           }
         >
           <IntlProvider>
