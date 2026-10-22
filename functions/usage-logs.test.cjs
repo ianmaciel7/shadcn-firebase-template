@@ -53,9 +53,15 @@ test("rejects spoofed identities, unknown actions, arbitrary paths and query dat
   const { handler, logs } = setup();
   for (const data of [
     null,
+    undefined,
+    42,
+    false,
     [],
     "event",
     {},
+    { type: "screen_view" },
+    { name: "/profile" },
+    { type: "screen_view", name: "/profile", extra: true },
     { type: "constructor", name: "x" },
     { type: ["screen_view"], name: "/profile" },
     { type: "screen_view", name: ["/profile"] },
