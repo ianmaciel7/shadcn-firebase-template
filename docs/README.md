@@ -17,17 +17,20 @@ language, as defined in `.agents/rules/language.md`.
 | [Contributing](../CONTRIBUTING.md) | Branch, commit, and PR conventions | Commitlint, hooks, CI |
 | [Security](../SECURITY.md) | Reporting policy and accepted dependency risk | Audit configuration and security workflow |
 | [Glossary](../GLOSSARY.md) | Agreed product vocabulary; currently pending | Adopted product terminology |
-| [Entity-relationship diagram](../DER.md) | Persistence model; currently pending | Adopted database schema and constraints |
+| [Entity-relationship diagram](../DER.md) | Pending product model and existing technical Firebase stores | Current SDK modules, Security Rules, and adopted domain constraints |
 | [Agent instructions](../AGENTS.md) | Repository-wide contributor guidance | Current guides and agent configuration |
+| [React reference](agents/react.md) | Complete official content inventory, runtime error catalog, and applicability review | Installed React/DOM/Compiler, official source revision, and lint config |
+| [Next.js reference](agents/nextjs.md) | Complete stable/current docs and error-message inventory, compatibility, and lookup workflow | Official source revisions, installed Next.js, current config |
+| [shadcn/ui reference](agents/shadcn.md) | Official documentation coverage, source inventory, and lookup workflow | Official source revision and current local configuration |
 
 ## Decisions and agent references
 
 - [ADR index](adr/README.md): accepted template architecture decisions.
-  They document the current template architecture; current versions and commands
-  belong in the guides above.
+  Accepted records preserve their original context; current versions and
+  commands belong in the guides above.
 - [Agent configuration](../.agents/README.md): two configured MCP servers,
   persistent rules, and enabled integrations.
-- [Skill inventory](../.agents/skills/README.md): five installed skills and
+- [Skill inventory](../.agents/skills/README.md): seven installed skills and
   their provenance. Supporting skill documents remain reusable references
   rather than application configuration.
 - [Domain workflow](agents/domain.md) and
@@ -37,9 +40,10 @@ language, as defined in `.agents/rules/language.md`.
 
 Update the guide that owns a changed practice in the same change as its
 implementation. Check cross-references when renaming paths, adding scripts,
-changing locale behavior, or upgrading tools. Keep template ADRs aligned with
-the current architecture; consolidate or renumber them when it improves the
-template, updating cross-references in the same change.
+changing locale behavior, or upgrading tools. Preserve accepted ADRs without
+rewriting or renumbering them. Record a changed architectural decision in a new
+ADR and update the ADR index with its supersession scope. Documentation
+clarifications and upstream reference refreshes alone do not require an ADR.
 
 For documentation changes, run:
 

@@ -8,10 +8,10 @@ repository. It is not a catalog of every runtime library; `package.json` and
 
 | Category | Tool | Version or status | Purpose | Source of truth |
 | --- | --- | --- | --- | --- |
-| Package management | pnpm | 12.11.2 | Installs dependencies and runs project commands. Do not use npm or Yarn to modify dependencies. | `package.json`, `pnpm-lock.yaml` |
+| Package management | pnpm | 12.14.0 | Installs dependencies and runs project commands. Do not use npm or Yarn to modify dependencies. | `package.json`, `pnpm-lock.yaml` |
 | Application build | Next.js | 16.4.2 | App Router framework, development server, production build, and server runtime. | `package.json`, `next.config.ts` |
 | Bundler | Turbopack | Included with Next.js | Bundles development and production builds; loads Tailwind CSS through `@tailwindcss/turbopack`. | `next.config.ts` |
-| Language | TypeScript | `^5` (5.9.3 locked) | Provides type checking and the `@/*` import alias. | `package.json`, `tsconfig.json`, `pnpm-lock.yaml` |
+| Language | TypeScript | `^5`; inspect the installed version and lockfile | Provides type checking and the `@/*` import alias. | `package.json`, `tsconfig.json`, `pnpm-lock.yaml` |
 | Compiler | React Compiler | 1.0.0 | Optimizes React components through Next.js configuration. | `package.json`, `next.config.ts` |
 | Styling | Tailwind CSS | `^4` | Generates utility CSS and is loaded by Turbopack (and by Vite for Ladle). | `package.json`, `next.config.ts`, `.ladle/vite.config.mjs`, `src/app/globals.css` |
 | Code quality | Biome | 2.5.15 | Formats code, runs lint checks, and organizes imports. | `package.json`, `biome.json` |
@@ -27,7 +27,8 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Mutation testing | Stryker with the `command` runner | 10.0.0 (see [Known limitations](#known-limitations)) | On-demand mutation analysis of selected logic; runs the unit tests once per mutant. | `stryker.config.json`, `vitest.mutation.config.mts` |
 | Unused code | Knip | 6.41.0 | Finds unused files, exports, and dependencies. | `knip.jsonc` |
 | Architecture boundaries | dependency-cruiser | 18.6.0 | Enforces layering rules and forbids dependency cycles. | `.dependency-cruiser.cjs` |
-| Structural rules | ast-grep | 0.51.0 | Enforces project conventions that need syntax awareness (currently a warning-level hint about manual memoization, per `CODING_STANDARDS.md`). Rules have snapshot tests. | `sgconfig.yml`, `.ast-grep/` |
+| Structural rules | ast-grep | 0.51.0 | Enforces form, prop, Tailwind, and route conventions, with warning-level React review hints. Rules have snapshot tests. | `sgconfig.yml`, `.ast-grep/` |
+| Component contracts | TypeScript compiler API | Uses the existing TypeScript dependency | Checks repository-specific named families and adapter forwarding through `pnpm check:components`; does not duplicate native framework diagnostics. | `scripts/check-component-conventions.mjs`, `scripts/check-component-composition.mjs`, their regression tests, `package.json` |
 | Duplication | jscpd | 5.4.1 | Reports meaningful duplicated code. | `.jscpd.json` |
 | Complexity and health | Fallow | 3.34.0 | Reports complexity, CRAP score (from real coverage), and hotspots. Route-private hooks under `src/app/**/_hooks/` are included. `.ladle/` is excluded on purpose: it is tooling glue that Ladle loads by convention. Vendored `src/components/ui/*.tsx` and `ai-elements` are excluded; custom code under `ui/extensions/` is analyzed. Dead-code, duplication, and architecture analysis stay with Knip, jscpd, and dependency-cruiser. | `.fallowrc.json` |
 | React diagnostics | React Doctor | 0.9.18 | Scans application React code for correctness, performance, and security issues. | `doctor.config.json` |
@@ -43,6 +44,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Codebase graph | Graphify | Host tool | Builds an on-demand knowledge graph; output goes to the ignored `graphify-out/`. | None |
 | Git hooks | Husky + lint-staged + Commitlint | 9.1.7 / 17.6.0 / 21.2.3 | Check staged files with Biome and validate commit messages. | `.husky/`, `package.json`, `commitlint.config.mjs` |
 | Repository integrity | pre-commit | Host tool | Runs file-integrity hooks (large files, case conflicts, JSON/YAML, merge markers). | `.pre-commit-config.yaml` |
+| Agent documentation | Seven installed skills | Project-local `save` plus six external skills | See [.agents/skills/README.md](.agents/skills/README.md) for names, provenance, and entrypoints. | `.agents/skills/`, `skills-lock.json` |
 | Agent configuration | Agents CLI | Repository configuration; CLI is externally provided | Synchronizes reusable agent skills and MCP settings (Serena, Next.js DevTools). | `.agents/agents.json`, `.agents/skills/` |
 
 ## Host prerequisites
@@ -73,8 +75,14 @@ by hand outside the hook may need the same variable.
 
 ## Package management
 
-Use [pnpm](https://pnpm.io/) `12.11.2`, as pinned by the `packageManager`
+Use [pnpm](https://pnpm.io/) `12.14.0`, as pinned by the `packageManager`
 field in `package.json`. The `pnpm-lock.yaml` file is the lockfile of record.
+pnpm 12 serializes two YAML documents in this file: package-manager dependency
+metadata first, followed by the application importers, packages, and snapshots.
+Read the complete stream when inspecting lock coverage; the first document
+alone is not evidence of a missing application dependency graph. Validate
+frozen installs with the pinned pnpm version. Documentation-only work should
+not silently resolve or upgrade dependencies.
 
 Do not approve third-party build scripts unless a reviewed dependency needs
 them for documented core functionality. ADR 0007 also prohibits approving tools
@@ -103,7 +111,7 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm check:duplicates` | jscpd. |
 | `pnpm check:structure` | ast-grep rule tests, then a scan of application code. |
 | `pnpm check:routes` | Enforce thin `page.tsx`, `layout.tsx` and `template.tsx` entrypoints with AST tests. |
-| `pnpm check:components` | Test and enforce owned component semantic names, matching named exports, props names and client/server import boundaries; registry code excluded. |
+| `pnpm check:components` | Test and enforce owned component names, family-root/part exports, primitive-adapter forwarding, static-compound restrictions, and direct client-boundary checks; registry code excluded. |
 | `pnpm check:spelling` / `pnpm check:markdown` | CSpell / markdownlint. |
 | `pnpm check:security` / `pnpm check:security:rules` | Semgrep scan of `src` (fails on findings) / tests of the Semgrep rules. Run inside a Git work tree. |
 | `pnpm check:secrets` / `pnpm audit` | Gitleaks / dependency audit. |
@@ -153,6 +161,7 @@ theming decision is recorded in ADR 0003.
 | `biome.json` | Biome formatting, linting, and custom-rule configuration. |
 | `.biome/rules/nextjs/*.grit` | GritQL source for project-specific Biome rules. |
 | `components.json` | shadcn/ui configuration and import aliases. |
+| `scripts/check-component-conventions.mjs`, `scripts/check-component-composition.mjs` | Owned component naming/family conventions and adapter forwarding; regression tests are colocated `*.test.mjs` files. |
 | `vitest.config.mts` | `unit` and `browser` projects and coverage. |
 | `vitest.mutation.config.mts` | Unit-only Vitest config used by Stryker. |
 | `playwright.config.ts` | Playwright projects, web server, and screenshot tolerance. |
@@ -183,9 +192,15 @@ valid and invalid tests, before registering a new custom rule.
 
 | Rule | Owner | Severity | Scope | Why it is not native |
 | --- | --- | --- | --- | --- |
+| `owned-component-composition` | TypeScript AST (`scripts/check-component-composition.mjs`) | error | All owned component modules, Server and Client, through `pnpm check:components` | TypeScript permits dropping inherited props and constructing static compound APIs; this enforces our separate-named-export and adapter-forwarding contract. Checks matching direct JSX roots, remaining props and extracted children/className. Tests live in `scripts/check-component-composition.test.mjs`. [Coverage and limits](CODING_STANDARDS.md#composition-guard-coverage). |
+| `owned-component-family` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | All owned component modules, Server and Client | Root-prefixed family names, filename/export matching, and local function declarations are repository conventions that TypeScript and Next.js allow alternatives to. Preserves the existing direct client-boundary checks, with type-only imports excluded. The complete RSC graph remains a Next.js build responsibility. |
+| `owned-component-behavior` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | All owned component functions | Enforces component-named orchestration hooks, focused behavior ownership, and declarative rendering. React permits other arrangements; these are repository policies. See [.agents/rules/component-naming.md](.agents/rules/component-naming.md). |
+| `owned-component-naming` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | Owned TypeScript modules throughout `src` | Rejects generic View/Screen naming terms while preserving external API names through local aliases. Vendor and fixture exclusions apply. |
+| `profile-direct-parent-chain` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | Profile Card, Form, and action composition | Validates immediate JSX parent relationships and action safety. Extra wrappers can alter slots even when a matching ancestor exists. See [.agents/rules/form-architecture.md](.agents/rules/form-architecture.md#direct-parent-relationships). |
 | `prefer-page-props` | Grit (Biome plugin) | error | `export default async function Page({ params }: {...})` | Next.js accepts compatible hand-written types, so TypeScript will not reject them. This enforces the generated `PageProps<"/route">` helper ([Next.js docs](https://nextjs.org/docs/app/api-reference/file-conventions/page)). Convention, not a framework requirement. |
 | `prefer-layout-props` | Grit (Biome plugin) | error | `export default function Layout({ children }: { children: ReactNode })` | Same reasoning for `LayoutProps<"/route">`. `Readonly<{ children: ReactNode }>` is not matched. |
 | `prefer-route-context` | Grit (Biome plugin) | error | Route Handlers `GET`/`POST`/`PUT`/`PATCH`/`DELETE` with a hand-written `{ params }` | Same reasoning for `RouteContext<"/route">`. |
+| `prefer-is-error` | Grit (Biome plugin) | error | Direct `.status` equality/inequality with `"error"` in owned app/component TSX files | Hooks expose `isError`; components consume the flag. Hook TS modules and vendored components are excluded. Syntax-only; no automatic fix because the hook must supply the flag. |
 | `no-document-write` | Grit (Biome plugin) | error | `document.write`, `document.writeln`, `window.document.write`, `window.document.writeln` | Deprecated DOM APIs degrade HTML parser performance and introduce XSS risks. TypeScript only flags them as editor suggestions (`TS6387`), which `tsc --noEmit` omits in CI. |
 | `review-effect-custom-hook` | ast-grep | warning | `useEffect` and `React.useEffect` in app-owned TSX under `src/` | Prompts review of whether the Effect would be clearer inside a descriptive custom Hook, following [React's guidance](https://react.dev/learn/reusing-logic-with-custom-hooks#when-to-use-custom-hooks). This is a judgment call, so it warns without blocking commits or CI. |
 | `review-redundant-state-effect` | ast-grep | warning | `useEffect` calls setting state (`set[A-Z]...`) in `src/app`, `src/components`, `src/hooks` | Prompts review of setting state inside Effects based on dependencies, following React's [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect) guideline. Derived values should be calculated during render, and state updates handled in event callbacks to avoid unnecessary cascading renders. |
@@ -198,7 +213,7 @@ valid and invalid tests, before registering a new custom rule.
 | `require-component-props` | ast-grep | error | Type or interface declarations ending in `*Props$` in app-owned `src/app` and `src/components` | Component prop types in application code should inherit standard element properties directly or through intersections (via `ComponentProps<...>`, `HTMLAttributes<...>`, or `PropsWithChildren`) so components remain composable and support `className` pass-through. Helpers nested in object members, wrapper arguments, or union alternatives do not establish inheritance. |
 | `require-field-data-invalid` | ast-grep | error | `<Field>` rendered inside a Controller consuming `fieldState` in `src/app` and `src/components` | Enforces binding `data-invalid` to `<Field>` when `fieldState` is used, ensuring proper error styling and accessible ARIA attribute propagation per `CODING_STANDARDS.md`. |
 | `require-form-provider` | ast-grep | error | `<form>` elements in composite form orchestrators (`*-form.tsx`) in `src/app` and `src/components` | Enforces wrapping composite forms in `<FormProvider>` or `<Form>` to eliminate prop-drilling of form controls into child field components. |
-| `review-route-special-files-logic` | ast-grep | error | App Router special files (`page.tsx`, `layout.tsx`, `template.tsx`, `loading.tsx`) under `src/app/` using `useState` or `useEffect` | Prompts review of stateful or side-effect logic colocated directly inside route special files. Route entry points should remain thin presentation/glue layers; state and effects must be extracted into semantic client components under `_components/` or private hooks under `_hooks/`. |
+| `review-route-special-files-logic` | ast-grep | error | App Router special files (`page.tsx`, `layout.tsx`, `template.tsx`) under `src/app/` using `useState` or `useEffect` | Rejects direct `useState`/`useEffect` calls inside the three configured route file kinds; the separate route AST guard covers broader violations. Route entry points should remain thin presentation/glue layers; state and effects must be extracted into semantic client components under `_components/` or private hooks under `_hooks/`. |
 | `no-excessive-cognitive-complexity` | Biome | error | Functions in application code under `src/` | Enforces a maximum cognitive complexity of 15 per function (`lint/complexity/noExcessiveCognitiveComplexity`), preventing high cyclomatic branching and unmaintainable stateful procedures. |
 | `no-server-api-in-client-components` | Semgrep | error | `"use client"` files importing `next/headers` | Complements `no-server-only-in-client-components`; fails with a clear message before the framework build error. |
 | `session-cookie-must-be-http-only` | Semgrep | error | a `.set()` call whose cookie name contains session, token, auth or sid, without `httpOnly: true` and `secure: true` | [Next.js authentication guide](https://nextjs.org/docs/app/guides/authentication). Matches by cookie name only, so unrelated cookies (theme, locale) are never flagged. |
@@ -223,15 +238,17 @@ is reintroduced:
   covered by axe and Playwright.
 - **Hooks placement and inline components** (`exported-hook-location`,
   `extract-stateful-hooks`, `no-inline-hook-definition`): Biome
-  `noNestedComponentDefinitions` and `useHookAtTopLevel`; hooks may be colocated.
+  `noNestedComponentDefinitions` and `useHookAtTopLevel`. The repository additionally requires component-named
+  orchestration hooks in separate hook modules, as registered above.
 - **Effects and state** (`react-effect-set-state`, controlled/uncontrolled
   rules): React Doctor and TypeScript.
 - **Tailwind style preferences** (`logical-properties`, `no-inline-styles`,
   semantic-color and spacing rules): optional preferences; Biome gets native
   rules when upgraded.
 - **i18n** (`next-intl-*`): JSX text is covered by `noJsxLiterals`, keys by
-  typed next-intl, catalogs by `messages.test.ts`. Dynamic keys and toast
-  literals are deferred until the template has toasts.
+  typed next-intl, catalogs by `messages.test.ts`. Dynamic keys and imperative
+  toast messages need explicit review; the template
+  now uses the Base UI toast manager, and those messages must use locale catalogs.
 - **Security** (`next-*` server rules): see "Security checks not adopted".
 
 ### Native Biome rule evaluation history
@@ -245,6 +262,11 @@ Recheck current documentation before adding a replacement rule.
   passes `ref` as a prop; relaxed for vendored components), and the `next` and
   `react` domains, which include `noNestedComponentDefinitions`,
   `useHookAtTopLevel`, and `useExhaustiveDependencies`.
+- **Native async client-component check:** Biome 2.5.15 provides
+  `lint/correctness/noNextAsyncClientComponent`, enabled by the configured
+  Next.js domain. Its diagnostics cover default exports, inline named exports,
+  and local named functions exported separately. Keep this responsibility in
+  Biome instead of duplicating it in the custom component guard.
 - **Not available in 2.4.2:** `noInlineStyles`, `noTailwindRawColors`,
   `noTailwindArbitraryValue`, `useTailwindShorthandClasses`. Revisit after a
   Biome upgrade; do not reintroduce them as Grit rules.
@@ -257,10 +279,12 @@ Recheck current documentation before adding a replacement rule.
   links; adopt it once locale-prefixed internal links exist).
 - **Security checks not adopted:** unsafe Server Action input handling, missing
   authorization near sensitive operations, and private data in shared caches.
-  The template has no auth, database, or Server Actions to validate rules
-  against, `.parse()` or `throw` does not prove safety, and Next.js already
-  rejects `cookies()` or `headers()` inside `"use cache"`. Gitleaks owns
-  real secrets. Add taint-mode rules once a data access layer exists.
+  Browser Firebase Auth, Firestore preferences, and Storage uploads now exist;
+  there are no application Server Actions or server DAL to validate these
+  particular checks against. `.parse()` or `throw` does not prove safety, and
+  Next.js rejects `cookies()` or `headers()` inside `"use cache"`. Firebase
+  Security Rules own client SDK access control; Gitleaks owns secret detection.
+  Reassess taint-mode rules when server data access is introduced.
 - **Left to TypeScript:** component props, variants, Base UI and Accordion /
   ToggleGroup APIs, and async `params`. No Grit rule duplicates them.
 
@@ -319,7 +343,8 @@ Reusable agent skills and MCP configuration live in `.agents/`. Run
 `agents sync --check` before opening a pull request that changes them.
 
 The configured MCP servers are Serena and Next.js DevTools. The installed
-skills are `ask-matt`, `context7-cli`, `save`, `setup-matt-pocock-skills`, and `shadcn`;
+seven skills are `ask-matt`, `context7-cli`, `firebase-basics`,
+`firebase-auth-basics`, `save`, `setup-matt-pocock-skills`, and `shadcn`;
 see the [agent inventory](.agents/README.md). Configuration does not guarantee
 that an external executable is installed or a server is running.
 
@@ -378,3 +403,160 @@ The operational commands for the Firebase Auth Emulator are:
 
 See [Firebase setup](https://firebase.google.com/docs/auth/web/start) and
 [OAuth domain guidance](https://firebase.google.com/docs/auth/web/redirect-best-practices).
+
+## shadcn/ui CLI workflow
+
+The project already has `components.json`. Use the installed CLI for repeatable
+project work; use `pnpm dlx shadcn@latest` only when deliberately evaluating a
+newer CLI. A CLI upgrade does not update copied component source automatically.
+
+```bash
+pnpm exec shadcn --version
+pnpm exec shadcn info --json
+pnpm exec shadcn docs button card field select toast
+pnpm exec shadcn search @shadcn -q "card"
+pnpm exec shadcn view @shadcn/card
+pnpm exec shadcn add card --dry-run
+pnpm exec shadcn add card --diff card.tsx
+pnpm exec shadcn add card --view card.tsx
+pnpm exec shadcn preset resolve --json
+```
+
+`docs` returns documentation and API URLs; read the returned pages. `view`
+inspects registry metadata; `add --dry-run`, `--diff`, and `--view` resolve the
+actual project paths and changes. The latter two imply a dry run. The standalone
+`diff` command is deprecated. Review each affected source file, dependency,
+stylesheet, and import before merging an update, preserving local changes.
+
+`apply` changes an existing preset; `apply <code> --only theme,font` limits it
+to those parts. A new style, base, icon library, or RTL migration requires a
+scoped implementation review. `migrate cn` exists, but this project already
+uses `cn` and re-exports it from `src/lib/utils.ts`; do not run it again just
+to update documentation. Keep `shadcn/tailwind.css`: `eject` copies it into the
+project and removes automatic upstream CSS updates.
+
+No shadcn MCP server or custom registry publisher is configured. The only
+explicit additional registry is `@firebase`. See
+[the source review](docs/agents/shadcn.md) for the full upstream inventory and
+[the persistent rule](.agents/rules/shadcn-ui.md) for the project workflow.
+
+## Next.js documentation and CLI workflow
+
+`package.json` pins Next.js 16.4.2. The
+[complete source inventory](docs/agents/nextjs-sources.json) records the official
+stable and current documentation revisions, including `errors/` messages.
+The installed `node_modules/next/dist/docs/` bundle contains version-matched
+Markdown generated from upstream MDX; its filenames and bytes can differ from
+the repository sources. Do not compare generated `.md` bodies with source
+`.mdx` hashes as if they were identical files.
+
+Use the project's pnpm runner and inspect supported options before changing a
+workflow:
+
+```bash
+pnpm exec next --version
+pnpm exec next --help
+pnpm exec next typegen --help
+pnpm exec next info
+pnpm typecheck
+pnpm build
+```
+
+`pnpm typecheck` runs `next typegen` before TypeScript. Type generation loads
+Next.js configuration in the production build phase and can require its
+plugins, environment, and native dependencies even without a full build.
+`next dev` and `next build` also generate route types. Do not hand-edit generated
+`.next/types` or replace the configured `tsconfig.build.json` with an example.
+`next lint` is removed in Next.js 16; Biome owns this project's lint commands.
+Turbopack is the configured bundler; webpack-only configuration is not applied
+by copying an example into it.
+
+The existing Next.js DevTools MCP is configured in `.agents/agents.json`.
+Runtime diagnostics require a running development server and a connected MCP
+client; configuration alone does not prove a successful runtime inspection.
+Context7 provides targeted current lookups; the immutable source inventory
+establishes full reference scope and the installed version establishes API
+compatibility. Neither lookup installs another MCP server or agent skill.
+
+Next.js can maintain documentation guidance in `AGENTS.md`. Preserve its
+managed block and keep project policies outside the markers. Upstream upgrade
+reminders, `next upgrade`, and suggested codemods do not authorize a dependency
+upgrade in a documentation-only task. Review package and lockfile changes on
+a focused branch when an upgrade is requested.
+
+### Next.js diagnostics and native guard ownership
+
+| Concern | Owner | Boundary |
+| --- | --- | --- |
+| Framework exports, generated route types, invalid segment configuration, RSC and prerender constraints | Next.js build and TypeScript plugin | Depends on installed version and actual import/render graph |
+| Async Client Components | Biome `noNextAsyncClientComponent` | Native Next.js domain rule; no duplicate custom implementation |
+| Pages Router imports in owned App Router code | Biome `noRestrictedImports` in `biome.json` | `next/router`, `next/head`, `next/document`, `next/app`; regression-tested in `.biome/rules/nextjs/app-router-imports.test.ts` |
+| Thin route entrypoints | Existing route AST guard and ast-grep | Stricter repository policy; does not claim Next.js forbids branching or all hooks universally |
+| Component family and adapter contracts | Existing component AST guards | Repository conventions for owned components; full graph validation stays with Next.js |
+| Actual freshness, navigation state, authorization, and cache isolation | Behavior tests, production E2E, and review | Syntax checks do not prove these properties |
+
+The Pages Router import restriction includes owned `src/app`, `src/components`,
+`src/hooks`, and `ui/extensions` code. Registry and generated sources retain
+their existing exclusions. It uses a native rule with project configuration;
+no new custom parser or framework diagnostic is introduced.
+
+CSpell excludes the generated `docs/agents/nextjs-sources.json` evidence file,
+whose upstream paths include historical API spellings and error identifiers.
+The explanatory Next.js reference and canonical Markdown guides remain checked.
+
+## React documentation and diagnostic workflow
+
+`package.json` pins React and React DOM 19.3.1 and React Compiler 1.0.0.
+The [official-source review](docs/agents/react.md) and
+[complete source inventory](docs/agents/react-sources.json) record the exact
+React documentation revision, current release, and runtime error catalog.
+Documentation is maintained within a major version, so a live page is not
+proof that its newest API exists in every React 19 installation.
+
+Inspect installed versions and exports without upgrading packages:
+
+```bash
+pnpm list react react-dom babel-plugin-react-compiler --depth 0
+pnpm exec biome explain noNestedComponentDefinitions
+pnpm exec biome explain noReactPropAssignments
+pnpm test
+pnpm analyze:react
+```
+
+The Next.js `reactCompiler` option owns application compilation. The package's
+presence does not enable Compiler in every Vite pipeline or prove every
+component was optimized. React DevTools can inspect optimized components and
+React performance tracks; actual profiling requires a running application.
+Do not report a profiling session based only on configuration or a successful
+source lookup.
+
+### Native React guards and limits
+
+| Concern | Enforcement | Limits |
+| --- | --- | --- |
+| Ordinary hook call order | Biome `useHookAtTopLevel`, existing React domain | Native diagnostics; React `use` retains its conditional/loop exception |
+| Reactive Effect dependencies | Biome `useExhaustiveDependencies`, existing React domain | Does not establish cleanup, async ordering, or external-system correctness |
+| Stable component type identity | Biome `noNestedComponentDefinitions`, explicit error for owned code | Rejects nested component definitions; does not prohibit every ordinary callback |
+| Direct prop assignment | Biome `noReactPropAssignments`, explicit error for owned code | Does not prove deep immutability of all props, context, state, or hook results |
+| React 19 ref convention | Existing Biome `noReactForwardRef` configuration | Project preference; upstream `forwardRef` is still available |
+| Repository behavior ownership | Existing component and route AST guards | Stricter than the Rules of React; retains documented presentation-hook exceptions |
+| Compiler eligibility and semantic React issues | Compiler, React Doctor, tests, and review | Biome does not implement every diagnostic documented for `eslint-plugin-react-hooks` |
+
+The two newly explicit policies cover owned `src/app`, `src/components`, and
+`src/hooks`, including `ui/extensions`, with existing registry exclusions.
+`.biome/rules/react/native-rules.test.ts` exercises the actual configuration
+without forcing rules on via CLI flags: invalid patterns, valid counterparts,
+React `use`, ref props, each owned code area, and vendor exclusions. It runs in
+the existing unit project and CI; no new parser, runner, or lint dependency is
+introduced.
+
+The prior tooling notes about the React domain did not establish that nested
+component definitions were blocking by default. Explicit configuration and
+regression probes now establish that behavior. Native diagnostic severity and
+scope must be verified rather than inferred from a domain label.
+
+Upstream `eslint-plugin-react-hooks` documentation is an API/reference source,
+not a statement that ESLint is installed here. Keep Biome, React Doctor,
+Compiler, and behavior-test responsibilities explicit before proposing another
+lint stack. CSpell excludes only the generated React source inventory's
+upstream identifiers; the explanatory review and canonical Markdown stay checked.

@@ -6,6 +6,16 @@
     "useIgnoreFile": true
   },
   "plugins": [
+    {
+      "path": "./.biome/rules/react/prefer-is-error.grit",
+      "includes": [
+        "**/src/app/**/*.tsx",
+        "**/src/components/**/*.tsx",
+        "!**/src/components/ui/*.tsx",
+        "!**/src/components/ai-elements/**",
+        "!**/src/components/firebase/**"
+      ]
+    },
     "./.biome/rules/dom/no-document-write.grit",
     "./.biome/rules/nextjs/prefer-layout-props.grit",
     "./.biome/rules/nextjs/prefer-page-props.grit",
@@ -147,6 +157,37 @@
           "style": {
             "noDefaultExport": "off",
             "useExportsLast": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "src/app/**",
+        "src/components/**",
+        "src/hooks/**",
+        "!src/components/ui/*.tsx",
+        "!src/components/ai-elements/**",
+        "!src/components/firebase/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "next/router": "Use next/navigation in App Router code.",
+                  "next/head": "Use the App Router Metadata API.",
+                  "next/document": "Use the App Router root layout.",
+                  "next/app": "Use App Router layouts and providers."
+                }
+              }
+            }
+          },
+          "correctness": {
+            "noNestedComponentDefinitions": "error",
+            "noReactPropAssignments": "error"
           }
         }
       }

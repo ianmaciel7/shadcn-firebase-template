@@ -1,11 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/loading/loading-indicator";
-import { useProfileController } from "../_hooks/use-profile-controller";
+import { Loading } from "@/components/ui/extensions/loading";
+import { useProfileSection } from "../_hooks/use-profile-section";
+import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
 import { ProfileAvatarField } from "./profile-avatar-field";
-import { ProfileButton } from "./profile-button";
 import {
   ProfileCard,
   ProfileCardContent,
@@ -22,63 +20,65 @@ import {
   ProfileFormFooter,
 } from "./profile-form";
 import { ProfileLocaleField } from "./profile-locale-field";
+import { ProfileSaveButton } from "./profile-save-button";
+import { ProfileSignOutButton } from "./profile-sign-out-button";
 import { ProfileThemeField } from "./profile-theme-field";
 
 function ProfileSection() {
-  const profile = useProfileController();
-  const { user, t } = profile;
+  const { profile, state, t } = useProfileSection();
 
-  if (!profile.authReady || (user && !profile.preferencesReady)) {
-    return <LoadingIndicator label={t("loading")} className="flex w-full" />;
-  }
-
-  if (!user && !profile.error) return null;
-
-  if (!user || !profile.formProps) {
+  if (state.status === "loading") {
     return (
       <ProfileCard>
         <ProfileCardContent>
-          <p role="alert">{profile.error ?? t("profileSaveError")}</p>
+          <Loading className="w-full text-sm text-muted-foreground">
+            {t("loading")}
+          </Loading>
+        </ProfileCardContent>
+      </ProfileCard>
+    );
+  }
+
+  if (state.status === "hidden") return null;
+
+  if (state.isError) {
+    return (
+      <ProfileCard>
+        <ProfileCardContent>
+          <p role="alert">{state.message}</p>
         </ProfileCardContent>
       </ProfileCard>
     );
   }
 
   return (
-    <ProfileCard>
-      <ProfileForm key={user.uid} {...profile.formProps}>
-        <ProfileCardHeader>
-          <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
-          <ProfileCardDescription>
-            {t("personalInfoDescription")}
-          </ProfileCardDescription>
-        </ProfileCardHeader>
-        <ProfileCardContent>
-          <ProfileFormContent>
-            <ProfileAvatarField {...profile.avatarProps} />
-            <ProfileDisplayNameField />
-            <ProfileEmailField />
-            <ProfileLocaleField />
-            <ProfileThemeField />
-          </ProfileFormContent>
-        </ProfileCardContent>
-        <ProfileCardFooter>
-          <ProfileFormFooter>
-            <ProfileButton />
-            <Button
-              variant="link"
-              size="sm"
-              nativeButton={false}
-              role="link"
-              render={<Link href="/" />}
-              className="w-full"
-            >
-              <span className="text-xs">{t("backToHome")}</span>
-            </Button>
-          </ProfileFormFooter>
-        </ProfileCardFooter>
-      </ProfileForm>
-    </ProfileCard>
+    <ProfileSessionContext value={profile}>
+      <ProfileCard>
+        <ProfileForm key={state.userId}>
+          <ProfileCardHeader>
+            <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
+            <ProfileCardDescription>
+              {t("personalInfoDescription")}
+            </ProfileCardDescription>
+          </ProfileCardHeader>
+          <ProfileCardContent>
+            <ProfileFormContent>
+              <ProfileAvatarField />
+              <ProfileDisplayNameField />
+              <ProfileEmailField />
+              <ProfileLocaleField />
+              <ProfileThemeField />
+            </ProfileFormContent>
+          </ProfileCardContent>
+          <ProfileCardFooter>
+            <ProfileFormFooter>
+              <ProfileSaveButton />
+              <ProfileSignOutButton />
+            </ProfileFormFooter>
+          </ProfileCardFooter>
+        </ProfileForm>
+      </ProfileCard>
+    </ProfileSessionContext>
   );
 }
 

@@ -46,8 +46,8 @@ function ProfileCardContent(props: ProfileCardContentProps) {
 function ProfileCardFooter({ className, ...props }: ProfileCardFooterProps) {
   return (
     <CardFooter
+      className={cn("border-t-0 bg-transparent pt-0", className)}
       {...props}
-      className={cn("border-0 bg-transparent pt-0", className)}
     />
   );
 }

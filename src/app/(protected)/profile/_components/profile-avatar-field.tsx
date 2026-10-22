@@ -1,46 +1,28 @@
-import { useTranslations } from "next-intl";
-import type { ChangeEventHandler, ComponentProps, RefObject } from "react";
+import type { ComponentProps } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useProfileAvatarField } from "../_hooks/use-profile-avatar-field";
 
-type ProfileAvatarFieldProps = ComponentProps<"div"> & {
-  displayName: string | null;
-  email: string | null;
-  photoURL: string | null;
-  avatarPreview: string | null;
-  avatarVersion: number;
-  fileInputRef: RefObject<HTMLInputElement | null>;
-  onFileChange: ChangeEventHandler<HTMLInputElement>;
-  disabled?: boolean;
-};
+type ProfileAvatarFieldProps = ComponentProps<"div">;
 
-function ProfileAvatarField({
-  className,
-  displayName,
-  email,
-  photoURL,
-  avatarPreview,
-  avatarVersion,
-  fileInputRef,
-  onFileChange,
-  disabled,
-  ...props
-}: ProfileAvatarFieldProps) {
-  const t = useTranslations("Auth");
-  const avatarSrc = getAvatarSource(avatarPreview, photoURL, avatarVersion);
-  const fallbackInitial = (
-    displayName?.charAt(0) ||
-    email?.charAt(0) ||
-    "U"
-  ).toUpperCase();
+function ProfileAvatarField({ className, ...props }: ProfileAvatarFieldProps) {
+  const {
+    t,
+    displayName,
+    email,
+    disabled,
+    avatarSrc,
+    avatarAlt,
+    fallbackInitial,
+    fileInputRef,
+    handleAvatarChange,
+  } = useProfileAvatarField();
 
   return (
     <div className={cn("flex items-center gap-4", className)} {...props}>
       <Avatar className="size-16">
-        {avatarSrc ? (
-          <AvatarImage src={avatarSrc} alt={displayName ?? t("profileTitle")} />
-        ) : null}
+        {avatarSrc ? <AvatarImage src={avatarSrc} alt={avatarAlt} /> : null}
         <AvatarFallback className="text-xl">{fallbackInitial}</AvatarFallback>
       </Avatar>
       <div className="flex min-w-0 flex-col items-start">
@@ -67,22 +49,11 @@ function ProfileAvatarField({
           className="sr-only"
           aria-label={t("profilePhotoChange")}
           disabled={disabled}
-          onChange={onFileChange}
+          onChange={handleAvatarChange}
         />
       </div>
     </div>
   );
-}
-
-function getAvatarSource(
-  preview: string | null,
-  photoURL: string | null,
-  version: number,
-) {
-  if (preview) return preview;
-  if (!photoURL || !version) return photoURL ?? undefined;
-
-  return `${photoURL}${photoURL.includes("?") ? "&" : "?"}v=${version}`;
 }
 
 export { ProfileAvatarField };

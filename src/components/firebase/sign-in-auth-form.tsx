@@ -1,5 +1,7 @@
 "use client";
 
+import { Loading } from "@/components/ui/extensions/loading";
+
 import type { SignInAuthFormSchema } from "@firebase-oss/ui-core";
 import {
   useSignInAuthFormAction,
@@ -14,7 +16,6 @@ import { FirebaseUIError, getTranslation } from "@firebase-oss/ui-core";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { Policies } from "./policies";
 
 export type { SignInAuthFormProps };
@@ -78,9 +79,13 @@ export function SignInAuthForm(props: SignInAuthFormProps) {
           )}
         />
         <Policies />
-        <Button type="submit" disabled={ui.state !== "idle"} aria-busy={ui.state !== "idle"}>
+        <Button
+          type="submit"
+          disabled={ui.state !== "idle"}
+          aria-busy={ui.state !== "idle"}
+        >
           {ui.state !== "idle" ? (
-            <LoadingIndicator label={getTranslation(ui, "labels", "signIn")} className="text-inherit" />
+            <Loading>{getTranslation(ui, "labels", "signIn")}</Loading>
           ) : (
             getTranslation(ui, "labels", "signIn")
           )}

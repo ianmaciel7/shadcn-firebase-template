@@ -25,17 +25,22 @@ When standards conflict, apply them in this order:
   feature-local custom hook would make its purpose and data flow clearer. React
   recommends considering a custom hook for each Effect ([Reusing Logic with
   Custom Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks#when-to-use-custom-hooks)). Remove unnecessary Effects first, and extract a hook only when it creates a useful boundary; do not add one solely to shorten a component.
+- Expose semantic state flags such as `isError` from hooks. Components use
+  `state.isError` or `!state.isError` instead of comparing `state.status` with
+  `"error"`. Derive the flag inside the hook; do not store redundant state.
+  Biome enforces direct member comparisons in owned TSX application files;
+  this syntax rule does not trace hook types, aliases, or destructuring.
 - **State derivation and Effect elimination**:
   - Do not use `useEffect` to copy, derive, or mirror state from props or other state variables. Calculate derived values during rendering or synchronize atomic changes directly in event handlers ([You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect)).
   - Consolidate state variables that always transition together into a single atomic state object rather than maintaining fragmented, dependent `useState` declarations.
-  - When managing external imperatively allocated browser resources (such as `URL.createObjectURL`), manage creation and revocation synchronously in handlers or during unmount cleanup, avoiding cascaded rendering ticks.
-- When a component owns several related stateful behaviors, consider a
-  component-specific hook such as `useProfileController`. The component can keep
-  independent hooks, while the custom hook can compose React hooks and other
-  custom hooks ([Rules of Hooks](https://react.dev/reference/rules/rules-of-hooks#only-call-hooks-at-the-top-level)). Keep
-  this code colocated with its route in a private `_hooks` folder when
-  appropriate ([Next.js private folders](https://nextjs.org/docs/app/getting-started/project-structure#private-folders)). This is a project heuristic, not a framework requirement
-  for every component.
+  - Allocate external resources after commit in the appropriate Effect or in the user event that owns them, never during render. Pair setup with cleanup for replacement, hiding, and unmount as appropriate. An Effect can legitimately synchronize an external resource; avoid blanket rewrites that move necessary synchronization into handlers.
+- React permits composing multiple focused hooks. This repository adds the
+  stricter [component-named orchestration policy](.agents/rules/component-naming.md#component-named-orchestration-hooks)
+  for owned components: put behavior/context orchestration in a separate
+  `use<ComponentName>` hook, which may compose focused hooks internally.
+  Keep route-specific hooks in private `_hooks` folders. The documented
+  single-presentation-hook exception remains; React itself does not require
+  one orchestration hook per component.
 - **Form Architecture and State Propagation**:
   - Compound forms composed with field-component `children` use a single `useForm` and `<FormProvider {...form}>`; nested field components obtain `control` through `useFormContext()`. The repository currently enforces Providers for owned `*-form.tsx` files, although the official shadcn/ui examples do not universally require one.
   - Name standalone field components after their React Hook Form data property (for example `ProfileDisplayNameField` for `Controller name="displayName"`). Prefer built-in `FieldGroup`/`FieldSet` over arbitrary wrapper components.
@@ -57,8 +62,8 @@ When standards conflict, apply them in this order:
 - Keep route entrypoints and Next.js special files in `src/app`.
 - **Server and Client boundary separation**: Route entrypoints (`page.tsx`, `layout.tsx`) cannot be simultaneously Server and Client Components. In the React Server Components model:
   - Adding `"use client"` transforms the entire module into a Client Component boundary, rendering it and all its imports in the client bundle.
-  - Server-only exports such as `metadata`, `generateMetadata`, and server-side data fetching functions cannot be exported from files marked with `"use client"`.
-  - Conversely, server components cannot use React hooks (`useState`, `useEffect`, `useRouter`) or event handlers (`onClick`).
+  - Framework server exports such as `metadata`, `generateMetadata`, and `generateStaticParams` cannot be exported from a `"use client"` route module. Ordinary browser data-fetching functions are different; their allowed APIs depend on the import graph.
+  - Server Components cannot use client state/effect/navigation hooks (`useState`, `useEffect`, `useRouter`) or DOM event handlers (`onClick`). This does not prohibit every API whose name begins with `use`; for example, React supports `use` in synchronous Server Components.
   - Therefore, keep route entrypoint files (`page.tsx`) as Server Components by default. Whenever interactivity or client hooks are required, never create a generic `*-page-client.tsx` at the route root. Instead, extract the client logic into a semantically named UI component in a private `_components/` directory (e.g., following shadcn conventions such as `_components/register-auth-flow.tsx`, `_components/sign-in-auth-flow.tsx`, or `_components/forgot-password-auth-flow.tsx`) and render it from the server `page.tsx`.
 - Use the generated `PageProps`, `LayoutProps`, and `RouteContext` helpers for
   route parameters rather than hand-written equivalents:
@@ -108,22 +113,183 @@ When standards conflict, apply them in this order:
 - Use Tailwind CSS and the existing design tokens. Avoid inline styles unless a
   value must be computed at runtime.
 
+### Compound components and Server/Client boundaries
+
+These conventions apply to **all application-owned components**, both Server
+and Client Components: route-private `_components/`, shared `src/components/`,
+and `src/components/ui/extensions/`. They are not limited to the profile route.
+Generated registry trees retain their documented exclusions.
+
+Composition describes a component's public API. A compound component exposes a
+root and independently usable parts, such as `Card`, `CardHeader`, `CardTitle`,
+and `CardContent`. The caller assembles those parts through `children` or named
+slots. Each adapter inherits its corresponding primitive's props and forwards
+applicable attributes, `className`, `children`, and `ref`. React 19 can carry
+`ref` through the ordinary props contract and spread.
+
+A simple `Button`, field, or application view does not need invented parts or
+an unused `children` prop. A primitive adapter preserves the primitive contract;
+a feature view may own its content, actions, and loading states. Do not confuse
+a fixed feature view with a general-purpose Card adapter.
+
+Use separate named exports from one family module. `account-card.tsx` declares
+`AccountCard` plus any actual parts named `AccountCardHeader`,
+`AccountCardContent`, etc. The root matches the filename, every part is a local
+named function with the same root prefix, and each props type matches its part.
+Unrelated components belong in their own modules. The exact profile families
+retain their additional safety checks.
+
+```tsx
+import type { ComponentProps } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
+function AccountCard(props: ComponentProps<typeof Card>) {
+  return <Card {...props} />;
+}
+
+function AccountCardHeader(props: ComponentProps<typeof CardHeader>) {
+  return <CardHeader {...props} />;
+}
+
+function AccountCardContent(props: ComponentProps<typeof CardContent>) {
+  return <CardContent {...props} />;
+}
+
+export { AccountCard, AccountCardHeader, AccountCardContent };
+```
+
+At the call site, the caller supplies the content for each part:
+
+```tsx
+<AccountCard>
+  <AccountCardHeader>{heading}</AccountCardHeader>
+  <AccountCardContent>{children}</AccountCardContent>
+</AccountCard>
+```
+
+Compose only the parts with content. An adapter that extracts `className` merges
+it with its layout classes using `cn`; an extracted `children` value must reach
+the primitive. Forward remaining standard props instead of copying a small
+selection such as `id` and `title` and silently dropping everything else.
+
+Server/Client describes module graphs and rendering, independently of compound
+anatomy. It is not a third component naming taxonomy:
+
+| Situation | Meaning |
+| --- | --- |
+| Module without a directive | It can participate in the server graph, client graph, or both depending on imports; the missing directive alone does not prove it is a Server Component |
+| Module with `"use client"` in its directive prologue | It establishes a client boundary; its runtime dependencies join the client graph without repeating the directive in every file |
+| Client Component on an initial request | Next.js can render its initial HTML on the server and hydrate it in the browser; Client does not mean browser-only rendering |
+| Server parent passes `<ServerDetails />` as `children` to a Client Component | The server renders the details and passes their output; the Client Component does not import the server module |
+| Ordinary callback inside the client graph | It can pass between Client Components; React serialization constraints apply when values cross the Server-to-Client boundary |
+
+Keep browser interactivity behind the smallest useful client boundary. Shared
+components do not gain a runtime from names such as `Card`, `Form`, `Header`,
+`Section`, or `Provider`. `"use server"` marks server functions; it is not a
+way to declare an ordinary Server Component. An exported component at a client
+boundary cannot be an async function; an async event handler inside it is valid.
+
+Expose compound parts as named exports rather than assigning static properties
+such as `AccountCard.Header = AccountCardHeader` or using
+`Object.assign(AccountCard, { Header })`. A Server Component importing a Client
+Component receives a client reference, so looking up an arbitrary static part
+on it is not a safe cross-boundary API. Named exports let the framework create
+an independent reference for each client part. This is our portable project
+contract even for a family currently used inside one graph; upstream React also
+supports static compound patterns within a single graph.
+
+The import graph and the rendered tree are different. A client boundary must
+not import runtime server-only APIs. Type-only imports are erased and do not
+establish runtime dependencies. Passing server-rendered nodes through slots is
+valid; importing their server-only implementation into client code is not.
+See the installed Next.js boundary guide and the
+[official Server and Client boundary reference](https://nextjs.org/docs/app/guides/server-and-client-boundary).
+
+### Composition guard coverage
+
+`pnpm check:components` tests and runs the TypeScript AST guard for all owned
+components, without restricting the scan to files with `"use client"`.
+It enforces semantic filenames, a matching family root, locally declared named
+parts with the root prefix, matching props names, and separate named exports.
+It rejects static component-property assignment and direct `Object.assign`,
+`Object.defineProperty`, or `Object.defineProperties` on a component family.
+
+For direct returned adapters whose local parameter contract resolves to
+`ComponentProps<typeof Primitive>` (including React's ref variants, local type
+aliases, intersections, and `Omit`) and whose primitive is a named value import
+from `@/components/ui/`, the guard requires a matching direct JSX root and
+checks remaining-props spreads and forwarding
+of explicitly extracted `children` and `className`, including renamed bindings.
+It also detects client directives in the full directive prologue, ignores
+erased type imports, and preserves the existing direct runtime server-only
+import checks at client boundaries. Biome's native
+`noNextAsyncClientComponent` rule owns async client-component diagnostics;
+the custom composition guard does not duplicate it.
+
+React Hook Form `Controller` roots delegate their visual output to a render
+callback and are excluded from this direct-root check; aliases of its named
+value import are recognized.
+
+This is a bounded source guard, not a proof of complete RSC behavior. It does
+not resolve the transitive import graph, barrel/namespace imports, arbitrary
+wrapper helpers, external/interface type contracts, conditional return trees,
+all prop/ref data flow, or the semantic purpose of a slot. It does not infer
+that every component without a directive is server-only or require every view
+to have compound parts. TypeScript, Next.js builds, structural checks, and
+behavior/accessibility tests remain responsible for their respective contracts.
+
 ### Form and Field Architecture (shadcn/ui & React Hook Form)
 
-Forms across the application follow the modern shadcn `Field` architecture implemented in `src/components/ui/field.tsx`, orchestrated with `react-hook-form` and schema validation:
+Use `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, and `FieldError`
+from the installed `@/components/ui/field` alongside React Hook Form
+`Controller`. The upstream guide demonstrates a choice of schema validation;
+it does not require a specific schema library or `FormProvider` in every form.
+The profile currently uses RHF defaults, controlled values, and field-level
+rules, without a schema resolver. Add one only when the feature needs it.
 
-- **Canonical composition pattern**: Compose form inputs using `FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, and `FieldError` from `@/components/ui/field` alongside React Hook Form's `<Controller>`. Prefer this modular primitive composition over monolithic form context wrappers.
-- **Form state orchestration**: Initialize forms via `useForm` typed with schema inference (e.g., `z.infer<typeof schema>`), providing an explicit validation resolver (`zodResolver` or `standardSchemaResolver`), explicit default values for every field, and reactive validation mode (`mode: "onChange"` or `mode: "onSubmit"`).
-- **Accessibility and state binding**:
-  - Bind `data-invalid={!!fieldState.error}` to the `<Field>` container.
-  - Bind `aria-invalid={!!fieldState.error}` to the interactive control (`<Input>`, `<Textarea>`, `<NativeSelect>`).
-  - Explicitly connect `<FieldLabel htmlFor={id}>` with the control's `id`.
-  - Display validation errors using `<FieldError>{fieldState.error.message}</FieldError>`.
-- **Default values requirement**: Always supply a complete `defaultValues` object matching the form schema shape to prevent React warnings regarding uncontrolled components switching to controlled.
-- **Form taxonomy and naming**: Structure form components according to the taxonomy in `.agents/rules/component-naming.md`:
-  - `*-form.tsx`: Primary interactive orchestrator component handling submission and action callbacks.
-  - `*-fields.tsx`: Composite sections grouping multiple inputs via `<FieldGroup>`.
-  - `*-field.tsx`: Granular, reusable field units (label + input + error/description).
+- Initialize complete defaults for controlled values. When external values
+  change, choose RHF `values` or `reset` deliberately and preserve unsaved edits.
+- Follow [.agents/rules/form-architecture.md](.agents/rules/form-architecture.md)
+  for the single form instance, compound children, Provider boundary, profile
+  operation lock, reset, avatar cleanup, and fixed button action types. These
+  are repository policies rather than universal shadcn/ui requirements.
+- Use `FieldGroup` for field layout and `FieldSet` with `FieldLegend` for
+  semantically related controls. `*-fields.tsx` is available for a real grouped
+  responsibility, not a requirement to wrap every set of inputs.
+- Bind `data-invalid={fieldState.invalid}` on `Field` and
+  `aria-invalid={fieldState.invalid}` on the interactive control; for Select,
+  put the latter on `SelectTrigger`. Connect labels with stable control IDs.
+  Use `FieldError errors={[fieldState.error]}` when invalid, or its supported
+  children API for a specific message.
+- Bind Select through `value` and `onValueChange`; inspect local types for
+  nullable values. Do not copy Radix-only props into Base UI components.
+- Use `InputGroupInput`/`InputGroupTextarea` within `InputGroup`, with
+  `InputGroupAddon` and the matching button component for embedded actions.
+- Use native validation where appropriate. A documentation demo's `noValidate`
+  is a demonstration choice, not a production default. Client validation never
+  replaces Firebase Security Rules or server authorization.
+
+### shadcn/ui API and accessibility
+
+Read [.agents/rules/shadcn-ui.md](.agents/rules/shadcn-ui.md) before UI work and
+use the CLI workflow in [TOOLING.md](TOOLING.md#shadcnui-cli-workflow). Base UI
+uses `render` and presence state attributes; Radix `asChild` and
+`data-state` examples do not establish the local API. For navigation, apply
+`buttonVariants` to a real anchor or Link instead of rendering an anchor
+through Base UI Button, which supplies button semantics.
+
+Keep Select items inside `SelectGroup`, menu items in the corresponding group,
+and Tabs triggers inside `TabsList`. Dialog, Sheet, and Drawer need an
+accessible title; avatars need a fallback. An icon-only action needs a localized
+accessible name. Preserve `ref`, applicable element props, keyboard behavior,
+and focus management when adapting primitives. Use `ComponentProps` of the
+actual primitive, not a prop contract copied from a different base.
+
+Use semantic colors and existing variants. Application classes should primarily
+control layout; shared visual changes belong in the primitive or theme. Use
+the `cn` package directly or the existing `@/lib/utils` re-export rather than
+reintroducing a `clsx`/`tailwind-merge` helper. Preserve intentional registry
+exclusions while keeping application extensions subject to normal checks.
 
 ### Dependency Inversion and Composition in Screen and Presentation Components
 
@@ -177,3 +343,252 @@ Components throughout the application—regardless of whether they are Server Co
   external library's internals.
 - Cover asynchronous Server Components with Playwright E2E tests rather than
   forcing them through Vitest.
+
+## Next.js request data and caching
+
+Use the installed-version guide before copying an example. This application
+uses App Router with Cache Components and Partial Prefetching enabled. The
+[complete upstream reference](docs/agents/nextjs.md) separates versioned APIs,
+newer documentation, and optional deployment recipes.
+
+### Async request APIs and streaming
+
+- Await `cookies()`, `headers()`, `draftMode()`, and promised route `params` /
+  page `searchParams` before reading their values; React `use` is another
+  framework-supported option where appropriate. Preserve this repository's
+  stricter hook-free route policy. Generated `PageProps`, `LayoutProps`, and
+  `RouteContext` are available after `next typegen`, `next dev`, or `next build`.
+- Put request-time or uncached asynchronous reads beneath a useful `Suspense`
+  boundary. Move the read into a child if the parent would await it before
+  returning that boundary. Do not assume `loading.tsx` covers its own layout's
+  earlier work. Keep fallbacks accessible and consistent with the design system.
+- Read request cookies and headers outside a shared `"use cache"` scope. Pass
+  only resolved, minimal values needed by a cached function, after authorization.
+  Request-dependent promises captured through props or closures do not become
+  safe cache inputs. Request identity and sensitive data need a deliberate
+  isolation policy; adding a user ID to a key is not authorization.
+- Server Components and cached functions must stay free of render-time writes.
+  Do not use `"use server"` to label a Server Component. It marks Server Functions.
+  Client Components may also render initial HTML on the server, so browser APIs
+  must run at an appropriate client lifecycle point.
+
+### Cache ownership and mutation consistency
+
+For new shared cached work, prefer `"use cache"` with an explicit `cacheLife`
+and, when invalidation is needed, `cacheTag`. Choose a lifetime from freshness
+requirements; never increase it only to silence a prerender diagnostic.
+React `cache()` deduplicates work within a request; it is not a persistent cache.
+Plain `fetch` results are not persistently cached by default.
+
+With `cacheComponents` enabled, do not introduce old `dynamic`, `dynamicParams`,
+`fetchCache`, `revalidate`, or `runtime` segment exports from previous-model
+recipes. Consult the migration guide and installed compiler diagnostics;
+`cacheLife` and cache scopes express caching. Existing `fetch` cache options and
+`unstable_cache` have migration guidance; this does not require a speculative
+rewrite of code that is not present.
+
+| API | Intended use |
+| --- | --- |
+| `cacheLife`, `cacheTag` | Define lifetime and tags inside a cache scope |
+| `revalidateTag(tag, "max")` | Mark tagged server data stale with stale-while-revalidate behavior; Server Functions or Route Handlers |
+| `updateTag(tag)` | Immediately expire tagged data for read-your-own-writes; Server Actions only |
+| `revalidatePath(path)` | Invalidate the selected page/layout path; does not replace tags shared by other paths |
+| `refresh()` from `next/cache` | Refresh the client router from a Server Action; does not invalidate tagged server data |
+| `router.refresh()` from `next/navigation` | Request and merge fresh RSC output for the current route while preserving unaffected client state; does not invalidate the server cache |
+
+The single-argument `revalidateTag(tag)` form is deprecated. For immediate
+invalidation from a Route Handler, use the documented `{ expire: 0 }` profile
+instead of calling the Server-Action-only `updateTag`.
+
+Current Firebase writes remain browser SDK operations with explicit form reset,
+feedback, and Security Rules. The cache APIs above are guidance for future
+server-owned data, not a migration of the profile submit workflow.
+
+### Routing, metadata, and errors
+
+Use `next/navigation` for App Router navigation hooks, `next/link` for navigation
+links, and the Metadata API for route metadata. The native Biome
+`noRestrictedImports` rule rejects `next/router`, `next/head`, `next/document`,
+and `next/app` in owned app, component, and hook modules. It also checks UI
+extensions, while untouched registry components keep their exclusions. Static
+imports and re-exports are checked; this is not a complete transitive graph
+analysis. Keep the current unprefixed locale URLs and use the existing safe
+return-URL validator for user-controlled redirect destinations.
+
+Use `error.tsx` / `global-error.tsx` according to their Client Component contracts;
+a global error boundary replaces the root layout and needs its own document
+markup. Error boundaries do not catch every event-handler or async callback
+failure. Return expected action errors as explicit state; keep unexpected
+failures for the framework boundary. `redirect()` and `notFound()` throw
+framework control-flow signals, so do not swallow them in generic catches.
+
+Keep `metadata` / `generateMetadata` and `viewport` / `generateViewport` on the
+server and use their respective APIs. Metadata can stream under supported
+conditions; inspect crawler behavior and the installed version's diagnostics
+before adding request-dependent metadata. The existing static viewport and
+localized metadata are not automatically changed by a documentation refresh.
+
+### Route Handlers and Server Functions
+
+Server Components should call their data layer directly instead of fetching
+the application's own Route Handler through HTTP. A Route Handler is a public
+HTTP boundary: validate inputs, authorize each operation, and return only the
+intended response data. A Server Function is also directly callable over the
+network; verify identity and resource authorization inside each operation.
+See [Security](SECURITY.md#nextjs-server-and-environment-boundaries).
+
+Use Server Actions for mutations, not as a parallel data-fetching API. Write
+response cookies only in a Server Function or Route Handler before streaming
+starts. This application does not currently implement these server mutation
+surfaces; adding one requires its own behavior and authorization tests.
+
+### Navigation state and optional features
+
+With Cache Components, Next.js may preserve inactive UI using React Activity.
+Do not assume navigation always unmounts a component, clears a form, or disposes
+an external resource. Follow the preserving-state guide for intentional resets,
+and test navigation, back/forward, focus, and effect cleanup.
+
+Use `next/image`, `next/font`, `next/script`, and Metadata APIs according to the
+installed reference. Image allowlists, script strategy, CSP, telemetry,
+instrumentation, remote cache handlers, and hosting adapters are separate
+configuration decisions. Do not enable experimental flags, run codemods, or
+install upstream agent skills simply because a guide mentions them.
+
+## React rendering, hooks, and identity
+
+The project pins React and React DOM 19.3.1 and uses React Compiler 1.0.0 in
+Next.js. [The official-source review](docs/agents/react.md) covers React,
+React DOM, Compiler, lint references, warnings, and release material. Match new
+APIs to installed exports; the live docs are updated within a major version
+and also contain experimental sections.
+
+### Pure render and immutable inputs
+
+Treat props, state, context, and hook arguments/results as snapshots. Derive
+rendered values from current inputs; update state through setters or reducers
+and make copies before changing shared arrays or objects. Updater functions
+and reducers must be pure. Local mutation of a newly created value is different
+from mutating a value received from another render or caller.
+
+Do not start network writes, subscriptions, timers, DOM changes, or object-URL
+allocation during render. React may restart or abandon render work. A ref does
+not make a render-time side effect safe. Refs hold values that do not drive
+rendering; avoid arbitrary ref reads/writes during render, preserving only
+React's documented predictable initialization patterns.
+
+Declare component types at module scope. Defining a component inside a render
+creates a new identity and can reset child state on every parent update.
+Native Biome `noNestedComponentDefinitions` and `noReactPropAssignments` are
+explicit errors in owned app/component/hook code, including UI extensions.
+The props rule checks direct assignments; it is not a proof of deep
+immutability or all state/context mutations. Keep list keys stable and based
+on data identity. `useId` is for accessibility associations, not list keys.
+Use a deliberate `key` change only when resetting a subtree is intended.
+
+### Hook dependencies and external synchronization
+
+Call state/effect and ordinary custom hooks unconditionally at the top level
+of a component or hook. Do not call them from handlers, loops, nested callbacks,
+or after an early return. React's `use` API has a documented exception for
+conditions and loops, but still belongs inside a component or hook and cannot
+be wrapped in a local `try/catch`. Preserve the stricter route-entrypoint and
+component orchestration policies where they apply.
+
+Calculate derived state during render when possible. Put work caused by a user
+action in that action's handler. Use an Effect to synchronize with an external
+system: Firebase subscriptions, browser listeners, and the current avatar
+preview lifecycle are legitimate examples. A custom hook encapsulates this
+synchronization; it does not make impure render code or redundant state valid.
+
+Declare reactive Effect dependencies accurately. Move object/function creation
+inside the Effect or restructure ownership when that removes a dependency;
+do not suppress dependency checks merely to force a once-only run. Pair each
+subscription, observer, timer, or resource with cleanup, and prevent obsolete
+async results from changing the current subject's state. Test setup/cleanup
+symmetry under Strict Mode and replacement, rather than asserting an Effect
+runs exactly once.
+
+`useEffectEvent` separates non-reactive reads from an Effect while seeing current
+props/state. Call the returned Effect Event only from the allowed local Effect
+logic; do not use it as a dependency-avoidance shortcut, ordinary click handler,
+or callback passed to a child. Its lifecycle rules need review: this project's
+Biome coverage is not claimed to implement every upstream ESLint/Compiler rule.
+
+For external stores, `useSyncExternalStore` needs a stable subscription contract,
+immutable/reused snapshots while unchanged, and matching initial server and
+hydration snapshots. `useIsMobile` currently uses a `false` server snapshot;
+keep viewport behavior tested in a real browser. Do not invent an ad hoc
+render-time store or force every SDK subscription into a new abstraction.
+
+### React 19 refs, context, and controlled inputs
+
+Function components can receive `ref` as a prop in React 19. Preserve a wrapped
+primitive's ref/props contract; the existing native `noReactForwardRef` policy
+prefers this API for owned code. `forwardRef` remains available upstream and
+is unnecessary for these new wrappers; it is not a removed React API.
+Callback refs can return cleanup functions. Avoid accidental return values
+from assignment expressions, and clean up callback-owned registrations when
+React detaches them.
+
+Context provides a value to consumers; it is not a security boundary or a
+replacement for explicit ownership. A React 19 context can be rendered as a
+provider directly, while `.Provider` remains valid. Preserve current providers
+unless changing them has a concrete purpose. Server Components cannot consume
+client context. Pass server-rendered nodes through slots instead of importing
+server implementations into the client graph.
+
+Keep controlled inputs controlled for their entire lifetime and update their
+value from the relevant input event. Use the appropriate `value`/`checked` and
+`defaultValue`/`defaultChecked` contracts; an initial undefined value followed
+by a controlled value is a different contract. Existing React Hook Form
+controllers own profile field state. Do not add another mirror state, nest
+forms, or replace that integration solely because an upstream form Action
+example exists.
+
+### Suspense, Actions, and preserved state
+
+Suspense responds to supported render-time suspension, such as `lazy` or
+reading a stable Promise with `use`; fetching inside an Effect or handler does
+not automatically activate it. Use the framework's supported data mechanisms,
+not a fresh Promise created on each client render. Rejected resources need an
+error boundary; async callbacks and event-handler failures need their own
+appropriate error handling.
+
+A React Action is transition-coordinated work and may run on the client.
+A Server Function is a separate network-callable server surface. `useTransition`
+marks non-urgent updates and provides pending feedback; it does not authorize
+a mutation, cancel obsolete requests, or guarantee custom request ordering.
+The current API requires another `startTransition` for state updates after an
+`await` when those updates should remain transitions. Keep text-input updates
+urgent. `useActionState` queues its actions; `useOptimistic` describes temporary
+UI over a confirmed base value and needs an Action plus a pure reducer/updater.
+These APIs do not replace the existing Firebase/RHF submit workflow by default.
+
+Strict Mode's extra development renders, Effect cycles, and ref callbacks are
+diagnostics, not duplicate production transactions. Activity can retain hidden
+state and DOM while tearing down Effects, then restore them on reveal.
+Suspense can also clean up and rerun layout Effects when content hides/reappears.
+Cleanup is therefore not synonymous with permanent unmount. Preserve and test
+intentional form, dialog, media, and subscription behavior across navigation.
+
+### Compiler and performance boundaries
+
+React Compiler optimizes eligible components/hooks, not every function or every
+build pipeline. Keep correctness independent of memoization. Retain intentional
+`useMemo`, `useCallback`, or `memo` when an integration needs a measured/stated
+identity contract; do not add them routinely or mechanically delete them all.
+They are not resource-lifetime or persistence guarantees.
+
+Do not add `"use memo"` everywhere or silently set `"use no memo"` to hide a
+problem. Compiler directives and options need a specific reason and validation.
+Check third-party mutable APIs and the installed compiler's diagnostics; the
+presence of React Hook Form does not establish that every API it exports is
+compatible with automatic memoization. Preserve the current integration and
+verify actual behavior before changing it.
+
+New APIs described in current docs require installed runtime/type/framework
+support. In this review, `Activity`, `ViewTransition`, `addTransitionType`, `use`,
+and `useEffectEvent` exist in React 19.3.1; `browser` is not an installed export.
+Availability alone is not a request to adopt an animation, browser-only-rendering,
+optimistic-state, or experimental Suspense feature.

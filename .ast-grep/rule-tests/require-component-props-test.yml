@@ -1,5 +1,8 @@
 id: require-component-props
 valid:
+  - 'type ButtonProps = Omit<ComponentProps<typeof Button>, "type" | "onClick">;'
+  - 'type FormProps = Omit<ComponentProps<"form">, "onSubmit">;'
+  - 'type LabelProps = Pick<ComponentProps<"label">, "children" | "htmlFor">;'
   - 'type MyButtonProps = ComponentProps<typeof Button> & { profile: ProfileState };'
   - 'type CardProps = ComponentProps<"div"> & { title: string };'
   - 'type ContainerProps = HTMLAttributes<HTMLDivElement>;'
@@ -24,3 +27,5 @@ invalid:
   - 'type PanelProps = NotComponentProps<"div">;'
   - 'interface PanelProps extends Wrapper<ComponentProps<"div">> { title: string; }'
   - 'interface PanelProps extends NotComponentProps<"div"> { title: string; }'
+  - 'type PanelProps = Omit<Wrapper<ComponentProps<"div">>, "id">;'
+  - 'type PanelProps = Omit<{ forwarded: ComponentProps<"div"> }, "id">;'

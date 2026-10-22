@@ -57,6 +57,88 @@ coordinate disclosure and remediation with the reporter.
 - AI interface components do not configure an AI service, server-side
   authorization, or credentials. A derived application owns those decisions.
 
-This template does not prescribe an authentication provider or data store.
-Projects derived from it must document their own access-control, data-retention,
-and incident-response requirements.
+The template currently uses Firebase Authentication, Firestore preferences, and
+Storage avatars. Projects derived from it must document their own access-control,
+data-retention, and incident-response requirements, including changes to these
+services or their Security Rules.
+
+## Component registry updates
+
+Registry items become executable application source and may introduce package
+dependencies, styles, environment variable placeholders, and additional files.
+Schema validation confirms the payload's shape; it does not establish that the
+source or its dependencies are safe. Review the resolved project changes with
+`shadcn add --dry-run`, `--diff`, or `--view` before installation, following
+[TOOLING.md](TOOLING.md#shadcnui-cli-workflow).
+
+Review the explicit registry or repository, requested version/ref, dependencies,
+file destinations, and any configuration changes. Prefer an immutable commit
+ref for a reviewed GitHub registry update. Keep private registry credentials in
+environment variables and reference placeholders in configuration. Never store
+live credentials in source inventories, examples, or command output. A public
+registry health score is not a security audit.
+
+Client form validation, disabled actions, and route guards do not authorize
+Firebase data access. Preserve the existing Firestore and Storage ownership,
+field/value, MIME type, and upload-size checks when updating UI source.
+
+## Next.js server and environment boundaries
+
+Server Components do not make all imported modules or returned props private.
+Keep privileged server data access in a `server-only` boundary and project only
+the fields the client needs. Client Components can render initial HTML on the
+server and must still be treated as browser code. `"use server"` identifies
+callable Server Functions; it does not establish user or resource permissions.
+
+If a Server Function or Route Handler is introduced, validate untrusted inputs
+and authenticate and authorize the operation at its data-access boundary.
+Page redirects, client guards, Proxy matchers, hidden buttons, encrypted action
+identifiers, and closed-over values do not replace those checks. Review response
+serialization, upload limits, error disclosure, and cookie options with the
+new endpoint. The current Firebase Web SDK continues to rely on its Security
+Rules; Firebase Admin would require a separate server authorization design.
+
+`NEXT_PUBLIC_*` values are public and inlined at build time. Also treat every
+entry in `next.config.ts`'s `env` object as public bundle configuration,
+regardless of its prefix. This project lists Auth and Firestore emulator host
+addresses there; never add credentials, Admin service-account data, private
+keys, or session secrets. A prefix-free name in that object is not secret.
+Changing a deployment environment does not rewrite already-built public values.
+
+Shared caching must preserve tenant/user isolation and permission changes.
+Do not put cookie stores, request headers, tokens, or privileged results into
+a shared cache through closures or unresolved promises. Resolve request inputs
+outside the cache, authorize access, and deliberately choose cache keys,
+returned fields, lifetime, and invalidation. Cache invalidation is not access
+control. Private/remote cache examples and taint APIs are optional tools, not
+proof that cached data is safe.
+
+For new external image sources, use narrow `remotePatterns`; validate external
+URLs and proxy destinations to prevent unintended server requests. A dynamic
+nonce-based CSP, instrumentation exporter, or hosting adapter needs a deployment
+and rendering review. None is enabled by this documentation update. See the
+[official data-security and environment sources](docs/agents/nextjs.md).
+
+## React rendering and input boundaries
+
+React escapes ordinary text children; that does not sanitize arbitrary HTML,
+executable content, DOM sinks, external URLs, or third-party renderers. Review
+`dangerouslySetInnerHTML`, rich/streamed markup, JSX parsing, and URL-bearing
+props at the actual trust boundary. Use the application's reviewed sanitization
+and URL policies when such content is introduced; a registry or UI component's
+presence is not a security approval.
+
+Render purity and immutable inputs reduce unexpected cross-render behavior,
+but lint and Compiler diagnostics do not establish authorization. React Actions,
+optimistic updates, context providers, pending/disabled UI, and error boundaries
+are not data-access controls. Server Function inputs and outputs remain
+untrusted network boundaries; preserve the Next.js and Firebase security
+contracts already documented above.
+
+Do not expose privileged data through client props, raw server errors,
+profiling artifacts, or broad cache entries. Framework-managed RSC transport
+and hydration are not reasons to add custom serialization or HTML injection.
+React and React DOM versions, framework integration, and server-component
+security advisories must be reviewed together during an authorized upgrade.
+The [React source inventory](docs/agents/react.md) records a snapshot, not a
+continuing vulnerability audit.

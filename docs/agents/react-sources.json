@@ -1,0 +1,942 @@
+{
+  "schemaVersion": 1,
+  "retrievedAt": "2026-10-21",
+  "documentation": {
+    "repository": "https://github.com/reactjs/react.dev",
+    "revision": "ae5e48074d4f73f1e349eda2a66841f9a959023e",
+    "contentTreeSha": "5ad12d04871c462118e1e9c1d3f9b0df0ba8d5d8",
+    "scope": "Every Markdown/MDX file under src/content, including learn, reference, warnings, errors, community, versions, root and historical blog pages.",
+    "treeTruncated": false,
+    "fileCount": 226,
+    "uniqueBlobs": 226,
+    "sourceUrlTemplate": "https://github.com/reactjs/react.dev/blob/{revision}/{path}"
+  },
+  "installed": {
+    "react": "19.3.1",
+    "reactDom": "19.3.1",
+    "reactCompiler": "1.0.0"
+  },
+  "latestStableRuntime": {
+    "repository": "https://github.com/react/react",
+    "version": "19.3.1",
+    "revision": "61aa00df822d0eb76d0362eb8b6fdd3527693efe",
+    "publishedAt": "2026-10-14T17:06:15Z"
+  },
+  "errorCatalog": {
+    "repository": "https://github.com/react/react",
+    "path": "scripts/error-codes/codes.json",
+    "stableRevision": "61aa00df822d0eb76d0362eb8b6fdd3527693efe",
+    "currentRevision": "9ffcb463b0ab01a42e781d4dc2e00f3a1b97a188",
+    "stableBlobSha": "653e4ec972d54976b497bd81e0532b720a3df2b0",
+    "currentBlobSha": "653e4ec972d54976b497bd81e0532b720a3df2b0",
+    "messageCount": 599,
+    "sourceUrlTemplate": "https://github.com/react/react/blob/{revision}/scripts/error-codes/codes.json"
+  },
+  "verification": "Every listed content body and both versioned error catalogs were retrieved at immutable revisions and verified with the Git blob SHA-1 algorithm. The error catalogs have identical bodies at these revisions. Retrieval does not prove every example is supported by installed runtime, types, Compiler or framework.",
+  "documents": [
+    {
+      "path": "src/content/blog/2020/12/21/data-fetching-with-react-server-components.md",
+      "blobSha": "b0bc9f558af81942fafb03cba6d6d42c29b4c7a7"
+    },
+    {
+      "path": "src/content/blog/2021/06/08/the-plan-for-react-18.md",
+      "blobSha": "1004523b796e8e32e1a6dfb746e6719b4b17dd01"
+    },
+    {
+      "path": "src/content/blog/2021/12/17/react-conf-2021-recap.md",
+      "blobSha": "c9e75ff7b948378579cb0b251f245c3ba078a968"
+    },
+    {
+      "path": "src/content/blog/2022/03/08/react-18-upgrade-guide.md",
+      "blobSha": "50babfb132232c42094715b98dc2427cd664df3d"
+    },
+    {
+      "path": "src/content/blog/2022/03/29/react-v18.md",
+      "blobSha": "b68ef4e8d3978065d1806497854ea03cfac0d8a2"
+    },
+    {
+      "path": "src/content/blog/2022/06/15/react-labs-what-we-have-been-working-on-june-2022.md",
+      "blobSha": "b021bc3ffecdfa3c79a105d0536c4c66f261b609"
+    },
+    {
+      "path": "src/content/blog/2023/03/16/introducing-react-dev.md",
+      "blobSha": "96d2a630da62975f3739114952b39a7e4033c0ad"
+    },
+    {
+      "path": "src/content/blog/2023/03/22/react-labs-what-we-have-been-working-on-march-2023.md",
+      "blobSha": "df1fd085dd205835e0fe9dd300db92f7a993213f"
+    },
+    {
+      "path": "src/content/blog/2023/05/03/react-canaries.md",
+      "blobSha": "c2e1a823e0e7513e6b6fa86e024a3f98e4b467ec"
+    },
+    {
+      "path": "src/content/blog/2024/02/15/react-labs-what-we-have-been-working-on-february-2024.md",
+      "blobSha": "002dae2a94c974411d3ccef76a041d50b32d0acf"
+    },
+    {
+      "path": "src/content/blog/2024/04/25/react-19-upgrade-guide.md",
+      "blobSha": "6f918a2a97b8d43080aecc1e15c67b41f28b8326"
+    },
+    {
+      "path": "src/content/blog/2024/05/22/react-conf-2024-recap.md",
+      "blobSha": "d0774782a05c2b4a6887808e3cdd8400254f3fdc"
+    },
+    {
+      "path": "src/content/blog/2024/10/21/react-compiler-beta-release.md",
+      "blobSha": "5cc5f19ae38f02857de1da6e7f931d3b9e392298"
+    },
+    {
+      "path": "src/content/blog/2024/12/05/react-19.md",
+      "blobSha": "93ac0c360171b882b082c56ebb356385fbf98fab"
+    },
+    {
+      "path": "src/content/blog/2025/02/14/sunsetting-create-react-app.md",
+      "blobSha": "45c0090d51b304d78dc336e7fbd030bdb42a8bef"
+    },
+    {
+      "path": "src/content/blog/2025/04/23/react-labs-view-transitions-activity-and-more.md",
+      "blobSha": "95821fc43cf4b6c25551fba45b2ba2ed2be915c3"
+    },
+    {
+      "path": "src/content/blog/2025/10/01/react-19-2.md",
+      "blobSha": "feee6cdb626042556d50bdc184183dff71a857b2"
+    },
+    {
+      "path": "src/content/blog/2025/10/07/introducing-the-react-foundation.md",
+      "blobSha": "a9b922dbc923f2b4c3b4a9ac7ca8cadcae0f8efe"
+    },
+    {
+      "path": "src/content/blog/2025/10/07/react-compiler-1.md",
+      "blobSha": "ee5ffa4fd44c7be02989e2aa2a0964a9e2ad0f98"
+    },
+    {
+      "path": "src/content/blog/2025/10/16/react-conf-2025-recap.md",
+      "blobSha": "8476b02aad347fa783a020b27414b3bbd3781484"
+    },
+    {
+      "path": "src/content/blog/2025/12/03/critical-security-vulnerability-in-react-server-components.md",
+      "blobSha": "a669a2c4e72130584e80f9e9518cced45a40f9de"
+    },
+    {
+      "path": "src/content/blog/2025/12/11/denial-of-service-and-source-code-exposure-in-react-server-components.md",
+      "blobSha": "206d49e39103cde778729899eb584ab23c93170d"
+    },
+    {
+      "path": "src/content/blog/2026/02/24/the-react-foundation.md",
+      "blobSha": "17b17b7b91eb27991a0a6ddae4833986b556783a"
+    },
+    {
+      "path": "src/content/blog/2026/09/09/react-19-3.md",
+      "blobSha": "ed6857732e36bb120e429cf05240c762f70eab00"
+    },
+    {
+      "path": "src/content/blog/index.md",
+      "blobSha": "b8b83a3dc94cdf3739c7b9349d867a1f509587cb"
+    },
+    {
+      "path": "src/content/community/acknowledgements.md",
+      "blobSha": "7c84285f9ae155b2f7a59e8ad4f6cc3476707210"
+    },
+    {
+      "path": "src/content/community/conferences.md",
+      "blobSha": "37d3726e7963830de825b61c8a65a6c373a77120"
+    },
+    {
+      "path": "src/content/community/docs-contributors.md",
+      "blobSha": "27b32a18f763352d131dc856049720db6e0addb7"
+    },
+    {
+      "path": "src/content/community/index.md",
+      "blobSha": "9bd0d09cf3189999a8ead432539bdce9e37824f6"
+    },
+    {
+      "path": "src/content/community/meetups.md",
+      "blobSha": "78d48093aae5b33b00ae1a0577d001668facf98d"
+    },
+    {
+      "path": "src/content/community/team.md",
+      "blobSha": "4e307463d35663aae8f45ec52ec54f42de44fb92"
+    },
+    {
+      "path": "src/content/community/translations.md",
+      "blobSha": "fd49bd3e97adbcaf863618a849be85507a12aceb"
+    },
+    {
+      "path": "src/content/community/versioning-policy.md",
+      "blobSha": "2e3edb6170fa2980d5126e43e133f59af9e64ce1"
+    },
+    {
+      "path": "src/content/community/videos.md",
+      "blobSha": "1fca6030746cb12eaf00bd258d516cc9eab043da"
+    },
+    {
+      "path": "src/content/errors/377.md",
+      "blobSha": "6269e9d06d61b387e738980f8f38f4b7ca1e0f33"
+    },
+    {
+      "path": "src/content/errors/generic.md",
+      "blobSha": "27c3ca52d4c919dd1cf97faa31a2d65ebc2a212b"
+    },
+    {
+      "path": "src/content/errors/index.md",
+      "blobSha": "d4fc3927a9239d17daa349a877e35ab3a7dcff62"
+    },
+    {
+      "path": "src/content/index.md",
+      "blobSha": "63dbd33eb65098bc991a121d3d84632d70dc36e9"
+    },
+    {
+      "path": "src/content/learn/add-react-to-an-existing-project.md",
+      "blobSha": "f98bece42d4f650424472f0983927d4901a57cc5"
+    },
+    {
+      "path": "src/content/learn/adding-interactivity.md",
+      "blobSha": "0e84780fa6080434f791fa67d90038cc9eeffb2b"
+    },
+    {
+      "path": "src/content/learn/build-a-react-app-from-scratch.md",
+      "blobSha": "182ad54bb1a37a9a30e6a282344149937ab5665c"
+    },
+    {
+      "path": "src/content/learn/choosing-the-state-structure.md",
+      "blobSha": "2533a53d85dad69330d8403a64ad448c925e399e"
+    },
+    {
+      "path": "src/content/learn/conditional-rendering.md",
+      "blobSha": "7a75fe021d8711a52a7cfa2737cd74fcfd0663c1"
+    },
+    {
+      "path": "src/content/learn/creating-a-react-app.md",
+      "blobSha": "fef66838e7251f5229d83df6d11a6dd6c4d4e9d3"
+    },
+    {
+      "path": "src/content/learn/describing-the-ui.md",
+      "blobSha": "43db5edd597d60a72579476577294f9facb2b240"
+    },
+    {
+      "path": "src/content/learn/editor-setup.md",
+      "blobSha": "fb469d3761c38f8ab9f9588626f8e3618b850688"
+    },
+    {
+      "path": "src/content/learn/escape-hatches.md",
+      "blobSha": "cbaef8bb36f719f3add966fa71a3c44598c12fd6"
+    },
+    {
+      "path": "src/content/learn/extracting-state-logic-into-a-reducer.md",
+      "blobSha": "5c08c012390754bac44a33bd094aeb421cf8dd74"
+    },
+    {
+      "path": "src/content/learn/importing-and-exporting-components.md",
+      "blobSha": "16cd509f0797b99f4f1855ad5c6784388df98f3f"
+    },
+    {
+      "path": "src/content/learn/index.md",
+      "blobSha": "ab1d12afb524e7a95e5a0287b9a1f8af1c0e19e7"
+    },
+    {
+      "path": "src/content/learn/installation.md",
+      "blobSha": "ab538e5bb510fed96bfdc0d127dc429d832bf4c4"
+    },
+    {
+      "path": "src/content/learn/javascript-in-jsx-with-curly-braces.md",
+      "blobSha": "94b943de0c901c785ec1038142ca86ca2fd9570d"
+    },
+    {
+      "path": "src/content/learn/keeping-components-pure.md",
+      "blobSha": "5bf8e0a79b821d4aec06f347ab0dd418ff9bda00"
+    },
+    {
+      "path": "src/content/learn/lifecycle-of-reactive-effects.md",
+      "blobSha": "608db09a00ed0f417286d3f00852b3e6a3c68d1f"
+    },
+    {
+      "path": "src/content/learn/managing-state.md",
+      "blobSha": "ef7b76e04c208ab4fc2a86f67e2a38f4af64672b"
+    },
+    {
+      "path": "src/content/learn/manipulating-the-dom-with-refs.md",
+      "blobSha": "2d1ee86851d6d196aad0f5159ad3eba8a772c588"
+    },
+    {
+      "path": "src/content/learn/passing-data-deeply-with-context.md",
+      "blobSha": "fead4056db5ab2765f1bfc3eca932eb634683504"
+    },
+    {
+      "path": "src/content/learn/passing-props-to-a-component.md",
+      "blobSha": "c0f16be949bb43428ab6172c5670475b92f05750"
+    },
+    {
+      "path": "src/content/learn/preserving-and-resetting-state.md",
+      "blobSha": "685f63ef4ae332382802936301d452ef6ea3e877"
+    },
+    {
+      "path": "src/content/learn/queueing-a-series-of-state-updates.md",
+      "blobSha": "b3be278cf4d1e6c386c9b04fa3a0c7171146c2db"
+    },
+    {
+      "path": "src/content/learn/react-compiler/debugging.md",
+      "blobSha": "a2981e09470b48aaed327a56b77b7332dbf62a4c"
+    },
+    {
+      "path": "src/content/learn/react-compiler/incremental-adoption.md",
+      "blobSha": "56d9320346f7fa859be09888505486f1c22ed9c8"
+    },
+    {
+      "path": "src/content/learn/react-compiler/index.md",
+      "blobSha": "480187ed5e6934e2dd8a6c08e6b7d92538f08f59"
+    },
+    {
+      "path": "src/content/learn/react-compiler/installation.md",
+      "blobSha": "b386e866ea32278f0843f08b240e3aed6859b501"
+    },
+    {
+      "path": "src/content/learn/react-compiler/introduction.md",
+      "blobSha": "ff5d6eae4837f16c03944a214b196d95e5da06bb"
+    },
+    {
+      "path": "src/content/learn/react-developer-tools.md",
+      "blobSha": "75406c5c629ee1f6c9ee739334f673889f81d8d3"
+    },
+    {
+      "path": "src/content/learn/reacting-to-input-with-state.md",
+      "blobSha": "006f316255546d2e52e377d5e4bc899366408983"
+    },
+    {
+      "path": "src/content/learn/referencing-values-with-refs.md",
+      "blobSha": "657d3ddcb008a214ce38e2ff587e0922c4d8155e"
+    },
+    {
+      "path": "src/content/learn/removing-effect-dependencies.md",
+      "blobSha": "0b69cfa64f48571d855b6210a4b568d143505e3a"
+    },
+    {
+      "path": "src/content/learn/render-and-commit.md",
+      "blobSha": "055111c3225bd3f2c2bb61f7939d359a1b0c1852"
+    },
+    {
+      "path": "src/content/learn/rendering-lists.md",
+      "blobSha": "8dfdf0b16fe7bd8087a80af2b0d850467f256180"
+    },
+    {
+      "path": "src/content/learn/responding-to-events.md",
+      "blobSha": "1fb554c5eee1dc4a7bc24f476fd2d089d20b727c"
+    },
+    {
+      "path": "src/content/learn/reusing-logic-with-custom-hooks.md",
+      "blobSha": "47a4cf52a18a3722ef0361d43da664a783158d75"
+    },
+    {
+      "path": "src/content/learn/rsc-sandbox-test.md",
+      "blobSha": "f914ea4ae3f6a291f033444bb84c3754b760fab1"
+    },
+    {
+      "path": "src/content/learn/scaling-up-with-reducer-and-context.md",
+      "blobSha": "01483bebf48921771c69f55c27002a072aaebd09"
+    },
+    {
+      "path": "src/content/learn/separating-events-from-effects.md",
+      "blobSha": "5f6ce4ee8d966b43043802c77ebf1eee9447b927"
+    },
+    {
+      "path": "src/content/learn/setup.md",
+      "blobSha": "2c46ee1485d1fad89966f519d021796788c398f9"
+    },
+    {
+      "path": "src/content/learn/sharing-state-between-components.md",
+      "blobSha": "2fbef89180150915f106ed4de7b6fc51b88c569d"
+    },
+    {
+      "path": "src/content/learn/state-a-components-memory.md",
+      "blobSha": "0637dd173d4ef27b6a4396b9b6b695e0cbc26b2a"
+    },
+    {
+      "path": "src/content/learn/state-as-a-snapshot.md",
+      "blobSha": "df4eddbd677f76a5a671211c16ee96c923c245fe"
+    },
+    {
+      "path": "src/content/learn/synchronizing-with-effects.md",
+      "blobSha": "1eec633882f30b5d1a7bbbbdbea94b5e7a3fcac5"
+    },
+    {
+      "path": "src/content/learn/thinking-in-react.md",
+      "blobSha": "70a94d64794d50d19e15b4ce9d4dd312bd3fd385"
+    },
+    {
+      "path": "src/content/learn/tutorial-tic-tac-toe.md",
+      "blobSha": "7be70f088dd3af12197a8c6218af54f2024fd174"
+    },
+    {
+      "path": "src/content/learn/typescript.md",
+      "blobSha": "2e6f7edc53ec7eb6723b2a6c3ef1a00dd620ac5f"
+    },
+    {
+      "path": "src/content/learn/understanding-your-ui-as-a-tree.md",
+      "blobSha": "afc38cd332fa4232205904d58704592cee8cfa74"
+    },
+    {
+      "path": "src/content/learn/updating-arrays-in-state.md",
+      "blobSha": "61e4f4e2d98049493c96d88539c577293f189447"
+    },
+    {
+      "path": "src/content/learn/updating-objects-in-state.md",
+      "blobSha": "5e04e7ae5cb637d869d0de27ed714121f5656e48"
+    },
+    {
+      "path": "src/content/learn/writing-markup-with-jsx.md",
+      "blobSha": "be3a9ac2cdb76bf88b433bc02b575f2a005afc37"
+    },
+    {
+      "path": "src/content/learn/you-might-not-need-an-effect.md",
+      "blobSha": "81a0842eb60f53c3f97e56f6c4d9e8b18bf846d8"
+    },
+    {
+      "path": "src/content/learn/your-first-component.md",
+      "blobSha": "81744322e60c36d7ef5e310c54c57c4e1702fccf"
+    },
+    {
+      "path": "src/content/reference/dev-tools/react-devtools-cdt-mcp.md",
+      "blobSha": "9c966a0ffc937bbea9751138df7c556d22fcd2b7"
+    },
+    {
+      "path": "src/content/reference/dev-tools/react-performance-tracks.md",
+      "blobSha": "d4757b9ec9e0083d0e119d5aea346bc687c7e609"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/index.md",
+      "blobSha": "b3a16bc3702791c66f4332c21cc9835e54e66285"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/component-hook-factories.md",
+      "blobSha": "537903abdd00bad6a4b20d8ecb7207792e29a280"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/config.md",
+      "blobSha": "719e08412e50c9fbdf0771485e912ea1ca5cd8de"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/error-boundaries.md",
+      "blobSha": "830098e5be3fe12f7d527ad1091682e0402eaa32"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/exhaustive-deps.md",
+      "blobSha": "daa7db6a81391329e25c9748a15800987a670042"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/gating.md",
+      "blobSha": "3bd662a86e1d4a4b7446f28745be126a3e28bb37"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/globals.md",
+      "blobSha": "fe0cbe0080f5f68dda8ece5f8268280ed1a67132"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/immutability.md",
+      "blobSha": "2314cde0649b49a709ed684f7750407e30c3717d"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/incompatible-library.md",
+      "blobSha": "6acffb227f4dec05e3c2b7f2c7abdec44f316331"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/preserve-manual-memoization.md",
+      "blobSha": "93b582b1e16e059cf69b2d38c2a1e3b3a133a322"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/purity.md",
+      "blobSha": "af8aacc612d86c4bd1d00e94cfe4d3c6a45eda48"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/refs.md",
+      "blobSha": "3108fdd89da5812fd1640755b936ba6558d3ce31"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/rules-of-hooks.md",
+      "blobSha": "a364ab67febd8b181024a20e32505720a58295b8"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/set-state-in-effect.md",
+      "blobSha": "64fa5c655a9a707254a0ef3214871772c41740f5"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/set-state-in-render.md",
+      "blobSha": "7517d5f9286cac317a71087e33e7987fd989f2cb"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/static-components.md",
+      "blobSha": "bd52f07037a0cf5df3d950d1551a1ac640cb2c39"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/unsupported-syntax.md",
+      "blobSha": "a3eefcdb24ff779328d0fb86ff7488d00034683f"
+    },
+    {
+      "path": "src/content/reference/eslint-plugin-react-hooks/lints/use-memo.md",
+      "blobSha": "a5a77e5f6e8a9a6b7dd775192eca44a75fc55bf6"
+    },
+    {
+      "path": "src/content/reference/react-compiler/compilationMode.md",
+      "blobSha": "5513d1c6a68dd7cfdb8629656cae1222aee89141"
+    },
+    {
+      "path": "src/content/reference/react-compiler/compiling-libraries.md",
+      "blobSha": "ec0a7581eaef2d28f96dd3cb66aebf3894aaa1fb"
+    },
+    {
+      "path": "src/content/reference/react-compiler/configuration.md",
+      "blobSha": "ec9b27e6f577c6fb7c78951491fa9a316cda8f28"
+    },
+    {
+      "path": "src/content/reference/react-compiler/directives.md",
+      "blobSha": "df0f053e8c76f2deda47e30116658585b97d64f2"
+    },
+    {
+      "path": "src/content/reference/react-compiler/directives/use-memo.md",
+      "blobSha": "431862682f1e749c31113691d629403c150bf6f2"
+    },
+    {
+      "path": "src/content/reference/react-compiler/directives/use-no-memo.md",
+      "blobSha": "e6c419bc66c397fe97a791dd51d87f52d0e84713"
+    },
+    {
+      "path": "src/content/reference/react-compiler/gating.md",
+      "blobSha": "479506af32b4323bd7f562ee525770ba891719a3"
+    },
+    {
+      "path": "src/content/reference/react-compiler/logger.md",
+      "blobSha": "41e2a1da064c5019dfd396a0b72e073145daddbe"
+    },
+    {
+      "path": "src/content/reference/react-compiler/panicThreshold.md",
+      "blobSha": "e20f5c0c5080f12b61b90bed9461d7ab6f0ffc39"
+    },
+    {
+      "path": "src/content/reference/react-compiler/target.md",
+      "blobSha": "8ccc4a6b1254f1891c2bb5861cb5bfed0b5fe237"
+    },
+    {
+      "path": "src/content/reference/react-dom/browser.md",
+      "blobSha": "8b00905751308508a9fbebe0c3173cea6bb04810"
+    },
+    {
+      "path": "src/content/reference/react-dom/client/createRoot.md",
+      "blobSha": "c42f2fabfc5d3dced7ff5d81d7165eda69cdfce8"
+    },
+    {
+      "path": "src/content/reference/react-dom/client/hydrateRoot.md",
+      "blobSha": "251818bc992b972bc56bf6ee02ee1ecc6db88550"
+    },
+    {
+      "path": "src/content/reference/react-dom/client/index.md",
+      "blobSha": "b612d7ba63182dc3db8ab03c241787026d0fff2b"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/common.md",
+      "blobSha": "f81788da0e4047c023a979721c7ba40e0de64c9d"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/form.md",
+      "blobSha": "10e9c67940e627c6b051ed9c4e76ab243df0bad6"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/img.md",
+      "blobSha": "255aee8d6f2b02f5413e5d561e3cd46f41c27ce4"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/index.md",
+      "blobSha": "dea91881c2c74571bee59db03fff6a96551c4d9b"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/input.md",
+      "blobSha": "37ff14d98765c29a6a0082cff1d7d6c649b78153"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/link.md",
+      "blobSha": "6d374807caefc358b7b382da4a8d2ad4e6586be7"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/meta.md",
+      "blobSha": "35a95c5aaf5a75fae097c6c018efcf9b23b11c90"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/option.md",
+      "blobSha": "f523e0da843424acc92b6ac8eb7f1da9036276eb"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/progress.md",
+      "blobSha": "cc231890c038b5a890faaefbf39490a7086b9f14"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/script.md",
+      "blobSha": "06032a8935bac8bfdf8264947e788d1acbf8a8c5"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/select.md",
+      "blobSha": "72033ea0ac0a814fd659d559d8706488b9bfa4d8"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/style.md",
+      "blobSha": "561c207d1d20f45e88a5059da76ce1dd3a7c7eec"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/textarea.md",
+      "blobSha": "963b0b3fde7f6eedff9cbb9795606f84767478ed"
+    },
+    {
+      "path": "src/content/reference/react-dom/components/title.md",
+      "blobSha": "9e4d8e65ae4b047b59f8c05978acd52c201cfe3f"
+    },
+    {
+      "path": "src/content/reference/react-dom/createPortal.md",
+      "blobSha": "e806660e8699c418669e403e6ce56254eae4ae54"
+    },
+    {
+      "path": "src/content/reference/react-dom/flushSync.md",
+      "blobSha": "6fe53337d440f0d650d7336cbf81be17178096e0"
+    },
+    {
+      "path": "src/content/reference/react-dom/hooks/index.md",
+      "blobSha": "5bda2b5ad10f7155fd4856d3ba2b30b53972f525"
+    },
+    {
+      "path": "src/content/reference/react-dom/hooks/useFormStatus.md",
+      "blobSha": "7517d8ae22f5bb703089d9d19e257936df41cb41"
+    },
+    {
+      "path": "src/content/reference/react-dom/index.md",
+      "blobSha": "daf8290177bf9675572165f3a60961af58133bae"
+    },
+    {
+      "path": "src/content/reference/react-dom/preconnect.md",
+      "blobSha": "f28de8776fc6bc061ff45504778d12ac3892e98b"
+    },
+    {
+      "path": "src/content/reference/react-dom/prefetchDNS.md",
+      "blobSha": "c9229bba266602a60785c107323dc0747acfd6dc"
+    },
+    {
+      "path": "src/content/reference/react-dom/preinit.md",
+      "blobSha": "d9f3808c465dc2e5d0fec3e4041d523152cf1817"
+    },
+    {
+      "path": "src/content/reference/react-dom/preinitModule.md",
+      "blobSha": "72c443291e7975e42aa52cb66b59c8f3b05e4b23"
+    },
+    {
+      "path": "src/content/reference/react-dom/preload.md",
+      "blobSha": "5d625d23672fcefd8c3e4fbecb56ba0bf8bf3b29"
+    },
+    {
+      "path": "src/content/reference/react-dom/preloadModule.md",
+      "blobSha": "c26b4878f6a682522e3148f34ae85dcfa3ed3426"
+    },
+    {
+      "path": "src/content/reference/react-dom/server/index.md",
+      "blobSha": "aa5d370908708b19ec3bf498723f767fca6fd57b"
+    },
+    {
+      "path": "src/content/reference/react-dom/server/renderToPipeableStream.md",
+      "blobSha": "c3fac16c341efe2503660a912322a4e17b1d7edb"
+    },
+    {
+      "path": "src/content/reference/react-dom/server/renderToReadableStream.md",
+      "blobSha": "76819184c72ba57318f6c2b00063c1c8e645bbbe"
+    },
+    {
+      "path": "src/content/reference/react-dom/server/renderToStaticMarkup.md",
+      "blobSha": "2b9178d550ee531c2f0e4e884811173a9b2b4450"
+    },
+    {
+      "path": "src/content/reference/react-dom/server/renderToString.md",
+      "blobSha": "b89c65c0c178479780e796f89eb4e1937098e521"
+    },
+    {
+      "path": "src/content/reference/react-dom/server/resume.md",
+      "blobSha": "012d3823f90f24217a0a342a6f80b11f0fb6010d"
+    },
+    {
+      "path": "src/content/reference/react-dom/server/resumeToPipeableStream.md",
+      "blobSha": "f80cf23fc3ff2544a064b1d3a824a8bfc29d36ff"
+    },
+    {
+      "path": "src/content/reference/react-dom/static/index.md",
+      "blobSha": "cde1268f6de10b4930eb4f4087534fc64f022ccb"
+    },
+    {
+      "path": "src/content/reference/react-dom/static/prerender.md",
+      "blobSha": "1a4258f8f90771eba937787ff4aa0ba1028e441d"
+    },
+    {
+      "path": "src/content/reference/react-dom/static/prerenderToNodeStream.md",
+      "blobSha": "52a96fef24146978b974498846eaf8bf60c4d401"
+    },
+    {
+      "path": "src/content/reference/react-dom/static/resumeAndPrerender.md",
+      "blobSha": "a0191aae3b047f10551d115423e40e438a018f15"
+    },
+    {
+      "path": "src/content/reference/react-dom/static/resumeAndPrerenderToNodeStream.md",
+      "blobSha": "018fcf6d3df3c5b3e1b48cceb312b924a0449c1f"
+    },
+    {
+      "path": "src/content/reference/react/Activity.md",
+      "blobSha": "b521970b764d1b085a9d9c10c920c1d9f77a1413"
+    },
+    {
+      "path": "src/content/reference/react/Children.md",
+      "blobSha": "3647b1eed1d343645819007448a89da63e049c3d"
+    },
+    {
+      "path": "src/content/reference/react/Component.md",
+      "blobSha": "f6c8cc4bf321c23c32425b3b2012807dc53474aa"
+    },
+    {
+      "path": "src/content/reference/react/Fragment.md",
+      "blobSha": "8666850fc009ebff4828284e07999add04796772"
+    },
+    {
+      "path": "src/content/reference/react/Profiler.md",
+      "blobSha": "e70e299636de8d013b5ce6ca101c3ea3086e967a"
+    },
+    {
+      "path": "src/content/reference/react/PureComponent.md",
+      "blobSha": "3e2d074e10d00e38579dc4f60711c8f882a3823e"
+    },
+    {
+      "path": "src/content/reference/react/StrictMode.md",
+      "blobSha": "16e8d9e606526ac40df5767be6ba9bc45076f68c"
+    },
+    {
+      "path": "src/content/reference/react/Suspense.md",
+      "blobSha": "179a4d368fd39c9f2cedf9052e92b6cc7c5a40a0"
+    },
+    {
+      "path": "src/content/reference/react/ViewTransition.md",
+      "blobSha": "17595bb763e693ca3dc3cc2f0144e64dd36237e0"
+    },
+    {
+      "path": "src/content/reference/react/act.md",
+      "blobSha": "007e2cb0fe1016b75e8687ae592d38f9f71820ea"
+    },
+    {
+      "path": "src/content/reference/react/addTransitionType.md",
+      "blobSha": "415e7247a4f2f10aec9bc4a0c8f649e3fd8c8262"
+    },
+    {
+      "path": "src/content/reference/react/apis.md",
+      "blobSha": "1e6a8a6449a3aad826a8c7c0949e34977db5cece"
+    },
+    {
+      "path": "src/content/reference/react/cache.md",
+      "blobSha": "7b6984736eedb85e2711ca44b0c8806388c7beb2"
+    },
+    {
+      "path": "src/content/reference/react/cacheSignal.md",
+      "blobSha": "c898ca53b1d2a4216b313f72b010a03fb3febd24"
+    },
+    {
+      "path": "src/content/reference/react/captureOwnerStack.md",
+      "blobSha": "b7516791ed9cb7ea13e7f04a7232d921a3a7847b"
+    },
+    {
+      "path": "src/content/reference/react/cloneElement.md",
+      "blobSha": "91d501b7203ac1297177312d148162e3a5047c4c"
+    },
+    {
+      "path": "src/content/reference/react/components.md",
+      "blobSha": "bd5a30112d33a9d18371bd95de86f2d0ed3f1bbd"
+    },
+    {
+      "path": "src/content/reference/react/createContext.md",
+      "blobSha": "e4e9bcf6219e1b5d2560a6de6c811be125ac170c"
+    },
+    {
+      "path": "src/content/reference/react/createElement.md",
+      "blobSha": "87110a71af5e5e7221fb8da4a5454b09ca6f7874"
+    },
+    {
+      "path": "src/content/reference/react/createRef.md",
+      "blobSha": "2a3ba6aa3df4e102e1ab536f252ea4a97aa19c28"
+    },
+    {
+      "path": "src/content/reference/react/experimental_taintObjectReference.md",
+      "blobSha": "c7b565e9b6ea041e689be4ed04d842fbfffbcc8f"
+    },
+    {
+      "path": "src/content/reference/react/experimental_taintUniqueValue.md",
+      "blobSha": "bea4b627da8498df9cd6c5b17ee5295601230510"
+    },
+    {
+      "path": "src/content/reference/react/forwardRef.md",
+      "blobSha": "db42bfae06633372d362b727666ae8ad70781479"
+    },
+    {
+      "path": "src/content/reference/react/hooks.md",
+      "blobSha": "ab48b644b7fe9f269b50e890bf140032e7fa1b66"
+    },
+    {
+      "path": "src/content/reference/react/index.md",
+      "blobSha": "bdb202157f6724b030604e21b95df260d656ad5b"
+    },
+    {
+      "path": "src/content/reference/react/isValidElement.md",
+      "blobSha": "bc4fbaef45498188a95d67d1004a6ed7efd33a58"
+    },
+    {
+      "path": "src/content/reference/react/lazy.md",
+      "blobSha": "5ec74d0d9c0c93c413ddea77d04d37782331414b"
+    },
+    {
+      "path": "src/content/reference/react/legacy.md",
+      "blobSha": "f4e3ebe289f7d401f9ad1054e4937ac02ec8c7cf"
+    },
+    {
+      "path": "src/content/reference/react/memo.md",
+      "blobSha": "b91171e8fd24d68f4722c932cb8941a53e894e30"
+    },
+    {
+      "path": "src/content/reference/react/startTransition.md",
+      "blobSha": "1da920d5e920fa031d03c2f1e6e288978f2b5b84"
+    },
+    {
+      "path": "src/content/reference/react/use.md",
+      "blobSha": "ab0db0dd8ec721b02ffde2256a243bd64ce4b2dd"
+    },
+    {
+      "path": "src/content/reference/react/useActionState.md",
+      "blobSha": "581eebc634bfaff67f318180993b37111551e852"
+    },
+    {
+      "path": "src/content/reference/react/useCallback.md",
+      "blobSha": "cb5a3454e761cca7de1f249dee2b032c5bca8b3f"
+    },
+    {
+      "path": "src/content/reference/react/useContext.md",
+      "blobSha": "022277df40f5454bb7130fd5ccef12ff52fe1bbb"
+    },
+    {
+      "path": "src/content/reference/react/useDebugValue.md",
+      "blobSha": "62db9e6b231a2538abb7158a55b79eff773a31da"
+    },
+    {
+      "path": "src/content/reference/react/useDeferredValue.md",
+      "blobSha": "f5aa29bb128ab3797adaec3c29651bfe7a0284e8"
+    },
+    {
+      "path": "src/content/reference/react/useEffect.md",
+      "blobSha": "218e65ffb1d7fcca730a013eaf477a1693ded343"
+    },
+    {
+      "path": "src/content/reference/react/useEffectEvent.md",
+      "blobSha": "97a659138c57aed5650932472383640ed6f5d513"
+    },
+    {
+      "path": "src/content/reference/react/useId.md",
+      "blobSha": "40446825aff33461b03284c414a83658506b031b"
+    },
+    {
+      "path": "src/content/reference/react/useImperativeHandle.md",
+      "blobSha": "ea3f97f8aac2bb4c3602357307847faf3c402c53"
+    },
+    {
+      "path": "src/content/reference/react/useInsertionEffect.md",
+      "blobSha": "c8094014409e657224e707df7987111731244514"
+    },
+    {
+      "path": "src/content/reference/react/useLayoutEffect.md",
+      "blobSha": "df7e2e9cc7cfa11b26e6e70950e59a22a44b4eae"
+    },
+    {
+      "path": "src/content/reference/react/useMemo.md",
+      "blobSha": "e8552e1666c521801c823ebbce375f97d86a8f27"
+    },
+    {
+      "path": "src/content/reference/react/useOptimistic.md",
+      "blobSha": "c1ec7978791dd83d3edb14377f26ff7e2d27645e"
+    },
+    {
+      "path": "src/content/reference/react/useReducer.md",
+      "blobSha": "404ebb08770aa9b9969e6734f48842b4ea6126c9"
+    },
+    {
+      "path": "src/content/reference/react/useRef.md",
+      "blobSha": "6f7728f0a2a6e838e2dff10c94e3885edf0dfde0"
+    },
+    {
+      "path": "src/content/reference/react/useState.md",
+      "blobSha": "21911f0ad2012f07ff5d17feaad440d28a865a5d"
+    },
+    {
+      "path": "src/content/reference/react/useSyncExternalStore.md",
+      "blobSha": "9bb755a4be93c04ba6e6666ba54adc155f76f24a"
+    },
+    {
+      "path": "src/content/reference/react/useTransition.md",
+      "blobSha": "6533a201bf359f1216ebf01d5b80c190a2a3307c"
+    },
+    {
+      "path": "src/content/reference/rsc/directives.md",
+      "blobSha": "af04d5b4158905c4fc22ba8edf168b550f2f6514"
+    },
+    {
+      "path": "src/content/reference/rsc/server-components.md",
+      "blobSha": "a54306e4381f3bb9c78d6ea6a4657489a03e8512"
+    },
+    {
+      "path": "src/content/reference/rsc/server-functions.md",
+      "blobSha": "25d2eca2dd4a5914c69b7ec10893dac1194a0c57"
+    },
+    {
+      "path": "src/content/reference/rsc/use-client.md",
+      "blobSha": "4c6051977ef942a82318d3923776001ef4846d1a"
+    },
+    {
+      "path": "src/content/reference/rsc/use-server.md",
+      "blobSha": "27ef9ee3ccab3a0d07041024ab88451bb98cbab4"
+    },
+    {
+      "path": "src/content/reference/rules/components-and-hooks-must-be-pure.md",
+      "blobSha": "973561c2251eb48fa253bb9fef221ce72006f480"
+    },
+    {
+      "path": "src/content/reference/rules/index.md",
+      "blobSha": "dd5f7456c84374d09f12497c5daf58481e6c840d"
+    },
+    {
+      "path": "src/content/reference/rules/react-calls-components-and-hooks.md",
+      "blobSha": "03354ad5a73a2c8d85f22d915d3466a3e2b81099"
+    },
+    {
+      "path": "src/content/reference/rules/rules-of-hooks.md",
+      "blobSha": "ecaef7c60d9caf26b1740a6bf4b0f970d31da875"
+    },
+    {
+      "path": "src/content/versions.md",
+      "blobSha": "1b883a11a54643bcb9f5bc56e251113f1eeea877"
+    },
+    {
+      "path": "src/content/warnings/invalid-aria-prop.md",
+      "blobSha": "4097cc3b5cdb8669d42317929060b397a5634ccf"
+    },
+    {
+      "path": "src/content/warnings/invalid-hook-call-warning.md",
+      "blobSha": "31b930ee3718e59b3a9bc7412ed1829819f84b2e"
+    },
+    {
+      "path": "src/content/warnings/react-dom-test-utils.md",
+      "blobSha": "794bb1d11f431c1cc86846558942c70b61139cd9"
+    },
+    {
+      "path": "src/content/warnings/react-test-renderer.md",
+      "blobSha": "dca1761b4b131b82443c7a9ba12eec1300f6bde3"
+    },
+    {
+      "path": "src/content/warnings/special-props.md",
+      "blobSha": "1646b531a2c29c0bd47ed01995252df44f114859"
+    },
+    {
+      "path": "src/content/warnings/unknown-prop.md",
+      "blobSha": "80bcdb14296b04f2ad503ecba6297be0db859f29"
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 "use client";
 
+import { Loading } from "@/components/ui/extensions/loading";
+
 import type { ForgotPasswordAuthFormSchema } from "@firebase-oss/ui-core";
 import {
   useForgotPasswordAuthFormAction,
@@ -15,7 +17,6 @@ import { useState } from "react";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { Policies } from "./policies";
 
 export type { ForgotPasswordAuthFormProps };
@@ -68,9 +69,13 @@ export function ForgotPasswordAuthForm(props: ForgotPasswordAuthFormProps) {
           )}
         />
         <Policies />
-        <Button type="submit" disabled={ui.state !== "idle"} aria-busy={ui.state !== "idle"}>
+        <Button
+          type="submit"
+          disabled={ui.state !== "idle"}
+          aria-busy={ui.state !== "idle"}
+        >
           {ui.state !== "idle" ? (
-            <LoadingIndicator label={getTranslation(ui, "labels", "resetPassword")} className="text-inherit" />
+            <Loading>{getTranslation(ui, "labels", "resetPassword")}</Loading>
           ) : (
             getTranslation(ui, "labels", "resetPassword")
           )}

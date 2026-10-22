@@ -1,22 +1,25 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { buttonVariants } from "@/components/ui/button";
 
-function HomeScreen({
-  title,
-  description,
-  primaryHref,
-  primaryLabel,
-  secondaryAction,
-}: {
+type HomePresentationProps = ComponentProps<"div"> & {
   title: string;
   description: string;
   primaryHref: string;
   primaryLabel: string;
   secondaryAction: ReactNode;
-}) {
+};
+
+function HomePresentation({
+  title,
+  description,
+  primaryHref,
+  primaryLabel,
+  secondaryAction,
+  ...props
+}: HomePresentationProps) {
   return (
-    <>
+    <div {...props}>
       <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
         <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-foreground">
           {title}
@@ -37,8 +40,8 @@ function HomeScreen({
         </Link>
         {secondaryAction}
       </div>
-    </>
+    </div>
   );
 }
 
-export { HomeScreen };
+export { HomePresentation };

@@ -1,47 +1,35 @@
 "use client";
 
-import { signOut } from "firebase/auth";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
+import type { ComponentProps } from "react";
 import { LoadingIndicator } from "@/components/loading/loading-indicator";
 import { buttonVariants } from "@/components/ui/button";
-import { getFirebaseUI } from "@/lib/firebase/client";
+import { useHomeSignOutButton } from "../_hooks/use-home-sign-out-button";
 
-function HomeSignOutButton() {
-  const t = useTranslations("Home");
-  const auth = useTranslations("Auth");
-  const [state, setState] = useState<"idle" | "pending" | "error">("idle");
+type HomeSignOutButtonProps = ComponentProps<"div">;
 
-  async function handleSignOut() {
-    if (state === "pending") return;
-    setState("pending");
-    try {
-      await signOut(getFirebaseUI().get().auth);
-    } catch {
-      setState("error");
-    }
-  }
+function HomeSignOutButton(props: HomeSignOutButtonProps) {
+  const { t, auth, isPending, isError, handleSignOut } = useHomeSignOutButton();
 
   return (
-    <div className="flex w-full flex-col gap-2 sm:w-auto">
+    <div {...props} className="flex w-full flex-col gap-2 sm:w-auto">
       <button
         type="button"
         onClick={handleSignOut}
-        disabled={state === "pending"}
-        aria-busy={state === "pending"}
+        disabled={isPending}
+        aria-busy={isPending}
         className={buttonVariants({
           variant: "outline",
           className:
             "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
         })}
       >
-        {state === "pending" ? (
+        {isPending ? (
           <LoadingIndicator label={t("signingOut")} className="text-inherit" />
         ) : (
           auth("signOut")
         )}
       </button>
-      {state === "error" && (
+      {isError && (
         <p role="alert" className="max-w-xs text-sm text-destructive">
           {t("signOutError")}
         </p>

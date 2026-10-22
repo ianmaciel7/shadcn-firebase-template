@@ -7,7 +7,8 @@
       "src/components/ui/*.tsx",
       "reports/**",
       ".next/**",
-      "coverage/**"
+      "coverage/**",
+      "tests/semgrep/**"
     ]
   }
 }

@@ -1,15 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import type { ComponentProps } from "react";
 import { LoadingIndicator } from "@/components/loading/loading-indicator";
-import { useHomeSession } from "../_hooks/use-home-session";
+import { useHomeContent } from "../_hooks/use-home-content";
 import { AuthenticatedHome } from "./authenticated-home";
 import { GuestHome } from "./guest-home";
 
-function HomeContent() {
-  const t = useTranslations("Home");
-  const { ready, user } = useHomeSession();
+type HomeContentProps = ComponentProps<"div">;
+
+function HomeContent(props: HomeContentProps) {
+  const { t, ready, user } = useHomeContent();
 
   if (!ready) {
     return (
@@ -20,7 +21,10 @@ function HomeContent() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground font-sans">
+    <div
+      {...props}
+      className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground font-sans"
+    >
       <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 sm:items-start">
         <Image
           className="dark:invert h-5 w-[100px]"

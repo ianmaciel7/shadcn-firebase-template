@@ -1,16 +1,18 @@
 import type { User } from "firebase/auth";
 import { useTranslations } from "next-intl";
-import { HomeScreen } from "./home-screen";
+import type { ComponentProps } from "react";
+import { HomePresentation } from "./home-presentation";
 import { HomeSignOutButton } from "./home-sign-out-button";
 
-function AuthenticatedHome({
-  user,
-}: {
+type AuthenticatedHomeProps = ComponentProps<"div"> & {
   user: Pick<User, "displayName" | "email">;
-}) {
+};
+
+function AuthenticatedHome({ user, ...props }: AuthenticatedHomeProps) {
   const t = useTranslations("Home");
   return (
-    <HomeScreen
+    <HomePresentation
+      {...props}
       title={t("welcome", { name: user.displayName?.trim() || t("friend") })}
       description={t("signedInDescription")}
       primaryHref="/profile"

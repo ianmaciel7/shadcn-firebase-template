@@ -72,3 +72,44 @@ the final squash commit title follows Conventional Commits. The intended GitHub
 protection settings and their availability are described in
 [ADR 0007](docs/adr/0007-configure-ci.md#main-branch-merge-policy); repository
 settings must be configured separately to enforce this policy.
+
+## shadcn/ui documentation and source changes
+
+Use [the documentation workflow](docs/agents/shadcn.md) to identify the correct
+primitive family and source revision. Keep upstream findings in their canonical
+guide, update the source inventory when refreshing the full reference, and
+distinguish official APIs from project-specific guards. Do not rewrite accepted
+ADRs or external skill references to make them match a new release.
+
+For a component update, include the registry/ref, reviewed CLI diff, preserved
+local adaptations, and behavior verification in the pull request. Documentation
+updates alone do not imply component, dependency, preset, or AI Elements
+migrations. Preserve unrelated working-tree changes and stage only the intended
+files or hunks.
+
+## Next.js documentation and framework changes
+
+Use [the versioned Next.js review](docs/agents/nextjs.md) before changing
+routing, cache scopes, metadata, or server boundaries. Report the installed
+version and source revision, the applicable rendering model, and the checks
+actually run. Keep framework requirements distinct from repository policies.
+
+A documentation refresh alone does not upgrade Next.js, run migration codemods,
+install suggested agent skills, select hosting, or alter Firebase persistence.
+For an authorized upgrade, review the release notes, installed CLI support,
+configuration migrations, package/lockfile diff, and production behavior in a
+focused change. Preserve accepted ADRs and unrelated working-tree changes.
+
+## React documentation and runtime changes
+
+Use [the React source review](docs/agents/react.md) to distinguish current
+reference material, installed React/React DOM APIs, Compiler support, and
+optional/experimental features. Document the source revision and actual
+verification when refreshing guidance or changing behavior.
+
+Keep native diagnostic configuration and its valid/invalid regression cases
+together. A framework/library recommendation does not automatically install
+ESLint, replace React Hook Form, enable another renderer, remove all manual
+memoization, or upgrade dependencies. Review runtime, DOM, framework, type,
+and Compiler compatibility together when an upgrade is explicitly requested.
+Preserve accepted ADRs, external skill provenance, and unrelated local edits.

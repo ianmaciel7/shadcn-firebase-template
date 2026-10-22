@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
-import { HomeScreen } from "./home-screen";
+import { HomePresentation } from "./home-presentation";
 
-function GuestHome() {
+type GuestHomeProps = ComponentProps<"div">;
+
+function GuestHome(props: GuestHomeProps) {
   const t = useTranslations("Home");
   return (
-    <HomeScreen
+    <HomePresentation
+      {...props}
       title={t("title")}
       description={t("description")}
       primaryHref="/sign-in"

@@ -1,42 +1,15 @@
 "use client";
 
-import { onAuthStateChanged } from "firebase/auth";
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
-import { type PropsWithChildren, useEffect, useState } from "react";
-import { LoadingIndicator } from "@/components/loading/loading-indicator";
-import { getFirebaseUI } from "@/lib/firebase/client";
+import type { PropsWithChildren } from "react";
+import { Loading } from "@/components/ui/extensions/loading";
+import { useProtectedGate } from "../_hooks/use-protected-gate";
 
 type ProtectedGateProps = PropsWithChildren;
 
 function ProtectedGate({ children }: ProtectedGateProps) {
-  const t = useTranslations("Auth");
-  const router = useRouter();
-  const [ready, setReady] = useState(false);
-  const [error, setError] = useState(false);
+  const { t, isLoading, hasError } = useProtectedGate();
 
-  useEffect(() => {
-    let store: ReturnType<typeof getFirebaseUI>;
-    try {
-      store = getFirebaseUI();
-    } catch (cause) {
-      console.error(cause);
-      setError(true);
-      return;
-    }
-
-    return onAuthStateChanged(store.get().auth, (user) => {
-      if (!user) {
-        setReady(false);
-        const destination = window.location.pathname + window.location.search;
-        router.replace(`/sign-in?next=${encodeURIComponent(destination)}`);
-      } else {
-        setReady(true);
-      }
-    });
-  }, [router]);
-
-  if (error) {
+  if (hasError) {
     return (
       <main className="flex min-h-svh flex-1 items-center justify-center p-6 md:p-10">
         <p role="alert">{t("configurationError")}</p>
@@ -44,10 +17,12 @@ function ProtectedGate({ children }: ProtectedGateProps) {
     );
   }
 
-  if (!ready) {
+  if (isLoading) {
     return (
       <main className="flex min-h-svh flex-1 items-center justify-center p-6 md:p-10">
-        <LoadingIndicator label={t("loading")} />
+        <Loading className="text-sm text-muted-foreground">
+          {t("loading")}
+        </Loading>
       </main>
     );
   }

@@ -1,6 +1,6 @@
 # Project skills
 
-This directory contains five installed skills. `skills-lock.json` at the
+This directory contains seven installed skills. `skills-lock.json` at the
 repository root records upstream sources, paths, and computed hashes for external
 skills.
 
@@ -8,6 +8,8 @@ skills.
 | --- | --- | --- | --- |
 | ask-matt | [SKILL.md](ask-matt/SKILL.md) | `mattpocock/skills` | Route engineering work to relevant workflows |
 | context7-cli | [SKILL.md](context7-cli/SKILL.md) | `upstash/context7` | Resolve a library and query current documentation |
+| firebase-basics | [SKILL.md](firebase-basics/SKILL.md) | `firebase/agent-skills` | Firebase CLI setup, project selection, and app configuration downloads |
+| firebase-auth-basics | [SKILL.md](firebase-auth-basics/SKILL.md) | `firebase/agent-skills` | Firebase Authentication concepts, integration, and security rules |
 | save | [SKILL.md](save/SKILL.md) | Project-local | Persist knowledge, rules, decisions, and conventions to canonical documentation |
 | setup-matt-pocock-skills | [SKILL.md](setup-matt-pocock-skills/SKILL.md) | `mattpocock/skills` | Configure engineering skill and tracker documentation |
 | shadcn | [SKILL.md](shadcn/SKILL.md) | `shadcn/ui` | Work with shadcn components, registries, and design systems |

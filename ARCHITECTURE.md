@@ -37,7 +37,7 @@ configuration and repository documentation.
 ├── ARCHITECTURE.md
 ├── CODING_STANDARDS.md
 ├── CONTRIBUTING.md
-├── DER.md                   # Entity-relationship diagram (pending persistence)
+├── DER.md                   # Pending product ERD and existing technical stores
 ├── DESIGN.md                # Design system tokens, typography, and UI specs
 ├── GLOSSARY.md
 ├── README.md
@@ -52,8 +52,8 @@ files, and `public/` remain at the repository root, as required by the Next.js
 
 ## Application boundaries
 
-- `src/app` contains routes and Next.js special files only, such as
-  `page.tsx`, `layout.tsx`, `loading.tsx`, and `route.ts`.
+- `src/app` contains route entrypoints and Next.js special files, plus
+  route-private implementation code under underscore-prefixed folders.
 - Shared UI belongs in `src/components`; shared non-UI helpers belong in
   `src/lib`.
 - Route-specific implementation details may be colocated with a route. Use an
@@ -78,8 +78,9 @@ When an unauthenticated user requests a protected route, the client guard redire
   non-JSX modules and `*.test.tsx` for React or JSX integrations.
 - Colocate Ladle stories (`*.stories.tsx`) next to UI primitives under
   `src/components/ui/` for isolated component development and visual inspection.
-- Keep repository-integrity Vitest tests, such as the Firebase reference guard, in
-  `tests/unit/` with `*.test.ts`; they check files outside a single source module.
+- Keep repository tooling guard self-tests beside their scripts, such as
+  `scripts/check-component-conventions.test.mjs`. Do not introduce a global
+  `tests/unit/` hierarchy for application tests.
 - Keep Playwright E2E specifications in root `tests/` with `*.spec.ts`.
   Feature-specific fixtures and helpers stay with their consumer unless shared
   by multiple E2E specifications.
@@ -112,8 +113,11 @@ validation integrates `@cspell/dict-pt-br`.
 
 The root layout (`src/app/layout.tsx`) currently declares a static `<html
 lang="en">` attribute even when translated content is rendered through
-`IntlProvider` via the cookie. Derived applications requiring dynamic
-server-rendered `lang` attributes must read the cookie in `RootLayout`. See
+`IntlProvider` via the cookie. A dynamic server-rendered `lang` needs an explicit locale/rendering design:
+with Cache Components, awaiting a request cookie at the root above all
+`Suspense` boundaries can block prerendering. Moving the existing cookie read
+there is not a complete fix. Preserve the current behavior until that design
+and its accessibility tests are implemented. See
 [ADR 0004](docs/adr/0004-configure-internationalization.md) for the complete
 decision.
 
@@ -124,7 +128,8 @@ Compiler. It loads Tailwind through the Turbopack CSS loader and wraps the
 configuration with the `next-intl` plugin.
 
 The root layout keeps the async `IntlProvider` inside `Suspense`, followed by
-`ThemeProvider` and `TooltipProvider`. The component libraries under
+`ThemeProvider` and `TooltipProvider`, with `Toaster` inside `ThemeProvider`.
+The component libraries under
 `src/components/ui` and `src/components/ai-elements` are locally owned source;
 custom providers under `ui/extensions` remain subject to application checks.
 `src/components/firebase` contains Firebase UI registry source used by the app.
@@ -144,8 +149,13 @@ Firebase Authentication provides browser authentication on public auth routes an
 client-guarded protected routes (`(protected)/profile`); see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md).
 Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`; Firestore
 operations live in descriptive modules under `src/lib/firebase/firestore/`, such
-as `user-preferences.ts`. The profile route's `useProfileActions` hook coordinates
-its Auth, Storage, and Firestore updates. Profile preferences use
+as `user-preferences.ts`. The profile route's `useProfileSubmit` hook coordinates Auth, Storage,
+and Firestore persistence. `useProfileForm` owns the React Hook Form lifecycle
+and operation lock. `useProfileSection` composes session, status, and translation
+hooks; `ProfileSection` renders those states and composes the Card and Form
+parts. Shared profile value types live in `src/lib/profile.ts`. The canonical profile
+responsibilities live in
+[the form rule](.agents/rules/form-architecture.md). Profile preferences use
 Firestore at `users/{uid}` with owner and field/value validation rules. Avatar
 Storage rules restrict `users/{uid}/avatar` to its owner and enforce accepted
 image types and the 2 MiB upload limit. These browser SDK modules are not a
@@ -168,3 +178,82 @@ Architecture decisions that have lasting consequences are recorded in
 `docs/adr/`; use its [index](docs/adr/README.md) to distinguish historical
 details from current configuration. New ADRs are numbered sequentially and must describe the context,
 decision, and consequences before the related implementation is merged.
+
+## UI distribution boundary
+
+`components.json` selects `base-nova`, Base UI primitives, TypeScript, React
+Server Component support, Lucide, and the `@/*` aliases. Tailwind v4 uses the
+existing CSS entry rather than a separate Tailwind config. The `shadcn` package
+provides the CLI and shared CSS; a dependency upgrade does not replace copied
+files in `src/components/ui`, `src/components/ai-elements`, or
+`src/components/firebase`.
+
+The repository consumes registries; it does not publish a custom registry.
+Monorepo, package-import, React Aria, Radix, alternative form-library, and
+server-action examples in upstream documentation are available references,
+not adopted architecture. See [the upstream applicability map](docs/agents/shadcn.md).
+
+## Compound APIs and runtime graphs
+
+All owned UI follows the general
+[compound component contract](CODING_STANDARDS.md#compound-components-and-serverclient-boundaries).
+Server/Client graph membership is independent of component anatomy. Shared
+modules can be compiled in both graphs; server-rendered children can be passed
+into client slots without importing server code into the client graph. Named
+part exports preserve an independent reference for each client part across
+that boundary. The [composition guard](CODING_STANDARDS.md#composition-guard-coverage)
+checks local contracts and leaves complete graph validation to Next.js.
+
+## Next.js rendering and cache model
+
+The installed Next.js 16.4.2 configuration explicitly enables both
+`cacheComponents` and `partialPrefetching`. The applicable model combines a
+prerendered shell, cached work, and request-time streamed content. Guidance for
+caching without Cache Components and Pages Router APIs remains migration
+reference material. See [the versioned review](docs/agents/nextjs.md).
+
+`src/i18n/request.ts` awaits `cookies()` to resolve request-specific messages.
+The async `IntlProvider` renders within the root layout's `Suspense` boundary;
+keep request access beneath a boundary that can cover it. A boundary returned
+by a component cannot cover an await already performed by that component.
+A same-segment `loading.tsx` covers the page subtree, not an earlier read in
+its layout. Metadata and viewport have their own rendering rules.
+
+The browser Firebase cache, React request memoization, Next.js server caches,
+and client navigation cache have different lifetimes. No server profile cache,
+Server Action persistence layer, Route Handler API, or custom cache handler is
+configured. `router.refresh()` does not turn browser SDK mutations into
+server cache invalidation. Implement a consistency contract when introducing
+server-owned data; its API choices belong in
+[Coding standards](CODING_STANDARDS.md#nextjs-request-data-and-caching).
+
+Route groups are URL-neutral, private folders do not create routes, and
+`src/app` is the active router. There is no Pages Router, `proxy.ts`, or
+`middleware.ts` implementation. A proxy or route-group layout is not a data
+access authorization boundary. Hosting adapters, static export, Edge runtime,
+remote/private caches, parallel/intercepted routes, and offline support are
+reviewed upstream options; this refresh does not adopt them.
+
+## React runtime and lifecycle boundaries
+
+React and React DOM are pinned together at 19.3.1. Next.js owns application root
+creation, hydration, RSC transport, and streaming; application features should
+not add a second `createRoot`/`hydrateRoot` bootstrap. Ladle and Vitest own their
+separate workbench/test roots. React Compiler 1.0.0 is enabled through Next.js;
+that flag does not establish compiler transformation in the Vite-based test or
+Ladle pipeline.
+
+Browser Firebase subscriptions stay in focused hooks behind the existing
+component-named orchestration seams. The profile form uses React Hook Form and
+its providers, not React form Actions or a server mutation layer. Avatar object
+URLs are created in an Effect with replacement/unmount cleanup. The viewport
+hook uses `useSyncExternalStore` with a matching initial server/hydration
+snapshot. These are external-system contracts, not redundant derived state.
+
+The current framework can preserve hidden UI state with Activity. Effect
+cleanup may occur when content hides or is replaced, not only on permanent
+unmount; ownership must tolerate setup/cleanup/setup. Keep this independent of
+Server/Client import-graph membership and of compound-component anatomy.
+[Coding standards](CODING_STANDARDS.md#react-rendering-hooks-and-identity) own
+the behavioral rules; [the React review](docs/agents/react.md) records sources
+and stable/experimental boundaries.

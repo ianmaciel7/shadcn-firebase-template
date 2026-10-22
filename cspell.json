@@ -20,7 +20,9 @@
     "src/components/firebase",
     "src/components/ui",
     "src/messages",
-    "src/lib/highlighter.tsx"
+    "src/lib/highlighter.tsx",
+    "docs/agents/nextjs-sources.json",
+    "docs/agents/react-sources.json"
   ],
   "words": [
     "actionlint",
@@ -42,6 +44,7 @@
     "firebaseopensource",
     "firebaserc",
     "firestore",
+    "Formisch",
     "Focusable",
     "geist",
     "gemini",
@@ -58,14 +61,17 @@
     "tmpdir",
     "readdir",
     "Ladle",
+    "Laravel",
     "latin",
     "linux",
+    "llms",
     "logomark",
     "matt",
     "memoization",
     "memoized",
     "MSYS",
     "Noninteractive",
+    "nullable",
     "noopener",
     "oklch",
     "pnpm",
@@ -73,6 +79,7 @@
     "rrggbb",
     "rrggbbaa",
     "samesite",
+    "Scroller",
     "Semgrep",
     "semgrep",
     "ruleid",
@@ -105,6 +112,11 @@
     "webgl",
     "writeln",
     "xyflow",
-    "zizmor"
+    "zizmor",
+    "codemods",
+    "prerender",
+    "prerendered",
+    "prerendering",
+    "Rspack"
   ]
 }

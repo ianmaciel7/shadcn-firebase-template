@@ -41,3 +41,10 @@ If your output contradicts an existing ADR, surface it explicitly rather than si
 
 Use [the ADR index](../adr/README.md) to identify later decisions. Never rename,
 renumber, or rewrite an accepted record to make it match current operations.
+
+## Technical UI references
+
+The [shadcn/ui review](shadcn.md) describes framework and component practices.
+It does not introduce business vocabulary or resolve the pending product ERD.
+Use [DER.md](../../DER.md) for the existing technical Firebase persistence
+boundary and future product relationships.
