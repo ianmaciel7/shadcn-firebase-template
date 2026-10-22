@@ -84,13 +84,14 @@ function checkFileName(source, stem, report) {
   if (!kebabCase.test(stem)) {
     report(source, "Component filename must be kebab-case.");
   }
-  if (environmentSuffix.test(stem)) {
+  const semantic = semanticStem(stem);
+  if (environmentSuffix.test(stem) || environmentSuffix.test(semantic)) {
     report(
       source,
       "Name by semantic role, never by Component/UI/Presentation.",
     );
   }
-  if (screenStem.test(stem)) {
+  if (screenStem.test(semantic)) {
     report(
       source,
       `Component name "${stem}" must not end with a screen or page term (-screen, -view, -page); name by semantic role such as -section, -card, -form, -flow, or -hero.`,

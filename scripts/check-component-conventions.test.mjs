@@ -164,6 +164,21 @@ describe("owned component conventions", () => {
       /must not end with a screen or page term/,
       "src/app/_components/user-page.tsx",
     );
+    expectInvalid(
+      "function CheckoutPresentation() { return <div />; } export { CheckoutPresentation };",
+      /Name by semantic role, never by Component\/UI\/Presentation/,
+      "src/app/_components/checkout-presentation-client.tsx",
+    );
+    expectInvalid(
+      '"use client"; function CheckoutPage() { return <div />; } export { CheckoutPage };',
+      /must not end with a screen or page term/,
+      "src/app/_components/checkout-page-client.tsx",
+    );
+    expectInvalid(
+      'import "server-only"; function CheckoutPage() { return <div />; } export { CheckoutPage };',
+      /must not end with a screen or page term/,
+      "src/app/_components/checkout-page-server.tsx",
+    );
   });
 
   it("permits client interaction but rejects server-only imports", () => {
