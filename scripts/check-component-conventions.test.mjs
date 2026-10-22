@@ -42,6 +42,31 @@ function compoundCard(source) {
 }
 
 describe("owned component conventions", () => {
+  it("rejects component aliases and re-exports even with a matching local root", () => {
+    const root = "function AccountCard() { return <div />; }";
+    const file = "src/components/account-card.tsx";
+    for (const exports of [
+      "function OtherHeader() { return <div />; } export { AccountCard, OtherHeader as AccountCardHeader };",
+      "function header() { return <div />; } export { AccountCard, header as AccountCardHeader };",
+      "export { AccountCard }; export { OtherHeader as AccountCardHeader } from './other';",
+      "export { AccountCard }; export { AccountCardHeader } from './other';",
+      "export { AccountCard as accountCard };",
+    ]) {
+      expectInvalid(
+        `${root} ${exports}`,
+        /keep their local declaration name/,
+        file,
+      );
+    }
+  });
+
+  it("accepts matching family names and type-only export aliases", () => {
+    expectValid(
+      "function AccountCard() { return <div />; } function AccountCardHeader() { return <div />; } export { AccountCard, AccountCardHeader }; export type { OtherProps as AccountCardProps } from './types'; export { type OtherHeader as AccountCardExtra } from './types';",
+      "src/components/account-card.tsx",
+    );
+  });
+
   it("selects private components and project-owned extensions", () => {
     assert.equal(isOwnedComponent(profile), true);
     assert.equal(

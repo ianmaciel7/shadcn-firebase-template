@@ -145,8 +145,33 @@ function checkPrimaryExport(source, stem, report) {
   }
 }
 
+function checkComponentExportNames(statement, report) {
+  if (
+    !ts.isExportDeclaration(statement) ||
+    statement.isTypeOnly ||
+    !statement.exportClause ||
+    !ts.isNamedExports(statement.exportClause)
+  )
+    return;
+  for (const specifier of statement.exportClause.elements) {
+    if (specifier.isTypeOnly) continue;
+    const localName = (specifier.propertyName ?? specifier.name).text;
+    const publicName = specifier.name.text;
+    if (
+      (/^[A-Z]/.test(localName) || /^[A-Z]/.test(publicName)) &&
+      (statement.moduleSpecifier || localName !== publicName)
+    ) {
+      report(
+        specifier,
+        "Component exports must keep their local declaration name; declare the filename-matching component locally instead of aliasing or re-exporting it.",
+      );
+    }
+  }
+}
+
 function checkExportStyle(source, report) {
   for (const statement of source.statements) {
+    checkComponentExportNames(statement, report);
     if (ts.isExportAssignment(statement)) {
       report(statement, "Owned components must use named exports.");
     }
