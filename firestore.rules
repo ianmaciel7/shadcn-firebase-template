@@ -2,6 +2,12 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Legacy usage records are inaccessible to browser clients.
+    // Current events are emitted by Cloud Functions to Cloud Logging.
+    match /usageLogs/{logId} {
+      allow read, write: if false;
+    }
+
     match /users/{uid} {
       function isOwner() {
         return request.auth != null && request.auth.uid == uid;

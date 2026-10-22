@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ProtectedGate } from "./protected-gate";
 
@@ -6,11 +6,13 @@ const mocks = vi.hoisted(() => ({
   router: { replace: vi.fn() },
   subscribe: vi.fn(),
   getUI: vi.fn(),
+  recordUsage: vi.fn(),
   currentUser: null as unknown,
 }));
 
 vi.mock("next/navigation", () => ({
   useRouter: () => mocks.router,
+  usePathname: () => "/profile",
 }));
 
 vi.mock("next-intl", () => ({
@@ -25,9 +27,12 @@ vi.mock("@/lib/firebase/client", () => ({
   getFirebaseUI: mocks.getUI,
 }));
 
+vi.mock("@/lib/usage/guard", () => ({ recordUsage: mocks.recordUsage }));
+
 describe("ProtectedGate", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.recordUsage.mockResolvedValue(undefined);
     mocks.getUI.mockReturnValue({
       get: () => ({
         auth: {
@@ -73,14 +78,32 @@ describe("ProtectedGate", () => {
     expect(screen.queryByText("Protected Content")).toBeNull();
   });
 
-  it("renders children when authenticated", () => {
+  it("renders children only after access is recorded", async () => {
     mocks.currentUser = { uid: "user-123" };
     render(
       <ProtectedGate>
         <div>{"Protected Content"}</div>
       </ProtectedGate>,
     );
-    expect(screen.getByText("Protected Content")).toBeTruthy();
+    await waitFor(() =>
+      expect(screen.getByText("Protected Content")).toBeTruthy(),
+    );
+    expect(mocks.recordUsage).toHaveBeenCalledWith({
+      type: "screen_view",
+      name: "/profile",
+    });
+  });
+
+  it("blocks content when access logging fails", async () => {
+    mocks.currentUser = { uid: "user-123" };
+    mocks.recordUsage.mockRejectedValue(new Error("offline"));
+    render(
+      <ProtectedGate>
+        <div>{"Protected Content"}</div>
+      </ProtectedGate>,
+    );
+    await waitFor(() => expect(screen.getByRole("alert")).toBeTruthy());
+    expect(screen.queryByText("Protected Content")).toBeNull();
   });
 
   it("shows configuration error when getFirebaseUI throws", () => {

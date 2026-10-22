@@ -30,6 +30,7 @@
     "system": "System"
   },
   "Auth": {
+    "usageLogError": "Unable to record access. Check your connection and reload to try again.",
     "loading": "Loading…",
     "configurationError": "Firebase authentication is not configured. Check the application configuration.",
     "profileTitle": "User Profile",

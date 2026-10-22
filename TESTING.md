@@ -354,3 +354,14 @@ verify blob hashes. The versioned runtime error catalog is a separate source
 from the narrative error guides. Record source scope, installed API support,
 and actual behavior-test results separately, following
 [the review workflow](docs/agents/react.md).
+
+## Application logging validation
+
+Logging changes need both the colocated Vitest guard/instrumentation tests and
+`pnpm test:logging` for callable authentication, event
+validation, and identity handling. Both `verify:fast` and `verify:static` include
+this command, so the existing CI static job runs the callable tests. A production
+Next.js build and a deployed Cloud Logging smoke test remain separate checks; mocked logger tests do not
+prove provider ingestion or IAM configuration. Native SWC loading failures can
+prevent Next.js type generation and leave `LayoutProps` unresolved in TypeScript;
+report the environment failure rather than treating those checks as passed.
