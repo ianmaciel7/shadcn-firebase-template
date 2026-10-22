@@ -146,6 +146,14 @@ function checkPrimaryExport(source, stem, report) {
   }
 }
 
+function mismatchedComponentExport(specifier, statement) {
+  if (specifier.isTypeOnly) return false;
+  const localName = (specifier.propertyName ?? specifier.name).text;
+  const publicName = specifier.name.text;
+  const isComponent = /^[A-Z]/.test(localName) || /^[A-Z]/.test(publicName);
+  return isComponent && (statement.moduleSpecifier || localName !== publicName);
+}
+
 function checkComponentExportNames(statement, report) {
   if (
     !ts.isExportDeclaration(statement) ||
@@ -155,13 +163,7 @@ function checkComponentExportNames(statement, report) {
   )
     return;
   for (const specifier of statement.exportClause.elements) {
-    if (specifier.isTypeOnly) continue;
-    const localName = (specifier.propertyName ?? specifier.name).text;
-    const publicName = specifier.name.text;
-    if (
-      (/^[A-Z]/.test(localName) || /^[A-Z]/.test(publicName)) &&
-      (statement.moduleSpecifier || localName !== publicName)
-    ) {
+    if (mismatchedComponentExport(specifier, statement)) {
       report(
         specifier,
         "Component exports must keep their local declaration name; declare the filename-matching component locally instead of aliasing or re-exporting it.",
