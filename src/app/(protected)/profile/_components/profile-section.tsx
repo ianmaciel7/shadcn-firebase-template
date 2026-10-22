@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { Loading } from "@/components/ui/extensions/loading";
 import { useProfileSection } from "../_hooks/use-profile-section";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
@@ -21,13 +23,12 @@ import {
 } from "./profile-form";
 import { ProfileLocaleField } from "./profile-locale-field";
 import { ProfileSaveButton } from "./profile-save-button";
-import { ProfileSignOutButton } from "./profile-sign-out-button";
 import { ProfileThemeField } from "./profile-theme-field";
 
 function ProfileSection() {
   const { profile, state, t } = useProfileSection();
 
-  if (state.status === "loading") {
+  if (state.isLoading) {
     return (
       <ProfileCard>
         <ProfileCardContent>
@@ -39,7 +40,7 @@ function ProfileSection() {
     );
   }
 
-  if (state.status === "hidden") return null;
+  if (state.isHidden) return null;
 
   if (state.isError) {
     return (
@@ -73,7 +74,16 @@ function ProfileSection() {
           <ProfileCardFooter>
             <ProfileFormFooter>
               <ProfileSaveButton />
-              <ProfileSignOutButton />
+              <Button
+                variant="link"
+                size="sm"
+                nativeButton={false}
+                role="link"
+                render={<Link href="/" />}
+                className="w-full text-xs"
+              >
+                {t("backToHome")}
+              </Button>
             </ProfileFormFooter>
           </ProfileCardFooter>
         </ProfileForm>

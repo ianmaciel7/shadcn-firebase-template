@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 type HomePresentationProps = ComponentProps<"div"> & {
   title: string;
@@ -16,10 +17,11 @@ function HomePresentation({
   primaryHref,
   primaryLabel,
   secondaryAction,
+  className,
   ...props
 }: HomePresentationProps) {
   return (
-    <div {...props}>
+    <div {...props} className={cn("flex flex-col gap-8", className)}>
       <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
         <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-foreground">
           {title}

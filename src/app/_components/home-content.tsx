@@ -25,7 +25,7 @@ function HomeContent(props: HomeContentProps) {
       {...props}
       className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground font-sans"
     >
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 sm:items-start">
+      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-center gap-12 p-6 sm:items-start">
         <Image
           className="dark:invert h-5 w-[100px]"
           src="/next.svg"

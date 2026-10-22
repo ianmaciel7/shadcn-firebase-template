@@ -8,7 +8,15 @@ or {
   `"error" === $state.status` as $check,
   `"error" == $state.status` as $check,
   `"error" !== $state.status` as $check,
-  `"error" != $state.status` as $check
+  `"error" != $state.status` as $check,
+  `$state.status === "loading"` as $check,
+  `$state.status == "loading"` as $check,
+  `$state.status !== "loading"` as $check,
+  `$state.status != "loading"` as $check,
+  `"loading" === $state.status` as $check,
+  `"loading" == $state.status` as $check,
+  `"loading" !== $state.status` as $check,
+  `"loading" != $state.status` as $check
 } where {
-  register_diagnostic(span=$check, message="Expose isError from the hook and use state.isError (or !state.isError) in the component instead of comparing status with error.", severity="error")
+  register_diagnostic(span=$check, message="Expose isError from the hook and use state.isError or state.isLoading in the component instead of comparing status.", severity="error")
 }
