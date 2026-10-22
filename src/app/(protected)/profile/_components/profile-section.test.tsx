@@ -164,6 +164,12 @@ describe("ProfileSection", () => {
       expect(screen.getByLabelText("languageLabel")).toBeTruthy();
     });
     expect(screen.getByLabelText("themeLabel")).toBeTruthy();
+    expect(screen.getByLabelText("languageLabel").textContent).toContain(
+      "languageOptions.en",
+    );
+    expect(screen.getByLabelText("themeLabel").textContent).toContain(
+      "themeOptions.system",
+    );
   });
 
   it("keeps form fields in CardContent and buttons in CardFooter", async () => {

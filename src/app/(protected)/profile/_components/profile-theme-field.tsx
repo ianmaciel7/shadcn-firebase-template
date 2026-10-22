@@ -38,7 +38,13 @@ function ProfileThemeField(props: ProfileThemeFieldProps) {
               aria-invalid={fieldState.invalid}
               onBlur={field.onBlur}
             >
-              <SelectValue />
+              <SelectValue>
+                {(value) =>
+                  isThemePreference(value)
+                    ? t(`themeOptions.${value}`)
+                    : undefined
+                }
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
