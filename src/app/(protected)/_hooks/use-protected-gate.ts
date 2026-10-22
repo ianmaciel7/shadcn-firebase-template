@@ -1,7 +1,7 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getFirebaseUI } from "@/lib/firebase/client";
 import { recordUsage } from "@/lib/usage/guard";
 
@@ -9,6 +9,7 @@ export function useProtectedGate() {
   const t = useTranslations("Auth");
   const router = useRouter();
   const pathname = usePathname();
+  const revision = useRef(0);
   const [readyPath, setReadyPath] = useState<string | null>(null);
   const [error, setError] = useState<
     "configurationError" | "usageLogError" | null
@@ -16,7 +17,6 @@ export function useProtectedGate() {
 
   useEffect(() => {
     let active = true;
-    let revision = 0;
     setError(null);
     let store: ReturnType<typeof getFirebaseUI>;
     try {
@@ -28,7 +28,7 @@ export function useProtectedGate() {
     }
 
     const unsubscribe = onAuthStateChanged(store.get().auth, (user) => {
-      const currentRevision = ++revision;
+      const currentRevision = ++revision.current;
       setReadyPath(null);
       if (!user) {
         setReadyPath(null);
@@ -37,10 +37,11 @@ export function useProtectedGate() {
       } else {
         void recordUsage({ type: "screen_view", name: pathname }).then(
           () => {
-            if (active && revision === currentRevision) setReadyPath(pathname);
+            if (active && revision.current === currentRevision)
+              setReadyPath(pathname);
           },
           () => {
-            if (active && revision === currentRevision)
+            if (active && revision.current === currentRevision)
               setError("usageLogError");
           },
         );
