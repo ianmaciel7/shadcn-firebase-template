@@ -207,7 +207,9 @@ test("saving the profile language keeps the unprefixed route and translates afte
   await page.getByLabel("Email Address").fill(email);
   await page.locator("#password").fill(password);
   await page.getByRole("button", { name: "Sign In", exact: true }).click();
-  await expect(page).toHaveURL("http://127.0.0.1:3100/profile");
+  await expect(page).toHaveURL("/");
+  await page.getByRole("link", { name: "My profile" }).click();
+  await expect(page).toHaveURL(`${authTestOrigin}/profile`);
   await page.getByLabel("Language", { exact: true }).click();
   await page
     .getByRole("option", {
@@ -219,7 +221,7 @@ test("saving the profile language keeps the unprefixed route and translates afte
   await expect(
     page.getByText(esMessages.Auth.personalInfoTitle, { exact: true }),
   ).toBeVisible();
-  await expect(page).toHaveURL("http://127.0.0.1:3100/profile");
+  await expect(page).toHaveURL(`${authTestOrigin}/profile`);
   expect(
     (await context.cookies()).find((cookie) => cookie.name === "NEXT_LOCALE")
       ?.value,
@@ -228,5 +230,5 @@ test("saving the profile language keeps the unprefixed route and translates afte
   await expect(
     page.getByText(esMessages.Auth.personalInfoTitle, { exact: true }),
   ).toBeVisible();
-  await expect(page).toHaveURL("http://127.0.0.1:3100/profile");
+  await expect(page).toHaveURL(`${authTestOrigin}/profile`);
 });
