@@ -16,7 +16,7 @@ export function getSafeReturnUrl(value: string | null | undefined): string {
     const url = new URL(value, "https://app.local");
     if (
       url.origin !== "https://app.local" ||
-      /^\/(?:sign-in|register|forgot-password)(?:\/|$)/.test(url.pathname)
+      /^\/(?:sign-in|register|forgot-password)(?:\/|$)/i.test(url.pathname)
     ) {
       return "/";
     }
