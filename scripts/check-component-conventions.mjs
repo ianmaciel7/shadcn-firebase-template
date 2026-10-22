@@ -225,6 +225,16 @@ function isServerRuntimeImport(statement) {
   );
 }
 
+function isTypeOnlyReexport(statement) {
+  if (!ts.isExportDeclaration(statement) || !statement.exportClause)
+    return false;
+  return (
+    ts.isNamedExports(statement.exportClause) &&
+    statement.exportClause.elements.length > 0 &&
+    statement.exportClause.elements.every((part) => part.isTypeOnly)
+  );
+}
+
 function runtimeDependencySpecifier(statement) {
   if (
     (!ts.isImportDeclaration(statement) &&
@@ -236,13 +246,7 @@ function runtimeDependencySpecifier(statement) {
     return null;
   if (ts.isImportDeclaration(statement) && !isRuntimeImport(statement))
     return null;
-  if (
-    ts.isExportDeclaration(statement) &&
-    statement.exportClause &&
-    ts.isNamedExports(statement.exportClause) &&
-    statement.exportClause.elements.every((part) => part.isTypeOnly)
-  )
-    return null;
+  if (isTypeOnlyReexport(statement)) return null;
   return statement.moduleSpecifier.text;
 }
 
@@ -281,25 +285,30 @@ function helperModuleTarget(filename, specifier, modules) {
   );
 }
 
+function isBrowserProperty(node, source) {
+  if (!ts.isPropertyAccessExpression(node)) return false;
+  const owner = node.expression.getText(source);
+  if (
+    /^(window|document|navigator|localStorage|sessionStorage|indexedDB)$/.test(
+      owner,
+    )
+  )
+    return true;
+  if (owner === "globalThis")
+    return /^(window|document|navigator|localStorage|sessionStorage|indexedDB)$/.test(
+      node.name.text,
+    );
+  return (
+    owner === "URL" &&
+    /^(createObjectURL|revokeObjectURL)$/.test(node.name.text)
+  );
+}
+
 function integrationSyntax(source) {
   const result = { client: false, server: false, fetch: false };
   function visit(node) {
     if (ts.isTypeNode(node)) return;
-    if (ts.isPropertyAccessExpression(node)) {
-      const owner = node.expression.getText(source);
-      if (
-        /^(window|document|navigator|localStorage|sessionStorage|indexedDB)$/.test(
-          owner,
-        ) ||
-        (owner === "globalThis" &&
-          /^(window|document|navigator|localStorage|sessionStorage|indexedDB)$/.test(
-            node.name.text,
-          )) ||
-        (owner === "URL" &&
-          /^(createObjectURL|revokeObjectURL)$/.test(node.name.text))
-      )
-        result.client = true;
-    }
+    if (isBrowserProperty(node, source)) result.client = true;
     if (
       ts.isCallExpression(node) &&
       /^(fetch|globalThis\.fetch)$/.test(node.expression.getText(source))
@@ -309,6 +318,21 @@ function integrationSyntax(source) {
   }
   visit(source);
   return result;
+}
+
+function dependencyIntegrations(statement, specifier) {
+  return {
+    server: serverImports.test(specifier) || isBuiltin(specifier),
+    client:
+      /^(firebase(?:\/|$)|@firebase-oss\/ui-(?:react|core)(?:\/|$)|next-themes(?:\/|$)|client-only$)/.test(
+        specifier,
+      ) || browserNavigationImport(statement, specifier),
+    fetch: false,
+  };
+}
+
+function mergeIntegrations(result, child) {
+  for (const key of Object.keys(result)) result[key] ||= child[key];
 }
 
 // Follow hooks/helpers, but stop at component imports: composing an integration
@@ -321,11 +345,7 @@ function componentIntegrations(source, filename, modules, visited = new Set()) {
   for (const statement of source.statements) {
     const specifier = runtimeDependencySpecifier(statement);
     if (!specifier) continue;
-    result.server ||= serverImports.test(specifier) || isBuiltin(specifier);
-    result.client ||=
-      /^(firebase(?:\/|$)|@firebase-oss\/ui-(?:react|core)(?:\/|$)|next-themes(?:\/|$)|client-only$)/.test(
-        specifier,
-      ) || browserNavigationImport(statement, specifier);
+    mergeIntegrations(result, dependencyIntegrations(statement, specifier));
     const target = helperModuleTarget(filename, specifier, modules);
     if (!target) continue;
     const child = componentIntegrations(
@@ -339,7 +359,7 @@ function componentIntegrations(source, filename, modules, visited = new Set()) {
       modules,
       visited,
     );
-    for (const key of Object.keys(result)) result[key] ||= child[key];
+    mergeIntegrations(result, child);
   }
   return result;
 }
@@ -360,6 +380,34 @@ function integrationKinds(integration, clientBoundary) {
   };
 }
 
+function integrationNameMessages(stem, client, server) {
+  const messages = [];
+  if (client && !stem.endsWith("-client"))
+    messages.push(
+      "Browser integration components must use a -client.tsx filename.",
+    );
+  if (server && !stem.endsWith("-server"))
+    messages.push(
+      "Server integration components must use a -server.tsx filename.",
+    );
+  if (stem.endsWith("-client") && !client)
+    messages.push(
+      "Presentation components must not use the -client suffix; UI state, events, hooks and use client alone are not integrations.",
+    );
+  return messages;
+}
+
+function integrationBoundaryMessages(source, stem, clientBoundary, client) {
+  const messages = [];
+  if (client && !clientBoundary)
+    messages.push('Browser integration components must declare "use client".');
+  if (stem.endsWith("-server") && clientBoundary)
+    messages.push('A -server.tsx component cannot declare "use client".');
+  if (stem.endsWith("-server") && !hasServerOnlyMarker(source))
+    messages.push('A -server.tsx component must import "server-only".');
+  return messages;
+}
+
 export function inspectComponentRuntime(
   content,
   filename,
@@ -378,25 +426,10 @@ export function inspectComponentRuntime(
   const clientBoundary = isClientBoundary(source);
   const integration = componentIntegrations(source, filename, modules);
   const { client, server } = integrationKinds(integration, clientBoundary);
-  const messages = [];
-  if (client && !stem.endsWith("-client"))
-    messages.push(
-      "Browser integration components must use a -client.tsx filename.",
-    );
-  if (server && !stem.endsWith("-server"))
-    messages.push(
-      "Server integration components must use a -server.tsx filename.",
-    );
-  if (stem.endsWith("-client") && !client)
-    messages.push(
-      "Presentation components must not use the -client suffix; UI state, events, hooks and use client alone are not integrations.",
-    );
-  if (client && !clientBoundary)
-    messages.push('Browser integration components must declare "use client".');
-  if (stem.endsWith("-server") && clientBoundary)
-    messages.push('A -server.tsx component cannot declare "use client".');
-  if (stem.endsWith("-server") && !hasServerOnlyMarker(source))
-    messages.push('A -server.tsx component must import "server-only".');
+  const messages = [
+    ...integrationNameMessages(stem, client, server),
+    ...integrationBoundaryMessages(source, stem, clientBoundary, client),
+  ];
   return messages.map((message) => ({
     file: filename,
     line: 1,
