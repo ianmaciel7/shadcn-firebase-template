@@ -904,7 +904,7 @@ describe("runtime suffixes preserve semantic safety checks", () => {
       "src/app/(protected)/profile/_components/profile-form-client.tsx",
     );
     expectInvalid(
-      '"use client"; function ProfileEmailField(props) { return <Controller name="displayName" {...props} />; } export { ProfileEmailField };',
+      '"use client"; function ProfileEmailFieldClient(props) { return <Controller name="displayName" {...props} />; } export { ProfileEmailFieldClient };',
       /match Controller/,
       "src/app/(protected)/profile/_components/profile-email-field-client.tsx",
     );

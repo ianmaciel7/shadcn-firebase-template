@@ -546,7 +546,8 @@ function checkClientImports(source, report) {
 }
 
 function checkFieldControllerNames(source, stem, report) {
-  if (!stem.endsWith("-field")) return;
+  const fieldStem = stem.replace(/-(client|server)$/, "");
+  if (!fieldStem.endsWith("-field")) return;
 
   function visit(node) {
     if (
@@ -563,8 +564,8 @@ function checkFieldControllerNames(source, stem, report) {
           (letter) => `-${letter.toLowerCase()}`,
         );
         if (
-          stem !== `${fieldName}-field` &&
-          !stem.endsWith(`-${fieldName}-field`)
+          fieldStem !== `${fieldName}-field` &&
+          !fieldStem.endsWith(`-${fieldName}-field`)
         ) {
           report(
             name,
