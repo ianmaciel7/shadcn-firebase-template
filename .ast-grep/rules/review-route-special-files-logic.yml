@@ -16,4 +16,4 @@ rule:
   kind: call_expression
   has:
     field: function
-    regex: '(^|\\.)use[A-Z]'
+    regex: '(^|\.)use[A-Z]'
