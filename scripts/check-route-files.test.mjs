@@ -78,6 +78,10 @@ describe("route entrypoint guard", () => {
       "export default function Page() { return ok ? <A /> : <B />; }",
       /conditional/,
     );
+    expectRejected(
+      "export default function Page() { const render = () => <A />; return render(); }",
+      /Extract inline/,
+    );
   });
 
   it("allows a data-layer read in a thin route entrypoint", () => {
