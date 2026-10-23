@@ -164,14 +164,15 @@ function checkStemComponentTermParity(source, fileStem, report) {
 }
 
 function expectedComponentNames(source, _stem) {
-  const path = source.fileName
-    .replaceAll("\\", "/")
-    .replace(/-(client|server)\.tsx$/, ".tsx");
+  const path = source.fileName.replaceAll("\\", "/");
   if (path.endsWith("/profile/_components/profile-card.tsx")) {
     return profileCardParts;
   }
   if (path.endsWith("/profile/_components/profile-form-client.tsx")) {
     return profileFormParts;
+  }
+  if (path.endsWith("/profile/_components/profile-form.tsx")) {
+    return ["ProfileForm", "ProfileFormContent", "ProfileFormFooter"];
   }
   const fileStem = basename(source.fileName.replaceAll("\\", "/"), ".tsx");
   const root = pascalCase(fileStem);

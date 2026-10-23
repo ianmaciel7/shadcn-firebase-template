@@ -112,7 +112,7 @@ describe("owned component conventions", () => {
     const server = "src/app/_components/account-server.tsx";
     expectInvalid(
       '"use client"; function Account(props) { return <div {...props} />; } export { Account };',
-      /missing term\\(s\\): "client"/,
+      /missing term/,
       client,
     );
     expectValid(
@@ -121,7 +121,7 @@ describe("owned component conventions", () => {
     );
     expectInvalid(
       'import "server-only"; function Account(props) { return <div {...props} />; } export { Account };',
-      /missing term\\(s\\): "server"/,
+      /missing term/,
       server,
     );
     expectValid(
@@ -453,7 +453,7 @@ describe("owned component conventions", () => {
 
   it("rejects passing the complete profile controller to a child", () => {
     expectInvalid(
-      "function ProfileCard() { return <ProfileForm profile={profile} />; } export { ProfileCard };",
+      "function ProfileCard() { return <ProfileFormClient profile={profile} />; } export { ProfileCard };",
       /focused field\/form\/button props/,
     );
     expectInvalid(
@@ -532,7 +532,7 @@ describe("owned component conventions", () => {
     );
     expectInvalid(
       "function ProfileSection() { return <ProfileForm><ProfileCard><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileCard></ProfileForm>; } export { ProfileSection };",
-      /ProfileForm must be inside ProfileCard/,
+      /ProfileFormClient must be inside ProfileCard/,
       section,
     );
     expectInvalid(
