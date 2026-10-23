@@ -38,11 +38,24 @@ When standards conflict, apply them in this order:
   stricter [component-named orchestration policy](.agents/rules/component-naming.md#component-named-orchestration-hooks)
   for owned components: put behavior/context orchestration in a separate
   `use<ComponentName>` hook, which may compose focused hooks internally.
-  Keep route-specific hooks in private `_hooks` folders. The documented
-  single-presentation-hook exception remains; React itself does not require
-  one orchestration hook per component.
+  Keep route-specific hooks in private `_hooks` folders. Any combination
+  of the supported presentation hooks may be called directly. React itself
+  does not require one orchestration hook per component.
+- **Dependency inversion without prop drilling**: Inject infrastructure
+  through typed service functions at the persistence boundary when behavior
+  benefits from independent testing. `saveProfile` accepts
+  `ProfileDependencies` and defaults to Firebase adapters. Keep UI fields
+  dependent on form context, not on Firebase implementations or a passed
+  profile controller. Dependency injection is a design choice, not a rule
+  to create an interface for every helper.
 - **Form Architecture and State Propagation**:
-  - Compound forms composed with field-component `children` use a single `useForm` and `<FormProvider {...form}>`; nested field components obtain `control` through `useFormContext()`. The repository currently enforces Providers for owned `*-form.tsx`, `*-form-client.tsx`, and `*-form-server.tsx` files, although the official shadcn/ui examples do not universally require one.
+  - Compound forms composed with field-component `children` use one
+    `useForm` and `<FormProvider {...form}>`; fields obtain `control`
+    with `useFormContext()`. `ProfileFormClientContent` already renders
+    one `FieldGroup`, so do not introduce a second group in
+    `ProfileSectionClient`. Read native RHF `formState.isSubmitting`
+    rather than synchronizing a separate saving flag. The Provider
+    requirement is a repository convention, not universal shadcn/ui policy.
   - Name standalone field components after their React Hook Form data property (for example `ProfileDisplayNameField` for `Controller name="displayName"`). Prefer built-in `FieldGroup`/`FieldSet` over arbitrary wrapper components.
   - Allow React Hook Form `UseFormProps<Values>` as an appropriate form component contract. Extract `onSubmit` and component presentation props before passing only RHF options into `useForm`.
   - Form fields use `Field`, `FieldLabel`, `FieldError`, `data-invalid` and `aria-invalid` as documented by shadcn/ui.

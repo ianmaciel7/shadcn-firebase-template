@@ -69,9 +69,10 @@ Owned component files outside the legacy allowlist enforce exact 1:1 term parity
 - **Legacy allowlist (`LEGACY_SEMANTIC_STEM_ALLOWLIST`)**: Existing legacy integration components (such as `profile-form-client.tsx` exporting `ProfileForm`) maintain their semantic unsuffixed exports for backward compatibility. All new and modernized components enforce exact 1:1 term parity.
 
 Simple presentation hooks such as `useId`, `useTranslations`, and React Hook
-Form's `useFormContext` and `useWatch` may be called directly in a field component.
-Do not create component-specific wrapper hooks solely to group these calls.
-Keep custom hooks for reusable stateful behavior, effects, and data coordination.
+Form's `useFormContext` and `useWatch` may be called directly in a field.
+Multiple presentation hooks are permitted. Do not create component-specific
+wrappers solely to group these calls; reserve application hooks for stateful
+behavior, effects, and data coordination.
 
 ## CI enforcement
 
@@ -128,15 +129,33 @@ References: [shadcn/ui Field](https://ui.shadcn.com/docs/components/field), [sha
 Owned components keep rendering, translations, primitive prop forwarding and simple UI composition. Place stateful effects, Firebase operations and asynchronous workflow handlers in responsibility-specific custom hooks. Focused hooks compose inside the component-named orchestration hook described below; do not restore a single controller that owns every field and action.
 
 - Expose discriminated status states for session components (`loading`, `hidden`, `error`, `ready`). Components render `state.status` and an already resolved error message, rather than deriving readiness from user, authentication and preferences flags.
-- Keep responsibilities local: `useProfileStatus` derives session status, `useProfileForm` coordinates form lifecycle, and `useProfileAvatarFieldClient` prepares avatar data. Auth provider, gate, navigation button and auth flow navigation have separate hooks.
+- Keep responsibilities local: `useProfileStatus` derives one discriminated
+  session status; `useProfileFormClient` owns the React Hook Form lifecycle
+  and uses `formState.isSubmitting` rather than a parallel saving flag;
+  `useProfileAvatarFieldClient` handles avatar field data. Do not mirror
+  derived state in additional `useState` variables.
 - `check:components` rejects React state/effect imports (including aliases), namespace state/effect calls, Firebase value imports, async workflow functions, compound `if` conditions/derived locals and error fallbacks inside owned component functions. Async Server Components, simple discriminated-state branches, translations, form context and presentation props such as `disabled={disabled || pending}` remain valid.
 - The guard checks syntax, not arbitrary semantic equivalence or the ideal number of hooks. Generated Firebase/UI registries and Next.js special files retain their existing scope exclusions. Module-level setup is outside component branch analysis.
 
 ### Component-named orchestration hooks
 
-A component that uses behavior/context hooks or coordinates multiple hooks must call a single imported `use<ComponentName>` hook in a separate hook module. For example, `ProfileSection` calls `useProfileSection`, which composes `useProfileSession`, `useProfileStatus` and translations internally. `ProfileAvatarFieldClient`, `ProfileSaveButton`, profile fields and auth flows follow the same naming rule. Their hooks may compose focused hooks; this does not restore a global controller.
+A component coordinating application behavior must use the imported
+`use<ComponentName>` hook in a separate module. For example,
+`ProfileSectionClient` calls `useProfileSectionClient`, which composes
+`useProfileSession`, `useProfileStatus`, and translations. Stateful avatar
+fields, save actions, and auth flows use focused hooks; simple display name,
+email, locale, and theme fields do **not** need one-line wrappers around
+standard hooks. This is a stricter project policy, not a React rule.
 
-`check:components` verifies the called hook's canonical imported name (including aliased imports), rejects extra hook calls alongside it, and rejects missing imports. Components with no hooks and components using only one presentation hook (`useTranslations`, `useFormatter` or `useId`) do not require a boilerplate wrapper. This rule applies to all owned component functions; existing vendor and route-entrypoint exclusions remain. `HomeSectionClient` strictly enforces this pattern by delegating orchestration exclusively to `useHomeSectionClient` in `src/app/_hooks/use-home-section-client.ts`; attempting to call `useHomeSection` or other mismatched hook identifiers is rejected by `check:components`.
+`check:components` checks the imported orchestration hook's canonical name,
+including aliased imports, and rejects unrelated application orchestration
+hooks alongside it. Any number of supported presentation hooks
+(`useId`, `useTranslations`, `useFormatter`, `useFormContext`,
+`useWatch`) may be used directly without a wrapper, including alongside
+the one named application hook. The current AST implementation recognizes
+specific syntax; it is not a proof of all React hook semantics. Scope
+exclusions still apply. For example, `HomeSectionClient` delegates
+application orchestration to `useHomeSectionClient`.
 
 ### Banned generic naming terms
 

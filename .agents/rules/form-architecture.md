@@ -7,19 +7,43 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
 - A composite form that renders nested field components (as with `ProfileForm`) creates exactly one `useForm` instance, wraps its content in `FormProvider {...form}` and uses `form.handleSubmit(onSubmit)`.
 - Child fields access `control` with `useFormContext<ProfileValues>()`; they compose shadcn/ui `Field`, `FieldLabel`, `Input` / `Select`, and `FieldError` with React Hook Form `Controller`.
 - Match each independently named `*-field.tsx` to its literal React Hook Form `Controller name`. For example `name="displayName"` is implemented by `ProfileDisplayNameField`, while the label may simply read "Name".
-- A parent may pass a strongly typed set of `formProps` via spread to the composed form. The form extracts `onSubmit`, `children`, and presentation attributes **before** forwarding only `UseFormProps<ProfileValues>` to `useForm`. `onSubmit` is an application component prop, **not** a `UseFormProps` option.
+- A reusable form can accept strongly typed `UseFormProps<Values>`, but
+  never pass DOM attributes or `onSubmit` into `useForm`: they are not
+  `UseFormProps` options. The current `ProfileFormClient` receives only
+  DOM form props, while `useProfileFormClient` owns `useForm` options and
+  the submit callback.
 - A screen/controller owns asynchronous data loading; only mount a form with prepared defaults or deliberately use RHF `values` / `reset` to synchronize subsequent changes. After successful client Firebase mutations, reset the form to the persisted values without clobbering unsaved edits.
 - Avatar file selection and preview remain a separate field, since `File` / `FileList` need application-level lifecycle handling.
-- The profile uses the same **compound composition** principle as native shadcn/ui: `ProfileCard` is a thin `Card` adapter that accepts `children`, `ComponentProps<typeof Card>` (including `size`), `className` and HTML props, without loading profile data. `ProfileSection` owns session loading, loading/error views, and composition of `ProfileCard` with `ProfileForm`, `ProfileCardHeader`/`ProfileCardTitle`/`ProfileCardDescription`, `ProfileCardContent` (`CardContent`) holding `ProfileFormContent` (`FieldGroup`), and `ProfileCardFooter` (`CardFooter`) holding `ProfileFormFooter` (action layout). `ProfileForm` owns `FormProvider` and a single native `<form>`; its flex gap uses `--card-spacing` so the native Card sections remain visually consistent.
+- The profile follows native shadcn/ui composition: `ProfileCard` is a
+  thin `Card` adapter forwarding primitive props and children, without
+  loading data. `ProfileSectionClient` composes `ProfileCard` with
+  `ProfileFormClient`, Card header/content/footer, and Form content/footer.
+  `ProfileFormClientContent` provides one `FieldGroup` with the avatar,
+  display name, email, locale, and theme fields as direct children.
+  `ProfileFormClient` owns `FormProvider` and one native `<form>`;
+  the form uses `--card-spacing` to preserve the Card layout.
 - UI primitives already provided by shadcn/ui (`FieldGroup`, `FieldSet`, `FieldLegend`) are preferable to splitting basic fields into arbitrary grouping components without a semantic responsibility.
 
 ## Profile behavior ownership
 
-- `useProfileStatus` derives the loading/hidden/error/ready states and resolves error text; the section only renders those states.
-- `useProfileController` is removed. `ProfileSection` uses `useProfileSection` to compose session and status hooks with translations; it does not assemble field or button props.
-- `ProfileForm` delegates its React Hook Form lifecycle and operation lock to `useProfileForm`, which uses `useProfileSubmit` for persistence. `ProfileValues` and `ProfileFormValues` live in `src/lib/profile.ts`.
+- `useProfileStatus` returns a discriminated `status`:
+  `loading`, `hidden`, `error` (with `message`), or `ready` (with
+  `userId`). The section renders those branches without redundant
+  `isLoading`, `isHidden`, or `isError` flags.
+- `useProfileController` is removed. `ProfileSectionClient` uses
+  `useProfileSectionClient` to compose session and status hooks with
+  translations; it does not assemble field or button props.
+- `ProfileFormClient` delegates its React Hook Form lifecycle to
+  `useProfileFormClient`, which calls `useProfileSubmit` for persistence.
+  Read `formState.isSubmitting` instead of keeping a second saving flag;
+  `ProfileValues` and `ProfileFormValues` live in `src/lib/profile.ts`.
+  `saveProfile` accepts typed `ProfileDependencies` with default Firebase
+  adapters to test persistence without production services.
 - `ProfileAvatarFieldClient` uses `useProfileAvatarFieldClient` for field state and avatar display data, with `useProfileAvatar` handling validation and preview. Only the selected `File` lives in React Hook Form so submission can upload it; preview URLs are released on replacement, successful reset and unmount. Failed saves retain the selection for retry.
-- `ProfileFormContent` and `ProfileFormFooter` are colocated exports in `profile-form-client.tsx`; AST safety checks inspect each function independently.
+- `ProfileFormClientContent` and `ProfileFormClientFooter` are colocated
+  exports in `profile-form-client.tsx`; AST safety checks inspect each
+  function independently. The content owns the **one** `FieldGroup`:
+  do not wrap the individual profile fields in another `FieldGroup`.
 
 ## Profile form action safety (repository guard)
 
