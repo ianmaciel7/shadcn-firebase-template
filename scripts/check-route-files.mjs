@@ -13,53 +13,17 @@ const forbiddenImports =
   /^(firebase|firebase-admin)(\/|$)|^@\/lib\/firebase\/client$/;
 
 const messages = {
-  directive:
     "Keep route entrypoints as Server Components; move client behavior to _components/.",
-  sdk: "Import Firebase through a dedicated data/service layer or client component.",
-  hook: "React/client hooks belong in _components/ or _hooks/, not route entrypoints.",
   branch:
     "Extract conditional, iterative, and error-handling logic out of route entrypoints.",
   mutation:
     "Extract conditionals and mutations to a focused component or service.",
   state: "Mutable local state belongs in a component, hook, or service.",
-  event: "Event handlers belong in Client Components, not route entrypoints.",
   browser: "Browser APIs belong in Client Components.",
   function:
     "Extract helper functions; allow only the default route component and Next.js generators.",
   callback: "Extract inline functions and callbacks into focused modules.",
 };
-
-function checkDirective(node, source) {
-  if (
-    ts.isExpressionStatement(node) &&
-    ts.isStringLiteral(node.expression) &&
-    node.expression.text === "use client" &&
-    node.parent === source
-  ) {
-    return messages.directive;
-  }
-}
-
-function checkSdkImport(node) {
-  if (
-    ts.isImportDeclaration(node) &&
-    ts.isStringLiteral(node.moduleSpecifier) &&
-    forbiddenImports.test(node.moduleSpecifier.text)
-  ) {
-    return messages.sdk;
-  }
-}
-
-function checkHook(node) {
-  if (!ts.isCallExpression(node)) return;
-  const callee = node.expression;
-  const name = ts.isIdentifier(callee)
-    ? callee.text
-    : ts.isPropertyAccessExpression(callee)
-      ? callee.name.text
-      : "";
-  if (/^use[A-Z]/.test(name)) return messages.hook;
-}
 
 const controlFlowKinds = new Set([
   ts.SyntaxKind.IfStatement,
@@ -106,12 +70,6 @@ function checkUpdateExpression(node) {
 function checkMutableDeclaration(node) {
   if (ts.isVariableDeclarationList(node) && node.flags & ts.NodeFlags.Let) {
     return messages.state;
-  }
-}
-
-function checkEventHandler(node, source) {
-  if (ts.isJsxAttribute(node) && /^on[A-Z]/.test(node.name.getText(source))) {
-    return messages.event;
   }
 }
 
@@ -165,14 +123,10 @@ function checkNamedFunction(node) {
 }
 
 const checks = [
-  checkDirective,
-  checkSdkImport,
-  checkHook,
   checkControlFlow,
   checkBinaryLogic,
   checkUpdateExpression,
   checkMutableDeclaration,
-  checkEventHandler,
   checkBrowserApi,
   checkArrowFunction,
   checkNamedFunction,

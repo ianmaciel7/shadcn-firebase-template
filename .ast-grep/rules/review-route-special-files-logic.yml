@@ -7,14 +7,13 @@ files:
 ignores:
   - "**/*.test.tsx"
 severity: error
-message: App Router special files (page, layout, template) must act as thin presentation controllers/glue code; avoid colocating complex client state or side-effects directly inside them.
+message: Route entrypoints must not call React, Next.js or application hooks; move client behavior into private components or hooks.
 note: |
-  Per Next.js architecture and repository CODING_STANDARDS.md:
-  - page, layout, and template files should only orchestrate server data, read params, and compose presentation components.
-  - Client state, hooks (useState, useEffect), and interactive logic must be extracted into semantic UI components under private _components/ (e.g., _components/*-form-client.tsx) or private _hooks/.
+  This is a project policy requiring thin route entrypoints, not a restriction
+  imposed by Next.js on every page or layout.
+  Prefer server-side data loading and framework generators in route files.
 rule:
-  any:
-    - pattern: useState($$$)
-    - pattern: React.useState($$$)
-    - pattern: useEffect($$$)
-    - pattern: React.useEffect($$$)
+  kind: call_expression
+  has:
+    field: function
+    regex: '(^|\\.)use[A-Z]'
