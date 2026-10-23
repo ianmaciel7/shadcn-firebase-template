@@ -4,7 +4,6 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
-import { FieldGroup } from "@/components/ui/field";
 import { useProfileSectionClient } from "../_hooks/use-profile-section-client";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
 import { ProfileAvatarFieldClient } from "./profile-avatar-field-client";
@@ -32,7 +31,7 @@ type ProfileSectionClientProps = ComponentProps<"div">;
 function ProfileSectionClient(props: ProfileSectionClientProps) {
   const { profile, state, t } = useProfileSectionClient();
 
-  if (state.isLoading) {
+  if (state.status === "loading") {
     return (
       <div {...props}>
         <LoadingIndicator className="w-full text-sm text-muted-foreground">
@@ -42,9 +41,9 @@ function ProfileSectionClient(props: ProfileSectionClientProps) {
     );
   }
 
-  if (state.isHidden) return null;
+  if (state.status === "hidden") return null;
 
-  if (state.isError) {
+  if (state.status === "error") {
     return (
       <ProfileCard {...props}>
         <ProfileCardContent>
@@ -67,12 +66,10 @@ function ProfileSectionClient(props: ProfileSectionClientProps) {
           <ProfileCardContent>
             <ProfileFormClientContent>
               <ProfileAvatarFieldClient />
-              <FieldGroup>
-                <ProfileDisplayNameField />
-                <ProfileEmailField />
-                <ProfileLocaleField />
-                <ProfileThemeField />
-              </FieldGroup>
+              <ProfileDisplayNameField />
+              <ProfileEmailField />
+              <ProfileLocaleField />
+              <ProfileThemeField />
             </ProfileFormClientContent>
           </ProfileCardContent>
           <ProfileCardFooter>
