@@ -1269,10 +1269,10 @@ export function inspectNaming(content, filename) {
 }
 
 export function isOwnedHookModule(filename) {
-  const path = filename.replaceAll("\\\\", "/");
+  const path = filename.replaceAll("\\", "/");
   return (
-    /^src\\/app\\/.*\\/_hooks\\/[^/]+\\.tsx?$/.test(path) &&
-    !/\\.(test|spec|stories)\\.tsx?$/.test(path)
+    /^src\/app\/(?:.*\/)?_hooks\/[^/]+\.tsx?$/.test(path) &&
+    !/\.(test|spec|stories)\.tsx?$/.test(path)
   );
 }
 
@@ -1286,7 +1286,7 @@ export function inspectHookFilename(content, filename) {
     filename.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
   );
   const findings = [];
-  const stem = basename(filename.replaceAll("\\\\", "/")).replace(/\\.tsx?$/, "");
+  const stem = basename(filename.replaceAll("\\", "/")).replace(/\.tsx?$/, "");
   const expected = stem.startsWith("use-")
     ? `use${pascalCase(stem.slice(4))}`
     : null;
