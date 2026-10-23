@@ -24,12 +24,8 @@ export const matchComponentFilename = defineRule({
     const root = componentNameFromPath(ctx.filePath);
     if (!root) return;
 
-    const binding = ctx.model().asBinding(node);
-    if (
-      !binding ||
-      binding.declarationKind() !== "function" ||
-      !binding.isExported()
-    ) {
+    const binding = ctx.model.asBinding(node);
+    if (binding?.declarationKind() !== "function" || !binding.isExported()) {
       return;
     }
 
