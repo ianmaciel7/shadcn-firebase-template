@@ -819,7 +819,7 @@ describe("component placement", () => {
 
   it("allows extensions, route-private files and existing registry trees", () => {
     for (const file of [
-      "src/components/ui/extensions/loading-indicator.tsx",
+      "src/components/ui/extensions/loading.tsx",
       "src/components/ui/extensions/loading.test.tsx",
       "src/app/_components/route-loading.tsx",
       "src/app/(protected)/profile/_components/profile-section.tsx",

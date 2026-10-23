@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
+import { Loading } from "@/components/ui/extensions/loading";
 import { cn } from "@/lib/utils";
 import { useHomeSectionClient } from "../_hooks/use-home-section-client";
 import {
@@ -31,7 +31,7 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
           className,
         )}
       >
-        <LoadingIndicator label={t("loading")} />
+        <Loading label={t("loading")} />
       </main>
     );
   }

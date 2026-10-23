@@ -57,6 +57,7 @@ next-env.d.ts
 .agents/agents.json.*.bak
 .agents/plugin-data/
 .agents/mcp_config.json
+.claude/
 CLAUDE.md
 .codex/
 .gemini/
@@ -77,6 +78,9 @@ opencode.json
 
 # serena local state
 .serena/
+
+# local analysis state
+.fallow/
 
 # mutation testing
 /.stryker-tmp/

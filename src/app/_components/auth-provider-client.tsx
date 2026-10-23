@@ -2,7 +2,7 @@
 
 import { FirebaseUIProvider } from "@firebase-oss/ui-react";
 import type { PropsWithChildren } from "react";
-import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
+import { Loading } from "@/components/ui/extensions/loading";
 import { useAuthProviderClient } from "../_hooks/use-auth-provider-client";
 
 type AuthProviderClientProps = PropsWithChildren;
@@ -22,9 +22,9 @@ function AuthProviderClient({ children }: AuthProviderClientProps) {
     );
   if (state.status === "loading")
     return (
-      <LoadingIndicator className="w-full text-sm text-muted-foreground">
+      <Loading className="w-full text-sm text-muted-foreground">
         {t("loading")}
-      </LoadingIndicator>
+      </Loading>
     );
   return <FirebaseUIProvider ui={state.ui}>{children}</FirebaseUIProvider>;
 }

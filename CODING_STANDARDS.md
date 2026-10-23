@@ -665,7 +665,7 @@ optimistic-state, or experimental Suspense feature.
 
 Place shared application components in `src/components/ui/extensions/` and
 route-private components in `src/app/**/_components/`. For example,
-`LoadingIndicator` belongs alongside `Loading` in `ui/extensions` because both
+`Loading` belongs in `ui/extensions` because both
 route components and Firebase UI consume it. Do not create parallel application
 component folders such as `src/components/loading/`.
 
@@ -677,7 +677,7 @@ policy, not a Next.js requirement.
 
 Placement does not classify runtime. `IntlProvider` in `intl-provider-server.tsx` is an async Server
 Component using server-only translation APIs; `ThemeProvider` in `theme-provider-client.tsx` declares
-`"use client"`; `LoadingIndicator` has no directive and can be used in either
+`"use client"`; `Loading` has no directive and can be used in either
 rendering graph. Keep those boundaries even when the files share a directory.
 The existing direct server-import guard complements placement checks; Next.js
 validates the complete module graph.
@@ -701,7 +701,7 @@ review those implementations. `ProfileFormClient` persists through `useProfileSu
 so it remains in `profile-form-client.tsx`. `ProfileEmailField` uses only form
 context and translations, so it lives in `profile-email-field.tsx` while keeping
 `"use client"`. `ProfileAvatarFieldClient` accesses browser object URLs through its
-hook and keeps `profile-avatar-field-client.tsx`. `LoadingIndicator` remains
+hook and keeps `profile-avatar-field-client.tsx`. `Loading` remains
 without a suffix and compatible with either graph.
 
 Owned component exports, props types, and component-named orchestration hooks
