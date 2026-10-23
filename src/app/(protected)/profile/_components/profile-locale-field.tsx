@@ -1,7 +1,8 @@
 "use client";
 
-import type { ComponentProps } from "react";
-import { Controller } from "react-hook-form";
+import { useTranslations } from "next-intl";
+import { type ComponentProps, useId } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import {
   Select,
@@ -12,12 +13,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { isLocale, locales } from "@/i18n/routing";
-import { useProfileLocaleField } from "../_hooks/use-profile-locale-field";
+import type { ProfileValues } from "@/lib/profile";
 
 type ProfileLocaleFieldProps = ComponentProps<typeof Field>;
 
 function ProfileLocaleField(props: ProfileLocaleFieldProps) {
-  const { id, t, control } = useProfileLocaleField();
+  const id = useId();
+  const t = useTranslations("Auth");
+  const { control } = useFormContext<ProfileValues>();
 
   return (
     <Controller

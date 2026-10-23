@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { signOutUser } from "@/lib/auth/auth";
 
-export function useHomeSignOutButton() {
+export function useHomeSignOutButtonClient() {
   const t = useTranslations("Home");
   const auth = useTranslations("Auth");
   const [state, setState] = useState<"idle" | "pending" | "error">("idle");

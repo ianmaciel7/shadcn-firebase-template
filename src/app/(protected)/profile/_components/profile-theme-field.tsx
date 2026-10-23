@@ -1,7 +1,8 @@
 "use client";
 
-import type { ComponentProps } from "react";
-import { Controller } from "react-hook-form";
+import { useTranslations } from "next-intl";
+import { type ComponentProps, useId } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import {
   Select,
@@ -11,13 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import type { ProfileValues } from "@/lib/profile";
 import { isThemePreference, themePreferences } from "@/lib/theme";
-import { useProfileThemeField } from "../_hooks/use-profile-theme-field";
 
 type ProfileThemeFieldProps = ComponentProps<typeof Field>;
 
 function ProfileThemeField(props: ProfileThemeFieldProps) {
-  const { id, t, control } = useProfileThemeField();
+  const id = useId();
+  const t = useTranslations("Auth");
+  const { control } = useFormContext<ProfileValues>();
 
   return (
     <Controller

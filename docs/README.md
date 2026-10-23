@@ -13,7 +13,9 @@ language, as defined in `.agents/rules/language.md`.
 | [Design](../DESIGN.md) | Implemented tokens, typography, providers, components | CSS, layout, `components.json`, `.ladle/` |
 | [Coding standards](../CODING_STANDARDS.md) | Source and test conventions | Biome, TypeScript, accepted decisions |
 | [Tooling](../TOOLING.md) | Tools, commands, configuration ownership | `package.json`, configuration, workflows |
-| [Testing](../TESTING.md) | Test layers, validation, CI, limitations | Vitest, Playwright, Stryker, workflows |
+| [Testing](../TESTING.md) | Test layers, required Firebase Emulator E2E, CI limitations | Vitest, Playwright, Firebase, Stryker, workflows |
+| [Quality rule ownership](quality-rule-ownership.md) | Which tool owns each rule, coverage limits, regressions | Biome, ast-grep, TypeScript AST, Playwright, CI |
+| [Biome plugin pilot](biome-javascript-plugin-pilot.md) | Isolated 2.6 preview and migration gate | `biome.preview.json`, pilot fixtures, CI |
 | [Contributing](../CONTRIBUTING.md) | Branch, commit, and PR conventions | Commitlint, hooks, CI |
 | [Security](../SECURITY.md) | Reporting policy and accepted dependency risk | Audit configuration and security workflow |
 | [Glossary](../GLOSSARY.md) | Agreed product vocabulary; currently pending | Adopted product terminology |
@@ -44,7 +46,10 @@ language, as defined in `.agents/rules/language.md`.
 ## Updating documentation
 
 Update the guide that owns a changed practice in the same change as its
-implementation. Check cross-references when renaming paths, adding scripts,
+implementation. When changing an architectural rule, update
+[rule ownership](quality-rule-ownership.md), the executable fixtures, the
+[tool inventory](../TOOLING.md), and the relevant agent rule in the same PR.
+Never document planned behavior as a passing CI check. Check cross-references when renaming paths, adding scripts,
 changing locale behavior, or upgrading tools. Preserve accepted ADRs without
 rewriting or renumbering them. Record a changed architectural decision in a new
 ADR and update the ADR index with its supersession scope. Documentation

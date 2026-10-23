@@ -1,5 +1,5 @@
 import { useAuthNavigation } from "@/app/_hooks/use-auth-navigation";
 
-export function useForgotPasswordAuthFlow() {
+export function useForgotPasswordAuthFlowClient() {
   return useAuthNavigation();
 }

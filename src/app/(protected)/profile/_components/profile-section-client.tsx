@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
-import { FieldGroup } from "@/components/ui/field";
-import { useProfileSection } from "../_hooks/use-profile-section";
+import { useProfileSectionClient } from "../_hooks/use-profile-section-client";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
 import { ProfileAvatarFieldClient } from "./profile-avatar-field-client";
 import {
@@ -18,30 +18,34 @@ import {
 import { ProfileDisplayNameField } from "./profile-display-name-field";
 import { ProfileEmailField } from "./profile-email-field";
 import {
-  ProfileForm,
-  ProfileFormContent,
-  ProfileFormFooter,
+  ProfileFormClient,
+  ProfileFormClientContent,
+  ProfileFormClientFooter,
 } from "./profile-form-client";
 import { ProfileLocaleField } from "./profile-locale-field";
 import { ProfileSaveButton } from "./profile-save-button";
 import { ProfileThemeField } from "./profile-theme-field";
 
-function ProfileSection() {
-  const { profile, state, t } = useProfileSection();
+type ProfileSectionClientProps = ComponentProps<"div">;
 
-  if (state.isLoading) {
+function ProfileSectionClient(props: ProfileSectionClientProps) {
+  const { profile, state, t } = useProfileSectionClient();
+
+  if (state.status === "loading") {
     return (
-      <LoadingIndicator className="w-full text-sm text-muted-foreground">
-        {t("loading")}
-      </LoadingIndicator>
+      <div {...props}>
+        <LoadingIndicator className="w-full text-sm text-muted-foreground">
+          {t("loading")}
+        </LoadingIndicator>
+      </div>
     );
   }
 
-  if (state.isHidden) return null;
+  if (state.status === "hidden") return null;
 
-  if (state.isError) {
+  if (state.status === "error") {
     return (
-      <ProfileCard>
+      <ProfileCard {...props}>
         <ProfileCardContent>
           <p role="alert">{state.message}</p>
         </ProfileCardContent>
@@ -51,8 +55,8 @@ function ProfileSection() {
 
   return (
     <ProfileSessionContext value={profile}>
-      <ProfileCard>
-        <ProfileForm key={state.userId}>
+      <ProfileCard {...props}>
+        <ProfileFormClient key={state.userId}>
           <ProfileCardHeader>
             <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
             <ProfileCardDescription>
@@ -60,18 +64,16 @@ function ProfileSection() {
             </ProfileCardDescription>
           </ProfileCardHeader>
           <ProfileCardContent>
-            <ProfileFormContent>
+            <ProfileFormClientContent>
               <ProfileAvatarFieldClient />
-              <FieldGroup>
-                <ProfileDisplayNameField />
-                <ProfileEmailField />
-                <ProfileLocaleField />
-                <ProfileThemeField />
-              </FieldGroup>
-            </ProfileFormContent>
+              <ProfileDisplayNameField />
+              <ProfileEmailField />
+              <ProfileLocaleField />
+              <ProfileThemeField />
+            </ProfileFormClientContent>
           </ProfileCardContent>
           <ProfileCardFooter>
-            <ProfileFormFooter>
+            <ProfileFormClientFooter>
               <ProfileSaveButton />
               <Link
                 href="/"
@@ -83,12 +85,12 @@ function ProfileSection() {
               >
                 {t("backToHome")}
               </Link>
-            </ProfileFormFooter>
+            </ProfileFormClientFooter>
           </ProfileCardFooter>
-        </ProfileForm>
+        </ProfileFormClient>
       </ProfileCard>
     </ProfileSessionContext>
   );
 }
 
-export { ProfileSection };
+export { ProfileSectionClient };

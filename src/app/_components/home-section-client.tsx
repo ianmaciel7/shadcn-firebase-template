@@ -14,7 +14,7 @@ import {
   HomeHeroHeader,
   HomeHeroTitle,
 } from "./home-hero";
-import { HomeSignOutButton } from "./home-sign-out-button-client";
+import { HomeSignOutButtonClient } from "./home-sign-out-button-client";
 
 type HomeSectionClientProps = ComponentProps<"main">;
 
@@ -78,7 +78,7 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
                 >
                   {t("manageAccount")}
                 </Link>
-                <HomeSignOutButton />
+                <HomeSignOutButtonClient />
               </>
             ) : (
               <>

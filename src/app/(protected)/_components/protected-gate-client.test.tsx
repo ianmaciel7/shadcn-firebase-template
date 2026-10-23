@@ -1,6 +1,6 @@
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ProtectedGate } from "./protected-gate-client";
+import { ProtectedGateClient } from "./protected-gate-client";
 
 const mocks = vi.hoisted(() => ({
   router: { replace: vi.fn() },
@@ -29,7 +29,7 @@ vi.mock("@/lib/firebase/client", () => ({
 
 vi.mock("@/lib/usage/guard", () => ({ recordUsage: mocks.recordUsage }));
 
-describe("ProtectedGate", () => {
+describe("ProtectedGateClient", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.recordUsage.mockResolvedValue(undefined);
@@ -56,9 +56,9 @@ describe("ProtectedGate", () => {
   it("renders loading indicator before auth resolves", () => {
     mocks.subscribe.mockReturnValue(() => {});
     render(
-      <ProtectedGate>
+      <ProtectedGateClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGate>,
+      </ProtectedGateClient>,
     );
     expect(screen.getByRole("status").textContent).toBe("loading");
     expect(screen.queryByText("Protected Content")).toBeNull();
@@ -68,9 +68,9 @@ describe("ProtectedGate", () => {
     mocks.currentUser = null;
     window.history.replaceState(null, "", "/profile?tab=security");
     render(
-      <ProtectedGate>
+      <ProtectedGateClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGate>,
+      </ProtectedGateClient>,
     );
     expect(mocks.router.replace).toHaveBeenCalledWith(
       `/sign-in?next=${encodeURIComponent("/profile?tab=security")}`,
@@ -81,9 +81,9 @@ describe("ProtectedGate", () => {
   it("renders children only after access is recorded", async () => {
     mocks.currentUser = { uid: "user-123" };
     render(
-      <ProtectedGate>
+      <ProtectedGateClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGate>,
+      </ProtectedGateClient>,
     );
     await waitFor(() =>
       expect(screen.getByText("Protected Content")).toBeTruthy(),
@@ -98,9 +98,9 @@ describe("ProtectedGate", () => {
     mocks.currentUser = { uid: "user-123" };
     mocks.recordUsage.mockRejectedValue(new Error("offline"));
     render(
-      <ProtectedGate>
+      <ProtectedGateClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGate>,
+      </ProtectedGateClient>,
     );
     await waitFor(() => expect(screen.getByRole("alert")).toBeTruthy());
     expect(screen.queryByText("Protected Content")).toBeNull();
@@ -115,9 +115,9 @@ describe("ProtectedGate", () => {
     );
     mocks.currentUser = { uid: "user-123" };
     render(
-      <ProtectedGate>
+      <ProtectedGateClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGate>,
+      </ProtectedGateClient>,
     );
     const onAuthChange = mocks.subscribe.mock.calls[0][1];
     await act(async () => {
@@ -137,9 +137,9 @@ describe("ProtectedGate", () => {
     );
     mocks.currentUser = { uid: "user-123" };
     render(
-      <ProtectedGate>
+      <ProtectedGateClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGate>,
+      </ProtectedGateClient>,
     );
     const onAuthChange = mocks.subscribe.mock.calls[0][1];
     await act(async () => {
@@ -161,9 +161,9 @@ describe("ProtectedGate", () => {
     });
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
     render(
-      <ProtectedGate>
+      <ProtectedGateClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGate>,
+      </ProtectedGateClient>,
     );
     expect(screen.getByRole("alert").textContent).toBe("configurationError");
     log.mockRestore();

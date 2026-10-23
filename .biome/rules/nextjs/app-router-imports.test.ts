@@ -89,3 +89,46 @@ describe("native App Router import policy", () => {
     ).not.toContain("lint/style/noRestrictedImports");
   });
 });
+
+describe("route-only Firebase import restrictions", () => {
+  it.each([
+    "firebase",
+    "firebase/auth",
+    "firebase/firestore",
+    "firebase-admin",
+    "firebase-admin/auth",
+    "@/lib/firebase/client",
+  ])("rejects %s in Next.js route entrypoints", (modulePath) => {
+    for (const entry of ["page.tsx", "layout.tsx", "template.tsx"]) {
+      const output = lint(
+        join(directories[0], entry),
+        `import * as SDK from "${modulePath}"; export { SDK };`,
+      );
+      expect(output).toContain("lint/style/noRestrictedImports");
+    }
+  });
+
+  it("allows Firebase imports in dedicated client components and data modules", () => {
+    const output = lint(
+      join(directories[0], "_components.tsx"),
+      'import { getAuth } from "firebase/auth"; export { getAuth };',
+    );
+    expect(output).not.toContain("lint/style/noRestrictedImports");
+  });
+
+  it("allows route entrypoints to import an application data module", () => {
+    const output = lint(
+      join(directories[0], "page.tsx"),
+      'import { readProfile } from "@/lib/firebase/firestore/user-preferences"; export { readProfile };',
+    );
+    expect(output).not.toContain("lint/style/noRestrictedImports");
+  });
+
+  it("keeps legacy Next.js imports prohibited in route entrypoints", () => {
+    const output = lint(
+      join(directories[0], "page.tsx"),
+      'import { useRouter } from "next/router"; export { useRouter };',
+    );
+    expect(output).toContain("lint/style/noRestrictedImports");
+  });
+});

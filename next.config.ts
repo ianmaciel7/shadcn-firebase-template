@@ -14,10 +14,6 @@ const authEmulatorUrl = authEmulatorHost
 const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
-  env: {
-    FIREBASE_AUTH_EMULATOR_HOST: process.env.FIREBASE_AUTH_EMULATOR_HOST,
-    FIRESTORE_EMULATOR_HOST: process.env.FIRESTORE_EMULATOR_HOST,
-  },
   partialPrefetching: true,
   reactCompiler: true,
   async rewrites() {

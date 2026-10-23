@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { subscribeToSession } from "@/lib/auth/session";
 import { recordUsage } from "@/lib/usage/guard";
 
-export function useProtectedGate() {
+export function useProtectedGateClient() {
   const t = useTranslations("Auth");
   const router = useRouter();
   const pathname = usePathname();

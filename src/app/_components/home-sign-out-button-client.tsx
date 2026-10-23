@@ -4,12 +4,16 @@ import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
-import { useHomeSignOutButton } from "../_hooks/use-home-sign-out-button";
+import { useHomeSignOutButtonClient } from "../_hooks/use-home-sign-out-button-client";
 
-type HomeSignOutButtonProps = ComponentProps<"div">;
+type HomeSignOutButtonClientProps = ComponentProps<"div">;
 
-function HomeSignOutButton({ className, ...props }: HomeSignOutButtonProps) {
-  const { t, auth, isPending, isError, handleSignOut } = useHomeSignOutButton();
+function HomeSignOutButtonClient({
+  className,
+  ...props
+}: HomeSignOutButtonClientProps) {
+  const { t, auth, isPending, isError, handleSignOut } =
+    useHomeSignOutButtonClient();
   const errorId = "home-sign-out-error";
 
   return (
@@ -45,4 +49,4 @@ function HomeSignOutButton({ className, ...props }: HomeSignOutButtonProps) {
   );
 }
 
-export { HomeSignOutButton };
+export { HomeSignOutButtonClient };

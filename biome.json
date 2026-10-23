@@ -6,16 +6,6 @@
     "useIgnoreFile": true
   },
   "plugins": [
-    {
-      "path": "./.biome/rules/react/prefer-is-error.grit",
-      "includes": [
-        "**/src/app/**/*.tsx",
-        "**/src/components/**/*.tsx",
-        "!**/src/components/ui/*.tsx",
-        "!**/src/components/ai-elements/**",
-        "!**/src/components/firebase/**"
-      ]
-    },
     "./.biome/rules/dom/no-document-write.grit",
     "./.biome/rules/nextjs/prefer-layout-props.grit",
     "./.biome/rules/nextjs/prefer-page-props.grit",
@@ -188,6 +178,39 @@
           "correctness": {
             "noNestedComponentDefinitions": "error",
             "noReactPropAssignments": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "src/app/**/page.tsx",
+        "src/app/**/layout.tsx",
+        "src/app/**/template.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "next/router": "Use next/navigation in App Router code.",
+                  "next/head": "Use the App Router Metadata API.",
+                  "next/document": "Use the App Router root layout.",
+                  "next/app": "Use App Router layouts and providers.",
+                  "firebase": "Route entrypoints must access Firebase through a data layer.",
+                  "firebase-admin": "Route entrypoints must access Firebase through a data layer.",
+                  "@/lib/firebase/client": "Use a server data module or a dedicated client component."
+                },
+                "patterns": [
+                  {
+                    "group": ["firebase/*", "firebase-admin/*"],
+                    "message": "Route entrypoints must access Firebase through a data layer."
+                  }
+                ]
+              }
+            }
           }
         }
       }

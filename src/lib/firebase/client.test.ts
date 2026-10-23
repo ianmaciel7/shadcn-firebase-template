@@ -66,6 +66,7 @@ describe("getFirebaseUI", () => {
     vi.stubEnv("NEXT_PUBLIC_FIREBASE_APP_ID", "app-id");
     delete process.env.FIREBASE_AUTH_EMULATOR_HOST;
     delete process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
+    delete process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST;
     delete process.env.FIREBASE_STORAGE_EMULATOR_HOST;
     delete process.env.NEXT_PUBLIC_FIREBASE_STORAGE_EMULATOR_HOST;
     delete process.env.FIREBASE_DATABASE_EMULATOR_HOST;
@@ -109,7 +110,7 @@ describe("getFirebaseUI", () => {
   });
 
   it("rejects emulator use outside development", async () => {
-    vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9099");
+    vi.stubEnv("NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9099");
 
     const { getFirebaseUI } = await import("./client");
     expect(() => getFirebaseUI()).toThrow(
@@ -119,7 +120,7 @@ describe("getFirebaseUI", () => {
 
   it("initializes Firebase and connects the emulator in development", async () => {
     vi.stubEnv("NODE_ENV", "development");
-    vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9098");
+    vi.stubEnv("NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9098");
 
     const { getFirebaseUI } = await import("./client");
     expect(getFirebaseUI()).toBe(mocks.store);
@@ -143,7 +144,7 @@ describe("getFirebaseUI", () => {
 
   it("uses redirect OAuth in Electron browsers", async () => {
     vi.stubEnv("NODE_ENV", "development");
-    vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "localhost:9099");
+    vi.stubEnv("NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST", "localhost:9099");
     vi.stubGlobal("navigator", { userAgent: "Mozilla/5.0 Electron/42.0.0" });
     vi.stubGlobal("window", { location: { origin: "http://localhost:3000" } });
 
@@ -162,7 +163,7 @@ describe("getFirebaseUI", () => {
 
   it("returns the shared Auth instance and connects its emulator once", async () => {
     vi.stubEnv("NODE_ENV", "development");
-    vi.stubEnv("FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9098");
+    vi.stubEnv("NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST", "127.0.0.1:9098");
 
     const { getFirebaseAuth } = await import("./client");
     expect(getFirebaseAuth()).toBe(mocks.auth);
@@ -179,6 +180,21 @@ describe("getFirebaseUI", () => {
     expect(mocks.getApp).toHaveBeenCalledOnce();
     expect(mocks.initializeApp).not.toHaveBeenCalled();
     expect(mocks.initializeUI).not.toHaveBeenCalled();
+  });
+
+  it("connects browser Firestore using its public emulator endpoint", async () => {
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST", "127.0.0.1:8080");
+    const firestore = { app: mocks.app };
+    mocks.getFirestore.mockReturnValue(firestore);
+
+    const { getFirebaseFirestore } = await import("./client");
+    expect(getFirebaseFirestore()).toBe(firestore);
+    expect(mocks.connectFirestoreEmulator).toHaveBeenCalledWith(
+      firestore,
+      "127.0.0.1",
+      8080,
+    );
   });
 
   it("connects browser Storage to the local emulator using public configuration", async () => {

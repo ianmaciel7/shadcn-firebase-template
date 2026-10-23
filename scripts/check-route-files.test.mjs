@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { inspectRouteSource, isRouteEntrypoint } from "./check-route-files.mjs";
 
@@ -14,6 +15,18 @@ function expectRejected(source, reason, path) {
 }
 
 describe("route entrypoint guard", () => {
+  it("keeps migrated structural route checks in verify:fast", () => {
+    const packageJson = JSON.parse(
+      readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+    );
+    assert.ok(
+      packageJson.scripts["verify:fast"]
+        .split(" && ")
+        .includes("pnpm check:structure"),
+    );
+    assert.match(packageJson.scripts["verify:static"], /pnpm check:structure/);
+  });
+
   it("scans route special files but not private components", () => {
     assert.equal(isRouteEntrypoint("src/app/page.tsx"), true);
     assert.equal(isRouteEntrypoint("src/app/(group)/layout.tsx"), true);
@@ -69,30 +82,6 @@ describe("route entrypoint guard", () => {
     );
   });
 
-  it("rejects client directives in every entrypoint kind", () => {
-    for (const kind of ["page", "layout", "template"]) {
-      expectRejected(
-        '"use client"; export default function Entry() { return <div />; }',
-        /Server Components/,
-        `src/app/${kind}.tsx`,
-      );
-    }
-  });
-
-  it("rejects hooks including Next.js and i18n hooks", () => {
-    for (const hook of [
-      "useState",
-      "useEffect",
-      "useTranslations",
-      "useRouter",
-    ]) {
-      expectRejected(
-        `export default function Page() { const result = ${hook}(); return <div />; }`,
-        /hooks belong/,
-      );
-    }
-  });
-
   it("rejects control flow and inline callbacks", () => {
     expectRejected(
       "export default function Page() { if (ok) return <A />; return <B />; }",
@@ -103,16 +92,12 @@ describe("route entrypoint guard", () => {
       /conditional/,
     );
     expectRejected(
-      "export default function Page() { return <List onClick={() => save()} />; }",
-      /Event handlers/,
+      "export default function Page() { const render = () => <A />; return render(); }",
+      /Extract inline/,
     );
   });
 
-  it("rejects direct SDK imports but permits a data-layer read", () => {
-    expectRejected(
-      'import { getDoc } from "firebase/firestore"; export default function Page() { return <div />; }',
-      /Firebase/,
-    );
+  it("allows a data-layer read in a thin route entrypoint", () => {
     expectValid(
       'import { readProfile } from "@/lib/firebase/firestore/user-preferences"; export default async function Page() { const value = await readProfile(); return <Card value={value} />; }',
     );

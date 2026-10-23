@@ -26,6 +26,15 @@ export type SavedProfile = {
   emailChanged: boolean;
 };
 
+/** Ports for profile persistence. Tests may inject adapters without Firebase. */
+export type ProfileDependencies = {
+  getActiveUser: typeof getActiveUser;
+  verifyBeforeUpdateEmail: typeof verifyBeforeUpdateEmail;
+  updateProfile: typeof updateProfile;
+  uploadAvatar: (user: User, avatarFile: File | null) => Promise<string | null>;
+  writeUserPreferences: typeof writeUserPreferences;
+};
+
 async function uploadAvatar(user: User, avatarFile: File | null) {
   if (!avatarFile) return user.photoURL;
 
@@ -34,18 +43,29 @@ async function uploadAvatar(user: User, avatarFile: File | null) {
   return getDownloadURL(avatarRef);
 }
 
-export async function saveProfile({
-  user,
-  previous,
-  values,
-  avatarFile,
-}: {
-  user: User;
-  previous: ProfileValues;
-  values: ProfileValues;
-  avatarFile: File | null;
-}): Promise<SavedProfile> {
-  const authUser = getActiveUser(user);
+const defaultProfileDependencies: ProfileDependencies = {
+  getActiveUser,
+  verifyBeforeUpdateEmail,
+  updateProfile,
+  uploadAvatar,
+  writeUserPreferences,
+};
+
+export async function saveProfile(
+  {
+    user,
+    previous,
+    values,
+    avatarFile,
+  }: {
+    user: User;
+    previous: ProfileValues;
+    values: ProfileValues;
+    avatarFile: File | null;
+  },
+  dependencies: ProfileDependencies = defaultProfileDependencies,
+): Promise<SavedProfile> {
+  const authUser = dependencies.getActiveUser(user);
   const displayName = values.displayName.trim();
   const email = values.email.trim();
   const emailChanged = email !== (authUser.email ?? "");
@@ -53,18 +73,18 @@ export async function saveProfile({
   const preferencesChanged =
     values.locale !== previous.locale || values.theme !== previous.theme;
 
-  if (emailChanged) await verifyBeforeUpdateEmail(authUser, email);
+  if (emailChanged) await dependencies.verifyBeforeUpdateEmail(authUser, email);
 
-  const photoURL = await uploadAvatar(authUser, avatarFile);
+  const photoURL = await dependencies.uploadAvatar(authUser, avatarFile);
   const avatarChanged = Boolean(avatarFile);
   if (nameChanged || avatarChanged) {
-    await updateProfile(authUser, {
+    await dependencies.updateProfile(authUser, {
       ...(nameChanged ? { displayName: displayName || null } : {}),
       ...(avatarChanged ? { photoURL } : {}),
     });
   }
   if (preferencesChanged) {
-    await writeUserPreferences(authUser.uid, {
+    await dependencies.writeUserPreferences(authUser.uid, {
       locale: values.locale,
       theme: values.theme,
     });

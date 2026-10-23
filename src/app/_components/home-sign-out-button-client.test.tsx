@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import en from "@/messages/en.json";
-import { HomeSignOutButton } from "./home-sign-out-button-client";
+import { HomeSignOutButtonClient } from "./home-sign-out-button-client";
 
 const mocks = vi.hoisted(() => ({
   signOut: vi.fn(),
@@ -17,7 +17,7 @@ vi.mock("@/lib/firebase/client", () => ({
   getFirebaseUI: mocks.getUI,
 }));
 
-describe("HomeSignOutButton", () => {
+describe("HomeSignOutButtonClient", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.getUI.mockReturnValue({ get: () => ({ auth: {} }) });
@@ -27,7 +27,7 @@ describe("HomeSignOutButton", () => {
   it("renders with custom className and accessible button text", () => {
     render(
       <NextIntlClientProvider locale="en" messages={en}>
-        <HomeSignOutButton className="custom-signout-wrapper" />
+        <HomeSignOutButtonClient className="custom-signout-wrapper" />
       </NextIntlClientProvider>,
     );
 
@@ -41,7 +41,7 @@ describe("HomeSignOutButton", () => {
 
     render(
       <NextIntlClientProvider locale="en" messages={en}>
-        <HomeSignOutButton />
+        <HomeSignOutButtonClient />
       </NextIntlClientProvider>,
     );
 

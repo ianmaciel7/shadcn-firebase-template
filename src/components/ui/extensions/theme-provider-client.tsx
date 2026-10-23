@@ -17,11 +17,11 @@ if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
   };
 }
 
-function ThemeProvider({
+function ThemeProviderClient({
   children,
   ...props
 }: React.ComponentProps<typeof NextThemesProvider>) {
   return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }
 
-export { ThemeProvider };
+export { ThemeProviderClient };

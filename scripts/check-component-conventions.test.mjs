@@ -4,8 +4,10 @@ import {
   inspectComponent,
   inspectComponentPlacement,
   inspectComponentRuntime,
+  inspectHookFilename,
   inspectNaming,
   isOwnedComponent,
+  isOwnedHookModule,
 } from "./check-component-conventions.mjs";
 
 const profile = "src/app/(protected)/profile/_components/profile-card.tsx";
@@ -42,6 +44,127 @@ function compoundCard(source) {
     `${compoundParts} export { ProfileCard, ProfileCardAction, ProfileCardHeader, ProfileCardTitle, ProfileCardDescription, ProfileCardContent, ProfileCardFooter };`,
   );
 }
+
+describe("owned hook filename/export parity", () => {
+  const gate = "src/app/(protected)/_hooks/use-protected-gate.ts";
+  const matching = "src/app/(protected)/_hooks/use-protected-gate-client.ts";
+  const messages = (code, file = gate) =>
+    inspectHookFilename(code, file)
+      .map((item) => item.message)
+      .join(" ");
+
+  it("reproduces the original false negative: useProtectedGateClient in use-protected-gate.ts", () => {
+    assert.match(
+      messages("export function useProtectedGateClient() {}"),
+      /does not match filename "use-protected-gate.ts"/,
+    );
+    assert.match(
+      messages("export function useProtectedGateClient() {}"),
+      /must export "useProtectedGate"/,
+    );
+  });
+
+  it("accepts direct exports and local named exports with exact hook filenames", () => {
+    assert.equal(
+      messages("export function useProtectedGateClient() {}", matching),
+      "",
+    );
+    assert.equal(
+      messages(
+        "const useProtectedGateClient = () => {}; export { useProtectedGateClient };",
+        matching,
+      ),
+      "",
+    );
+    assert.equal(
+      messages("export const useProtectedGateClient = () => {};", matching),
+      "",
+    );
+    assert.equal(
+      messages(
+        "export const ProfileSessionContext = {}; export function useProfileSessionContext() {}",
+        "src/app/(protected)/profile/_hooks/use-profile-session-context.ts",
+      ),
+      "",
+    );
+  });
+
+  it("rejects wrong suffixes, missing hooks, multiple hooks, aliases, and re-exports", () => {
+    for (const code of [
+      "export function useProtectedGateClient() {}",
+      "export function useProtectedGate() {} export function useOther() {}",
+      "export const someValue = true;",
+      "export { useProtectedGateClient } from './other';",
+      "function useProtectedGateClient() {} export { useProtectedGateClient as useProtectedGate };",
+    ]) {
+      const result = messages(code);
+      assert.ok(result, code);
+    }
+    assert.match(
+      messages("export { useProtectedGate } from './other';"),
+      /re-exports are not allowed/,
+    );
+    assert.match(
+      messages(
+        "export function useProtectedGate() {} export function useOther() {}",
+      ),
+      /does not match filename/,
+    );
+  });
+
+  it("scopes the rule to owned private hooks, not vendor files or shadcn use-mobile", () => {
+    assert.equal(isOwnedHookModule(gate), true);
+    for (const path of [
+      "src/hooks/use-mobile.ts",
+      "src/app/_hooks/use-account.test.ts",
+      "src/components/firebase/use-auth.ts",
+      "src/app/(protected)/profile/_components/profile-card.tsx",
+    ]) {
+      assert.equal(isOwnedHookModule(path), false);
+      assert.deepEqual(
+        inspectHookFilename("export function useWrong() {}", path),
+        [],
+      );
+    }
+    assert.match(
+      messages(
+        "export function useAccount() {}",
+        "src/app/_hooks/legacy-name.ts",
+      ),
+      /use-<semantic-name>/,
+    );
+  });
+});
+
+describe("presentation hooks in owned fields", () => {
+  it("allows native form, translation and id hooks without a redundant wrapper", () => {
+    const file =
+      "src/app/(protected)/profile/_components/profile-email-field.tsx";
+    const source = `"use client"; 
+      import { useId } from "react";
+      import { useTranslations } from "next-intl";
+      import { useFormContext } from "react-hook-form";
+      function ProfileEmailField(props) {
+        const id = useId();
+        const t = useTranslations("Auth");
+        const { control } = useFormContext();
+        return <Field {...props} data-testid={id}>{t("emailLabel")}</Field>;
+      }
+      export { ProfileEmailField };`;
+    assert.deepEqual(
+      inspectComponent(source, file).map((finding) => finding.message),
+      [],
+    );
+  });
+
+  it("continues rejecting mismatched application orchestration hooks", () => {
+    expectInvalid(
+      '"use client"; import { useWrong } from "../_hooks/use-wrong"; import { useId } from "react"; function AccountCard(props) { useId(); useWrong(); return <div {...props} />; } export { AccountCard };',
+      /must delegate hook coordination to useAccountCard/,
+      "src/app/_components/account-card.tsx",
+    );
+  });
+});
 
 describe("owned component conventions", () => {
   it("rejects component aliases and re-exports even with a matching local root", () => {
@@ -107,19 +230,36 @@ describe("owned component conventions", () => {
     );
   });
 
-  it("allows runtime filename suffixes without changing semantic exports", () => {
-    expectValid(
+  it("requires exact component names, including client and server suffixes", () => {
+    const client = "src/app/_components/account-client.tsx";
+    const server = "src/app/_components/account-server.tsx";
+    expectInvalid(
       '"use client"; function Account(props) { return <div {...props} />; } export { Account };',
-      "src/app/_components/account-client.tsx",
+      /missing term/,
+      client,
     );
     expectValid(
-      'import "server-only"; function Account(props) { return <div {...props} />; } export { Account };',
-      "src/app/_components/account-server.tsx",
+      '"use client"; function AccountClient(props) { return <div {...props} />; } export { AccountClient };',
+      client,
     );
     expectInvalid(
-      "function AccountUi() { return <div />; } export { AccountUi };",
-      /semantic role/,
-      "src/app/_components/account-ui.tsx",
+      'import "server-only"; function Account(props) { return <div {...props} />; } export { Account };',
+      /missing term/,
+      server,
+    );
+    expectValid(
+      'import "server-only"; function AccountServer(props) { return <div {...props} />; } export { AccountServer };',
+      server,
+    );
+    expectInvalid(
+      "function ProfileForm(props) { return <form {...props} />; } export { ProfileForm };",
+      /ProfileFormClient/,
+      "src/app/(protected)/profile/_components/profile-form-client.tsx",
+    );
+    expectInvalid(
+      "function ProfileSection(props) { return <div {...props} />; } export { ProfileSection };",
+      /ProfileSectionClient/,
+      "src/app/(protected)/profile/_components/profile-section-client.tsx",
     );
   });
 
@@ -286,12 +426,11 @@ describe("owned component conventions", () => {
       /useSessionPanel/,
       path,
     );
-    expectInvalid(
+    expectValid(
       render(
         'import { useSessionPanel } from "../_hooks/use-session-panel"; import { useTranslations } from "next-intl";',
         'useSessionPanel(); useTranslations("Auth");',
       ),
-      /call only that component hook/,
       path,
     );
     expectInvalid(
@@ -436,7 +575,7 @@ describe("owned component conventions", () => {
 
   it("rejects passing the complete profile controller to a child", () => {
     expectInvalid(
-      "function ProfileCard() { return <ProfileForm profile={profile} />; } export { ProfileCard };",
+      "function ProfileCard() { return <ProfileFormClient profile={profile} />; } export { ProfileCard };",
       /focused field\/form\/button props/,
     );
     expectInvalid(
@@ -515,17 +654,17 @@ describe("owned component conventions", () => {
     );
     expectInvalid(
       "function ProfileSection() { return <ProfileForm><ProfileCard><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileCard></ProfileForm>; } export { ProfileSection };",
-      /ProfileForm must be inside ProfileCard/,
+      /ProfileFormClient must be inside ProfileCard/,
       section,
     );
     expectInvalid(
       "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileSaveButton /><ProfileCardFooter><ProfileFormFooter><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
-      /ProfileSaveButton must be inside ProfileFormFooter/,
+      /ProfileSaveButton must be inside ProfileFormClientFooter/,
       section,
     );
     expectInvalid(
       "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileFormContent /><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
-      /ProfileFormContent must be inside ProfileCardContent/,
+      /ProfileFormClientContent must be inside ProfileCardContent/,
       section,
     );
   });
@@ -882,12 +1021,12 @@ describe("component integration naming", () => {
 describe("runtime suffixes preserve semantic safety checks", () => {
   it("keeps exact profile form families and field/property matching", () => {
     expectInvalid(
-      '"use client"; function ProfileForm(props) { return <form {...props} />; } export { ProfileForm };',
-      /ProfileFormContent/,
+      '"use client"; function ProfileFormClient(props) { return <form {...props} />; } export { ProfileFormClient };',
+      /ProfileFormClientContent/,
       "src/app/(protected)/profile/_components/profile-form-client.tsx",
     );
     expectInvalid(
-      '"use client"; function ProfileEmailField(props) { return <Controller name="displayName" {...props} />; } export { ProfileEmailField };',
+      '"use client"; function ProfileEmailFieldClient(props) { return <Controller name="displayName" {...props} />; } export { ProfileEmailFieldClient };',
       /match Controller/,
       "src/app/(protected)/profile/_components/profile-email-field-client.tsx",
     );
@@ -895,7 +1034,7 @@ describe("runtime suffixes preserve semantic safety checks", () => {
 
   it("rejects imports of local server component files from client boundaries", () => {
     expectInvalid(
-      '"use client"; import { Account } from "./account-server"; function Details(props) { return <div {...props} />; } export { Details };',
+      '"use client"; import { AccountServer } from "./account-server"; function DetailsClient(props) { return <div {...props} />; } export { DetailsClient };',
       /server-only/,
       "src/app/_components/details-client.tsx",
     );

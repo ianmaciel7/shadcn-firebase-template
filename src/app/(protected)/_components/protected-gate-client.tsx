@@ -2,12 +2,12 @@
 
 import type { PropsWithChildren } from "react";
 import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
-import { useProtectedGate } from "../_hooks/use-protected-gate";
+import { useProtectedGateClient } from "../_hooks/use-protected-gate-client";
 
-type ProtectedGateProps = PropsWithChildren;
+type ProtectedGateClientProps = PropsWithChildren;
 
-function ProtectedGate({ children }: ProtectedGateProps) {
-  const { t, isLoading, isError, errorKey } = useProtectedGate();
+function ProtectedGateClient({ children }: ProtectedGateClientProps) {
+  const { t, isLoading, isError, errorKey } = useProtectedGateClient();
 
   if (isError) {
     return (
@@ -34,4 +34,4 @@ function ProtectedGate({ children }: ProtectedGateProps) {
   );
 }
 
-export { ProtectedGate };
+export { ProtectedGateClient };

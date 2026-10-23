@@ -3,7 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import type * as React from "react";
 
-async function IntlProvider({
+async function IntlProviderServer({
   children,
   ...props
 }: React.ComponentProps<typeof NextIntlClientProvider>) {
@@ -17,4 +17,4 @@ async function IntlProvider({
   );
 }
 
-export { IntlProvider };
+export { IntlProviderServer };

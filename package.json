@@ -25,7 +25,7 @@
     "check:secrets": "gitleaks git --no-banner --redact",
     "check:workflows": "actionlint && zizmor .github/workflows",
     "audit": "pnpm audit",
-    "verify:fast": "pnpm lint:ci && pnpm typecheck && pnpm test && pnpm test:logging && pnpm check:routes && pnpm check:components && pnpm check:responsiveness",
+    "verify:fast": "pnpm lint:ci && pnpm typecheck && pnpm test && pnpm test:logging && pnpm check:structure && pnpm check:routes && pnpm check:components && pnpm check:responsiveness",
     "verify:static": "pnpm lint:ci && pnpm typecheck && pnpm test:coverage && pnpm test:logging && pnpm check:architecture && pnpm check:unused && pnpm check:duplicates && pnpm check:structure && pnpm check:routes && pnpm check:components && pnpm check:responsiveness && pnpm check:spelling && pnpm check:markdown && pnpm analyze:fallow && pnpm analyze:react",
     "verify:build": "pnpm test:browser && pnpm analyze:size && pnpm ladle:build",
     "verify:full": "pnpm verify:static && pnpm verify:build",

@@ -1,6 +1,6 @@
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { AuthProvider } from "./auth-provider-client";
+import { AuthProviderClient } from "./auth-provider-client";
 
 const mocks = vi.hoisted(() => ({
   router: { replace: vi.fn() },
@@ -21,7 +21,7 @@ vi.mock("@firebase-oss/ui-react", () => ({
   FirebaseUIProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
-describe("AuthProvider", () => {
+describe("AuthProviderClient", () => {
   afterEach(() => {
     cleanup();
     window.history.replaceState(null, "", "/");
@@ -36,9 +36,9 @@ describe("AuthProvider", () => {
 
   it("waits for the first auth state and renders the screen for a signed-out user", () => {
     render(
-      <AuthProvider>
+      <AuthProviderClient>
         <p>{"Screen"}</p>
-      </AuthProvider>,
+      </AuthProviderClient>,
     );
     expect(screen.getByRole("status")).toBeTruthy();
     expect(screen.queryByText("Screen")).toBeNull();
@@ -49,9 +49,9 @@ describe("AuthProvider", () => {
 
   it("redirects a signed-in user without displaying the screen", () => {
     render(
-      <AuthProvider>
+      <AuthProviderClient>
         <p>{"Screen"}</p>
-      </AuthProvider>,
+      </AuthProviderClient>,
     );
     act(() => mocks.subscribe.mock.calls[0][1]({ uid: "user" }));
     expect(mocks.router.replace).toHaveBeenCalledWith("/");
@@ -64,9 +64,9 @@ describe("AuthProvider", () => {
     });
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
     render(
-      <AuthProvider>
+      <AuthProviderClient>
         <p>{"Screen"}</p>
-      </AuthProvider>,
+      </AuthProviderClient>,
     );
     expect(screen.getByRole("alert").textContent).toBe("configurationError");
     log.mockRestore();
@@ -83,9 +83,9 @@ describe("AuthProvider", () => {
       `/sign-in?next=${encodeURIComponent(next)}`,
     );
     render(
-      <AuthProvider>
+      <AuthProviderClient>
         <p>{"Screen"}</p>
-      </AuthProvider>,
+      </AuthProviderClient>,
     );
     act(() => mocks.subscribe.mock.calls[0][1]({ uid: "user" }));
     expect(mocks.router.replace).toHaveBeenCalledWith(destination);

@@ -29,10 +29,7 @@ function getFirebaseConfig(): FirebaseOptions {
 }
 
 function getEmulatorUrl(): string | undefined {
-  const host = (
-    process.env.FIREBASE_AUTH_EMULATOR_HOST ||
-    process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST
-  )?.trim();
+  const host = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST?.trim();
 
   if (!host) return undefined;
 
@@ -134,7 +131,7 @@ function getEmulatorEndpoint(host: string, defaultPort: number) {
 function connectFirestoreIfNeeded(firestore: ReturnType<typeof getFirestore>) {
   if (process.env.NODE_ENV !== "development") return;
 
-  const host = process.env.FIRESTORE_EMULATOR_HOST?.trim();
+  const host = process.env.NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST?.trim();
   if (!host || globalThis.firebaseFirestoreEmulatorConnected) return;
 
   const endpoint = getEmulatorEndpoint(host, 8080);

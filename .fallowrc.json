@@ -7,7 +7,7 @@
     "src/i18n/**/*.ts",
     "src/app/**/_hooks/**/*.{ts,tsx}"
   ],
-  "ignorePatterns": [".ladle/**"],
+  "ignorePatterns": [".ladle/**", ".biome/**"],
   "health": {
     "ignore": [
       "src/components/ai-elements/**",

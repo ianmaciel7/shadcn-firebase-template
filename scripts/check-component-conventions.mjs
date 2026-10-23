@@ -110,34 +110,10 @@ const profileCardParts = [
 ];
 
 const profileFormParts = [
-  "ProfileForm",
-  "ProfileFormContent",
-  "ProfileFormFooter",
+  "ProfileFormClient",
+  "ProfileFormClientContent",
+  "ProfileFormClientFooter",
 ];
-
-const LEGACY_SEMANTIC_STEM_ALLOWLIST = new Set([
-  "src/app/(protected)/profile/_components/profile-form-client.tsx",
-  "src/app/(protected)/profile/_components/profile-section-client.tsx",
-  "src/app/(protected)/_components/protected-gate-client.tsx",
-  "src/app/(public)/forgot-password/_components/forgot-password-auth-flow-client.tsx",
-  "src/app/(public)/register/_components/register-auth-flow-client.tsx",
-  "src/app/(public)/sign-in/_components/sign-in-auth-flow-client.tsx",
-  "src/app/_components/auth-provider-client.tsx",
-  "src/app/_components/home-sign-out-button-client.tsx",
-  "src/components/ui/extensions/intl-provider-server.tsx",
-  "src/components/ui/extensions/theme-provider-client.tsx",
-  "src/app/_components/account-client.tsx",
-  "src/app/_components/account-server.tsx",
-  "src/app/_components/details-client.tsx",
-  "src/components/ui/extensions/details-client.tsx",
-  "src/app/(protected)/profile/_components/profile-email-field-client.tsx",
-]);
-
-function requiresExactStemMatch(filename) {
-  const normalized = filename.replaceAll("\\", "/");
-  if (normalized.endsWith("home-section-client.tsx")) return true;
-  return !LEGACY_SEMANTIC_STEM_ALLOWLIST.has(normalized);
-}
 
 function tokenizeKebab(stem) {
   return stem.toLowerCase().split("-").filter(Boolean);
@@ -174,8 +150,6 @@ function termParityMessage(name, fileStem, fileTerms) {
 }
 
 function checkStemComponentTermParity(source, fileStem, report) {
-  if (!requiresExactStemMatch(source.fileName)) return;
-
   const fileTerms = tokenizeKebab(fileStem);
   const expectedRoot = pascalCase(fileStem);
 
@@ -189,20 +163,19 @@ function checkStemComponentTermParity(source, fileStem, report) {
   }
 }
 
-function expectedComponentNames(source, stem) {
-  const path = source.fileName
-    .replaceAll("\\", "/")
-    .replace(/-(client|server)\.tsx$/, ".tsx");
+function expectedComponentNames(source, _stem) {
+  const path = source.fileName.replaceAll("\\", "/");
   if (path.endsWith("/profile/_components/profile-card.tsx")) {
     return profileCardParts;
   }
-  if (path.endsWith("/profile/_components/profile-form.tsx")) {
+  if (path.endsWith("/profile/_components/profile-form-client.tsx")) {
     return profileFormParts;
   }
+  if (path.endsWith("/profile/_components/profile-form.tsx")) {
+    return ["ProfileForm", "ProfileFormContent", "ProfileFormFooter"];
+  }
   const fileStem = basename(source.fileName.replaceAll("\\", "/"), ".tsx");
-  const root = requiresExactStemMatch(source.fileName)
-    ? pascalCase(fileStem)
-    : pascalCase(semanticStem(stem));
+  const root = pascalCase(fileStem);
   const parts = componentExports(source).filter(
     (name) => name.startsWith(root) && /^[A-Z]/.test(name.slice(root.length)),
   );
@@ -573,7 +546,8 @@ function checkClientImports(source, report) {
 }
 
 function checkFieldControllerNames(source, stem, report) {
-  if (!stem.endsWith("-field")) return;
+  const fieldStem = stem.replace(/-(client|server)$/, "");
+  if (!fieldStem.endsWith("-field")) return;
 
   function visit(node) {
     if (
@@ -590,8 +564,8 @@ function checkFieldControllerNames(source, stem, report) {
           (letter) => `-${letter.toLowerCase()}`,
         );
         if (
-          stem !== `${fieldName}-field` &&
-          !stem.endsWith(`-${fieldName}-field`)
+          fieldStem !== `${fieldName}-field` &&
+          !fieldStem.endsWith(`-${fieldName}-field`)
         ) {
           report(
             name,
@@ -610,7 +584,7 @@ function checkProfilePropDrilling(source, report) {
   function visit(node) {
     if (
       (ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) &&
-      /^(ProfileForm|ProfileAvatarFieldClient|ProfileSignOutButton)$/.test(
+      /^(ProfileFormClient|ProfileAvatarFieldClient|ProfileSignOutButton)$/.test(
         node.tagName.getText(source),
       )
     ) {
@@ -650,15 +624,26 @@ function jsxEntries(source, root = source) {
   return elements;
 }
 
+function normalizeProfileTag(name) {
+  // Normalize colocated compound form variants for composition checks.
+  return name.replace(/^ProfileFormClient/, "ProfileForm");
+}
+
 function profileElements(elements, name) {
-  return elements.filter((element) => element.name === name);
+  return elements.filter(
+    (element) =>
+      normalizeProfileTag(element.name) === normalizeProfileTag(name),
+  );
 }
 
 function isInsideProfile(element, ancestors) {
   const parents = element.ancestors.slice(-ancestors.length).reverse();
   return (
     parents.length === ancestors.length &&
-    ancestors.every((name, index) => parents[index] === name)
+    ancestors.every(
+      (name, index) =>
+        normalizeProfileTag(parents[index]) === normalizeProfileTag(name),
+    )
   );
 }
 
@@ -678,13 +663,13 @@ function checkProfileCardSafety(source, elements, report) {
     report(source, "ProfileCard must render one native Card as its root.");
   }
   if (
-    profileElements(elements, "ProfileForm").length ||
-    profileElements(elements, "ProfileFormContent").length ||
-    profileElements(elements, "ProfileFormFooter").length
+    profileElements(elements, "ProfileFormClient").length ||
+    profileElements(elements, "ProfileFormClientContent").length ||
+    profileElements(elements, "ProfileFormClientFooter").length
   ) {
     report(
       source,
-      "ProfileCard must accept children; compose profile UI in ProfileSection.",
+      "ProfileCard must accept children; compose profile UI in ProfileSectionClient.",
     );
   }
   for (const primitive of [
@@ -709,7 +694,12 @@ function checkProfileSectionAction(source, elements, action, report) {
     source,
     elements,
     action,
-    ["ProfileFormFooter", "ProfileCardFooter", "ProfileForm", "ProfileCard"],
+    [
+      "ProfileFormClientFooter",
+      "ProfileCardFooter",
+      "ProfileFormClient",
+      "ProfileCard",
+    ],
     report,
   );
   for (const button of buttons) {
@@ -728,12 +718,12 @@ function checkProfileSectionAction(source, elements, action, report) {
 
 function checkProfileSectionSafety(source, elements, report) {
   if (profileElements(elements, "ProfileCard").length === 0) {
-    report(source, "ProfileSection must compose ProfileCard.");
+    report(source, "ProfileSectionClient must compose ProfileCard.");
   }
   requireProfilePlacement(
     source,
     elements,
-    "ProfileForm",
+    "ProfileFormClient",
     ["ProfileCard"],
     report,
   );
@@ -741,7 +731,7 @@ function checkProfileSectionSafety(source, elements, report) {
     source,
     elements,
     "ProfileCardHeader",
-    ["ProfileForm", "ProfileCard"],
+    ["ProfileFormClient", "ProfileCard"],
     report,
   );
   for (const part of ["ProfileCardTitle", "ProfileCardDescription"]) {
@@ -749,29 +739,29 @@ function checkProfileSectionSafety(source, elements, report) {
       source,
       elements,
       part,
-      ["ProfileCardHeader", "ProfileForm", "ProfileCard"],
+      ["ProfileCardHeader", "ProfileFormClient", "ProfileCard"],
       report,
     );
   }
   requireProfilePlacement(
     source,
     elements,
-    "ProfileFormContent",
-    ["ProfileCardContent", "ProfileForm", "ProfileCard"],
+    "ProfileFormClientContent",
+    ["ProfileCardContent", "ProfileFormClient", "ProfileCard"],
     report,
   );
   requireProfilePlacement(
     source,
     elements,
     "ProfileCardFooter",
-    ["ProfileForm", "ProfileCard"],
+    ["ProfileFormClient", "ProfileCard"],
     report,
   );
   requireProfilePlacement(
     source,
     elements,
-    "ProfileFormFooter",
-    ["ProfileCardFooter", "ProfileForm", "ProfileCard"],
+    "ProfileFormClientFooter",
+    ["ProfileCardFooter", "ProfileFormClient", "ProfileCard"],
     report,
   );
   for (const action of ["ProfileSaveButton", "ProfileSignOutButton"]) {
@@ -781,7 +771,10 @@ function checkProfileSectionSafety(source, elements, report) {
     profileElements(elements, "form").length ||
     profileElements(elements, "Card").length
   ) {
-    report(source, "ProfileSection must delegate native Card and form roots.");
+    report(
+      source,
+      "ProfileSectionClient must delegate native Card and form roots.",
+    );
   }
 }
 
@@ -793,11 +786,14 @@ function checkProfileProviderSafety(source, elements, report) {
   ) {
     report(
       source,
-      "ProfileForm must provide exactly one HTML form inside FormProvider.",
+      "ProfileFormClient must provide exactly one HTML form inside FormProvider.",
     );
   }
   if (profileElements(elements, "Card").length > 0) {
-    report(source, "ProfileForm must delegate the Card root to ProfileCard.");
+    report(
+      source,
+      "ProfileFormClient must delegate the Card root to ProfileCard.",
+    );
   }
   if (
     profileElements(elements, "FieldGroup").length ||
@@ -805,7 +801,7 @@ function checkProfileProviderSafety(source, elements, report) {
   ) {
     report(
       source,
-      "ProfileForm must delegate fields and actions to its children.",
+      "ProfileFormClient must delegate fields and actions to its children.",
     );
   }
 }
@@ -818,7 +814,7 @@ function checkProfileContentSafety(source, elements, report) {
   ) {
     report(
       source,
-      "ProfileFormContent must render exactly one FieldGroup without CardContent or a nested form.",
+      "ProfileFormClientContent must render exactly one FieldGroup without CardContent or a nested form.",
     );
   }
 }
@@ -830,7 +826,7 @@ function checkProfileFooterSafety(source, elements, report) {
   ) {
     report(
       source,
-      "ProfileFormFooter must render a layout div inside ProfileCardFooter.",
+      "ProfileFormClientFooter must render a layout div inside ProfileCardFooter.",
     );
   }
 }
@@ -894,7 +890,9 @@ function checkProfileButtonSafety(source, elements, report, stem) {
 function checkProfileFormSafety(source, stem, report) {
   const checks = {
     "profile-card": checkProfileCardSafety,
+    "profile-section-client": checkProfileSectionSafety,
     "profile-section": checkProfileSectionSafety,
+    "profile-form-client": checkProfileProviderSafety,
     "profile-form": checkProfileProviderSafety,
     "profile-form-content": checkProfileContentSafety,
     "profile-form-footer": checkProfileFooterSafety,
@@ -910,11 +908,13 @@ function checkProfileFormSafety(source, stem, report) {
   ) {
     return;
   }
-  if (stem === "profile-form") {
+  if (stem === "profile-form-client" || stem === "profile-form") {
+    const namePrefix =
+      stem === "profile-form-client" ? "ProfileFormClient" : "ProfileForm";
     for (const [name, partCheck] of [
-      ["ProfileForm", checkProfileProviderSafety],
-      ["ProfileFormContent", checkProfileContentSafety],
-      ["ProfileFormFooter", checkProfileFooterSafety],
+      [namePrefix, checkProfileProviderSafety],
+      [`${namePrefix}Content`, checkProfileContentSafety],
+      [`${namePrefix}Footer`, checkProfileFooterSafety],
     ]) {
       const declaration = source.statements.find(
         (statement) =>
@@ -1035,10 +1035,18 @@ function checkComponentHook(component, source, report) {
     "useTranslations",
     "useFormatter",
     "useId",
+    "useFormContext",
+    "useWatch",
   ]);
-  if (hooks.length === 1 && presentationHooks.has(hooks[0].name)) return;
+  const orchestrationHooks = hooks.filter(
+    (hook) => !presentationHooks.has(hook.name),
+  );
+  if (!orchestrationHooks.length) return;
   const expected = `use${component.name.text}`;
-  if (hooks.length !== 1 || hooks[0].name !== expected) {
+  if (
+    orchestrationHooks.length !== 1 ||
+    orchestrationHooks[0].name !== expected
+  ) {
     report(
       component,
       `${component.name.text} must delegate hook coordination to ${expected} in a separate hook module; call only that component hook.`,
@@ -1047,8 +1055,8 @@ function checkComponentHook(component, source, report) {
   }
   if (
     !names.has(
-      ts.isIdentifier(hooks[0].node.expression)
-        ? hooks[0].node.expression.text
+      ts.isIdentifier(orchestrationHooks[0].node.expression)
+        ? orchestrationHooks[0].node.expression.text
         : "",
     )
   ) {
@@ -1173,9 +1181,7 @@ export function inspectComponent(content, filename) {
     });
   };
   const fileStem = basename(filename.replaceAll("\\", "/"), ".tsx");
-  const stem = requiresExactStemMatch(filename)
-    ? fileStem
-    : semanticStem(fileStem);
+  const stem = fileStem;
   checkFileName(source, fileStem, report);
   checkStemComponentTermParity(source, fileStem, report);
   checkPrimaryExport(source, stem, report);
@@ -1270,6 +1276,128 @@ export function inspectNaming(content, filename) {
   return findings;
 }
 
+export function isOwnedHookModule(filename) {
+  const path = filename.replaceAll("\\", "/");
+  return (
+    /^src\/app\/(?:.*\/)?_hooks\/[^/]+\.tsx?$/.test(path) &&
+    !/\.(test|spec|stories)\.tsx?$/.test(path)
+  );
+}
+
+function exportedHookDeclarations(statement) {
+  if (
+    ts.isFunctionDeclaration(statement) &&
+    statement.name &&
+    exported(statement) &&
+    /^use[A-Z]/.test(statement.name.text)
+  ) {
+    return [{ name: statement.name.text, node: statement.name }];
+  }
+  if (!ts.isVariableStatement(statement) || !exported(statement)) return [];
+  return statement.declarationList.declarations
+    .filter(
+      (declaration) =>
+        ts.isIdentifier(declaration.name) &&
+        /^use[A-Z]/.test(declaration.name.text),
+    )
+    .map((declaration) => ({
+      name: declaration.name.text,
+      node: declaration.name,
+    }));
+}
+
+function isNamedHookExport(statement) {
+  return (
+    ts.isExportDeclaration(statement) &&
+    !statement.isTypeOnly &&
+    statement.exportClause &&
+    ts.isNamedExports(statement.exportClause)
+  );
+}
+
+function exportedHookSpecifier(specifier, statement, report) {
+  if (specifier.isTypeOnly || !/^use[A-Z]/.test(specifier.name.text)) return [];
+  const local = specifier.propertyName?.text ?? specifier.name.text;
+  if (statement.moduleSpecifier || local !== specifier.name.text) {
+    report(
+      specifier,
+      "Hook exports must come from a matching local declaration; hook aliases and re-exports are not allowed.",
+    );
+  }
+  return [{ name: specifier.name.text, node: specifier.name }];
+}
+
+function namedHookExports(statement, report) {
+  if (!isNamedHookExport(statement)) return [];
+  return statement.exportClause.elements.flatMap((specifier) =>
+    exportedHookSpecifier(specifier, statement, report),
+  );
+}
+
+function validateHookExports(
+  source,
+  filename,
+  stem,
+  expected,
+  exports,
+  report,
+) {
+  if (!expected || !kebabCase.test(stem)) {
+    if (exports.length || stem.startsWith("use-")) {
+      report(
+        source,
+        `Owned hook filenames must use use-<semantic-name>.ts in kebab-case (received "${basename(filename)}").`,
+      );
+    }
+    return;
+  }
+  if (!exports.some((item) => item.name === expected)) {
+    report(
+      source,
+      `Hook file "${basename(filename)}" must export "${expected}" with the same exact name.`,
+    );
+  }
+  for (const item of exports) {
+    if (item.name !== expected) {
+      report(
+        item.node,
+        `Hook "${item.name}" does not match filename "${basename(filename)}"; rename this file to "${tokenizePascal(item.name).join("-")}.ts" or export "${expected}".`,
+      );
+    }
+  }
+}
+
+export function inspectHookFilename(content, filename) {
+  if (!isOwnedHookModule(filename)) return [];
+  const source = ts.createSourceFile(
+    filename,
+    content,
+    ts.ScriptTarget.Latest,
+    true,
+    filename.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  );
+  const findings = [];
+  const stem = basename(filename.replaceAll("\\", "/")).replace(/\.tsx?$/, "");
+  const expected = stem.startsWith("use-")
+    ? `use${pascalCase(stem.slice(4))}`
+    : null;
+  function report(node, message) {
+    const pos = source.getLineAndCharacterOfPosition(node.getStart(source));
+    findings.push({
+      file: filename,
+      line: pos.line + 1,
+      column: pos.character + 1,
+      message,
+    });
+  }
+  const exports = source.statements.flatMap((statement) => [
+    ...exportedHookDeclarations(statement),
+    ...namedHookExports(statement, report),
+  ]);
+  validateHookExports(source, filename, stem, expected, exports, report);
+  return findings;
+}
+
 function scan(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const path = join(directory, entry.name);
@@ -1296,6 +1424,7 @@ export function checkComponents(root) {
       ...inspectComponentPlacement(path),
       ...inspectComponentRuntime(content, path, modules),
       ...inspectNaming(content, path),
+      ...inspectHookFilename(content, path),
       ...inspectComponent(content, path),
     ];
   });

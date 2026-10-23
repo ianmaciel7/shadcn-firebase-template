@@ -7,6 +7,10 @@ import { readUserPreferences } from "@/lib/firebase/firestore/user-preferences";
 import type { ProfileValues } from "@/lib/profile";
 import { useProfileAuth } from "./use-profile-auth";
 
+type PreferencesState =
+  | { uid: string; status: "ready"; values: ProfileValues }
+  | { uid: string; status: "error"; message: string };
+
 export function useProfileSession() {
   const t = useTranslations("Auth");
   const locale = useLocale();
@@ -15,22 +19,18 @@ export function useProfileSession() {
   const auth = useProfileAuth();
   const savedValuesRef = useRef<ProfileValues | null>(null);
 
-  const [loaded, setLoaded] = useState<{
-    uid: string;
-    values: ProfileValues;
-  } | null>(null);
-  const [readyUid, setReadyUid] = useState<string | null>(null);
+  const [preferences, setPreferences] = useState<PreferencesState | null>(null);
   const [avatarVersion, setAvatarVersion] = useState(0);
-  const [error, setError] = useState<string | null>(null);
   const uid = auth.user?.uid;
-  const defaultValues = loaded && loaded.uid === uid ? loaded.values : null;
-  const preferencesReady = Boolean(uid && readyUid === uid);
+  const current = preferences?.uid === uid ? preferences : null;
+  const defaultValues = current?.status === "ready" ? current.values : null;
+  const preferencesReady = Boolean(uid && current);
 
   useEffect(() => {
     if (!uid) return;
     let active = true;
     savedValuesRef.current = null;
-    setReadyUid(null);
+    setPreferences(null);
 
     void readUserPreferences(uid)
       .then((preferences) => {
@@ -38,23 +38,25 @@ export function useProfileSession() {
         const currentUser = getFirebaseUI().get().auth.currentUser;
         if (!currentUser || currentUser.uid !== uid) return;
 
-        const nextValues: ProfileValues = {
+        const values: ProfileValues = {
           displayName: currentUser.displayName ?? "",
           email: currentUser.email ?? "",
           locale: preferences.locale ?? activeLocale,
           theme: preferences.theme ?? "system",
         };
 
-        savedValuesRef.current = nextValues;
-        setLoaded({ uid, values: nextValues });
+        savedValuesRef.current = values;
+        setPreferences({ uid, status: "ready", values });
         if (preferences.theme) setTheme(preferences.theme);
       })
       .catch((cause) => {
         console.error(cause);
-        if (active) setError(t("profileLoadError"));
-      })
-      .finally(() => {
-        if (active) setReadyUid(uid);
+        if (active)
+          setPreferences({
+            uid,
+            status: "error",
+            message: t("profileLoadError"),
+          });
       });
 
     return () => {
@@ -67,7 +69,7 @@ export function useProfileSession() {
     authReady: auth.authReady,
     avatarVersion,
     defaultValues,
-    error: error ?? auth.error,
+    error: (current?.status === "error" ? current.message : null) ?? auth.error,
     photoURL: auth.photoURL,
     preferencesReady,
     savedValuesRef,
