@@ -1268,6 +1268,103 @@ export function inspectNaming(content, filename) {
   return findings;
 }
 
+export function isOwnedHookModule(filename) {
+  const path = filename.replaceAll("\\\\", "/");
+  return (
+    /^src\\/app\\/.*\\/_hooks\\/[^/]+\\.tsx?$/.test(path) &&
+    !/\\.(test|spec|stories)\\.tsx?$/.test(path)
+  );
+}
+
+export function inspectHookFilename(content, filename) {
+  if (!isOwnedHookModule(filename)) return [];
+  const source = ts.createSourceFile(
+    filename,
+    content,
+    ts.ScriptTarget.Latest,
+    true,
+    filename.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  );
+  const findings = [];
+  const stem = basename(filename.replaceAll("\\\\", "/")).replace(/\\.tsx?$/, "");
+  const expected = stem.startsWith("use-")
+    ? `use${pascalCase(stem.slice(4))}`
+    : null;
+  function report(node, message) {
+    const pos = source.getLineAndCharacterOfPosition(node.getStart(source));
+    findings.push({
+      file: filename,
+      line: pos.line + 1,
+      column: pos.character + 1,
+      message,
+    });
+  }
+  const exports = [];
+  for (const statement of source.statements) {
+    if (
+      ts.isFunctionDeclaration(statement) &&
+      statement.name &&
+      exported(statement) &&
+      /^use[A-Z]/.test(statement.name.text)
+    ) {
+      exports.push({ name: statement.name.text, node: statement.name });
+    }
+    if (ts.isVariableStatement(statement) && exported(statement)) {
+      for (const declaration of statement.declarationList.declarations) {
+        if (
+          ts.isIdentifier(declaration.name) &&
+          /^use[A-Z]/.test(declaration.name.text)
+        ) {
+          exports.push({ name: declaration.name.text, node: declaration.name });
+        }
+      }
+    }
+    if (
+      ts.isExportDeclaration(statement) &&
+      !statement.isTypeOnly &&
+      statement.exportClause &&
+      ts.isNamedExports(statement.exportClause)
+    ) {
+      for (const specifier of statement.exportClause.elements) {
+        if (specifier.isTypeOnly || !/^use[A-Z]/.test(specifier.name.text))
+          continue;
+        const local = specifier.propertyName?.text ?? specifier.name.text;
+        if (statement.moduleSpecifier || local !== specifier.name.text) {
+          report(
+            specifier,
+            "Hook exports must come from a matching local declaration; hook aliases and re-exports are not allowed.",
+          );
+        }
+        exports.push({ name: specifier.name.text, node: specifier.name });
+      }
+    }
+  }
+  if (!expected || !kebabCase.test(stem)) {
+    if (exports.length || stem.startsWith("use-")) {
+      report(
+        source,
+        `Owned hook filenames must use use-<semantic-name>.ts in kebab-case (received "${basename(filename)}").`,
+      );
+    }
+    return findings;
+  }
+  if (!exports.some((item) => item.name === expected)) {
+    report(
+      source,
+      `Hook file "${basename(filename)}" must export "${expected}" with the same exact name.`,
+    );
+  }
+  for (const item of exports) {
+    if (item.name !== expected) {
+      report(
+        item.node,
+        `Hook "${item.name}" does not match filename "${basename(filename)}"; rename this file to "${tokenizePascal(item.name).join("-")}.ts" or export "${expected}".`,
+      );
+    }
+  }
+  return findings;
+}
+
 function scan(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const path = join(directory, entry.name);
@@ -1294,6 +1391,7 @@ export function checkComponents(root) {
       ...inspectComponentPlacement(path),
       ...inspectComponentRuntime(content, path, modules),
       ...inspectNaming(content, path),
+      ...inspectHookFilename(content, path),
       ...inspectComponent(content, path),
     ];
   });

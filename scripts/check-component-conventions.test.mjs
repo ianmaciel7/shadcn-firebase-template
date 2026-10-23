@@ -4,8 +4,10 @@ import {
   inspectComponent,
   inspectComponentPlacement,
   inspectComponentRuntime,
+  inspectHookFilename,
   inspectNaming,
   isOwnedComponent,
+  isOwnedHookModule,
 } from "./check-component-conventions.mjs";
 
 const profile = "src/app/(protected)/profile/_components/profile-card.tsx";
@@ -42,6 +44,60 @@ function compoundCard(source) {
     `${compoundParts} export { ProfileCard, ProfileCardAction, ProfileCardHeader, ProfileCardTitle, ProfileCardDescription, ProfileCardContent, ProfileCardFooter };`,
   );
 }
+
+describe("owned hook filename/export parity", () => {
+  const gate = "src/app/(protected)/_hooks/use-protected-gate.ts";
+  const matching = "src/app/(protected)/_hooks/use-protected-gate-client.ts";
+  const messages = (code, file = gate) =>
+    inspectHookFilename(code, file).map((item) => item.message).join(" ");
+
+  it("reproduces the original false negative: useProtectedGateClient in use-protected-gate.ts", () => {
+    assert.match(
+      messages("export function useProtectedGateClient() {}"),
+      /does not match filename "use-protected-gate.ts"/,
+    );
+    assert.match(
+      messages("export function useProtectedGateClient() {}"),
+      /must export "useProtectedGate"/,
+    );
+  });
+
+  it("accepts direct exports and local named exports with exact hook filenames", () => {
+    assert.equal(messages("export function useProtectedGateClient() {}", matching), "");
+    assert.equal(messages("const useProtectedGateClient = () => {}; export { useProtectedGateClient };", matching), "");
+    assert.equal(messages("export const useProtectedGateClient = () => {};", matching), "");
+    assert.equal(messages("export const ProfileSessionContext = {}; export function useProfileSessionContext() {}", "src/app/(protected)/profile/_hooks/use-profile-session-context.ts"), "");
+  });
+
+  it("rejects wrong suffixes, missing hooks, multiple hooks, aliases, and re-exports", () => {
+    for (const code of [
+      "export function useProtectedGateClient() {}",
+      "export function useProtectedGate() {} export function useOther() {}",
+      "export const someValue = true;",
+      "export { useProtectedGateClient } from './other';",
+      "function useProtectedGateClient() {} export { useProtectedGateClient as useProtectedGate };",
+    ]) {
+      const result = messages(code);
+      assert.ok(result, code);
+    }
+    assert.match(messages("export { useProtectedGate } from './other';"), /re-exports are not allowed/);
+    assert.match(messages("export function useProtectedGate() {} export function useOther() {}"), /does not match filename/);
+  });
+
+  it("scopes the rule to owned private hooks, not vendor files or shadcn use-mobile", () => {
+    assert.equal(isOwnedHookModule(gate), true);
+    for (const path of [
+      "src/hooks/use-mobile.ts",
+      "src/app/_hooks/use-account.test.ts",
+      "src/components/firebase/use-auth.ts",
+      "src/app/(protected)/profile/_components/profile-card.tsx",
+    ]) {
+      assert.equal(isOwnedHookModule(path), false);
+      assert.deepEqual(inspectHookFilename("export function useWrong() {}", path), []);
+    }
+    assert.match(messages("export function useAccount() {}", "src/app/_hooks/legacy-name.ts"), /use-<semantic-name>/);
+  });
+});
 
 describe("owned component conventions", () => {
   it("rejects component aliases and re-exports even with a matching local root", () => {
