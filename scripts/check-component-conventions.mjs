@@ -1276,6 +1276,53 @@ export function isOwnedHookModule(filename) {
   );
 }
 
+function exportedHookDeclarations(statement) {
+  if (
+    ts.isFunctionDeclaration(statement) &&
+    statement.name &&
+    exported(statement) &&
+    /^use[A-Z]/.test(statement.name.text)
+  ) {
+    return [{ name: statement.name.text, node: statement.name }];
+  }
+  if (!ts.isVariableStatement(statement) || !exported(statement)) return [];
+  return statement.declarationList.declarations
+    .filter(
+      (declaration) =>
+        ts.isIdentifier(declaration.name) &&
+        /^use[A-Z]/.test(declaration.name.text),
+    )
+    .map((declaration) => ({
+      name: declaration.name.text,
+      node: declaration.name,
+    }));
+}
+
+function namedHookExports(statement, report) {
+  if (
+    !ts.isExportDeclaration(statement) ||
+    statement.isTypeOnly ||
+    !statement.exportClause ||
+    !ts.isNamedExports(statement.exportClause)
+  ) {
+    return [];
+  }
+  const hooks = [];
+  for (const specifier of statement.exportClause.elements) {
+    if (specifier.isTypeOnly || !/^use[A-Z]/.test(specifier.name.text))
+      continue;
+    const local = specifier.propertyName?.text ?? specifier.name.text;
+    if (statement.moduleSpecifier || local !== specifier.name.text) {
+      report(
+        specifier,
+        "Hook exports must come from a matching local declaration; hook aliases and re-exports are not allowed.",
+      );
+    }
+    hooks.push({ name: specifier.name.text, node: specifier.name });
+  }
+  return hooks;
+}
+
 export function inspectHookFilename(content, filename) {
   if (!isOwnedHookModule(filename)) return [];
   const source = ts.createSourceFile(
@@ -1299,46 +1346,10 @@ export function inspectHookFilename(content, filename) {
       message,
     });
   }
-  const exports = [];
-  for (const statement of source.statements) {
-    if (
-      ts.isFunctionDeclaration(statement) &&
-      statement.name &&
-      exported(statement) &&
-      /^use[A-Z]/.test(statement.name.text)
-    ) {
-      exports.push({ name: statement.name.text, node: statement.name });
-    }
-    if (ts.isVariableStatement(statement) && exported(statement)) {
-      for (const declaration of statement.declarationList.declarations) {
-        if (
-          ts.isIdentifier(declaration.name) &&
-          /^use[A-Z]/.test(declaration.name.text)
-        ) {
-          exports.push({ name: declaration.name.text, node: declaration.name });
-        }
-      }
-    }
-    if (
-      ts.isExportDeclaration(statement) &&
-      !statement.isTypeOnly &&
-      statement.exportClause &&
-      ts.isNamedExports(statement.exportClause)
-    ) {
-      for (const specifier of statement.exportClause.elements) {
-        if (specifier.isTypeOnly || !/^use[A-Z]/.test(specifier.name.text))
-          continue;
-        const local = specifier.propertyName?.text ?? specifier.name.text;
-        if (statement.moduleSpecifier || local !== specifier.name.text) {
-          report(
-            specifier,
-            "Hook exports must come from a matching local declaration; hook aliases and re-exports are not allowed.",
-          );
-        }
-        exports.push({ name: specifier.name.text, node: specifier.name });
-      }
-    }
-  }
+  const exports = source.statements.flatMap((statement) => [
+    ...exportedHookDeclarations(statement),
+    ...namedHookExports(statement, report),
+  ]);
   if (!expected || !kebabCase.test(stem)) {
     if (exports.length || stem.startsWith("use-")) {
       report(
