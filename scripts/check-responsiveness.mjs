@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import ts from "typescript";
 
 const responsivePrefixPattern =
-  /^(sm|md|lg|xl|2xl|max-sm|max-md|max-lg|max-xl|max-2xl|@(?:[a-z0-9_-]+))$/;
+  /^(sm|md|lg|xl|2xl|@(?:sm|md|lg|xl|2xl|(?:min-)?\[\d+px\]))$/;
 
 export function hasResponsiveBreakpoint(token) {
   const parts = token.split(":");
@@ -55,28 +55,15 @@ function getAttributeString(initializer) {
   return null;
 }
 
-function extractClassStrings(node) {
-  if (!node) return [];
-  if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
-    return [node.text];
+function extractTemplateClassStrings(node) {
+  const parts = [node.head.text];
+  for (const span of node.templateSpans) {
+    parts.push(...extractClassStrings(span.expression), span.literal.text);
   }
-  if (ts.isTemplateExpression(node)) {
-    const parts = [node.head.text];
-    for (const span of node.templateSpans) {
-      parts.push(...extractClassStrings(span.expression));
-      parts.push(span.literal.text);
-    }
-    return parts;
-  }
-  if (ts.isJsxExpression(node) && node.expression) {
-    return extractClassStrings(node.expression);
-  }
-  if (ts.isCallExpression(node)) {
-    return node.arguments.flatMap(extractClassStrings);
-  }
-  if (ts.isArrayLiteralExpression(node)) {
-    return node.elements.flatMap(extractClassStrings);
-  }
+  return parts;
+}
+
+function extractBranchClassStrings(node) {
   if (ts.isConditionalExpression(node)) {
     return [
       ...extractClassStrings(node.whenTrue),
@@ -92,6 +79,18 @@ function extractClassStrings(node) {
   return [];
 }
 
+function extractClassStrings(node) {
+  if (!node) return [];
+  if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) {
+    return [node.text];
+  }
+  if (ts.isTemplateExpression(node)) return extractTemplateClassStrings(node);
+  if (ts.isJsxExpression(node)) return extractClassStrings(node.expression);
+  if (ts.isCallExpression(node)) return node.arguments.flatMap(extractClassStrings);
+  if (ts.isArrayLiteralExpression(node)) return node.elements.flatMap(extractClassStrings);
+  return extractBranchClassStrings(node);
+}
+
 function isInteractiveTag(tagName) {
   const lowerTag = tagName.toLowerCase();
   return (
@@ -105,35 +104,36 @@ function isInteractiveTag(tagName) {
   );
 }
 
-function isInteractiveElement(element) {
-  const tagName = element.tagName.getText();
-  if (isInteractiveTag(tagName)) return true;
+function isInteractiveAttribute(attr) {
+  if (!ts.isJsxAttribute(attr)) return false;
+  const name = attr.name.getText();
+  if (name === "onClick" || name === "onPress") return true;
+  if (name !== "role" || !attr.initializer) return false;
+  return ["button", "link", "menuitem"].includes(
+    getAttributeString(attr.initializer),
+  );
+}
 
-  for (const attr of element.attributes.properties) {
-    if (!ts.isJsxAttribute(attr)) continue;
-    const name = attr.name.getText();
-    if (name === "onClick" || name === "onPress") return true;
-    if (name === "role" && attr.initializer) {
-      const roleVal = getAttributeString(attr.initializer);
-      if (
-        roleVal === "button" ||
-        roleVal === "link" ||
-        roleVal === "menuitem"
-      ) {
-        return true;
-      }
-    }
-  }
-  return false;
+function isInteractiveElement(element) {
+  return (
+    isInteractiveTag(element.tagName.getText()) ||
+    element.attributes.properties.some(isInteractiveAttribute)
+  );
+}
+
+function tinyAxesForToken(token) {
+  const base = token.split(":").pop() ?? "";
+  const standard = base.match(
+    /^(size|h|w)-(0|0\.5|1|1\.5|2|2\.5|3|3\.5|4|5)$/,
+  );
+  const pixels = base.match(/^(size|h|w)-\[(\d+(?:\.\d+)?)px\]$/);
+  const axis = standard?.[1] ?? (pixels && Number(pixels[2]) < 24 ? pixels[1] : null);
+  if (axis === "size") return ["h", "w"];
+  return axis ? [axis] : [];
 }
 
 function isTinyDimension(token) {
-  const base = token.split(":").pop() ?? "";
-  if (/^(size|h|w)-(0|0\.5|1|1\.5|2|2\.5|3|3\.5|4|5)$/.test(base)) {
-    return true;
-  }
-  const pxMatch = base.match(/^(size|h|w)-\[(\d+(?:\.\d+)?)px\]$/);
-  return Boolean(pxMatch && Number.parseFloat(pxMatch[2]) < 24);
+  return tinyAxesForToken(token).length > 0;
 }
 
 function isHitAreaExpander(token) {
@@ -147,24 +147,30 @@ function isHitAreaExpander(token) {
   );
 }
 
-function isPaddingOrMinSize(base) {
-  if (/^p[xy]?-(?:1\.5|[2-9]|[1-9][0-9])$/.test(base)) return true;
-  const pPx = base.match(/^p[xy]?-\[(\d+)px\]$/);
-  if (pPx && Number.parseInt(pPx[1], 10) >= 6) return true;
+function isPaddingOrMinSize(base, axis) {
+  const minimum = base.match(/^min-(h|w|size)-(?:([6-9]|[1-9]\d+)|\[(\d+)px\])$/);
+  if (minimum) {
+    return (minimum[1] === axis || minimum[1] === "size") &&
+      (minimum[3] === undefined || Number(minimum[3]) >= 24);
+  }
 
-  if (/^min-(h|w|size)-(?:[6-9]|[1-9][0-9])$/.test(base)) return true;
-  const minPx = base.match(/^min-(h|w|size)-\[(\d+)px\]$/);
-  if (minPx && Number.parseInt(minPx[2], 10) >= 24) return true;
-
-  return /^-m[xy]?-/.test(base);
+  const padding = base.match(/^(p|px|py)-(?:([\d.]+)|\[(\d+)px\])$/);
+  if (!padding) return false;
+  const padPx = padding[3] === undefined ? Number(padding[2]) * 4 : Number(padding[3]);
+  const matchingAxis = padding[1] === "p" ||
+    (axis === "h" ? padding[1] === "py" : padding[1] === "px");
+  return matchingAxis && padPx >= 6;
 }
 
 function hasHitAreaPaddingOrMinSizing(tokens) {
-  return tokens.some((token) => {
-    if (isHitAreaExpander(token)) return true;
-    const base = token.split(":").pop() ?? "";
-    return isPaddingOrMinSize(base);
-  });
+  const tinyAxes = new Set(tokens.flatMap(tinyAxesForToken));
+  return [...tinyAxes].every((axis) =>
+    tokens.some(
+      (token) =>
+        isHitAreaExpander(token) ||
+        isPaddingOrMinSize(token.split(":").pop() ?? "", axis),
+    ),
+  );
 }
 
 function checkViewportWidth(prop, initText, fail) {
@@ -179,25 +185,29 @@ function checkViewportInitialScale(prop, initText, fail) {
   }
 }
 
+function hasDisabledZoomValue(propName, value) {
+  return propName === "userScalable" &&
+    ["false", "no", "0"].includes(value);
+}
+
+function checkMaximumScaleRestriction(prop, value, fail) {
+  const number = Number(value);
+  if (!Number.isNaN(number) && number <= 1) {
+    fail(
+      prop,
+      "Restricting maximumScale to 1 is strictly forbidden; users must be allowed to zoom (WCAG 1.4.4).",
+    );
+  }
+}
+
 function checkViewportZoomRestrictions(prop, propName, init, initText, fail) {
-  if (
-    propName === "userScalable" &&
-    (initText === "false" || initText === "no" || initText === "0")
-  ) {
+  if (hasDisabledZoomValue(propName, initText)) {
     fail(
       prop,
       "Disabling user zoom (userScalable: false) is strictly forbidden for accessibility (WCAG 1.4.4).",
     );
   }
-  if (propName === "maximumScale") {
-    const numVal = Number(initText);
-    if (!Number.isNaN(numVal) && numVal <= 1) {
-      fail(
-        prop,
-        "Restricting maximumScale to 1 is strictly forbidden; users must be allowed to zoom (WCAG 1.4.4).",
-      );
-    }
-  }
+  if (propName === "maximumScale") checkMaximumScaleRestriction(prop, initText, fail);
   if (ts.isStringLiteral(init) && /user-scalable\s*=\s*no/i.test(init.text)) {
     fail(
       prop,
@@ -404,34 +414,33 @@ function checkViewportFunction(node, state, fail) {
   });
 }
 
-function checkJsxElement(node, fail) {
-  if (!ts.isJsxOpeningElement(node) && !ts.isJsxSelfClosingElement(node))
-    return;
-
-  checkJsxMetaElement(node, fail);
-
+function checkJsxClassName(node, fail) {
   const classAttr = node.attributes.properties.find(
     (attr) => ts.isJsxAttribute(attr) && attr.name.getText() === "className",
   );
-  if (classAttr && ts.isJsxAttribute(classAttr) && classAttr.initializer) {
-    const classStrings = extractClassStrings(classAttr.initializer);
-    const tokens = classStrings.flatMap((s) => s.split(/\s+/)).filter(Boolean);
-    checkClassTokens(tokens, classAttr, node, fail);
-  }
+  if (!classAttr || !ts.isJsxAttribute(classAttr) || !classAttr.initializer) return;
+  const classStrings = extractClassStrings(classAttr.initializer);
+  const tokens = classStrings.flatMap((value) => value.split(/\s+/)).filter(Boolean);
+  checkClassTokens(tokens, classAttr, node, fail);
+}
 
+function checkJsxInlineStyle(node, fail) {
   const styleAttr = node.attributes.properties.find(
     (attr) => ts.isJsxAttribute(attr) && attr.name.getText() === "style",
   );
-  if (
-    styleAttr &&
-    ts.isJsxAttribute(styleAttr) &&
-    styleAttr.initializer &&
-    ts.isJsxExpression(styleAttr.initializer) &&
-    styleAttr.initializer.expression &&
-    ts.isObjectLiteralExpression(styleAttr.initializer.expression)
-  ) {
-    checkInlineStyleObject(styleAttr.initializer.expression, styleAttr, fail);
+  if (!styleAttr || !ts.isJsxAttribute(styleAttr)) return;
+  if (!styleAttr.initializer || !ts.isJsxExpression(styleAttr.initializer)) return;
+  const expression = styleAttr.initializer.expression;
+  if (expression && ts.isObjectLiteralExpression(expression)) {
+    checkInlineStyleObject(expression, styleAttr, fail);
   }
+}
+
+function checkJsxElement(node, fail) {
+  if (!ts.isJsxOpeningElement(node) && !ts.isJsxSelfClosingElement(node)) return;
+  checkJsxMetaElement(node, fail);
+  checkJsxClassName(node, fail);
+  checkJsxInlineStyle(node, fail);
 }
 
 function checkClassLiteralConstant(node, fail) {
