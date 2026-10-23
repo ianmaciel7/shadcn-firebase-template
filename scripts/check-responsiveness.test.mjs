@@ -29,10 +29,11 @@ describe("responsiveness guard", () => {
       assert.equal(hasResponsiveBreakpoint("lg:w-[600px]"), true);
       assert.equal(hasResponsiveBreakpoint("xl:w-[700px]"), true);
       assert.equal(hasResponsiveBreakpoint("2xl:w-[800px]"), true);
-      assert.equal(hasResponsiveBreakpoint("max-sm:w-[400px]"), true);
-      assert.equal(hasResponsiveBreakpoint("@container:w-[400px]"), true);
+      assert.equal(hasResponsiveBreakpoint("max-sm:w-[400px]"), false);
+      assert.equal(hasResponsiveBreakpoint("@container:w-[400px]"), false);
       assert.equal(hasResponsiveBreakpoint("@md:w-[500px]"), true);
       assert.equal(hasResponsiveBreakpoint("hover:w-[400px]"), false);
+      assert.equal(hasResponsiveBreakpoint("max-md:w-[500px]"), false);
       assert.equal(hasResponsiveBreakpoint("dark:w-[400px]"), false);
       assert.equal(hasResponsiveBreakpoint("w-[400px]"), false);
     });
@@ -231,6 +232,13 @@ describe("responsiveness guard", () => {
       );
     });
 
+    it("rejects max-width variants that activate at 320px", () => {
+      expectRejected(
+        'export function Card() { return <div className="max-sm:w-[400px]" />; }',
+        /Rigid non-responsive width 'max-sm:w-\\[400px\\]' exceeds 320px/,
+      );
+    });
+
     it("allows rigid width > 320px when guarded by responsive prefix", () => {
       expectValid(
         'export function Card() { return <div className="sm:w-[400px] md:w-[600px] @md:w-[500px]" />; }',
@@ -317,6 +325,20 @@ describe("responsiveness guard", () => {
       expectRejected(
         'export function RoleButton() { return <div role="button" className="size-4" onClick={() => {}} />; }',
         /Interactive element <div> has tiny dimension 'size-4' violating WCAG 2.2 SC 2.5.8 Touch Target/,
+      );
+    });
+
+    it("requires both axes of small interactive targets to be expanded", () => {
+      expectRejected(
+        'export function Close() { return <button className="h-4 px-4" />; }',
+        /Interactive element <button> has tiny dimension/,
+      );
+      expectRejected(
+        'export function Close() { return <button className="size-4 min-w-6" />; }',
+        /Interactive element <button> has tiny dimension/,
+      );
+      expectValid(
+        'export function Close() { return <button className="h-4 py-2" />; }',
       );
     });
 
