@@ -138,10 +138,9 @@ describe("ProfileSectionClient", () => {
     mocks.currentUser = { uid: "user-123", email: "user@example.com" };
     render(<ProfileSectionClient data-testid="profile-section" />);
 
-    expect(await screen.findByTestId("profile-section")).toHaveAttribute(
-      "data-slot",
-      "card",
-    );
+    expect(
+      (await screen.findByTestId("profile-section")).getAttribute("data-slot"),
+    ).toBe("card");
   });
 
   it("renders user information with fallback when fields are not set", async () => {
