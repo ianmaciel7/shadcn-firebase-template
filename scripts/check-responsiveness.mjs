@@ -148,18 +148,19 @@ function isHitAreaExpander(token) {
   );
 }
 
-function isPaddingOrMinSize(base, axis) {
+function hasAxisMinimumSize(base, axis) {
   const minimum = base.match(
-    /^min-(h|w|size)-(?:([6-9]|[1-9]\d+)|\[(\d+)px\])$/,
+    /^min-(h|w|size)-(?:([6-9]|[1-9]\\d+)|\\[(\\d+)px\\])$/,
   );
-  if (minimum) {
-    return (
-      (minimum[1] === axis || minimum[1] === "size") &&
-      (minimum[3] === undefined || Number(minimum[3]) >= 24)
-    );
-  }
+  if (!minimum) return false;
+  return (
+    (minimum[1] === axis || minimum[1] === "size") &&
+    (minimum[3] === undefined || Number(minimum[3]) >= 24)
+  );
+}
 
-  const padding = base.match(/^(p|px|py)-(?:([\d.]+)|\[(\d+)px\])$/);
+function hasAxisPadding(base, axis) {
+  const padding = base.match(/^(p|px|py)-(?:([\\d.]+)|\\[(\\d+)px\\])$/);
   if (!padding) return false;
   const padPx =
     padding[3] === undefined ? Number(padding[2]) * 4 : Number(padding[3]);
@@ -167,6 +168,10 @@ function isPaddingOrMinSize(base, axis) {
     padding[1] === "p" ||
     (axis === "h" ? padding[1] === "py" : padding[1] === "px");
   return matchingAxis && padPx >= 6;
+}
+
+function isPaddingOrMinSize(base, axis) {
+  return hasAxisMinimumSize(base, axis) || hasAxisPadding(base, axis);
 }
 
 function hasHitAreaPaddingOrMinSizing(tokens) {
