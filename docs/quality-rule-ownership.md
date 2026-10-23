@@ -7,6 +7,7 @@ and a regression test.
 | Responsibility | Primary tool | Notes |
 | --- | --- | --- |
 | Formatting, imports, React and Next.js lint | Biome | Prefer native rules over Grit plugins. |
+| Filename/export matching preview | Biome 2.6.2 plugin (CI-only) | Developer Preview, scoped to TSX; component AST guard remains authoritative until parity is demonstrated. |
 | Route-only Firebase SDK import boundaries | Biome `noRestrictedImports` | Specific to `page.tsx`, `layout.tsx`, and `template.tsx`. |
 | Route client directives, hook calls, JSX handlers | ast-grep | Structural rules with YAML regression tests. |
 | Other route logic and mutation restrictions | `scripts/check-route-files.mjs` | Kept until equivalent structural rules are tested. |
@@ -15,6 +16,7 @@ and a regression test.
 | Static responsive class heuristics | `scripts/check-responsiveness.mjs` | Supplemental; cannot prove actual rendered accessibility. |
 | Rendered reflow and touch target behavior | Playwright | `tests/responsive.spec.ts` measures real element bounds. |
 | Accessibility semantics and violations | axe-core with Playwright | Complements, rather than replaces, interaction tests. |
+| Firebase authentication flows | Playwright + Firebase Emulator | The default E2E suite excludes `firebase-auth.spec.ts`; full emulator coverage requires a dedicated CI job. |
 | Module dependency boundaries and cycles | dependency-cruiser | Owns dependency graph checks. |
 | Security patterns and tainted sinks | Semgrep | Avoid duplicating these in new lint scripts. |
 | Unused application code | Knip | Fallow supplies independent health and coverage signals. |

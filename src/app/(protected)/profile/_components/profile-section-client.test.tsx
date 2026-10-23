@@ -134,6 +134,16 @@ describe("ProfileSectionClient", () => {
     expect(mocks.router.replace).toHaveBeenCalledWith("/sign-in");
   });
 
+  it("forwards element props to the card while the session is active", async () => {
+    mocks.currentUser = { uid: "user-123", email: "user@example.com" };
+    render(<ProfileSectionClient data-testid="profile-section" />);
+
+    expect(await screen.findByTestId("profile-section")).toHaveAttribute(
+      "data-slot",
+      "card",
+    );
+  });
+
   it("renders user information with fallback when fields are not set", async () => {
     mocks.currentUser = { uid: "user-123", email: null, displayName: null };
     render(<ProfileSectionClient />);
@@ -192,9 +202,12 @@ describe("ProfileSectionClient", () => {
     mocks.currentUser = { uid: "user-123" };
     mocks.readPreferences.mockReturnValue(new Promise(() => {}));
 
-    const { container } = render(<ProfileSectionClient />);
+    const { container } = render(
+      <ProfileSectionClient data-testid="loading-profile" />,
+    );
 
     await screen.findByRole("status");
+    expect(screen.getByTestId("loading-profile")).toBeTruthy();
     expect(container.querySelector('[data-slot="card"]')).toBeNull();
   });
 

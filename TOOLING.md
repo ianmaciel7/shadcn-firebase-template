@@ -15,6 +15,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Compiler | React Compiler | 1.0.0 | Optimizes React components through Next.js configuration. | `package.json`, `next.config.ts` |
 | Styling | Tailwind CSS | `^4` | Generates utility CSS and is loaded by Turbopack (and by Vite for Ladle). | `package.json`, `next.config.ts`, `.ladle/vite.config.mjs`, `src/app/globals.css` |
 | Code quality | Biome | 2.5.15 | Formats code, runs lint checks, and organizes imports. | `package.json`, `biome.json` |
+| Experimental file/export rule | Biome 2.6.2 JavaScript plugin (CI only) | Developer Preview | Checks owned TSX function exports against filename roots and regression fixtures; `pnpm dlx` is isolated from the pinned production linter. Does not replace the TypeScript AST guard. | `biome.preview.json`, `.biome/plugins/match-component-filename.js`, `docs/biome-javascript-plugin-pilot.md`, `.github/workflows/ci.yml` |
 | Custom code quality rules | GritQL | Executed by Biome; no standalone CLI | Supplies project-specific rules for Next.js props/context and banning deprecated DOM APIs (`document.write`). Regression-tested in `.biome/rules/nextjs/rules.test.ts` and `.biome/rules/dom/rules.test.ts`. | `.biome/rules/nextjs/*.grit`, `.biome/rules/dom/*.grit`, `biome.json` |
 | UI scaffolding | shadcn/ui CLI | 4.22.0 | Adds and maintains locally owned UI components using the configured aliases and style. | `package.json`, `components.json` |
 | Component workbench | Ladle | 5.1.1 | Develops and reviews components in isolation through colocated `*.stories.tsx` files. | `.ladle/`, `package.json` |
@@ -228,6 +229,7 @@ valid and invalid tests, before registering a new custom rule.
 | `require-component-props` | ast-grep | error | Type or interface declarations ending in `*Props$` in app-owned `src/app` and `src/components` | Component prop types in application code should inherit standard element properties directly or through intersections (via `ComponentProps<...>`, `HTMLAttributes<...>`, or `PropsWithChildren`) so components remain composable and support `className` pass-through. Helpers nested in object members, wrapper arguments, or union alternatives do not establish inheritance. |
 | `require-field-data-invalid` | ast-grep | error | `<Field>` rendered inside a Controller consuming `fieldState` in `src/app` and `src/components` | Enforces binding `data-invalid` to `<Field>` when `fieldState` is used, ensuring proper error styling and accessible ARIA attribute propagation per `CODING_STANDARDS.md`. |
 | `require-form-provider` | ast-grep | error | `<form>` elements in composite form orchestrators (`*-form.tsx`) in `src/app` and `src/components` | Enforces wrapping composite forms in `<FormProvider>` or `<Form>` to eliminate prop-drilling of form controls into child field components. |
+| `require-component-props-parameter` | ast-grep | error | Owned `_components` TSX functions with no parameters | Enforces a declared props parameter; the TypeScript AST composition guard and tests must ensure the parameter is actually used and forwarded. |
 | `review-route-special-files-logic` | ast-grep | error | App Router special files (`page.tsx`, `layout.tsx`, `template.tsx`) under `src/app/` using `useState` or `useEffect` | Rejects direct `useState`/`useEffect` calls inside the three configured route file kinds; the separate route AST guard covers broader violations. Route entry points should remain thin presentation/glue layers; state and effects must be extracted into semantic client components under `_components/` or private hooks under `_hooks/`. |
 | `no-excessive-cognitive-complexity` | Biome | error | Functions in application code under `src/` | Enforces a maximum cognitive complexity of 15 per function (`lint/complexity/noExcessiveCognitiveComplexity`), preventing high cyclomatic branching and unmaintainable stateful procedures. |
 | `no-server-api-in-client-components` | Semgrep | error | `"use client"` files importing `next/headers` | Complements `no-server-only-in-client-components`; fails with a clear message before the framework build error. |
@@ -345,6 +347,8 @@ Recheck current documentation before adding a replacement rule.
   glob patterns. Remove the exception if the advisory is withdrawn or the chain
   drops `braces`; a local `pnpm patch` is not worth maintaining for this
   exposure.
+- **Fallow reports are advisory.** Health and unused-dependency metrics do not fail CI; review them alongside Knip. The direct-child `src/components/ui/*.tsx` glob intentionally does not match `ui/extensions/` with current glob semantics. The experimental `.biome/` plugin directory is excluded from Fallow's source traversal and is checked in its own CI step.
+- **React Doctor reports are advisory.** The currently observed React Compiler, repeated JSX, and public Firebase API key naming findings require code-level triage. They are not evidence that CI has enforced or fixed them.
 - **Visual tests run only in CI.** Baselines are Linux screenshots, generated and
   compared inside the pinned Playwright container (the `container` image in
   `ci.yml` and `visual-baselines.yml`), to reduce rendering differences between baseline generation and comparison.
@@ -399,6 +403,8 @@ protected data or actions. The `(public)` group is organization only. Unit tests
 must mock Firebase or use the Auth Emulator; CI must not need production keys.
 Real provider configuration, OAuth popup behavior, email delivery, and MFA need
 verification against a configured Firebase project or emulator as appropriate.
+For local emulator development, define both `FIREBASE_AUTH_EMULATOR_HOST` (for Next.js rewrites and tooling) and `NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST` (for browser Firebase Auth). For browser Firestore, use `NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST`; keep server-only `FIRESTORE_EMULATOR_HOST` out of the Next.js `env` option. No server-only endpoint is injected into the browser bundle.
+
 For local emulator development, define `FIREBASE_AUTH_EMULATOR_HOST` (for example,
 `localhost:9099`) in `.env` with a local project ID. For Electron redirect OAuth,
 Next proxies the Auth Emulator handler and Auth REST endpoints through the app origin

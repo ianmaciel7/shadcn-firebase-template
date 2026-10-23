@@ -29,14 +29,16 @@ import { ProfileThemeField } from "./profile-theme-field";
 
 type ProfileSectionClientProps = ComponentProps<"div">;
 
-function ProfileSectionClient(_props: ProfileSectionClientProps) {
+function ProfileSectionClient(props: ProfileSectionClientProps) {
   const { profile, state, t } = useProfileSectionClient();
 
   if (state.isLoading) {
     return (
-      <LoadingIndicator className="w-full text-sm text-muted-foreground">
-        {t("loading")}
-      </LoadingIndicator>
+      <div {...props}>
+        <LoadingIndicator className="w-full text-sm text-muted-foreground">
+          {t("loading")}
+        </LoadingIndicator>
+      </div>
     );
   }
 
@@ -44,7 +46,7 @@ function ProfileSectionClient(_props: ProfileSectionClientProps) {
 
   if (state.isError) {
     return (
-      <ProfileCard>
+      <ProfileCard {...props}>
         <ProfileCardContent>
           <p role="alert">{state.message}</p>
         </ProfileCardContent>
@@ -54,7 +56,7 @@ function ProfileSectionClient(_props: ProfileSectionClientProps) {
 
   return (
     <ProfileSessionContext value={profile}>
-      <ProfileCard>
+      <ProfileCard {...props}>
         <ProfileFormClient key={state.userId}>
           <ProfileCardHeader>
             <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
