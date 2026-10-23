@@ -74,7 +74,8 @@ jobs:
           node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      # The hosted runner already provides Chromium (also used by E2E).
+      # Avoid a redundant network-dependent Playwright browser installation.
       # Vitest Browser Mode, Next.js production build with size budgets, and
       # the Ladle production build.
       - run: pnpm verify:build
