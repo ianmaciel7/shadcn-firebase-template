@@ -8,8 +8,7 @@ export function useProfileStatus(
   const { user, error, defaultValues, authReady, preferencesReady } = session;
   if (!authReady || (user && !preferencesReady))
     return { status: "loading" as const };
-  if (!user && !error)
-    return { status: "hidden" as const };
+  if (!user && !error) return { status: "hidden" as const };
   if (!user || !defaultValues)
     return {
       status: "error" as const,

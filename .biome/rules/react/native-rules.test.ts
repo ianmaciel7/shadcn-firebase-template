@@ -112,6 +112,16 @@ describe("native React guard configuration", () => {
     expect(output).not.toContain("parse");
   });
 
+  it("allows discriminated state checks without redundant boolean flags", () => {
+    const output = lint(
+      directories[1],
+      'type State = { status: "loading" } | { status: "ready"; name: string }; export function Demo({ state }: { state: State }) { if (state.status === "loading") return null; return <span>{state.name}</span>; }',
+    );
+    expect(output).not.toContain("Expose isError");
+    expect(output).not.toContain("plugin");
+    expect(output).not.toContain("parse");
+  });
+
   it("preserves registry exclusions for the newly configured policies", () => {
     const output = lint(
       vendorFile,
