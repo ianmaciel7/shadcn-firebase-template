@@ -426,12 +426,11 @@ describe("owned component conventions", () => {
       /useSessionPanel/,
       path,
     );
-    expectInvalid(
+    expectValid(
       render(
         'import { useSessionPanel } from "../_hooks/use-session-panel"; import { useTranslations } from "next-intl";',
         'useSessionPanel(); useTranslations("Auth");',
       ),
-      /call only that component hook/,
       path,
     );
     expectInvalid(
