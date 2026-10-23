@@ -1298,29 +1298,59 @@ function exportedHookDeclarations(statement) {
     }));
 }
 
-function namedHookExports(statement, report) {
-  if (
-    !ts.isExportDeclaration(statement) ||
-    statement.isTypeOnly ||
-    !statement.exportClause ||
-    !ts.isNamedExports(statement.exportClause)
-  ) {
-    return [];
+function isNamedHookExport(statement) {
+  return (
+    ts.isExportDeclaration(statement) &&
+    !statement.isTypeOnly &&
+    statement.exportClause &&
+    ts.isNamedExports(statement.exportClause)
+  );
+}
+
+function exportedHookSpecifier(specifier, statement, report) {
+  if (specifier.isTypeOnly || !/^use[A-Z]/.test(specifier.name.text)) return [];
+  const local = specifier.propertyName?.text ?? specifier.name.text;
+  if (statement.moduleSpecifier || local !== specifier.name.text) {
+    report(
+      specifier,
+      "Hook exports must come from a matching local declaration; hook aliases and re-exports are not allowed.",
+    );
   }
-  const hooks = [];
-  for (const specifier of statement.exportClause.elements) {
-    if (specifier.isTypeOnly || !/^use[A-Z]/.test(specifier.name.text))
-      continue;
-    const local = specifier.propertyName?.text ?? specifier.name.text;
-    if (statement.moduleSpecifier || local !== specifier.name.text) {
+  return [{ name: specifier.name.text, node: specifier.name }];
+}
+
+function namedHookExports(statement, report) {
+  if (!isNamedHookExport(statement)) return [];
+  return statement.exportClause.elements.flatMap((specifier) =>
+    exportedHookSpecifier(specifier, statement, report),
+  );
+}
+
+function validateHookExports(source, filename, stem, expected, exports, report) {
+  if (!expected || !kebabCase.test(stem)) {
+    if (exports.length || stem.startsWith("use-")) {
       report(
-        specifier,
-        "Hook exports must come from a matching local declaration; hook aliases and re-exports are not allowed.",
+        source,
+        `Owned hook filenames must use use-<semantic-name>.ts in kebab-case (received "${basename(filename)}").`,
       );
     }
-    hooks.push({ name: specifier.name.text, node: specifier.name });
+    return findings;
   }
-  return hooks;
+  if (!exports.some((item) => item.name === expected)) {
+    report(
+      source,
+      `Hook file "${basename(filename)}" must export "${expected}" with the same exact name.`,
+    );
+  }
+  for (const item of exports) {
+    if (item.name !== expected) {
+      report(
+        item.node,
+        `Hook "${item.name}" does not match filename "${basename(filename)}"; rename this file to "${tokenizePascal(item.name).join("-")}.ts" or export "${expected}".`,
+      );
+    }
+  }
+
 }
 
 export function inspectHookFilename(content, filename) {
@@ -1350,29 +1380,7 @@ export function inspectHookFilename(content, filename) {
     ...exportedHookDeclarations(statement),
     ...namedHookExports(statement, report),
   ]);
-  if (!expected || !kebabCase.test(stem)) {
-    if (exports.length || stem.startsWith("use-")) {
-      report(
-        source,
-        `Owned hook filenames must use use-<semantic-name>.ts in kebab-case (received "${basename(filename)}").`,
-      );
-    }
-    return findings;
-  }
-  if (!exports.some((item) => item.name === expected)) {
-    report(
-      source,
-      `Hook file "${basename(filename)}" must export "${expected}" with the same exact name.`,
-    );
-  }
-  for (const item of exports) {
-    if (item.name !== expected) {
-      report(
-        item.node,
-        `Hook "${item.name}" does not match filename "${basename(filename)}"; rename this file to "${tokenizePascal(item.name).join("-")}.ts" or export "${expected}".`,
-      );
-    }
-  }
+  validateHookExports(source, filename, stem, expected, exports, report);
   return findings;
 }
 
