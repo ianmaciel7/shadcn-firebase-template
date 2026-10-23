@@ -73,6 +73,7 @@ When standards conflict, apply them in this order:
     required `params` and `searchParams` properties in JSX, breaking component unit tests (e.g., `<ProfilePage />`).
   - **Layout entrypoints (`layout.tsx`)**: Layouts must always receive `{ children }: LayoutProps<Route>`
     (or `{ children }: { children: ReactNode }`) so nested routes render properly; layouts must never have empty `()`.
+  - **Root layout viewport export**: The root layout (`src/app/layout.tsx`) must export a viewport configuration with `width: "device-width"` and `initialScale: 1`, strictly prohibiting zoom-disabling settings (`userScalable: false`, `maximumScale: 1`). See [Responsive design and layout contracts](#responsive-design-and-layout-contracts).
   - **Route error & feedback boundaries**: `not-found.tsx` and `loading.tsx` use empty `()`, while `error.tsx`
     receives `{ error, reset }`.
 - Colocate route-specific code when it improves locality. Use `_components`,
@@ -112,6 +113,55 @@ When standards conflict, apply them in this order:
   crossing module boundaries.
 - Use Tailwind CSS and the existing design tokens. Avoid inline styles unless a
   value must be computed at runtime.
+
+### Responsive design and layout contracts
+
+All application UI components—whether in route-private `_components/`, shared
+`src/components/`, or `src/components/ui/extensions/`—must satisfy modern 2026
+responsive design standards and accessibility criteria enforced by
+`pnpm check:responsiveness`:
+
+- **Root layout viewport export (`src/app/layout.tsx`)**:
+  - The root layout must export a `viewport: Viewport` object or `generateViewport` function:
+
+    ```tsx
+    import type { Viewport } from "next";
+
+    export const viewport: Viewport = {
+      width: "device-width",
+      initialScale: 1,
+    };
+    ```
+
+  - **Strict prohibition of zoom disabling (WCAG 1.4.4 Resize Text)**: Restricting user
+    zoom by declaring `userScalable: false`, `maximumScale: 1`, or `<meta name="viewport" content="user-scalable=no">`
+    is strictly forbidden. Users must always be able to zoom text and layout up to at least
+    200% without loss of content or functionality.
+- **Rigid pixel width anti-pattern (WCAG 1.4.10 Reflow)**:
+  - Do not use fixed pixel widths exceeding 320px (such as `w-[400px]`, `min-w-[500px]`,
+    or inline `style={{ width: "450px" }}`) without responsive modifiers or fluid constraints.
+  - The 320 CSS pixel threshold represents the standard mobile reflow baseline. Content must
+    reflow in a single vertical column without introducing horizontal scrolling (`scrollWidth <= clientWidth`).
+  - When wider fixed widths are necessary on larger screens, guard them with responsive
+    breakpoint modifiers (e.g., `sm:w-[400px]`, `md:w-[480px]`) or wrap them in fluid
+    constraints (e.g., `w-full max-w-[400px]`, `max-w-full`).
+- **Target size compliance (WCAG 2.2 SC 2.5.8 Target Size - Minimum 24x24px)**:
+  - Every interactive element—including `<button>`, `<a>`, `<Link>`, custom elements with
+    `role="button"` or `role="link"`, and click triggers—must provide an interactive target
+    area of at least 24x24 CSS pixels.
+  - When an element is visually smaller than 24px (such as a 16x16 icon button or compact badge):
+    - Add adequate hit-area padding: `p-2`, `p-[6px]`, or `p-1.5`.
+    - Apply explicit minimum dimensions: `min-h-6 min-w-6` or `min-size-6`.
+    - Use pseudo-element touch expanders: `relative after:absolute after:-inset-2` or `after:size-6`.
+  - Nested icons inside a parent button that already satisfies the 24x24px bounding box
+    do not need standalone touch padding.
+- **Tailwind CSS v4 Container Query conventions (`@container`)**:
+  - Prefer container queries over viewport media queries for modular, self-contained components
+    whose layout depends on the size of their containing column or card rather than the viewport.
+  - Mark parent wrappers with `@container` (or named containers like `@container/card-header`).
+  - Style child elements using container query modifiers: `@xs:`, `@sm:`, `@md:`, `@lg:`, etc.
+  - Test container query reflow in real Chromium via colocated Vitest Browser Mode tests
+    (e.g., `card.browser.test.tsx` verifying container-query adaptation for card metrics and actions).
 
 ### Compound components and Server/Client boundaries
 

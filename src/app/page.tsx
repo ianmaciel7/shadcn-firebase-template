@@ -1,5 +1,5 @@
-import { HomeSection } from "./_components/home-section-client";
+import { HomeSectionClient } from "./_components/home-section-client";
 
 export default function Home() {
-  return <HomeSection />;
+  return <HomeSectionClient />;
 }

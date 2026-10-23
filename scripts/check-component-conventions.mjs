@@ -115,6 +115,81 @@ const profileFormParts = [
   "ProfileFormFooter",
 ];
 
+const LEGACY_SEMANTIC_STEM_ALLOWLIST = new Set([
+  "src/app/(protected)/profile/_components/profile-avatar-field-client.tsx",
+  "src/app/(protected)/profile/_components/profile-form-client.tsx",
+  "src/app/(protected)/profile/_components/profile-section-client.tsx",
+  "src/app/(protected)/_components/protected-gate-client.tsx",
+  "src/app/(public)/forgot-password/_components/forgot-password-auth-flow-client.tsx",
+  "src/app/(public)/register/_components/register-auth-flow-client.tsx",
+  "src/app/(public)/sign-in/_components/sign-in-auth-flow-client.tsx",
+  "src/app/_components/auth-provider-client.tsx",
+  "src/app/_components/home-sign-out-button-client.tsx",
+  "src/components/ui/extensions/intl-provider-server.tsx",
+  "src/components/ui/extensions/theme-provider-client.tsx",
+  "src/app/_components/account-client.tsx",
+  "src/app/_components/account-server.tsx",
+  "src/app/_components/details-client.tsx",
+  "src/components/ui/extensions/details-client.tsx",
+  "src/app/(protected)/profile/_components/profile-email-field-client.tsx",
+]);
+
+function requiresExactStemMatch(filename) {
+  const normalized = filename.replaceAll("\\", "/");
+  if (normalized.endsWith("home-section-client.tsx")) return true;
+  return !LEGACY_SEMANTIC_STEM_ALLOWLIST.has(normalized);
+}
+
+function tokenizeKebab(stem) {
+  return stem.toLowerCase().split("-").filter(Boolean);
+}
+
+function tokenizePascal(name) {
+  return name
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+    .replace(/([A-Z])([A-Z][a-z])/g, "$1-$2")
+    .toLowerCase()
+    .split("-")
+    .filter(Boolean);
+}
+
+function termParityMessage(name, fileStem, fileTerms) {
+  const compTerms = tokenizePascal(name);
+  const missing = fileTerms.filter((term) => !compTerms.includes(term));
+  const extra = compTerms.filter((term) => !fileTerms.includes(term));
+  if (!missing.length && !extra.length) return null;
+
+  const missingMsg = missing.length
+    ? `missing term(s): ${missing.map((t) => `"${t}"`).join(", ")}; `
+    : "";
+  const extraMsg = extra.length
+    ? `unexpected term(s): ${extra.map((t) => `"${t}"`).join(", ")}; `
+    : "";
+
+  return (
+    `Component "${name}" does not match filename stem "${fileStem}": ` +
+    missingMsg +
+    extraMsg +
+    "component and filename must match term-for-term."
+  );
+}
+
+function checkStemComponentTermParity(source, fileStem, report) {
+  if (!requiresExactStemMatch(source.fileName)) return;
+
+  const fileTerms = tokenizeKebab(fileStem);
+  const expectedRoot = pascalCase(fileStem);
+
+  for (const statement of source.statements) {
+    if (!ts.isFunctionDeclaration(statement) || !statement.name) continue;
+    const name = statement.name.text;
+    if (!/^[A-Z]/.test(name) || name.startsWith(expectedRoot)) continue;
+
+    const message = termParityMessage(name, fileStem, fileTerms);
+    if (message) report(statement, message);
+  }
+}
+
 function expectedComponentNames(source, stem) {
   const path = source.fileName
     .replaceAll("\\", "/")
@@ -125,7 +200,10 @@ function expectedComponentNames(source, stem) {
   if (path.endsWith("/profile/_components/profile-form.tsx")) {
     return profileFormParts;
   }
-  const root = pascalCase(semanticStem(stem));
+  const fileStem = basename(source.fileName.replaceAll("\\", "/"), ".tsx");
+  const root = requiresExactStemMatch(source.fileName)
+    ? pascalCase(fileStem)
+    : pascalCase(semanticStem(stem));
   const parts = componentExports(source).filter(
     (name) => name.startsWith(root) && /^[A-Z]/.test(name.slice(root.length)),
   );
@@ -1096,8 +1174,11 @@ export function inspectComponent(content, filename) {
     });
   };
   const fileStem = basename(filename.replaceAll("\\", "/"), ".tsx");
-  const stem = semanticStem(fileStem);
+  const stem = requiresExactStemMatch(filename)
+    ? fileStem
+    : semanticStem(fileStem);
   checkFileName(source, fileStem, report);
+  checkStemComponentTermParity(source, fileStem, report);
   checkPrimaryExport(source, stem, report);
   checkExportStyle(source, report);
   checkProps(source, pascalCase(stem), report);

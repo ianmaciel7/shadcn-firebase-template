@@ -29,6 +29,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Architecture boundaries | dependency-cruiser | 18.6.0 | Enforces layering rules and forbids dependency cycles. | `.dependency-cruiser.cjs` |
 | Structural rules | ast-grep | 0.51.0 | Enforces form, prop, Tailwind, and route conventions, with warning-level React review hints. Rules have snapshot tests. | `sgconfig.yml`, `.ast-grep/` |
 | Component contracts | TypeScript compiler API | Uses the existing TypeScript dependency | Checks repository-specific named families and adapter forwarding through `pnpm check:components`; does not duplicate native framework diagnostics. | `scripts/check-component-conventions.mjs`, `scripts/check-component-composition.mjs`, their regression tests, `package.json` |
+| Responsiveness contracts | TypeScript compiler API | Uses the existing TypeScript dependency | Enforces viewport exports, no zoom restrictions, fluid widths <= 320px, and WCAG 2.2 touch targets through `pnpm check:responsiveness`. | `scripts/check-responsiveness.mjs`, `scripts/check-responsiveness.test.mjs`, `package.json` |
 | Duplication | jscpd | 5.4.1 | Reports meaningful duplicated code. | `.jscpd.json` |
 | Complexity and health | Fallow | 3.34.0 | Reports complexity, CRAP score (from real coverage), and hotspots. Route-private hooks under `src/app/**/_hooks/` are included. `.ladle/` is excluded on purpose: it is tooling glue that Ladle loads by convention. Vendored `src/components/ui/*.tsx` and `ai-elements` are excluded; custom code under `ui/extensions/` is analyzed. Dead-code, duplication, and architecture analysis stay with Knip, jscpd, and dependency-cruiser. | `.fallowrc.json` |
 | React diagnostics | React Doctor | 0.9.18 | Scans application React code for correctness, performance, and security issues. | `doctor.config.json` |
@@ -112,6 +113,7 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm check:structure` | ast-grep rule tests, then a scan of application code. |
 | `pnpm check:routes` | Enforce thin `page.tsx`, `layout.tsx` and `template.tsx` entrypoints with AST tests. |
 | `pnpm check:components` | Test and enforce owned component names, family-root/part exports, primitive-adapter forwarding, static-compound restrictions, and direct client-boundary checks; registry code excluded. |
+| `pnpm check:responsiveness` | Test and enforce responsive contracts: device-width viewports, no zoom restrictions, fluid widths <= 320px, and WCAG 2.2 touch targets (`node --test scripts/check-responsiveness.test.mjs && node scripts/check-responsiveness.mjs`). |
 | `pnpm check:spelling` / `pnpm check:markdown` | CSpell / markdownlint. |
 | `pnpm check:security` / `pnpm check:security:rules` | Semgrep scan of `src` (fails on findings) / tests of the Semgrep rules. Run inside a Git work tree. |
 | `pnpm check:secrets` / `pnpm audit` | Gitleaks / dependency audit. |
@@ -127,8 +129,8 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 
 | Command | Responsibility | Time |
 | --- | --- | --- |
-| `pnpm verify:fast` | Biome CI, typecheck, unit tests, route guard and component naming/boundary guard. Meant to run constantly. | seconds |
-| `pnpm verify:static` | Biome CI, typecheck, unit tests with coverage thresholds, architecture, unused code, duplication, structural rules, route/component guards, spelling, Markdown, Fallow health, and React Doctor. The CI `static` job. | minutes |
+| `pnpm verify:fast` | Biome CI, typecheck, unit tests, route guard, component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Meant to run constantly. | seconds |
+| `pnpm verify:static` | Biome CI, typecheck, unit tests with coverage thresholds, architecture, unused code, duplication, structural rules, route/component/responsiveness guards, spelling, Markdown, Fallow health, and React Doctor. The CI `static` job. | minutes |
 | `pnpm verify:build` | Browser tests, production build with size budgets, and the Ladle build. The CI `build` job. | minutes |
 | `pnpm verify:full` | `verify:static` then `verify:build`. | minutes |
 | `pnpm verify:e2e` | The whole Playwright suite: functional, accessibility, and visual. | minutes |
@@ -162,6 +164,7 @@ theming decision is recorded in ADR 0003.
 | `.biome/rules/nextjs/*.grit` | GritQL source for project-specific Biome rules. |
 | `components.json` | shadcn/ui configuration and import aliases. |
 | `scripts/check-component-conventions.mjs`, `scripts/check-component-composition.mjs` | Owned component naming/family conventions and adapter forwarding; regression tests are colocated `*.test.mjs` files. |
+| `scripts/check-responsiveness.mjs`, `scripts/check-responsiveness.test.mjs` | Enforces viewport metadata, rigid width prevention (>320px), and WCAG 2.2 touch target minimums; regression tests in colocated `*.test.mjs`. |
 | `vitest.config.mts` | `unit` and `browser` projects and coverage. |
 | `vitest.mutation.config.mts` | Unit-only Vitest config used by Stryker. |
 | `playwright.config.ts` | Playwright projects, web server, and screenshot tolerance. |
@@ -192,6 +195,7 @@ valid and invalid tests, before registering a new custom rule.
 
 | Rule | Owner | Severity | Scope | Why it is not native |
 | --- | --- | --- | --- | --- |
+| `responsiveness-contracts` | TypeScript AST (`scripts/check-responsiveness.mjs`) | error | Root layout, App Router routes, and owned components (`src/app/**`, `src/components/**`) | Next.js and TypeScript allow arbitrary viewport configs, rigid pixel widths, and tiny interactive controls. This enforces WCAG 1.4.4 viewport scalability, WCAG 1.4.10 reflow at 320px, and WCAG 2.2 SC 2.5.8 touch target minimums (24x24px). Tests live in `scripts/check-responsiveness.test.mjs`. |
 | `owned-component-composition` | TypeScript AST (`scripts/check-component-composition.mjs`) | error | All owned component modules, Server and Client, through `pnpm check:components` | TypeScript permits dropping inherited props and constructing static compound APIs; this enforces our separate-named-export and adapter-forwarding contract. Checks matching direct JSX roots, remaining props and extracted children/className. Tests live in `scripts/check-component-composition.test.mjs`. [Coverage and limits](CODING_STANDARDS.md#composition-guard-coverage). |
 | `owned-component-family` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | All owned component modules, Server and Client | Root-prefixed family names, filename/export matching, and local function declarations are repository conventions that TypeScript and Next.js allow alternatives to. Preserves the existing direct client-boundary checks, with type-only imports excluded. The complete RSC graph remains a Next.js build responsibility. |
 | `owned-component-behavior` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | All owned component functions | Enforces component-named orchestration hooks, focused behavior ownership, and declarative rendering. React permits other arrangements; these are repository policies. See [.agents/rules/component-naming.md](.agents/rules/component-naming.md). |

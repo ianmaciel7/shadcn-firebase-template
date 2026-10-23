@@ -25,8 +25,8 @@
     "check:secrets": "gitleaks git --no-banner --redact",
     "check:workflows": "actionlint && zizmor .github/workflows",
     "audit": "pnpm audit",
-    "verify:fast": "pnpm lint:ci && pnpm typecheck && pnpm test && pnpm test:logging && pnpm check:routes && pnpm check:components",
-    "verify:static": "pnpm lint:ci && pnpm typecheck && pnpm test:coverage && pnpm test:logging && pnpm check:architecture && pnpm check:unused && pnpm check:duplicates && pnpm check:structure && pnpm check:routes && pnpm check:components && pnpm check:spelling && pnpm check:markdown && pnpm analyze:fallow && pnpm analyze:react",
+    "verify:fast": "pnpm lint:ci && pnpm typecheck && pnpm test && pnpm test:logging && pnpm check:routes && pnpm check:components && pnpm check:responsiveness",
+    "verify:static": "pnpm lint:ci && pnpm typecheck && pnpm test:coverage && pnpm test:logging && pnpm check:architecture && pnpm check:unused && pnpm check:duplicates && pnpm check:structure && pnpm check:routes && pnpm check:components && pnpm check:responsiveness && pnpm check:spelling && pnpm check:markdown && pnpm analyze:fallow && pnpm analyze:react",
     "verify:build": "pnpm test:browser && pnpm analyze:size && pnpm ladle:build",
     "verify:full": "pnpm verify:static && pnpm verify:build",
     "verify:security": "pnpm check:security:rules && pnpm check:security && pnpm check:secrets && pnpm check:workflows && pnpm audit",
@@ -57,6 +57,7 @@
     "analyze:health": "pnpm test:coverage && pnpm analyze:fallow",
     "check:routes": "node --test scripts/check-route-files.test.mjs && node scripts/check-route-files.mjs",
     "check:components": "node --test scripts/check-component-conventions.test.mjs scripts/check-component-composition.test.mjs && node scripts/check-component-conventions.mjs",
+    "check:responsiveness": "node --test scripts/check-responsiveness.test.mjs && node scripts/check-responsiveness.mjs",
     "doctor": "react-doctor --no-score --no-telemetry --no-supply-chain"
   },
   "lint-staged": {

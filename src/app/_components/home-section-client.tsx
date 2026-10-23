@@ -5,7 +5,8 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
-import { useHomeSection } from "../_hooks/use-home-section";
+import { cn } from "@/lib/utils";
+import { useHomeSectionClient } from "../_hooks/use-home-section-client";
 import {
   HomeHero,
   HomeHeroActions,
@@ -15,25 +16,34 @@ import {
 } from "./home-hero";
 import { HomeSignOutButton } from "./home-sign-out-button-client";
 
-type HomeSectionProps = ComponentProps<"div">;
+type HomeSectionClientProps = ComponentProps<"main">;
 
-function HomeSection(props: HomeSectionProps) {
-  const { t, ready, user } = useHomeSection();
+function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
+  const { t, ready, user } = useHomeSectionClient();
 
   if (!ready) {
     return (
-      <main className="flex min-h-svh flex-1 items-center justify-center bg-background p-6 text-foreground">
+      <main
+        {...props}
+        className={cn(
+          "flex min-h-svh flex-1 items-center justify-center bg-background p-6 text-foreground",
+          className,
+        )}
+      >
         <LoadingIndicator label={t("loading")} />
       </main>
     );
   }
 
   return (
-    <div
+    <main
       {...props}
-      className="flex min-h-screen flex-col items-center justify-center bg-background text-foreground font-sans"
+      className={cn(
+        "flex min-h-svh flex-col items-center justify-center bg-background text-foreground font-sans",
+        className,
+      )}
     >
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-center gap-12 p-6 sm:items-start">
+      <div className="flex flex-1 w-full max-w-3xl flex-col items-center justify-center gap-12 p-6 sm:items-start">
         <Image
           className="dark:invert h-5 w-[100px]"
           src="/next.svg"
@@ -95,9 +105,9 @@ function HomeSection(props: HomeSectionProps) {
             )}
           </HomeHeroActions>
         </HomeHero>
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }
 
-export { HomeSection };
+export { HomeSectionClient };
