@@ -1,14 +1,14 @@
 import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
-import { Loading } from "@/components/ui/extensions/loading";
+import { LabeledSpinner } from "@/components/ui/extensions/labeled-spinner";
 import { cn } from "@/lib/utils";
 
-type RouteLoadingProps = ComponentProps<typeof Loading>;
+type RouteLoadingProps = ComponentProps<typeof LabeledSpinner>;
 
 function RouteLoading({ className, label, ...props }: RouteLoadingProps) {
   const t = useTranslations("App");
   return (
-    <Loading
+    <LabeledSpinner
       label={label ?? t("loading")}
       className={cn("flex w-full p-6", className)}
       {...props}

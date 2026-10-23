@@ -2,7 +2,7 @@
 
 import { FirebaseUIProvider } from "@firebase-oss/ui-react";
 import type { PropsWithChildren } from "react";
-import { Loading } from "@/components/ui/extensions/loading";
+import { LabeledSpinner } from "@/components/ui/extensions/labeled-spinner";
 import { useAuthProviderClient } from "../_hooks/use-auth-provider-client";
 
 type AuthProviderClientProps = PropsWithChildren;
@@ -22,9 +22,9 @@ function AuthProviderClient({ children }: AuthProviderClientProps) {
     );
   if (state.status === "loading")
     return (
-      <Loading className="w-full text-sm text-muted-foreground">
+      <LabeledSpinner className="w-full text-sm text-muted-foreground">
         {t("loading")}
-      </Loading>
+      </LabeledSpinner>
     );
   return <FirebaseUIProvider ui={state.ui}>{children}</FirebaseUIProvider>;
 }

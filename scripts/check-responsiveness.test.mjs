@@ -40,7 +40,7 @@ describe("responsiveness guard", () => {
 
     it("distinguishes owned components from third-party vendor code", () => {
       assert.equal(
-        isOwnedComponent("src/components/ui/extensions/loading.tsx"),
+        isOwnedComponent("src/components/ui/extensions/labeled-spinner.tsx"),
         true,
       );
       assert.equal(isOwnedComponent("src/app/_components/home-hero.tsx"), true);

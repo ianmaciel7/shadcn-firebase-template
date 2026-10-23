@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
-import { Loading } from "@/components/ui/extensions/loading";
+import { LabeledSpinner } from "@/components/ui/extensions/labeled-spinner";
 import { useProfileSectionClient } from "../_hooks/use-profile-section-client";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
 import { ProfileAvatarFieldClient } from "./profile-avatar-field-client";
@@ -34,9 +34,9 @@ function ProfileSectionClient(props: ProfileSectionClientProps) {
   if (state.status === "loading") {
     return (
       <div {...props}>
-        <Loading className="w-full text-sm text-muted-foreground">
+        <LabeledSpinner className="w-full text-sm text-muted-foreground">
           {t("loading")}
-        </Loading>
+        </LabeledSpinner>
       </div>
     );
   }

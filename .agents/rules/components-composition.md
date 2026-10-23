@@ -81,7 +81,7 @@ exports instead of static properties on the root function.
 
 Place shared application components in `src/components/ui/extensions/` and
 route-private components in `src/app/**/_components/`. For example,
-`Loading` belongs in `ui/extensions` because both
+`LabeledSpinner` belongs in `ui/extensions` because both
 route components and Firebase UI consume it. Do not create parallel application
 component folders such as `src/components/loading/`.
 

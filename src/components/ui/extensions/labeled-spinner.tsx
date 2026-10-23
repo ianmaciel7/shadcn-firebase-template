@@ -2,14 +2,19 @@ import type { ComponentProps, ReactNode } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
-type LoadingProps = ComponentProps<"span"> & {
+type LabeledSpinnerProps = ComponentProps<"span"> & {
   label?: ReactNode;
 };
 
-function Loading({ label, children, className, ...props }: LoadingProps) {
+function LabeledSpinner({
+  label,
+  children,
+  className,
+  ...props
+}: LabeledSpinnerProps) {
   return (
     <span
-      data-slot="loading"
+      data-slot="labeled-spinner"
       {...props}
       role="status"
       aria-live="polite"
@@ -29,4 +34,4 @@ function Loading({ label, children, className, ...props }: LoadingProps) {
   );
 }
 
-export { Loading };
+export { LabeledSpinner };
