@@ -138,7 +138,8 @@ describe("owned hook filename/export parity", () => {
 
 describe("presentation hooks in owned fields", () => {
   it("allows native form, translation and id hooks without a redundant wrapper", () => {
-    const file = "src/app/(protected)/profile/_components/profile-email-field.tsx";
+    const file =
+      "src/app/(protected)/profile/_components/profile-email-field.tsx";
     const source = `"use client"; 
       import { useId } from "react";
       import { useTranslations } from "next-intl";

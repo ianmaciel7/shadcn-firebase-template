@@ -1043,7 +1043,10 @@ function checkComponentHook(component, source, report) {
   );
   if (!orchestrationHooks.length) return;
   const expected = `use${component.name.text}`;
-  if (orchestrationHooks.length !== 1 || orchestrationHooks[0].name !== expected) {
+  if (
+    orchestrationHooks.length !== 1 ||
+    orchestrationHooks[0].name !== expected
+  ) {
     report(
       component,
       `${component.name.text} must delegate hook coordination to ${expected} in a separate hook module; call only that component hook.`,

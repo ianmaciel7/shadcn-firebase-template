@@ -12,8 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { isThemePreference, themePreferences } from "@/lib/theme";
 import type { ProfileValues } from "@/lib/profile";
+import { isThemePreference, themePreferences } from "@/lib/theme";
 
 type ProfileThemeFieldProps = ComponentProps<typeof Field>;
 
