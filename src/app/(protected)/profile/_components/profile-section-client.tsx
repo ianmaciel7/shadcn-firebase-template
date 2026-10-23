@@ -1,7 +1,6 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { LabeledSpinner } from "@/components/ui/extensions/labeled-spinner";
 import { FieldGroup } from "@/components/ui/field";
 import { useProfileSectionClient } from "../_hooks/use-profile-section-client";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
@@ -17,6 +16,7 @@ import {
 } from "./profile-card";
 import { ProfileDisplayNameField } from "./profile-display-name-field";
 import { ProfileEmailField } from "./profile-email-field";
+import { ProfileFallback } from "./profile-fallback";
 import { ProfileFormClient } from "./profile-form-client";
 import { ProfileLocaleField } from "./profile-locale-field";
 import { ProfileSaveButton } from "./profile-save-button";
@@ -27,54 +27,36 @@ type ProfileSectionClientProps = ComponentProps<"div">;
 function ProfileSectionClient(props: ProfileSectionClientProps) {
   const { profile, status, t } = useProfileSectionClient();
 
-  if (status.status === "hidden") return null;
-
-  if (status.status === "loading") {
-    return (
-      <div {...props}>
-        <LabeledSpinner className="w-full text-sm text-muted-foreground">
-          {t("loading")}
-        </LabeledSpinner>
-      </div>
-    );
-  }
-
-  if (status.status === "error") {
-    return (
-      <ProfileCard {...props}>
-        <ProfileCardContent>
-          <p role="alert">{status.errorMessage}</p>
-        </ProfileCardContent>
-      </ProfileCard>
-    );
-  }
-
   return (
-    <ProfileSessionContext value={profile}>
-      <ProfileCard {...props}>
-        <ProfileFormClient key={status.userId}>
-          <ProfileCardHeader>
-            <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
-            <ProfileCardDescription>
-              {t("personalInfoDescription")}
-            </ProfileCardDescription>
-          </ProfileCardHeader>
-          <ProfileCardContent>
-            <FieldGroup className="gap-4">
-              <ProfileAvatarFieldClient />
-              <ProfileDisplayNameField />
-              <ProfileEmailField />
-              <ProfileLocaleField />
-              <ProfileThemeField />
-            </FieldGroup>
-          </ProfileCardContent>
-          <ProfileCardFooter>
-            <ProfileSaveButton />
-            <ProfileBackToHomeButton />
-          </ProfileCardFooter>
-        </ProfileFormClient>
-      </ProfileCard>
-    </ProfileSessionContext>
+    <ProfileFallback status={status} {...props}>
+      <ProfileSessionContext value={profile}>
+        <ProfileCard {...props}>
+          <ProfileFormClient
+            key={"userId" in status ? status.userId : undefined}
+          >
+            <ProfileCardHeader>
+              <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
+              <ProfileCardDescription>
+                {t("personalInfoDescription")}
+              </ProfileCardDescription>
+            </ProfileCardHeader>
+            <ProfileCardContent>
+              <FieldGroup className="gap-4">
+                <ProfileAvatarFieldClient />
+                <ProfileDisplayNameField />
+                <ProfileEmailField />
+                <ProfileLocaleField />
+                <ProfileThemeField />
+              </FieldGroup>
+            </ProfileCardContent>
+            <ProfileCardFooter>
+              <ProfileSaveButton />
+              <ProfileBackToHomeButton />
+            </ProfileCardFooter>
+          </ProfileFormClient>
+        </ProfileCard>
+      </ProfileSessionContext>
+    </ProfileFallback>
   );
 }
 
