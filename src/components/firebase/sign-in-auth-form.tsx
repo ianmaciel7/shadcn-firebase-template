@@ -1,6 +1,6 @@
 "use client";
 
-import { Loading } from "@/components/ui/extensions/loading";
+import { Spinner } from "@/components/ui/spinner";
 
 import type { SignInAuthFormSchema } from "@firebase-oss/ui-core";
 import {
@@ -82,10 +82,9 @@ export function SignInAuthForm(props: SignInAuthFormProps) {
         <Button
           type="submit"
           disabled={ui.state !== "idle"}
-          aria-busy={ui.state !== "idle"}
         >
           {ui.state !== "idle" ? (
-            <Loading>{getTranslation(ui, "labels", "signIn")}</Loading>
+            <><Spinner data-icon="inline-start" aria-hidden="true" />{getTranslation(ui, "labels", "signIn")}</>
           ) : (
             getTranslation(ui, "labels", "signIn")
           )}

@@ -1,8 +1,8 @@
-import { onAuthStateChanged, type User } from "firebase/auth";
+import type { User } from "firebase/auth";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { getFirebaseUI } from "@/lib/firebase/client";
+import { subscribeToSession } from "@/lib/auth/session";
 
 export function useProfileAuth() {
   const t = useTranslations("Auth");
@@ -14,9 +14,7 @@ export function useProfileAuth() {
 
   useEffect(() => {
     try {
-      const auth = getFirebaseUI().get().auth;
-      return onAuthStateChanged(
-        auth,
+      return subscribeToSession(
         (currentUser) => {
           setUser(currentUser);
           setPhotoURL(currentUser?.photoURL ?? null);

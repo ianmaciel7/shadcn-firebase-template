@@ -2,7 +2,7 @@
 
 import { useUI, type OAuthButtonProps, useSignInWithProvider } from "@firebase-oss/ui-react";
 import { Button } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
+import { Spinner } from "@/components/ui/spinner";
 
 export type { OAuthButtonProps };
 
@@ -16,7 +16,6 @@ export function OAuthButton({ provider, children, themed, onSignIn }: OAuthButto
       <Button
         type="button"
         disabled={ui.state !== "idle"}
-        aria-busy={ui.state !== "idle"}
         onClick={callback}
         data-provider={provider.providerId}
         data-themed={themed}
@@ -24,7 +23,7 @@ export function OAuthButton({ provider, children, themed, onSignIn }: OAuthButto
         variant={themed ? "default" : "outline"}
       >
         {ui.state !== "idle" ? (
-          <LoadingIndicator label={children} className="text-inherit" />
+          <><Spinner data-icon="inline-start" aria-hidden="true" />{children}</>
         ) : (
           children
         )}

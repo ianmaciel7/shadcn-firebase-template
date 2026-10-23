@@ -12,7 +12,7 @@ import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
+import { Spinner } from "@/components/ui/spinner";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
 type TotpMultiFactorAssertionFormProps = {
@@ -66,9 +66,9 @@ export function TotpMultiFactorAssertionForm(props: TotpMultiFactorAssertionForm
             </Field>
           )}
         />
-        <Button type="submit" disabled={ui.state !== "idle"} aria-busy={ui.state !== "idle"}>
+        <Button type="submit" disabled={ui.state !== "idle"}>
           {ui.state !== "idle" ? (
-            <LoadingIndicator label={getTranslation(ui, "labels", "verifyCode")} className="text-inherit" />
+            <><Spinner data-icon="inline-start" aria-hidden="true" />{getTranslation(ui, "labels", "verifyCode")}</>
           ) : (
             getTranslation(ui, "labels", "verifyCode")
           )}

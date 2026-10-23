@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { Loading } from "@/components/ui/extensions/loading";
+import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
 import { FieldGroup } from "@/components/ui/field";
 import { useProfileSection } from "../_hooks/use-profile-section";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
-import { ProfileAvatarField } from "./profile-avatar-field-client";
+import { ProfileAvatarFieldClient } from "./profile-avatar-field-client";
 import {
   ProfileCard,
   ProfileCardContent,
@@ -31,9 +31,9 @@ function ProfileSection() {
 
   if (state.isLoading) {
     return (
-      <Loading className="w-full text-sm text-muted-foreground">
+      <LoadingIndicator className="w-full text-sm text-muted-foreground">
         {t("loading")}
-      </Loading>
+      </LoadingIndicator>
     );
   }
 
@@ -61,7 +61,7 @@ function ProfileSection() {
           </ProfileCardHeader>
           <ProfileCardContent>
             <ProfileFormContent>
-              <ProfileAvatarField />
+              <ProfileAvatarFieldClient />
               <FieldGroup>
                 <ProfileDisplayNameField />
                 <ProfileEmailField />

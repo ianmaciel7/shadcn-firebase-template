@@ -4,7 +4,7 @@ import type { ProfileFormValues } from "@/lib/profile";
 import { useProfileAvatar } from "./use-profile-avatar";
 import { useProfileSessionContext } from "./use-profile-session-context";
 
-export function useProfileAvatarField() {
+export function useProfileAvatarFieldClient() {
   const t = useTranslations("Auth");
   const { user, photoURL, avatarVersion } = useProfileSessionContext();
   const { control, setValue, formState } = useFormContext<ProfileFormValues>();

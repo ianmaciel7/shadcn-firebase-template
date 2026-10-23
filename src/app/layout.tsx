@@ -3,8 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { IntlProvider } from "@/components/ui/extensions/intl-provider-server";
-import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
 import { ThemeProvider } from "@/components/ui/extensions/theme-provider-client";
+import { Spinner } from "@/components/ui/spinner";
 import { Toaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
@@ -48,7 +48,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Suspense
           fallback={
             <div className="flex min-h-svh items-center justify-center">
-              <LoadingIndicator />
+              <Spinner
+                className="size-8 text-muted-foreground"
+                aria-hidden="true"
+              />
             </div>
           }
         >

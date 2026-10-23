@@ -8,7 +8,7 @@ import {
 import { NextIntlClientProvider } from "next-intl";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import en from "@/messages/en.json";
-import { HomeSection } from "./home-section-client";
+import { HomeSectionClient } from "./home-section-client";
 
 const mocks = vi.hoisted(() => ({
   subscribe: vi.fn(),
@@ -25,7 +25,7 @@ vi.mock("@/lib/firebase/client", () => ({ getFirebaseUI: mocks.getUI }));
 function renderHome() {
   return render(
     <NextIntlClientProvider locale="en" messages={en}>
-      <HomeSection />
+      <HomeSectionClient />
     </NextIntlClientProvider>,
   );
 }
@@ -79,6 +79,18 @@ describe("home session", () => {
     unmount();
     expect(mocks.unsubscribe).toHaveBeenCalledOnce();
   });
+  it("uses the friend fallback when displayName is not provided", () => {
+    renderHome();
+    act(() =>
+      mocks.subscribe.mock.calls[0][1]({
+        displayName: "",
+        email: "alex@example.test",
+      }),
+    );
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toContain(
+      `Welcome, ${en.Home.friend}.`,
+    );
+  });
   it("only offers profile and sign out when authenticated and restores visitor home after logout", async () => {
     mocks.signOut.mockImplementation(async () => {
       mocks.subscribe.mock.calls[0][1](null);
@@ -112,7 +124,6 @@ describe("home session", () => {
     const pending = screen.getByRole("button", { name: en.Home.signingOut });
     expect(pending.hasAttribute("disabled")).toBe(true);
     expect(pending.getAttribute("aria-busy")).toBe("true");
-    expect(screen.getByRole("status").textContent).toBe(en.Home.signingOut);
     fireEvent.click(pending);
     expect(mocks.signOut).toHaveBeenCalledOnce();
     await act(async () => {

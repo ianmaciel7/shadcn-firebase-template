@@ -913,3 +913,67 @@ describe("Node integration client boundary protection", () => {
     }
   });
 });
+
+describe("component filename term matching and parity", () => {
+  it("accepts HomeSectionClient with matching filename, props, and orchestration hook", () => {
+    expectValid(
+      `"use client";
+       import type { ComponentProps } from "react";
+       import { useHomeSectionClient } from "../_hooks/use-home-section-client";
+       type HomeSectionClientProps = ComponentProps<"div">;
+       function HomeSectionClient(props: HomeSectionClientProps) {
+         const { t } = useHomeSectionClient();
+         return <div {...props} />;
+       }
+       export { HomeSectionClient };`,
+      "src/app/_components/home-section-client.tsx",
+    );
+  });
+
+  it("rejects HomeSection in home-section-client.tsx due to missing 'Client' term", () => {
+    expectInvalid(
+      `"use client";
+       import type { ComponentProps } from "react";
+       type HomeSectionProps = ComponentProps<"div">;
+       function HomeSection(props: HomeSectionProps) { return <div {...props} />; }
+       export { HomeSection };`,
+      /missing term\(s\): "client"/i,
+      "src/app/_components/home-section-client.tsx",
+    );
+  });
+
+  it("rejects mismatched terms such as HomeViewClient or HomeSectionViewClient", () => {
+    expectInvalid(
+      `"use client";
+       function HomeViewClient() { return <div />; }
+       export { HomeViewClient };`,
+      /unexpected term\(s\): "view"/i,
+      "src/app/_components/home-section-client.tsx",
+    );
+  });
+
+  it("rejects HomeSectionClient delegating to useHomeSection instead of useHomeSectionClient", () => {
+    expectInvalid(
+      `"use client";
+       import { useHomeSection } from "../_hooks/use-home-section";
+       function HomeSectionClient() {
+         useHomeSection();
+         return <div />;
+       }
+       export { HomeSectionClient };`,
+      /must delegate hook coordination to useHomeSectionClient/i,
+      "src/app/_components/home-section-client.tsx",
+    );
+  });
+
+  it("rejects legacy props type naming when component is exact match", () => {
+    expectInvalid(
+      `"use client";
+       type HomeSectionProps = { id: string };
+       function HomeSectionClient() { return <div />; }
+       export { HomeSectionClient };`,
+      /Props type must be named one of: HomeSectionClientProps/i,
+      "src/app/_components/home-section-client.tsx",
+    );
+  });
+});

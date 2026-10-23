@@ -2,21 +2,29 @@
 
 import { FirebaseUIProvider } from "@firebase-oss/ui-react";
 import type { PropsWithChildren } from "react";
-import { Loading } from "@/components/ui/extensions/loading";
+import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
 import { useAuthProvider } from "../_hooks/use-auth-provider";
 
-interface AuthProviderProps extends PropsWithChildren {}
+type AuthProviderProps = PropsWithChildren;
 
 function AuthProvider({ children }: AuthProviderProps) {
   const state = useAuthProvider();
   const { t } = state;
 
-  if (state.isError) return <p role="alert">{t("configurationError")}</p>;
+  if (state.isError)
+    return (
+      <p
+        role="alert"
+        className="text-center text-sm font-medium text-destructive"
+      >
+        {t("configurationError")}
+      </p>
+    );
   if (state.isLoading)
     return (
-      <Loading className="w-full text-sm text-muted-foreground">
+      <LoadingIndicator className="w-full text-sm text-muted-foreground">
         {t("loading")}
-      </Loading>
+      </LoadingIndicator>
     );
   return <FirebaseUIProvider ui={state.ui}>{children}</FirebaseUIProvider>;
 }

@@ -7,7 +7,7 @@ These are **repository conventions**, not filename rules prescribed by Next.js o
 | Dimension | Convention | Examples |
 | --- | --- | --- |
 | Runtime | Import graphs determine membership; `"use client"` declares a boundary, while a shared module can compile in both graphs | `ProfileCard` may participate in a client subtree without its own directive |
-| Responsibility | Describe the composition or behavior, not its runtime | `ProfileCard`, `ProfileForm`, `ProfileAvatarField`, `AuthProvider`, `ProtectedGate`, `SignInAuthFlow` |
+| Responsibility | Describe the composition or behavior, not its runtime | `ProfileCard`, `ProfileForm`, `ProfileAvatarFieldClient`, `AuthProvider`, `ProtectedGate`, `SignInAuthFlow` |
 | Placement | Colocate route components in private `_components/`, hooks in `_hooks/` and shared components in `src/components/ui/extensions/` | App Router private folders do not become routes |
 
 The shadcn primitives live under `src/components/ui/`; Firebase registry output
@@ -30,8 +30,11 @@ from application naming checks. Application-owned extensions under
   name by semantic role. Prohibit generic implementation terms (`View`, `Screen`, `Presentation`) in component identifiers.
 - Reserve `-client.tsx` for browser integrations and `-server.tsx` for server
   integrations. Presentation components keep no suffix, including interactive
-  presentation that declares `"use client"`. Keep semantic exports and prop
-  types unchanged, such as `ProfileForm` and `ProfileFormProps`.
+  presentation that declares `"use client"`. Existing legacy integration files
+  in `LEGACY_SEMANTIC_STEM_ALLOWLIST` keep semantic exports and prop types
+  unchanged (such as `ProfileForm` and `ProfileFormProps` in `profile-form-client.tsx`),
+  whereas new and modernized integration components enforce exact 1:1 term parity
+  (such as `HomeSectionClient` and `HomeSectionClientProps` in `home-section-client.tsx`).
 - Integrations own application data, persistence, authentication, navigation or
   platform access, directly or through focused hooks/helpers. Examples include
   Firebase, browser storage, object URLs, theme persistence and external fetches.
@@ -51,6 +54,19 @@ from application naming checks. Application-owned extensions under
 - Next.js `page.tsx`, `layout.tsx` and `template.tsx` use their mandatory
   framework exports and remain outside this naming guard. The separate
   `pnpm check:routes` enforces our thin-route architecture policy.
+
+### Exact filename stem and component term parity (`checkStemComponentTermParity`)
+
+Owned component files outside the legacy allowlist enforce exact 1:1 term parity between the filename stem and component identifiers:
+
+- **Term-for-term matching**: The kebab-case filename stem and PascalCase component identifiers are tokenized into semantic terms (e.g., `home-section-client` -> `["home", "section", "client"]`). Every term present in the filename stem must exist in the component name, and no extraneous terms may appear.
+- **No missing terms**: Declaring a component that drops terms from the filename (such as declaring `HomeSection` in `home-section-client.tsx`, which omits `Client`) triggers an error: `missing term(s): "client"`.
+- **No unexpected terms**: Declaring a component with terms absent from the filename (such as `HomeViewClient` or `HomeSectionViewClient` in `home-section-client.tsx`) triggers an error: `unexpected term(s): "view"`.
+- **Reference implementation (`HomeSectionClient`)**: `src/app/_components/home-section-client.tsx` enforces exact 1:1 term parity:
+  - Component declaration and named export: `HomeSectionClient`
+  - Prop type declaration: `HomeSectionClientProps` (`HomeSectionProps` is rejected)
+  - Hook coordination: `useHomeSectionClient` in `src/app/_hooks/use-home-section-client.ts` (`useHomeSection` is rejected)
+- **Legacy allowlist (`LEGACY_SEMANTIC_STEM_ALLOWLIST`)**: Existing legacy integration components (such as `profile-form-client.tsx` exporting `ProfileForm`) maintain their semantic unsuffixed exports for backward compatibility. All new and modernized components enforce exact 1:1 term parity.
 
 ## CI enforcement
 
@@ -74,8 +90,8 @@ and rejects `-client` on presentation-only modules. Unknown browser SDKs can use
 conservative module-level syntax check, not symbol-level data-flow analysis.
 Dynamic imports, computed browser access, aliases of globals, third-party SDK
 internals and hooks implemented in `.tsx` require manual review. Next.js remains
-responsible for the complete Server/Client graph. Native boundary checks and
-existing composition/form/field guards remain active.
+responsible for the complete Server/Client graph. Native boundary checks,
+exact term parity (`checkStemComponentTermParity`), and existing composition/form/field guards remain active.
 
 ## Official references
 
@@ -94,7 +110,7 @@ Use `src/components/ui/card.tsx`, `button.tsx` and `field.tsx` as reference impl
 - Use `children` for genuine component composition, as in `Card` and `FieldGroup`. A compound `ProfileForm` can accept independently declared field components via `children` and provide `FormProvider` context.
 - Keep application-owned Card adapters **composable**: `ProfileCard`, `ProfileCardHeader`, `ProfileCardTitle`, `ProfileCardDescription` and `ProfileCardContent` each forward native Card primitive props and `children`; `ProfileSection` assembles data-backed form content and handles loading/error states. `ProfileFormContent` provides `FieldGroup`, not a second `CardContent`. The form content/footer remain children of the same native `<form>`. Do not confuse an application view that renders a Card with a Card primitive wrapper.
 - Fields connected via `Controller name="displayName"` must use the semantically matching component/file name `ProfileDisplayNameField` / `profile-display-name-field.tsx`. The component may expose a friendly display label without renaming the Firebase field.
-- Prefer narrow component props; do not hand `ProfileForm` or `ProfileAvatarField` the entire profile controller as a `profile` prop.
+- Prefer narrow component props; do not hand `ProfileForm` or `ProfileAvatarFieldClient` the entire profile controller as a `profile` prop.
 - `FieldGroup`, `FieldSet`, `Field` and `Controller` are real primitives/API integrations; do not introduce arbitrary *Fields wrapper components solely for visual grouping.
 - The family-root and root-prefixed-part convention applies to every owned module, including Server and Client Components. The profile Card and Form retain exact-part guards on top of the general contract. Upstream shadcn/ui files also export related primitives together; generated registries remain unchanged.
 
@@ -107,15 +123,15 @@ References: [shadcn/ui Field](https://ui.shadcn.com/docs/components/field), [sha
 Owned components keep rendering, translations, primitive prop forwarding and simple UI composition. Place stateful effects, Firebase operations and asynchronous workflow handlers in responsibility-specific custom hooks. Focused hooks compose inside the component-named orchestration hook described below; do not restore a single controller that owns every field and action.
 
 - Expose discriminated status states for session components (`loading`, `hidden`, `error`, `ready`). Components render `state.status` and an already resolved error message, rather than deriving readiness from user, authentication and preferences flags.
-- Keep responsibilities local: `useProfileStatus` derives session status, `useProfileForm` coordinates form lifecycle, and `useProfileAvatarField` prepares avatar data. Auth provider, gate, navigation button and auth flow navigation have separate hooks.
+- Keep responsibilities local: `useProfileStatus` derives session status, `useProfileForm` coordinates form lifecycle, and `useProfileAvatarFieldClient` prepares avatar data. Auth provider, gate, navigation button and auth flow navigation have separate hooks.
 - `check:components` rejects React state/effect imports (including aliases), namespace state/effect calls, Firebase value imports, async workflow functions, compound `if` conditions/derived locals and error fallbacks inside owned component functions. Async Server Components, simple discriminated-state branches, translations, form context and presentation props such as `disabled={disabled || pending}` remain valid.
 - The guard checks syntax, not arbitrary semantic equivalence or the ideal number of hooks. Generated Firebase/UI registries and Next.js special files retain their existing scope exclusions. Module-level setup is outside component branch analysis.
 
 ### Component-named orchestration hooks
 
-A component that uses behavior/context hooks or coordinates multiple hooks must call a single imported `use<ComponentName>` hook in a separate hook module. For example, `ProfileSection` calls `useProfileSection`, which composes `useProfileSession`, `useProfileStatus` and translations internally. `ProfileAvatarField`, `ProfileSaveButton`, profile fields and auth flows follow the same naming rule. Their hooks may compose focused hooks; this does not restore a global controller.
+A component that uses behavior/context hooks or coordinates multiple hooks must call a single imported `use<ComponentName>` hook in a separate hook module. For example, `ProfileSection` calls `useProfileSection`, which composes `useProfileSession`, `useProfileStatus` and translations internally. `ProfileAvatarFieldClient`, `ProfileSaveButton`, profile fields and auth flows follow the same naming rule. Their hooks may compose focused hooks; this does not restore a global controller.
 
-`check:components` verifies the called hook's canonical imported name (including aliased imports), rejects extra hook calls alongside it, and rejects missing imports. Components with no hooks and components using only one presentation hook (`useTranslations`, `useFormatter` or `useId`) do not require a boilerplate wrapper. This rule applies to all owned component functions; existing vendor and route-entrypoint exclusions remain.
+`check:components` verifies the called hook's canonical imported name (including aliased imports), rejects extra hook calls alongside it, and rejects missing imports. Components with no hooks and components using only one presentation hook (`useTranslations`, `useFormatter` or `useId`) do not require a boilerplate wrapper. This rule applies to all owned component functions; existing vendor and route-entrypoint exclusions remain. `HomeSectionClient` strictly enforces this pattern by delegating orchestration exclusively to `useHomeSectionClient` in `src/app/_hooks/use-home-section-client.ts`; attempting to call `useHomeSection` or other mismatched hook identifiers is rejected by `check:components`.
 
 ### Banned generic naming terms
 

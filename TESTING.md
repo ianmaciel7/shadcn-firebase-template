@@ -7,8 +7,8 @@ Run the checks relevant to a change before opening a pull request. See
 
 | Command | Use it for |
 | --- | --- |
-| `pnpm verify:fast` | Code changes: Biome CI, typecheck, unit tests, route-entrypoint guard, and owned-component naming/boundary guard. Browser suites run separately. |
-| `pnpm verify:full` | Before a pull request: `verify:static` (adds coverage thresholds, architecture, unused code, duplication, ast-grep structural checks, route/component guards, spelling, Markdown, complexity, React diagnostics) plus `verify:build` (browser tests, production build with size budgets, Ladle build). |
+| `pnpm verify:fast` | Code changes: Biome CI, typecheck, unit tests, route-entrypoint guard, owned-component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Browser suites run separately. |
+| `pnpm verify:full` | Before a pull request: `verify:static` (adds coverage thresholds, architecture, unused code, duplication, ast-grep structural checks, route/component/responsiveness guards, spelling, Markdown, complexity, React diagnostics) plus `verify:build` (browser tests, production build with size budgets, Ladle build). |
 | `pnpm verify:e2e` | Changes that affect pages or visual output: functional, accessibility, and visual Playwright specs. |
 | `pnpm verify:security` | Dependency or configuration changes: Semgrep rule tests and scan, Gitleaks, workflow lint, and `pnpm audit`. Needs the host tools in [TOOLING.md](TOOLING.md#host-prerequisites). |
 
@@ -30,9 +30,9 @@ browser, including its loading, error, and localized states where applicable.
 | --- | --- | --- | --- | --- |
 | Unit and hook | `src/**/*.test.ts(x)` next to the source | Vitest `unit` project, `jsdom` | `pnpm test` | Functions, utilities, hooks, and business logic. |
 | Property-based | Inside unit tests, with `fast-check` | Vitest `unit` | `pnpm test` | Pure logic with a large input space, such as `isLocale`. |
-| Browser component | `src/**/*.browser.test.tsx` | Vitest `browser` project, Chromium | `pnpm test:browser` | Behavior that needs a real browser: viewport and media queries, focus, real events. |
-| End-to-end | `tests/*.spec.ts` | Playwright | `pnpm test:e2e` | User journeys against a production build. |
-| Accessibility | `tests/a11y.spec.ts`, titled `@a11y` | Playwright and axe-core | `pnpm test:a11y` | Automated WCAG 2.0, 2.1, and 2.2 A/AA scans (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) in light and dark mode. |
+| Browser component | `src/**/*.browser.test.tsx` | Vitest `browser` project, Chromium | `pnpm test:browser` | Behavior that needs a real browser: responsive breakpoints, container queries (`@container`), focus, real events. |
+| End-to-end / Responsiveness | `tests/*.spec.ts`, `tests/responsive.spec.ts` | Playwright | `pnpm test:e2e` | User journeys and responsive layout against a production build. `tests/responsive.spec.ts` covers multi-viewport matrix (320px, 390px, 768px, 1280px), horizontal overflow prevention (`scrollWidth <= clientWidth`), and WCAG 2.2 SC 2.5.8 touch target compliance. |
+| Accessibility | `tests/a11y.spec.ts`, titled `@a11y` | Playwright and axe-core | `pnpm test:a11y` | Automated WCAG 2.0, 2.1, and 2.2 A/AA scans (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) across desktop (`1280x800`) and mobile (`390x844`) viewports in light and dark mode. |
 | Visual regression | `tests/visual.spec.ts`, titled `@visual` | Playwright screenshots (CI only) | `pnpm test:visual` | Layout and theme changes in rendered pages. |
 | Mutation | `stryker.config.json` | Stryker | `pnpm test:mutation` | Command-runner mutation testing. Manual CI run until a hosted-run success is confirmed; see [TOOLING.md](TOOLING.md#known-limitations). |
 
@@ -85,6 +85,70 @@ exists (ADR 0006).
 At minimum, new tests should be deterministic, independent of external
 services, and safe to run in CI. Mock network and clock dependencies where
 needed. Do not store production credentials or personal data in test fixtures.
+
+## Responsiveness testing and 2026 best practices
+
+The repository enforces modern responsive web design standards and WCAG
+accessibility requirements across three layers: static AST enforcement,
+Vitest Browser Mode component tests, and Playwright end-to-end specifications.
+
+### 1. Static responsiveness guard (`pnpm check:responsiveness`)
+
+`scripts/check-responsiveness.mjs` runs in `pnpm verify:fast` and `pnpm verify:static`
+to catch responsive anti-patterns and accessibility regressions before runtime:
+
+- **Viewport scalability (WCAG 1.4.4 Resize Text)**: The root layout (`src/app/layout.tsx`)
+  must export a `viewport` configuration (or `generateViewport`) declaring
+  `width: 'device-width'` and `initialScale: 1`. Disabling zoom via `userScalable: false`,
+  `maximumScale: 1`, or string `user-scalable=no` is strictly prohibited.
+- **Rigid pixel width prevention (WCAG 1.4.10 Reflow)**: Flags fixed pixel widths
+  greater than 320px (`w-[...px]`, `min-w-[...px]`, or inline `style={{ width: ... }}`)
+  when used without responsive breakpoint prefixes (`sm:`, `md:`, `lg:`, `@*`) or fluid
+  wrappers (`max-w-full`, `max-w-screen`, `max-w-[100%]`).
+- **Touch target minimums (WCAG 2.2 SC 2.5.8 Target Size)**: Flags interactive
+  elements (`<button>`, `<a>`, `<Link>`, or elements with `role="button"` / `onClick`)
+  with dimensions below 24x24px that lack hit-area padding (`p-2`, `p-[6px]`), explicit
+  minimum constraints (`min-h-6 min-w-6`), or pseudo-element expanders (`after:-inset-2`).
+
+### 2. Browser component testing (colocated `*.browser.test.tsx`)
+
+Vitest Browser Mode executes tests in real headless Chromium via Playwright,
+colocated alongside their respective UI components:
+
+- **Tailwind CSS v4 Container Queries (`@container`)**: Tests components utilizing
+  `@container`, `@xs:`, `@sm:`, and `@md:` variants (such as `card.browser.test.tsx`
+  for `@container/card-header` and responsive metric grids) in a real layout engine that
+  computes CSS container contexts accurately, which `jsdom` cannot replicate.
+- **Breakpoint reflow**: Validates that components adapt smoothly when viewport
+  dimensions shift between mobile (390px), tablet (768px), and desktop (1280px)
+  (such as `button.browser.test.tsx` and `use-mobile.browser.test.tsx`).
+- **Interactive touch targets**: Validates bounding box dimensions (`getBoundingClientRect()`)
+  for interactive buttons and actions in rendered DOM trees (e.g. `button.browser.test.tsx`).
+
+### 3. End-to-end responsiveness and reflow suite (`tests/responsive.spec.ts`)
+
+Playwright verifies production builds across a representative viewport matrix:
+
+| Viewport name | Dimensions | Focus |
+| --- | --- | --- |
+| `reflow-320` | 320x568 | WCAG 1.4.10 Reflow standard at 320 CSS pixels. Verifies horizontal overflow prevention (`scrollWidth <= clientWidth + 1`) and zero two-dimensional scrollbars. |
+| `mobile-390` | 390x844 | Modern mobile device layout, vertical button stacking, touch target sizing, and fluid hero sections. |
+| `tablet-768` | 768x1024 | Intermediate tablet viewport reflow and layout transitions. |
+| `desktop-1280` | 1280x800 | Full desktop multi-column layouts, side-by-side action alignment, and wide content containers. |
+
+- **Zero horizontal scrollbar**: Each route (`/`, `/sign-in`, `/register`) is verified
+  to ensure content fits within the client viewport without horizontal overflow.
+- **Touch target compliance**: Iterates over all interactive controls (`button`, `a`,
+  `[role='button']`, `[role='link']`) to verify computed bounding boxes meet or exceed
+  24x24px (with subpixel tolerance `>= 23.5px`).
+- **Component reflow behavior**: Proves that interactive layouts (such as hero action
+  links) stack vertically on small viewports and align horizontally on desktop viewports.
+
+### 4. Accessibility across viewports (`tests/a11y.spec.ts`)
+
+Axe scans run across both desktop (`1280x800`) and mobile (`390x844`) viewports in
+light and dark color schemes, ensuring responsive layout adaptations and DOM
+reordering do not introduce contrast, landmark, or accessibility violations.
 
 ## Visual regression workflow
 
@@ -144,7 +208,7 @@ Cover the variants and states a reviewer needs to see, not every prop.
 
 | Job | Runs | Local equivalent |
 | --- | --- | --- |
-| `static` | Biome, typecheck, unit tests with coverage thresholds, architecture, Knip, jscpd, ast-grep, route/component guards, CSpell, markdownlint, Fallow, React Doctor | `pnpm verify:static` |
+| `static` | Biome, typecheck, unit tests with coverage thresholds, architecture, Knip, jscpd, ast-grep, route/component/responsiveness guards, CSpell, markdownlint, Fallow, React Doctor | `pnpm verify:static` |
 | `build` | Vitest Browser Mode, production build with size budgets, Ladle production build | `pnpm verify:build` |
 | `e2e` | Playwright functional, accessibility, and visual specs in the pinned Playwright container | `pnpm verify:e2e` |
 | `security` | Semgrep rule tests and scan (`--error`), Gitleaks, actionlint, zizmor, `pnpm audit`, pre-commit | `pnpm verify:security` |
@@ -290,6 +354,30 @@ not duplicated. Keep valid counterexamples alongside rejected cases.
 The [coverage contract](CODING_STANDARDS.md#composition-guard-coverage) records
 what the guard can prove. It does not resolve arbitrary component anatomy or
 transitive RSC imports; builds and behavior tests still validate those paths.
+
+## Responsiveness guard regression tests
+
+`pnpm check:responsiveness` executes `scripts/check-responsiveness.test.mjs` before scanning
+application files. The suite tests both valid implementations and rejected anti-patterns:
+
+- **Path classifiers**: Confirms discrimination between owned application components, App
+  Router entry points, and third-party vendor trees (`src/components/firebase`,
+  `src/components/ai-elements`, and preinstalled `src/components/ui/*.tsx`).
+- **Root layout viewport metadata (WCAG 1.4.4)**: Confirms valid static `viewport` exports
+  and dynamic `generateViewport` functions with `width: 'device-width'` and `initialScale: 1`.
+  Rejects missing viewport exports on root layout, invalid dimensions, and zoom restrictions
+  (`userScalable: false`, `maximumScale: 1`, or meta string `user-scalable=no`).
+- **Rigid pixel widths (WCAG 1.4.10)**: Verifies rejection of fixed pixel widths greater than
+  320px in JSX classes, standalone string constants, and inline styles (`style={{ width: ... }}`)
+  when lacking responsive breakpoint prefixes (`sm:`, `md:`, `lg:`, `@*`) or fluid wrappers
+  (`max-w-full`). Allows widths `<= 320px` and fluid constraints.
+- **Touch target minimums (WCAG 2.2 SC 2.5.8)**: Verifies rejection of interactive elements
+  (`<button>`, `<a>`, `<Link>`, or `role="button"`) with dimensions below 24x24px lacking
+  hit-area padding, minimum sizing, or pseudo-element touch expanders, while allowing child icons
+  and non-interactive elements.
+
+The [responsiveness standards](CODING_STANDARDS.md#responsive-design-and-layout-contracts) record
+the enforced contracts and modern responsive practices.
 
 ## Next.js documentation and framework verification
 

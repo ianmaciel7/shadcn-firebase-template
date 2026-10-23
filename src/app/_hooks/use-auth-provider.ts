@@ -1,9 +1,9 @@
 import { enUs, esEs, ptBr } from "@firebase-oss/ui-translations";
-import { onAuthStateChanged } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { getSafeReturnUrl } from "@/lib/auth/return-url";
+import { subscribeToSession } from "@/lib/auth/session";
 import { getFirebaseUI } from "@/lib/firebase/client";
 
 export function useAuthProvider() {
@@ -24,7 +24,7 @@ export function useAuthProvider() {
       return;
     }
     setUI(store);
-    return onAuthStateChanged(store.get().auth, (user) => {
+    return subscribeToSession((user) => {
       if (user) {
         setReady(false);
         const destination = getSafeReturnUrl(

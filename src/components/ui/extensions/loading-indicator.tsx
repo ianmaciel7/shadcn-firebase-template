@@ -7,12 +7,14 @@ type LoadingIndicatorProps = ComponentProps<"span"> & {
 };
 
 function LoadingIndicator({
-  label = "Loading…",
+  label,
+  children,
   className,
   ...props
 }: LoadingIndicatorProps) {
   return (
     <span
+      data-slot="loading-indicator"
       {...props}
       role="status"
       aria-live="polite"
@@ -27,7 +29,7 @@ function LoadingIndicator({
         aria-label={undefined}
         className="shrink-0 motion-reduce:animate-none"
       />
-      <span>{label}</span>
+      {(children ?? label) ? <span>{children ?? label}</span> : null}
     </span>
   );
 }

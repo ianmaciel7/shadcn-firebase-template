@@ -4,7 +4,8 @@ import {
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { getFirebaseStorage, getFirebaseUI } from "@/lib/firebase/client";
+import { getActiveUser } from "@/lib/auth/session";
+import { getFirebaseStorage } from "@/lib/firebase/client";
 import { writeUserPreferences } from "@/lib/firebase/firestore/user-preferences";
 import type { Locale } from "@/lib/locale";
 import type { ThemePreference } from "@/lib/theme";
@@ -25,14 +26,6 @@ export type SavedProfile = {
   emailChanged: boolean;
 };
 
-function getCurrentUser(expectedUser: User) {
-  const currentUser = getFirebaseUI().get().auth.currentUser;
-  if (!currentUser || currentUser.uid !== expectedUser.uid) {
-    throw new Error("Authentication session unavailable");
-  }
-  return currentUser;
-}
-
 async function uploadAvatar(user: User, avatarFile: File | null) {
   if (!avatarFile) return user.photoURL;
 
@@ -52,7 +45,7 @@ export async function saveProfile({
   values: ProfileValues;
   avatarFile: File | null;
 }): Promise<SavedProfile> {
-  const authUser = getCurrentUser(user);
+  const authUser = getActiveUser(user);
   const displayName = values.displayName.trim();
   const email = values.email.trim();
   const emailChanged = email !== (authUser.email ?? "");

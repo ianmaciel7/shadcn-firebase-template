@@ -1,6 +1,6 @@
 "use client";
 
-import { Loading } from "@/components/ui/extensions/loading";
+import { Spinner } from "@/components/ui/spinner";
 
 import type { ForgotPasswordAuthFormSchema } from "@firebase-oss/ui-core";
 import {
@@ -72,10 +72,9 @@ export function ForgotPasswordAuthForm(props: ForgotPasswordAuthFormProps) {
         <Button
           type="submit"
           disabled={ui.state !== "idle"}
-          aria-busy={ui.state !== "idle"}
         >
           {ui.state !== "idle" ? (
-            <Loading>{getTranslation(ui, "labels", "resetPassword")}</Loading>
+            <><Spinner data-icon="inline-start" aria-hidden="true" />{getTranslation(ui, "labels", "resetPassword")}</>
           ) : (
             getTranslation(ui, "labels", "resetPassword")
           )}
