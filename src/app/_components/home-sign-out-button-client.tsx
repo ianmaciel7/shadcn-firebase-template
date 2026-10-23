@@ -2,7 +2,7 @@
 
 import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useHomeSignOutButton } from "../_hooks/use-home-sign-out-button";
 
@@ -29,11 +29,8 @@ function HomeSignOutButton({ className, ...props }: HomeSignOutButtonProps) {
             "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
         })}
       >
-        {isPending ? (
-          <LoadingIndicator label={t("signingOut")} className="text-inherit" />
-        ) : (
-          auth("signOut")
-        )}
+        {isPending && <Spinner data-icon="inline-start" aria-hidden="true" />}
+        {isPending ? t("signingOut") : auth("signOut")}
       </button>
       {isError && (
         <p
