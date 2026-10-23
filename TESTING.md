@@ -34,7 +34,7 @@ browser, including its loading, error, and localized states where applicable.
 | End-to-end / Responsiveness | `tests/*.spec.ts`, `tests/responsive.spec.ts` | Playwright | `pnpm test:e2e` | User journeys and responsive layout against a production build. `tests/responsive.spec.ts` covers multi-viewport matrix (320px, 390px, 768px, 1280px), horizontal overflow prevention (`scrollWidth <= clientWidth`), and WCAG 2.2 SC 2.5.8 touch target compliance. |
 | Accessibility | `tests/a11y.spec.ts`, titled `@a11y` | Playwright and axe-core | `pnpm test:a11y` | Automated WCAG 2.0, 2.1, and 2.2 A/AA scans (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) across desktop (`1280x800`) and mobile (`390x844`) viewports in light and dark mode. |
 | Visual regression | `tests/visual.spec.ts`, titled `@visual` | Playwright screenshots (CI only) | `pnpm test:visual` | Layout and theme changes in rendered pages. |
-| Firebase Auth and profile | `tests/firebase-auth.spec.ts` | Playwright with Firebase Auth and Firestore emulators | CI `auth-emulator` job | Sign-in, registration, recovery, profile, and authenticated axe checks. Not included in the ordinary `verify:e2e` suite. |
+| Firebase Auth and profile | `tests/firebase-auth.spec.ts` | Playwright with Firebase Auth, Firestore and Functions emulators | CI `auth-emulator` job | Sign-in, registration, recovery, profile, and authenticated axe checks, including the `recordUsage` callable gate. Not included in ordinary `verify:e2e`. |
 | Mutation | `stryker.config.json` | Stryker | `pnpm test:mutation` | Command-runner mutation testing. Manual CI run until a hosted-run success is confirmed; see [TOOLING.md](TOOLING.md#known-limitations). |
 
 Choose the lightest layer that can fail for the right reason. Keep a behavior
@@ -250,8 +250,10 @@ to your app rather than disabling E2E or automatically accepting new baselines.
 
 ### Firebase emulator regression coverage
 
-The standalone `auth-emulator` job starts Auth and Firestore in an isolated
-`demo-test` project. Browser Firebase SDK endpoints are explicit public
+The standalone `auth-emulator` job starts Auth, Firestore, and Functions in
+an isolated `demo-test` project. It installs the Functions dependencies
+from `functions/package-lock.json` with `npm ci --prefix functions` (the
+separate, upstream Firebase Functions package). Browser Firebase SDK endpoints are explicit public
 development configuration, not server secrets. The tests must establish a
 ready authenticated profile before inspecting form fields, theme, locale, or
 accessibility. A successful redirect or URL match alone does not prove the
@@ -263,8 +265,12 @@ labels rather than guessing from old screenshots or component names.
 passed the static, build, security, and ordinary E2E jobs, but its
 `auth-emulator` job failed three profile cases: profile email rendering,
 language saving, and authenticated profile axe setup. The Google popup test
-was also flaky. Keep this required job enabled, inspect its uploaded
-`auth-emulator-playwright-report` artifact, and fix the root causes.
+was also flaky. Investigation found that the CI started only Auth and
+Firestore while `ProtectedGateClient` waits for the `recordUsage`
+callable before rendering `/profile`. CI now starts the Functions Emulator
+and installs its dependencies as well. Confirm the updated job passes
+before closing the incident; keep the required check and inspect uploaded
+`auth-emulator-playwright-report` artifacts if failures remain.
 Do not claim a green PR or label retries and skips as passing tests.
 
 ### Automated accessibility limits

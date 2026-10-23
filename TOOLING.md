@@ -24,7 +24,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Browser component testing | Vitest Browser Mode + `vitest-browser-react` | Chromium through Playwright | Runs `*.browser.test.tsx` files in a real browser (`browser` project). | `vitest.config.mts`, `package.json` |
 | End-to-end testing | Playwright | `^1.64.1` | Runs `tests/*.spec.ts` against a production build. | `playwright.config.ts`, `tests/` |
 | Accessibility testing | `@axe-core/playwright` | 4.14.0 | Scans pages for WCAG 2.x A/AA violations in Playwright (`@a11y`). | `tests/a11y.spec.ts` |
-| Firebase Emulator E2E (CI) | Firebase CLI 15.34.1 (pinned via pnpm dlx) | CI on demo-test only | Exercises registration, sign-in, recovery, profile, popup/redirect, and axe on authenticated forms; requires no production Firebase secrets. | `.github/workflows/ci.yml`, `tests/firebase-auth.spec.ts`, `firebase.json` |
+| Firebase Emulator E2E (CI) | Firebase CLI 15.34.1 (pinned via pnpm dlx) | CI on demo-test only | Starts Auth, Firestore and Functions emulators; the profile gate and saves require the `recordUsage` callable. Installs the separate `functions/package-lock.json` package with npm ci and uses no production Firebase secrets. | `.github/workflows/ci.yml`, `tests/firebase-auth.spec.ts`, `firebase.json` |
 | Visual regression | Playwright screenshots | Linux baselines generated and compared in CI | Compares full-page screenshots against baselines (`@visual`). | `tests/visual.spec.ts`, `tests/visual.spec.ts-snapshots/` |
 | Mutation testing | Stryker with the `command` runner | 10.0.0 (see [Known limitations](#known-limitations)) | On-demand mutation analysis of selected logic; runs the unit tests once per mutant. | `stryker.config.json`, `vitest.mutation.config.mts` |
 | Unused code | Knip | 6.41.0 | Finds unused files, exports, and dependencies. | `knip.jsonc` |
@@ -379,12 +379,16 @@ Recheck current documentation before adding a replacement rule.
   does not cover `ui/extensions/`; the experimental `.biome/` folder is
   excluded from health analysis but tested separately.
 - **React Doctor reports are advisory.** The currently observed React Compiler, repeated JSX, and public Firebase API key naming findings require code-level triage. They are not evidence that CI has enforced or fixed them.
-- **Firebase Emulator E2E currently fails.** On 2026-10-23 run
+- **Firebase Emulator E2E needs confirmation after dependency fix.** On 2026-10-23 run
   [39970721905](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/39970721905),
   the `auth-emulator` job failed profile email, language, and accessible
   profile cases; the popup case was flaky. The other five jobs passed.
-  This is a known failing required check, not an acceptable exemption.
-  Inspect the uploaded Playwright trace and artifacts before revising tests.
+  Root-cause investigation found that the workflow did not launch the
+  Functions Emulator, although `ProtectedGateClient` and profile saving
+  require its `recordUsage` callable. The workflow now starts it and
+  installs the Functions package dependencies. This is not a validated
+  success until the new run passes; inspect the Playwright artifacts
+  if failures persist.
 - **Visual tests run only in CI.** Baselines are Linux screenshots, generated and
   compared inside the pinned Playwright container (the `container` image in
   `ci.yml` and `visual-baselines.yml`), to reduce rendering differences between baseline generation and comparison.
