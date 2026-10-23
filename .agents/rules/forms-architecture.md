@@ -36,7 +36,9 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
 - `ProfileFormClient` delegates its React Hook Form lifecycle to
   `useProfileFormClient`, which calls `useProfileSubmit` for persistence.
   Read `formState.isSubmitting` instead of keeping a second saving flag;
-  `ProfileValues` and `ProfileFormValues` live in `src/lib/profile.ts`.
+  `ProfileValues` and `ProfileFormValues` live in
+  `src/app/(protected)/profile/_lib/definitions.ts`; persistence lives in the sibling
+  `data.ts` module.
   `saveProfile` accepts typed `ProfileDependencies` with default Firebase
   adapters to test persistence without production services.
 - `ProfileAvatarFieldClient` uses `useProfileAvatarFieldClient` for field state and avatar display data, with `useProfileAvatar` handling validation and preview. Only the selected `File` lives in React Hook Form so submission can upload it; preview URLs are released on replacement, successful reset and unmount. Failed saves retain the selection for retry.

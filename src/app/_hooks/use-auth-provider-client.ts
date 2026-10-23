@@ -2,9 +2,9 @@ import { enUs, esEs, ptBr } from "@firebase-oss/ui-translations";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
-import { getSafeReturnUrl } from "@/lib/auth/return-url";
-import { subscribeToSession } from "@/lib/auth/session";
 import { getFirebaseUI } from "@/lib/firebase/client";
+import { getSafeReturnUrl } from "@/lib/return-url";
+import { subscribeToSession } from "@/lib/session";
 
 export function useAuthProviderClient() {
   const locale = useLocale();

@@ -2,14 +2,14 @@ import type { User } from "firebase/auth";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { localeCookie } from "@/i18n/routing";
-import {
-  type ProfileFormValues,
-  type ProfileValues,
-  type SavedProfile,
-  saveProfile,
-} from "@/lib/profile";
 import { toast } from "@/lib/toast";
 import { withUsageGuard } from "@/lib/usage/guard";
+import { saveProfile } from "../_lib/data";
+import type {
+  ProfileFormValues,
+  ProfileValues,
+  SavedProfile,
+} from "../_lib/definitions";
 
 type UseProfileSubmitOptions = {
   activeLocale: string;

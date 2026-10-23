@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { useFormContext, useWatch } from "react-hook-form";
-import type { ProfileFormValues } from "@/lib/profile";
+import type { ProfileFormValues } from "../_lib/definitions";
 import { useProfileAvatar } from "./use-profile-avatar";
 import { useProfileSessionContext } from "./use-profile-session-context";
 

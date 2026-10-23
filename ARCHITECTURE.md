@@ -147,16 +147,21 @@ It does not ban all third-party React dependencies in `src/lib`.
 
 Firebase Authentication provides browser authentication on public auth routes and
 client-guarded protected routes (`(protected)/profile`); see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md).
+The authentication modules intentionally remain flat under `src/lib`:
+`auth.ts`, `session.ts`, and `return-url.ts`; consumers should import them as
+`@/lib/auth`, `@/lib/session`, and `@/lib/return-url`.
 Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`; Firestore
 operations live in descriptive modules under `src/lib/firebase/firestore/`, such
 as `user-preferences.ts`. The profile route's `useProfileSubmit` hook coordinates the save
-workflow; `saveProfile` in `src/lib/profile.ts` injects typed Firebase
+workflow; `saveProfile` in `src/app/(protected)/profile/_lib/data.ts` injects typed Firebase
 persistence adapters for independent tests.
 `useProfileFormClient` owns the React Hook Form lifecycle and uses the
 native submitting state. `useProfileSectionClient` composes session,
 status, and translation hooks; `ProfileSectionClient` renders a
 discriminated `status` and composes Card and Form parts with one
-`FieldGroup`. Shared value types also live in `src/lib/profile.ts`. The canonical profile
+`FieldGroup`. Profile value types live in
+`src/app/(protected)/profile/_lib/definitions.ts`, alongside the route-private profile
+workflow. The canonical profile
 responsibilities live in
 [the form rule](.agents/rules/forms-architecture.md). Profile preferences use
 Firestore at `users/{uid}` with owner and field/value validation rules. Avatar
@@ -265,7 +270,7 @@ and stable/experimental boundaries.
 
 Place shared application components in `src/components/ui/extensions/` and
 route-private components in `src/app/**/_components/`. For example,
-`LoadingIndicator` belongs alongside `Loading` in `ui/extensions` because both
+`Loading` belongs in `ui/extensions` because both
 route components and Firebase UI consume it. Do not create parallel application
 component folders such as `src/components/loading/`.
 

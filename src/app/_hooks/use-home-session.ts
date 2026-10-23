@@ -2,7 +2,7 @@
 
 import type { User } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { subscribeToSession } from "@/lib/auth/session";
+import { subscribeToSession } from "@/lib/session";
 
 type HomeSession =
   | { status: "loading" }

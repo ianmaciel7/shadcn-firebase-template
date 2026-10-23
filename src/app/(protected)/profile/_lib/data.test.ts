@@ -1,10 +1,7 @@
 import type { User } from "firebase/auth";
 import { describe, expect, it, vi } from "vitest";
-import {
-  type ProfileDependencies,
-  type ProfileValues,
-  saveProfile,
-} from "./profile";
+import { type ProfileDependencies, saveProfile } from "./data";
+import type { ProfileValues } from "./definitions";
 
 const initial: ProfileValues = {
   displayName: "Before",

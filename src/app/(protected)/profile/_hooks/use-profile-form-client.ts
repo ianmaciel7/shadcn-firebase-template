@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import type { ProfileFormValues } from "@/lib/profile";
+import type { ProfileFormValues } from "../_lib/definitions";
 import { useProfileSessionContext } from "./use-profile-session-context";
 import { useProfileSubmit } from "./use-profile-submit";
 

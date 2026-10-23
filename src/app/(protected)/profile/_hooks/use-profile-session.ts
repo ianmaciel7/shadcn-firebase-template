@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { defaultLocale, isLocale } from "@/i18n/routing";
 import { getFirebaseUI } from "@/lib/firebase/client";
 import { readUserPreferences } from "@/lib/firebase/firestore/user-preferences";
-import type { ProfileValues } from "@/lib/profile";
+import type { ProfileValues } from "../_lib/definitions";
 import { useProfileAuth } from "./use-profile-auth";
 
 type PreferencesState =

@@ -17,6 +17,11 @@ When structuring data modeling, access control, and persistence operations, orga
 
 ## Architectural Guidelines
 
+Authentication helpers remain flat modules under `src/lib`: use `auth.ts`,
+`session.ts`, and `return-url.ts`. Do not create `src/lib/auth/` for these
+modules; `auth.ts` owns authentication operations, `session.ts` owns the
+active Firebase session, and `return-url.ts` owns safe post-auth navigation.
+
 1. **Separation of Concerns**:
    - `dal.ts` acts as the security and authorization boundary. Direct client or route calls must pass through the DAL rather than calling `data.ts` directly when sensitive or protected access is involved.
    - `data.ts` focuses strictly on query execution or storage mechanisms without mixing in routing, UI logic, or presentation-level concerns.
@@ -31,5 +36,7 @@ When structuring data modeling, access control, and persistence operations, orga
 
 ## Dependency injection and auth subscriptions
 
-- Inject service dependencies at operation boundaries, as in `src/lib/profile.ts`, so logic can be tested independently of Firebase. Do not pass service containers through presentational fields.
+- Inject service dependencies at operation boundaries, as in
+  `src/app/(protected)/profile/_lib/data.ts`, so logic can be tested independently of
+  Firebase. Do not pass service containers through presentational fields.
 - A Firebase Auth Effect subscription does not suspend automatically. Retain a tested loading branch instead of inventing a Promise wrapper.

@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { getAuthNavigationUrl } from "@/lib/auth/return-url";
+import { getAuthNavigationUrl } from "@/lib/return-url";
 
 export function useAuthNavigation() {
   const router = useRouter();

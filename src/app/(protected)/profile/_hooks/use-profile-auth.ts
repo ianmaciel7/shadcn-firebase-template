@@ -2,7 +2,7 @@ import type { User } from "firebase/auth";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { subscribeToSession } from "@/lib/auth/session";
+import { subscribeToSession } from "@/lib/session";
 
 type AuthState =
   | { status: "loading"; user: null; error: null }

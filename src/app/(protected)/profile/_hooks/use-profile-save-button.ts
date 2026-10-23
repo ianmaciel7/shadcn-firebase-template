@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
-import type { ProfileFormValues } from "@/lib/profile";
+import type { ProfileFormValues } from "../_lib/definitions";
 
 export function useProfileSaveButton() {
   const t = useTranslations("Auth");

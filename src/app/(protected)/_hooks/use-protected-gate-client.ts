@@ -1,7 +1,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { subscribeToSession } from "@/lib/auth/session";
+import { subscribeToSession } from "@/lib/session";
 import { recordUsage } from "@/lib/usage/guard";
 
 export function useProtectedGateClient() {
