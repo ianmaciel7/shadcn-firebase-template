@@ -1,4 +1,4 @@
-import { expect, type Locator, test } from "@playwright/test";
+import { expect, type Locator, type Page, test } from "@playwright/test";
 
 const viewports = [
   { name: "reflow-320", width: 320, height: 568 },
@@ -16,6 +16,19 @@ async function assertTouchTargetSize(target: Locator) {
 
   expect(box.width).toBeGreaterThanOrEqual(23.5);
   expect(box.height).toBeGreaterThanOrEqual(23.5);
+}
+
+async function waitForInteractiveUi(page: Page, route: string) {
+  if (route === "/") {
+    await expect(page.locator('a[href="/register"]')).toBeVisible();
+    return;
+  }
+
+  // The CI runner may intentionally lack Firebase configuration.
+  await expect(page.locator("main input, main [role='alert']").first()).toBeVisible();
+  if (await page.locator("main [role='alert']").isVisible()) {
+    test.skip(true, "Auth controls require Firebase configuration");
+  }
 }
 
 test.describe("responsiveness and reflow suite", () => {
@@ -46,18 +59,7 @@ test.describe("responsiveness and reflow suite", () => {
           await page.goto(route);
           await expect(page.locator("main")).toBeVisible();
 
-          // The auth forms need Firebase configuration; CI also exercises the
-          // explicit configuration-error fallback without those variables.
-          if (route !== "/") {
-            await expect(
-              page.locator("main input, main [role='alert']").first(),
-            ).toBeVisible();
-            if (await page.locator("main [role='alert']").isVisible()) {
-              test.skip(true, "Auth controls require Firebase configuration");
-            }
-          } else {
-            await expect(page.locator('a[href="/register"]')).toBeVisible();
-          }
+          await waitForInteractiveUi(page, route);
 
           const targets = await page
             .locator("button, a, [role='button'], [role='link']")
