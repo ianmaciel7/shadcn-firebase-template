@@ -110,11 +110,7 @@ const profileCardParts = [
   "ProfileCardFooter",
 ];
 
-const profileFormParts = [
-  "ProfileFormClient",
-  "ProfileFormClientContent",
-  "ProfileFormClientFooter",
-];
+const profileFormParts = ["ProfileFormClient"];
 
 function tokenizeKebab(stem) {
   return stem.toLowerCase().split("-").filter(Boolean);
@@ -663,11 +659,7 @@ function checkProfileCardSafety(source, elements, report) {
   if (cards.length !== 1 || cards[0].ancestors.length > 0) {
     report(source, "ProfileCard must render one native Card as its root.");
   }
-  if (
-    profileElements(elements, "ProfileFormClient").length ||
-    profileElements(elements, "ProfileFormClientContent").length ||
-    profileElements(elements, "ProfileFormClientFooter").length
-  ) {
+  if (profileElements(elements, "ProfileFormClient").length) {
     report(
       source,
       "ProfileCard must accept children; compose profile UI in ProfileSectionClient.",
@@ -695,12 +687,7 @@ function checkProfileSectionAction(source, elements, action, report) {
     source,
     elements,
     action,
-    [
-      "ProfileFormClientFooter",
-      "ProfileCardFooter",
-      "ProfileFormClient",
-      "ProfileCard",
-    ],
+    ["ProfileCardFooter", "ProfileFormClient", "ProfileCard"],
     report,
   );
   for (const button of buttons) {
@@ -747,7 +734,7 @@ function checkProfileSectionSafety(source, elements, report) {
   requireProfilePlacement(
     source,
     elements,
-    "ProfileFormClientContent",
+    "ProfileDisplayNameField",
     ["ProfileCardContent", "ProfileFormClient", "ProfileCard"],
     report,
   );
@@ -756,13 +743,6 @@ function checkProfileSectionSafety(source, elements, report) {
     elements,
     "ProfileCardFooter",
     ["ProfileFormClient", "ProfileCard"],
-    report,
-  );
-  requireProfilePlacement(
-    source,
-    elements,
-    "ProfileFormClientFooter",
-    ["ProfileCardFooter", "ProfileFormClient", "ProfileCard"],
     report,
   );
   for (const action of ["ProfileSaveButton", "ProfileSignOutButton"]) {
@@ -912,11 +892,14 @@ function checkProfileFormSafety(source, stem, report) {
   if (stem === "profile-form-client" || stem === "profile-form") {
     const namePrefix =
       stem === "profile-form-client" ? "ProfileFormClient" : "ProfileForm";
-    for (const [name, partCheck] of [
+    const checks = [
       [namePrefix, checkProfileProviderSafety],
       [`${namePrefix}Content`, checkProfileContentSafety],
       [`${namePrefix}Footer`, checkProfileFooterSafety],
-    ]) {
+    ];
+    for (const [name, partCheck] of stem === "profile-form-client"
+      ? checks.slice(0, 1)
+      : checks) {
       const declaration = source.statements.find(
         (statement) =>
           ts.isFunctionDeclaration(statement) && statement.name?.text === name,
