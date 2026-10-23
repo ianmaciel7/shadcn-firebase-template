@@ -68,6 +68,11 @@ Owned component files outside the legacy allowlist enforce exact 1:1 term parity
   - Hook coordination: `useHomeSectionClient` in `src/app/_hooks/use-home-section-client.ts` (`useHomeSection` is rejected)
 - **Legacy allowlist (`LEGACY_SEMANTIC_STEM_ALLOWLIST`)**: Existing legacy integration components (such as `profile-form-client.tsx` exporting `ProfileForm`) maintain their semantic unsuffixed exports for backward compatibility. All new and modernized components enforce exact 1:1 term parity.
 
+Simple presentation hooks such as `useId`, `useTranslations`, and React Hook
+Form's `useFormContext` and `useWatch` may be called directly in a field component.
+Do not create component-specific wrapper hooks solely to group these calls.
+Keep custom hooks for reusable stateful behavior, effects, and data coordination.
+
 ## CI enforcement
 
 `pnpm check:components` runs self-tests and validates all owned

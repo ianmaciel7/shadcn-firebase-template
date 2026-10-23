@@ -1035,10 +1035,15 @@ function checkComponentHook(component, source, report) {
     "useTranslations",
     "useFormatter",
     "useId",
+    "useFormContext",
+    "useWatch",
   ]);
-  if (hooks.length === 1 && presentationHooks.has(hooks[0].name)) return;
+  const orchestrationHooks = hooks.filter(
+    (hook) => !presentationHooks.has(hook.name),
+  );
+  if (!orchestrationHooks.length) return;
   const expected = `use${component.name.text}`;
-  if (hooks.length !== 1 || hooks[0].name !== expected) {
+  if (orchestrationHooks.length !== 1 || orchestrationHooks[0].name !== expected) {
     report(
       component,
       `${component.name.text} must delegate hook coordination to ${expected} in a separate hook module; call only that component hook.`,
@@ -1047,8 +1052,8 @@ function checkComponentHook(component, source, report) {
   }
   if (
     !names.has(
-      ts.isIdentifier(hooks[0].node.expression)
-        ? hooks[0].node.expression.text
+      ts.isIdentifier(orchestrationHooks[0].node.expression)
+        ? orchestrationHooks[0].node.expression.text
         : "",
     )
   ) {

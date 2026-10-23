@@ -136,6 +136,35 @@ describe("owned hook filename/export parity", () => {
   });
 });
 
+describe("presentation hooks in owned fields", () => {
+  it("allows native form, translation and id hooks without a redundant wrapper", () => {
+    const file = "src/app/(protected)/profile/_components/profile-email-field.tsx";
+    const source = `"use client"; 
+      import { useId } from "react";
+      import { useTranslations } from "next-intl";
+      import { useFormContext } from "react-hook-form";
+      function ProfileEmailField(props) {
+        const id = useId();
+        const t = useTranslations("Auth");
+        const { control } = useFormContext();
+        return <Field {...props} data-testid={id}>{t("emailLabel")}</Field>;
+      }
+      export { ProfileEmailField };`;
+    assert.deepEqual(
+      inspectComponent(source, file).map((finding) => finding.message),
+      [],
+    );
+  });
+
+  it("continues rejecting mismatched application orchestration hooks", () => {
+    expectInvalid(
+      '"use client"; import { useWrong } from "../_hooks/use-wrong"; import { useId } from "react"; function AccountCard(props) { useId(); useWrong(); return <div {...props} />; } export { AccountCard };',
+      /must delegate hook coordination to useAccountCard/,
+      "src/app/_components/account-card.tsx",
+    );
+  });
+});
+
 describe("owned component conventions", () => {
   it("rejects component aliases and re-exports even with a matching local root", () => {
     const root = "function AccountCard() { return <div />; }";
