@@ -1334,7 +1334,7 @@ function validateHookExports(source, filename, stem, expected, exports, report) 
         `Owned hook filenames must use use-<semantic-name>.ts in kebab-case (received "${basename(filename)}").`,
       );
     }
-    return findings;
+    return;
   }
   if (!exports.some((item) => item.name === expected)) {
     report(
@@ -1350,7 +1350,6 @@ function validateHookExports(source, filename, stem, expected, exports, report) 
       );
     }
   }
-
 }
 
 export function inspectHookFilename(content, filename) {
