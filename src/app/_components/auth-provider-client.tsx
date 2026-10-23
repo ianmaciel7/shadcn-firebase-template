@@ -11,7 +11,7 @@ function AuthProviderClient({ children }: AuthProviderClientProps) {
   const state = useAuthProviderClient();
   const { t } = state;
 
-  if (state.status === "error")
+  if (state.isError)
     return (
       <p
         role="alert"
@@ -20,12 +20,13 @@ function AuthProviderClient({ children }: AuthProviderClientProps) {
         {t("configurationError")}
       </p>
     );
-  if (state.status === "loading")
+  if (state.isLoading)
     return (
       <LabeledSpinner className="w-full text-sm text-muted-foreground">
         {t("loading")}
       </LabeledSpinner>
     );
+  if (!state.ui) return null;
   return <FirebaseUIProvider ui={state.ui}>{children}</FirebaseUIProvider>;
 }
 

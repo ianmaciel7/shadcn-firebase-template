@@ -42,7 +42,10 @@ export function useAuthProviderClient() {
       );
   }, [ui, locale]);
 
-  if (error) return { status: "error" as const, t };
-  if (!ui || !ready) return { status: "loading" as const, t };
-  return { status: "ready" as const, ui, t };
+  return {
+    isError: error,
+    isLoading: !error && (!ui || !ready),
+    t,
+    ui,
+  };
 }

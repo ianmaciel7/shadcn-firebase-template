@@ -112,12 +112,11 @@ describe("native React guard configuration", () => {
     expect(output).not.toContain("parse");
   });
 
-  it("allows discriminated state checks without redundant boolean flags", () => {
+  it("allows explicit UI phase flags", () => {
     const output = lint(
       directories[1],
-      'type State = { status: "loading" } | { status: "ready"; name: string }; export function Demo({ state }: { state: State }) { if (state.status === "loading") return null; return <span>{state.name}</span>; }',
+      "type State = { isLoading: boolean; name: string | null }; export function Demo({ state }: { state: State }) { if (state.isLoading) return null; return <span>{state.name}</span>; }",
     );
-    expect(output).not.toContain("Expose isError");
     expect(output).not.toContain("plugin");
     expect(output).not.toContain("parse");
   });

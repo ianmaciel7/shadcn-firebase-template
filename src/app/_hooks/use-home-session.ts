@@ -4,24 +4,26 @@ import type { User } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { subscribeToSession } from "@/lib/session";
 
-type HomeSession =
-  | { status: "loading" }
-  | { status: "signed-out" }
-  | { status: "signed-in"; user: User };
+type HomeSession = {
+  isError: boolean;
+  isLoading: boolean;
+  user: User | null;
+};
 
 function useHomeSession() {
-  const [session, setSession] = useState<HomeSession>({ status: "loading" });
+  const [session, setSession] = useState<HomeSession>({
+    isError: false,
+    isLoading: true,
+    user: null,
+  });
   useEffect(() => {
     try {
       return subscribeToSession(
-        (user) =>
-          setSession(
-            user ? { status: "signed-in", user } : { status: "signed-out" },
-          ),
-        () => setSession({ status: "signed-out" }),
+        (user) => setSession({ isError: false, isLoading: false, user }),
+        () => setSession({ isError: true, isLoading: false, user: null }),
       );
     } catch {
-      setSession({ status: "signed-out" });
+      setSession({ isError: true, isLoading: false, user: null });
     }
   }, []);
   return session;

@@ -78,9 +78,9 @@ verify valid and invalid Grit fixtures.
 `.biome/rules/nextjs/app-router-imports.test.ts` verifies the native App
 Router import policy and exclusions.
 `.biome/rules/react/native-rules.test.ts` verifies native React diagnostics,
-allowed React 19 patterns, and discriminated status branches. The earlier
-`prefer-is-error` Grit policy and its test were removed because they forced
-redundant state flags; do not restore them.
+allowed React 19 patterns, and explicit UI phase flags. The earlier
+`prefer-is-error` Grit policy remains removed; use the project's named flags
+when a component exposes loading, hidden, or error state.
 Semgrep rules are tested with `semgrep --test` (`pnpm check:security:rules`) and
 ast-grep rules with `ast-grep test`.
 

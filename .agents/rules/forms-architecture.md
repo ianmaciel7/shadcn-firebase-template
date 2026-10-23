@@ -26,10 +26,9 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
 
 ## Profile behavior ownership
 
-- `useProfileStatus` returns a discriminated `status`:
-  `loading`, `hidden`, `error` (with `message`), or `ready` (with
-  `userId`). The section renders those branches without redundant
-  `isLoading`, `isHidden`, or `isError` flags.
+- `useProfileStatus` returns `isLoading`, `isHidden`, and `isError` flags,
+  plus resolved `message` and `userId` payloads. The section renders the
+  applicable branch from these flags without completing error messages itself.
 - `useProfileController` is removed. `ProfileSectionClient` uses
   `useProfileSectionClient` to compose session and status hooks with
   translations; it does not assemble field or button props.

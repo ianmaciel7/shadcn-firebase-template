@@ -7,12 +7,34 @@ export function useProfileStatus(
   const t = useTranslations("Auth");
   const { user, error, defaultValues, authReady, preferencesReady } = session;
   if (!authReady || (user && !preferencesReady))
-    return { status: "loading" as const };
-  if (!user && !error) return { status: "hidden" as const };
+    return {
+      isError: false,
+      isHidden: false,
+      isLoading: true,
+      message: "",
+      userId: "",
+    };
+  if (!user && !error)
+    return {
+      isError: false,
+      isHidden: true,
+      isLoading: false,
+      message: "",
+      userId: "",
+    };
   if (!user || !defaultValues)
     return {
-      status: "error" as const,
+      isError: true,
+      isHidden: false,
+      isLoading: false,
       message: error ?? t("profileLoadError"),
+      userId: "",
     };
-  return { status: "ready" as const, userId: user.uid };
+  return {
+    isError: false,
+    isHidden: false,
+    isLoading: false,
+    message: "",
+    userId: user.uid,
+  };
 }

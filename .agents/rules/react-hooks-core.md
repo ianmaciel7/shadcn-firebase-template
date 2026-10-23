@@ -16,9 +16,9 @@ Keep the broader [coding standards](../../CODING_STANDARDS.md#react-rendering-ho
 and [form contract](forms-architecture.md) in force. Those local conventions can
 be stricter than React itself.
 
-Model mutually exclusive phases with one discriminated `status` and let
-TypeScript narrow branch data. Do not restore `isLoading`/`isError` when
-`status` already represents them. Independent flags remain valid.
+Model UI phases with explicit flags such as `isLoading`, `isHidden`, and
+`isError`. Keep phase payloads nullable when unavailable, and avoid deriving
+flags from duplicated local state.
 Presentation-only hooks may be composed directly; do not add single-line
 wrappers just to satisfy a naming heuristic. An asynchronous subscription Effect
 does not suspend automatically; retain a tested loading branch instead of

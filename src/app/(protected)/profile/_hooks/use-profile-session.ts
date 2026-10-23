@@ -7,9 +7,12 @@ import { readUserPreferences } from "@/lib/firebase/firestore/user-preferences";
 import type { ProfileValues } from "../_lib/definitions";
 import { useProfileAuth } from "./use-profile-auth";
 
-type PreferencesState =
-  | { uid: string; status: "ready"; values: ProfileValues }
-  | { uid: string; status: "error"; message: string };
+type PreferencesState = {
+  error: string | null;
+  isError: boolean;
+  uid: string;
+  values: ProfileValues | null;
+};
 
 export function useProfileSession() {
   const t = useTranslations("Auth");
@@ -23,7 +26,7 @@ export function useProfileSession() {
   const [avatarVersion, setAvatarVersion] = useState(0);
   const uid = auth.user?.uid;
   const current = preferences?.uid === uid ? preferences : null;
-  const defaultValues = current?.status === "ready" ? current.values : null;
+  const defaultValues = current?.values ?? null;
   const preferencesReady = Boolean(uid && current);
 
   useEffect(() => {
@@ -46,16 +49,17 @@ export function useProfileSession() {
         };
 
         savedValuesRef.current = values;
-        setPreferences({ uid, status: "ready", values });
+        setPreferences({ error: null, isError: false, uid, values });
         if (preferences.theme) setTheme(preferences.theme);
       })
       .catch((cause) => {
         console.error(cause);
         if (active)
           setPreferences({
+            error: t("profileLoadError"),
+            isError: true,
             uid,
-            status: "error",
-            message: t("profileLoadError"),
+            values: null,
           });
       });
 
@@ -69,7 +73,7 @@ export function useProfileSession() {
     authReady: auth.authReady,
     avatarVersion,
     defaultValues,
-    error: (current?.status === "error" ? current.message : null) ?? auth.error,
+    error: (current?.isError ? current.error : null) ?? auth.error,
     photoURL: auth.photoURL,
     preferencesReady,
     savedValuesRef,

@@ -31,7 +31,7 @@ type ProfileSectionClientProps = ComponentProps<"div">;
 function ProfileSectionClient(props: ProfileSectionClientProps) {
   const { profile, state, t } = useProfileSectionClient();
 
-  if (state.status === "loading") {
+  if (state.isLoading) {
     return (
       <div {...props}>
         <LabeledSpinner className="w-full text-sm text-muted-foreground">
@@ -41,9 +41,9 @@ function ProfileSectionClient(props: ProfileSectionClientProps) {
     );
   }
 
-  if (state.status === "hidden") return null;
+  if (state.isHidden) return null;
 
-  if (state.status === "error") {
+  if (state.isError) {
     return (
       <ProfileCard {...props}>
         <ProfileCardContent>

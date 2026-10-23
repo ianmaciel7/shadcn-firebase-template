@@ -4,30 +4,35 @@ import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { subscribeToSession } from "@/lib/session";
 
-type AuthState =
-  | { status: "loading"; user: null; error: null }
-  | { status: "ready"; user: User | null; error: null }
-  | { status: "error"; user: null; error: string };
+type AuthState = {
+  error: string | null;
+  isLoading: boolean;
+  user: User | null;
+};
 
 export function useProfileAuth() {
   const t = useTranslations("Auth");
   const router = useRouter();
   const [auth, setAuth] = useState<AuthState>({
-    status: "loading",
-    user: null,
     error: null,
+    isLoading: true,
+    user: null,
   });
   const [photoURL, setPhotoURL] = useState<string | null>(null);
 
   useEffect(() => {
     function onError(cause: Error) {
       console.error(cause);
-      setAuth({ status: "error", user: null, error: t("profileLoadError") });
+      setAuth({
+        error: t("profileLoadError"),
+        isLoading: false,
+        user: null,
+      });
     }
 
     try {
       return subscribeToSession((user) => {
-        setAuth({ status: "ready", user, error: null });
+        setAuth({ error: null, isLoading: false, user });
         setPhotoURL(user?.photoURL ?? null);
         if (!user) router.replace("/sign-in");
       }, onError);
@@ -37,7 +42,7 @@ export function useProfileAuth() {
   }, [router, t]);
 
   return {
-    authReady: auth.status !== "loading",
+    authReady: !auth.isLoading,
     error: auth.error,
     photoURL,
     setPhotoURL,

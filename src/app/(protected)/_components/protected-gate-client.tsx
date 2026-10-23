@@ -10,15 +10,15 @@ function ProtectedGateClient({ children }: ProtectedGateClientProps) {
   const state = useProtectedGateClient();
   const { t } = state;
 
-  if (state.status === "error") {
+  if (state.isError) {
     return (
       <main className="flex min-h-svh flex-1 items-center justify-center p-6 md:p-10">
-        <p role="alert">{t(state.errorKey)}</p>
+        <p role="alert">{state.errorMessage}</p>
       </main>
     );
   }
 
-  if (state.status === "loading") {
+  if (state.isLoading) {
     return (
       <main className="flex min-h-svh flex-1 items-center justify-center p-6 md:p-10">
         <LabeledSpinner className="text-sm text-muted-foreground">

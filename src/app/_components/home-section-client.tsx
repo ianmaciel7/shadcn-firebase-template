@@ -20,9 +20,9 @@ type HomeSectionClientProps = ComponentProps<"main">;
 
 function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
   const { t, session } = useHomeSectionClient();
-  const user = session.status === "signed-in" ? session.user : null;
+  const user = session.user;
 
-  if (session.status === "loading") {
+  if (session.isLoading) {
     return (
       <main
         {...props}
