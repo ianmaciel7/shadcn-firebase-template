@@ -26,4 +26,4 @@ If successful, a later change can upgrade the pinned Biome dependency and
 regenerate `pnpm-lock.yaml` using pnpm, then run the complete suite before
 removing the redundant part of the Node checker.
 
-Documentation: https://biomejs.dev/linter/plugins/
+Documentation: [Biome linter plugins](https://biomejs.dev/linter/plugins/)
