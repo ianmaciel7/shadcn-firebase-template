@@ -14,7 +14,7 @@ ignores:
 severity: error
 message: Composite form orchestrator components must wrap form fields in a FormProvider to avoid prop drilling.
 note: |
-  Following form architecture in CODING_STANDARDS.md and .agents/rules/form-architecture.md,
+  Following form architecture in CODING_STANDARDS.md and .agents/rules/forms-architecture.md,
   multi-field or orchestrator form components (*-form.tsx) using React Hook Form must wrap
   their contents in <FormProvider {...form}> or shadcn <Form {...form}>. Child fields (*-fields.tsx, *-field.tsx)
   must consume form methods (register, control, errors) via useFormContext() rather than receiving them

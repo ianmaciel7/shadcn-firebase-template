@@ -28,3 +28,8 @@ When structuring data modeling, access control, and persistence operations, orga
 2. **Locality and Placement**:
    - For domain-wide or shared features, place modules under `src/lib/<domain>/` (e.g., `src/lib/user/dal.ts`, `src/lib/user/dto.ts`).
    - For route-private or feature-colocated data access, place modules in private folders (e.g., `_lib/`).
+
+## Dependency injection and auth subscriptions
+
+- Inject service dependencies at operation boundaries, as in `src/lib/profile.ts`, so logic can be tested independently of Firebase. Do not pass service containers through presentational fields.
+- A Firebase Auth Effect subscription does not suspend automatically. Retain a tested loading branch instead of inventing a Promise wrapper.

@@ -55,7 +55,6 @@ Deliver correct, maintainable changes with minimal risk.
 - `CODING_STANDARDS.md`: conventions for TypeScript, React, Next.js, UI, and i18n.
 - `TOOLING.md`: package manager, commands, and configuration ownership.
 - `docs/quality-rule-ownership.md`: primary enforcement tools and rule limits.
-- `docs/biome-javascript-plugin-pilot.md`: separate Biome 2.6 pilot scope.
 - `TESTING.md`: required validation and test strategy.
 - `SECURITY.md`: vulnerability reporting and secure contribution practices.
 - `CONTRIBUTING.md`: branch, commit, release, and pull-request conventions.
@@ -63,7 +62,7 @@ Deliver correct, maintainable changes with minimal risk.
   product-specific terms are resolved.
 - `DER.md`: pending product entity-relationship diagram and the existing
   technical Firebase persistence boundary.
-- `.agents/rules/adr-naming.md`: naming and immutability policy for future
+- `.agents/rules/adr-conventions.md`: naming and immutability policy for future
   architecture decision records.
 
 Accepted ADRs are historical records; use `docs/adr/README.md` and current
@@ -89,7 +88,7 @@ Single-context (`GLOSSARY.md` + `docs/adr/`). See `docs/agents/domain.md`.
 
 ## shadcn/ui documentation workflow
 
-Before UI work, read `.agents/rules/shadcn-ui.md` and load the installed
+Before UI work, read `.agents/rules/shadcn-ui-maintenance.md` and load the installed
 `.agents/skills/shadcn/SKILL.md`. The project uses Base UI (`base-nova`), not
 the API of another primitive family. Current CLI commands belong in
 `TOOLING.md`; component contracts belong in `CODING_STANDARDS.md`; theme and
@@ -114,7 +113,7 @@ with regression cases for both boundary and directive-free modules.
 
 ## Next.js documentation workflow
 
-Before Next.js changes, read [.agents/rules/nextjs.md](.agents/rules/nextjs.md)
+Before Next.js changes, read [.agents/rules/nextjs-maintenance.md](.agents/rules/nextjs-maintenance.md)
 and the relevant installed `node_modules/next/dist/docs/` guide. The complete
 [Next.js source review](docs/agents/nextjs.md) records the stable and current
 upstream revisions, including error guides. Match guidance to installed
@@ -128,7 +127,9 @@ skills, hosting configuration, or migration to another rendering model.
 
 ## React documentation workflow
 
-For React changes, read [.agents/rules/react.md](.agents/rules/react.md) and
+For React changes, read [.agents/rules/react-hooks-core.md](.agents/rules/react-hooks-core.md)
+(alongside [.agents/rules/react-dom-server.md](.agents/rules/react-dom-server.md) and
+[.agents/rules/react-quality.md](.agents/rules/react-quality.md)) and
 [the complete official-source review](docs/agents/react.md). Verify installed
 React/React DOM 19.3.1 and Compiler 1.0.0 support before adopting live examples.
 Keep React's rules distinct from stricter repository orchestration conventions.
@@ -139,7 +140,7 @@ in their canonical guide, preserving accepted ADRs and local changes.
 
 The [detailed React reference](docs/agents/react.md#user-supplied-react-1931-reference)
 preserves all 20 topics from the supplied catalog, including its 15 examples.
-The [React implementation and review rules](.agents/rules/react.md) cover the
+The [React implementation and review rules](.agents/rules/react-hooks-core.md) cover the
 same 20 topics as actionable guidance. Consult both for hooks, components,
 React DOM rendering, forms, server boundaries, Compiler, lint, identity,
 legacy APIs, Fragment refs, experiments, version context, feature selection,

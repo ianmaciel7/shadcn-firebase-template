@@ -107,3 +107,7 @@ direct header children; Form content is directly in Card content, and Form
 footer is directly in Card footer. Action buttons are direct Form footer
 children. Additional wrappers at these boundaries fail the guard because
 they change the intended slot layout.
+
+## React Form Actions are not a migration
+
+Preserve the React Hook Form and Firebase profile architecture. The React `<form action>` example in the [React reference](../../docs/agents/react.md#user-supplied-react-1931-reference) is explanatory, not a request to migrate. Preserve controlled and React Hook Form-owned values when using `requestFormReset`.

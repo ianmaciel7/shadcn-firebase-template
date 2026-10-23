@@ -183,7 +183,7 @@ requiring a locale/rendering design compatible with Cache Components, not a
 newly discovered defect or an implemented fix. Do not move request-cookie reads
 above all Suspense boundaries as an untested quick fix.
 
-The user-supplied React reference is saved through `.agents/rules/react.md`
+The user-supplied React reference is saved through `.agents/rules/react-*.md`
 and `docs/agents/react.md`, with behavior owned by `CODING_STANDARDS.md` and
 the existing canonical guides. Local exports and types establish that
 `browser` belongs to `react-dom`, correcting two previous documentation claims.

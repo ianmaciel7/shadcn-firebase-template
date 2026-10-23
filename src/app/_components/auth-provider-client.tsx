@@ -11,7 +11,7 @@ function AuthProviderClient({ children }: AuthProviderClientProps) {
   const state = useAuthProviderClient();
   const { t } = state;
 
-  if (state.isError)
+  if (state.status === "error")
     return (
       <p
         role="alert"
@@ -20,7 +20,7 @@ function AuthProviderClient({ children }: AuthProviderClientProps) {
         {t("configurationError")}
       </p>
     );
-  if (state.isLoading)
+  if (state.status === "loading")
     return (
       <LoadingIndicator className="w-full text-sm text-muted-foreground">
         {t("loading")}

@@ -19,15 +19,10 @@ export function useHomeSignOutButtonClient() {
     }
   }
 
-  const isPending = state === "pending";
-  const isError = state === "error";
-
   return {
     t,
     auth,
     state,
-    isPending,
-    isError,
     handleSignOut,
   };
 }

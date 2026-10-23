@@ -19,9 +19,10 @@ import { HomeSignOutButtonClient } from "./home-sign-out-button-client";
 type HomeSectionClientProps = ComponentProps<"main">;
 
 function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
-  const { t, ready, user } = useHomeSectionClient();
+  const { t, session } = useHomeSectionClient();
+  const user = session.status === "signed-in" ? session.user : null;
 
-  if (!ready) {
+  if (session.status === "loading") {
     return (
       <main
         {...props}

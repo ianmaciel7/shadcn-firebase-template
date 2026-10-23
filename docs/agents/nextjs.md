@@ -66,7 +66,7 @@ the existing browser and server responsibilities explicit when reading examples.
 
 | Topic | Reviewed guidance and project consequence | Canonical owner |
 | --- | --- | --- |
-| Routing and organization | Pages/layouts, private folders, groups, templates, loading/error/not-found, parallel/intercepted routes, and migration APIs have distinct contracts. The thin-route guard is stricter than Next.js. | [Architecture](../../ARCHITECTURE.md), [route rule](../../.agents/rules/route-special-files.md) |
+| Routing and organization | Pages/layouts, private folders, groups, templates, loading/error/not-found, parallel/intercepted routes, and migration APIs have distinct contracts. The thin-route guard is stricter than Next.js. | [Architecture](../../ARCHITECTURE.md), [route rule](../../.agents/rules/nextjs-route-files.md) |
 | Server and Client graphs | Directives define boundaries, Client Components can initially render on the server, shared modules can belong to both graphs, and server-rendered children can cross client slots. | [Component boundaries](../../CODING_STANDARDS.md#compound-components-and-serverclient-boundaries) |
 | Cache Components and streaming | Request data needs an appropriate boundary; reusable cache scopes need explicit freshness and invalidation. Previous-model route flags do not apply unchanged. | [Request and cache standards](../../CODING_STANDARDS.md#nextjs-request-data-and-caching) |
 | Async request APIs | Cookies, headers, Draft Mode, promised params and search params need the installed async contracts. Page loading boundaries do not cover earlier layout reads. | [Request and cache standards](../../CODING_STANDARDS.md#nextjs-request-data-and-caching) |

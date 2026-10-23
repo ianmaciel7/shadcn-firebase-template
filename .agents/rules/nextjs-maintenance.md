@@ -14,8 +14,8 @@ are references until the installed version supports their APIs.
 - Use native Next.js, TypeScript, and Biome diagnostics first. Check the
   existing rule registry before adding custom guards; document scope and test
   invalid and valid cases for a new project policy.
-- Preserve the stricter [thin-route policy](route-special-files.md),
-  [component contracts](component-naming.md), cookie-driven unprefixed locale
+- Preserve the stricter [thin-route policy](nextjs-route-files.md),
+  [component contracts](components-contracts.md), cookie-driven unprefixed locale
   architecture, Firebase authorization boundary, and generated-source exclusions.
 - Apply [security guidance](../../SECURITY.md#nextjs-server-and-environment-boundaries)
   when introducing server data, cache scopes, environment values, or endpoints.
@@ -24,3 +24,5 @@ are references until the installed version supports their APIs.
   provider, agent-skill, or hosting migration. Preserve accepted ADRs and local
   changes. Follow the [verification strategy](../../TESTING.md#nextjs-documentation-and-framework-verification)
   and report unavailable tools accurately.
+
+- Next.js owns application roots, hydration, compilation and partial prerendering; do not replace them with isolated React DOM recipes. React `cache()` does not establish Next.js cache invalidation policy.

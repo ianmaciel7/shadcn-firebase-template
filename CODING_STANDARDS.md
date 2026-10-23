@@ -35,7 +35,7 @@ When standards conflict, apply them in this order:
   - Consolidate state variables that always transition together into a single atomic state object rather than maintaining fragmented, dependent `useState` declarations.
   - Allocate external resources after commit in the appropriate Effect or in the user event that owns them, never during render. Pair setup with cleanup for replacement, hiding, and unmount as appropriate. An Effect can legitimately synchronize an external resource; avoid blanket rewrites that move necessary synchronization into handlers.
 - React permits composing multiple focused hooks. This repository adds the
-  stricter [component-named orchestration policy](.agents/rules/component-naming.md#component-named-orchestration-hooks)
+  stricter [component-named orchestration policy](.agents/rules/components-composition.md#component-named-orchestration-hooks)
   for owned components: put behavior/context orchestration in a separate
   `use<ComponentName>` hook, which may compose focused hooks internally.
   Keep route-specific hooks in private `_hooks` folders. Any combination
@@ -59,10 +59,10 @@ When standards conflict, apply them in this order:
   - Name standalone field components after their React Hook Form data property (for example `ProfileDisplayNameField` for `Controller name="displayName"`). Prefer built-in `FieldGroup`/`FieldSet` over arbitrary wrapper components.
   - Allow React Hook Form `UseFormProps<Values>` as an appropriate form component contract. Extract `onSubmit` and component presentation props before passing only RHF options into `useForm`.
   - Form fields use `Field`, `FieldLabel`, `FieldError`, `data-invalid` and `aria-invalid` as documented by shadcn/ui.
-  - See `.agents/rules/form-architecture.md`; run `pnpm check:structure` and `pnpm check:components`.
+  - See `.agents/rules/forms-architecture.md`; run `pnpm check:structure` and `pnpm check:components`.
 
 - **Data and Authentication Module Architecture**:
-  - Follow the canonical module taxonomy in [.agents/rules/data-layer-modules.md](.agents/rules/data-layer-modules.md) for data and auth boundaries:
+  - Follow the canonical module taxonomy in [.agents/rules/data-layer.md](.agents/rules/data-layer.md) for data and auth boundaries:
     - `definitions.ts`: Types, interfaces, and validation schemas (e.g. Zod schemas).
     - `dto.ts`: Select and structure transferred data crossing system boundaries.
     - `dal.ts`: Protected data access and authorization boundary (`verifySession()`).
@@ -98,9 +98,9 @@ When standards conflict, apply them in this order:
 
 - Consult [DESIGN.md](DESIGN.md) for tokens and component conventions. Update
   that reference when changing fonts, theme tokens, or `components.json`.
-- The owned-component naming and Next.js Client/Server boundary guard is enforced by `pnpm check:components` (included in CI); registry-generated UI is excluded. See [.agents/rules/component-naming.md](.agents/rules/component-naming.md).
+- The owned-component naming and Next.js Client/Server boundary guard is enforced by `pnpm check:components` (included in CI); registry-generated UI is excluded. See [.agents/rules/components-contracts.md](.agents/rules/components-contracts.md).
 - Follow the component taxonomy and file naming conventions in
-  [.agents/rules/component-naming.md](.agents/rules/component-naming.md) for UI
+  [.agents/rules/components-contracts.md](.agents/rules/components-contracts.md) for UI
   and feature components (such as `*-field.tsx`, `*-fields.tsx`, `*-form.tsx`,
   `*-card.tsx`, `*-dialog.tsx`, and `*-header.tsx`).
 - Biome disables formatting and import organization for vendored UI and AI
@@ -121,7 +121,7 @@ When standards conflict, apply them in this order:
 - Maintain single-responsibility module separation: keep domain types, constants,
   and type guards (such as `theme.ts` and `locale.ts`) in dedicated modules under
   `src/lib/`, decoupled from persistence and database clients (e.g. `src/lib/firebase/firestore/`).
-- **Enforced thin route entrypoints**: `page.tsx`, `layout.tsx`, and `template.tsx` are Server Component composition seams in this repository. They can orchestrate server data reads, access route props, declare metadata, and compose UI, but must not embed client hooks, direct Firebase SDK calls, browser APIs, event handlers, state mutation, branching, loops, or helper callbacks. Extract UI into `_components/`, hooks into `_hooks/`, and business logic into dedicated `src/lib/` services. Run `pnpm check:routes` locally; it is mandatory in `verify:fast` and `verify:static` CI. This is a repository policy, not a general Next.js restriction. See [.agents/rules/route-special-files.md](.agents/rules/route-special-files.md).
+- **Enforced thin route entrypoints**: `page.tsx`, `layout.tsx`, and `template.tsx` are Server Component composition seams in this repository. They can orchestrate server data reads, access route props, declare metadata, and compose UI, but must not embed client hooks, direct Firebase SDK calls, browser APIs, event handlers, state mutation, branching, loops, or helper callbacks. Extract UI into `_components/`, hooks into `_hooks/`, and business logic into dedicated `src/lib/` services. Run `pnpm check:routes` locally; it is mandatory in `verify:fast` and `verify:static` CI. This is a repository policy, not a general Next.js restriction. See [.agents/rules/nextjs-route-files.md](.agents/rules/nextjs-route-files.md).
 - Use the configured `@/*` path aliases instead of deep relative imports when
   crossing module boundaries.
 - Use Tailwind CSS and the existing design tokens. Avoid inline styles unless a
@@ -316,7 +316,7 @@ rules, without a schema resolver. Add one only when the feature needs it.
 
 - Initialize complete defaults for controlled values. When external values
   change, choose RHF `values` or `reset` deliberately and preserve unsaved edits.
-- Follow [.agents/rules/form-architecture.md](.agents/rules/form-architecture.md)
+- Follow [.agents/rules/forms-architecture.md](.agents/rules/forms-architecture.md)
   for the single form instance, compound children, Provider boundary, profile
   submit state, reset, avatar cleanup, and fixed button action types. These
   are repository policies rather than universal shadcn/ui requirements.
@@ -338,7 +338,7 @@ rules, without a schema resolver. Add one only when the feature needs it.
 
 ### shadcn/ui API and accessibility
 
-Read [.agents/rules/shadcn-ui.md](.agents/rules/shadcn-ui.md) before UI work and
+Read [.agents/rules/shadcn-ui-maintenance.md](.agents/rules/shadcn-ui-maintenance.md) before UI work and
 use the CLI workflow in [TOOLING.md](TOOLING.md#shadcnui-cli-workflow). Base UI
 uses `render` and presence state attributes; Radix `asChild` and
 `data-state` examples do not establish the local API. For navigation, apply
@@ -373,7 +373,7 @@ Components throughout the application—regardless of whether they are Server Co
 ## Internationalization
 
 - Write source, comments, and project documentation in English by default,
-  following `.agents/rules/language.md`. Localized catalogs use their own
+  following `.agents/rules/language-conventions.md`. Localized catalogs use their own
   language.
 - Follow the implemented cookie-based request resolution. Localized navigation
   helpers alone do not establish locale-prefixed routes.
@@ -714,6 +714,6 @@ Mandatory Next.js filenames, registry output, hooks and non-component modules
 retain their existing contracts. Integrations stay in their current route or
 shared extension placement; no new container directory is required.
 
-See [the naming rule](.agents/rules/component-naming.md#ci-enforcement) for
+See [the naming rule](.agents/rules/components-contracts.md#ci-enforcement) for
 executable coverage and limits. [ADR 0016](docs/adr/0016-name-components-by-integration-responsibility.md)
 supersedes the broader runtime naming policy from ADR 0015.

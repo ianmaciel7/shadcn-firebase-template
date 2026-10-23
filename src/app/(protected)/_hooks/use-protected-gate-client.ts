@@ -50,10 +50,7 @@ export function useProtectedGateClient() {
     };
   }, [router, pathname]);
 
-  return {
-    t,
-    isLoading: readyPath !== pathname,
-    isError: error !== null,
-    errorKey: error ?? "configurationError",
-  };
+  if (error) return { t, status: "error" as const, errorKey: error };
+  if (readyPath !== pathname) return { t, status: "loading" as const };
+  return { t, status: "ready" as const };
 }

@@ -9,10 +9,10 @@ This skill governs how to classify, locate, and record knowledge, rules, decisio
 
 ## Core Principles
 
-1. **English by default**: All documentation, code comments, and rule descriptions must be in English per [.agents/rules/language.md](../../rules/language.md), even if the user provided the input in another language (e.g., Portuguese).
+1. **English by default**: All documentation, code comments, and rule descriptions must be in English per [.agents/rules/language-conventions.md](../../rules/language-conventions.md), even if the user provided the input in another language (e.g., Portuguese).
 2. **Strict path portability**: NEVER store hardcoded host-specific or user-specific absolute paths (such as user home directories, drive prefixes, or machine root paths). Always sanitize and convert paths to repository-relative format (e.g., `TOOLING.md`, `src/app/`, `.agents/rules/`).
 3. **Single source of truth**: Store each rule or piece of knowledge in its authoritative canonical document. Do not duplicate rules across multiple guides.
-4. **ADR immutability**: Accepted Architecture Decision Records (`docs/adr/0001-*` through current) are historical and immutable per [.agents/rules/adr-naming.md](../../rules/adr-naming.md). Never rewrite, edit, or renumber an accepted record.
+4. **ADR immutability**: Accepted Architecture Decision Records (`docs/adr/0001-*` through current) are historical and immutable per [.agents/rules/adr-conventions.md](../../rules/adr-conventions.md). Never rewrite, edit, or renumber an accepted record.
 
 ---
 
@@ -77,7 +77,7 @@ Create a new file only when the information constitutes a distinct, modular arti
 
 1. **Architecture Decision Records (`docs/adr/NNNN-<phrase>.md`)**:
   - **Trigger**: A significant architectural, structural, or technology choice that requires recording context, options considered, decision, and consequences.
-  - **Immutability rule**: Accepted ADRs are strictly immutable per [.agents/rules/adr-naming.md](../../rules/adr-naming.md). Never edit or rewrite accepted records.
+  - **Immutability rule**: Accepted ADRs are strictly immutable per [.agents/rules/adr-conventions.md](../../rules/adr-conventions.md). Never edit or rewrite accepted records.
   - **Naming format**: Next unused four-digit number followed by a kebab-case imperative phrase (e.g., `0009-adopt-database-orm.md`).
   - **Index update**: After creating the ADR, add its entry to `docs/adr/README.md`. If superseding an earlier ADR, note the supersession in `docs/adr/README.md` and in the new ADR.
 2. **Agent Persistent Rules (`.agents/rules/<name>.md`)**:
@@ -200,7 +200,7 @@ When a user requests to save or document information (e.g., "save this rule", "s
 
 ### 1. Ingest & Interpret
 - Extract the core rule, convention, architectural decision, or tool specification from the user's input.
-- Check the language: if input is in Portuguese or another language, translate the technical guidance into idiomatic English for storage (per [.agents/rules/language.md](../../rules/language.md)).
+- Check the language: if input is in Portuguese or another language, translate the technical guidance into idiomatic English for storage (per [.agents/rules/language-conventions.md](../../rules/language-conventions.md)).
 
 ### 2. Sanitize & Normalize
 - **Remove absolute machine paths**: Replace machine-specific absolute paths (such as full workspace paths or user directory prefixes) with repository-relative paths (e.g., `TOOLING.md`).

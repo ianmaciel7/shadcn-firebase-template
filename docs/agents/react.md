@@ -87,7 +87,7 @@ APIs do not become required app features merely because they appear in docs.
 
 This section preserves all 20 topics supplied on 2026-10-23, with explanations,
 API tables, examples, selection guidance, and the checklist. The matching
-[agent rule](../../.agents/rules/react.md) turns each topic into implementation
+[agent rules](../../.agents/rules/react-hooks-core.md) (along with `react-dom-server.md` and `react-quality.md`) turn each topic into implementation
 and review requirements. Documentation is in English under the repository's
 language convention. Examples are independent teaching snippets; supporting
 components, modules, and services must be supplied by their application.
@@ -933,7 +933,7 @@ contracts; use the canonical owners below for their full project policies.
 | Pure rendering and immutable inputs | Keep side effects out of render and do not assign to received props; direct assignments have a native guard, not a deep immutability proof. | [Coding standards](../../CODING_STANDARDS.md#react-rendering-hooks-and-identity) |
 | State and component identity | Use data keys, module-scope component types, pure reducers/updaters, and intentional reset boundaries. | [Coding standards](../../CODING_STANDARDS.md#pure-render-and-immutable-inputs) |
 | Effects and lifecycle | Distinguish derived values, user-event work, and external synchronization; pair setup with cleanup, including hidden/revealed content. | [Hook standards](../../CODING_STANDARDS.md#hook-dependencies-and-external-synchronization) |
-| Hook composition | React allows focused hooks; the component-named orchestration seam is a stricter repository convention. | [Component rule](../../.agents/rules/component-naming.md#component-named-orchestration-hooks) |
+| Hook composition | React allows focused hooks; the component-named orchestration seam is a stricter repository convention. | [Component rule](../../.agents/rules/components-composition.md#component-named-orchestration-hooks) |
 | Refs, context, and inputs | Prefer React 19 ref props; preserve controlled-input and RHF ownership and context boundaries. | [Coding standards](../../CODING_STANDARDS.md#react-19-refs-context-and-controlled-inputs) |
 | Suspense, Actions, and Activity | Effect fetches do not automatically suspend, client Actions are not Server Functions, and cleanup need not mean permanent unmount. | [Coding standards](../../CODING_STANDARDS.md#suspense-actions-and-preserved-state) |
 | Compiler | Automatic memoization is an optimization for eligible React code, not correctness, resource lifetime, or a guarantee every library API is compatible. | [Compiler standards](../../CODING_STANDARDS.md#compiler-and-performance-boundaries) |

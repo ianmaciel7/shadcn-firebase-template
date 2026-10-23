@@ -89,7 +89,7 @@ documentation entrypoints, except for the domain records described below:
 
 Lasting architectural choices continue to be recorded as sequential ADRs in
 `docs/adr/`. Future ADRs follow the filename and title convention in
-`.agents/rules/adr-naming.md`. Accepted ADRs remain immutable: a changed
+`.agents/rules/adr-conventions.md`. Accepted ADRs remain immutable: a changed
 decision is captured in a new record that supersedes the earlier one, rather
 than by renaming, renumbering, or rewriting it.
 
