@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Loading } from "./loading";
+import { LoadingIndicator } from "./loading-indicator";
 
 describe("Loading", () => {
   afterEach(cleanup);
@@ -23,5 +24,21 @@ describe("Loading", () => {
     expect(spinner?.getAttribute("class")).toContain(
       "motion-reduce:animate-none",
     );
+  });
+
+  it("LoadingIndicator accepts the label as children or via the label prop", () => {
+    const childrenMessage = "Aguarde…";
+    const labelMessage = "Espere…";
+
+    render(
+      <>
+        <LoadingIndicator data-testid="by-children">
+          {childrenMessage}
+        </LoadingIndicator>
+        <LoadingIndicator data-testid="by-label" label={labelMessage} />
+      </>,
+    );
+    expect(screen.getByTestId("by-children").textContent).toBe(childrenMessage);
+    expect(screen.getByTestId("by-label").textContent).toBe(labelMessage);
   });
 });

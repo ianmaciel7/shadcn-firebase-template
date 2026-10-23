@@ -1,9 +1,8 @@
 "use client";
 
-import { signOut } from "firebase/auth";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { getFirebaseUI } from "@/lib/firebase/client";
+import { signOutUser } from "@/lib/auth/auth";
 
 export function useHomeSignOutButton() {
   const t = useTranslations("Home");
@@ -14,7 +13,7 @@ export function useHomeSignOutButton() {
     if (state === "pending") return;
     setState("pending");
     try {
-      await signOut(getFirebaseUI().get().auth);
+      await signOutUser();
     } catch {
       setState("error");
     }

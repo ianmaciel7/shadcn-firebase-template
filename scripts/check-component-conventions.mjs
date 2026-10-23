@@ -116,7 +116,6 @@ const profileFormParts = [
 ];
 
 const LEGACY_SEMANTIC_STEM_ALLOWLIST = new Set([
-  "src/app/(protected)/profile/_components/profile-avatar-field-client.tsx",
   "src/app/(protected)/profile/_components/profile-form-client.tsx",
   "src/app/(protected)/profile/_components/profile-section-client.tsx",
   "src/app/(protected)/_components/protected-gate-client.tsx",
@@ -611,7 +610,7 @@ function checkProfilePropDrilling(source, report) {
   function visit(node) {
     if (
       (ts.isJsxSelfClosingElement(node) || ts.isJsxOpeningElement(node)) &&
-      /^(ProfileForm|ProfileAvatarField|ProfileSignOutButton)$/.test(
+      /^(ProfileForm|ProfileAvatarFieldClient|ProfileSignOutButton)$/.test(
         node.tagName.getText(source),
       )
     ) {

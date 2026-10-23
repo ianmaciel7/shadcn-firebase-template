@@ -28,6 +28,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Unused code | Knip | 6.41.0 | Finds unused files, exports, and dependencies. | `knip.jsonc` |
 | Architecture boundaries | dependency-cruiser | 18.6.0 | Enforces layering rules and forbids dependency cycles. | `.dependency-cruiser.cjs` |
 | Structural rules | ast-grep | 0.51.0 | Enforces form, prop, Tailwind, and route conventions, with warning-level React review hints. Rules have snapshot tests. | `sgconfig.yml`, `.ast-grep/` |
+| Route entrypoint contracts | TypeScript compiler API | Uses the existing TypeScript dependency | Enforces thin `page.tsx`, `layout.tsx`, and `template.tsx` entrypoints through `pnpm check:routes`. | `scripts/check-route-files.mjs`, `scripts/check-route-files.test.mjs`, `package.json` |
 | Component contracts | TypeScript compiler API | Uses the existing TypeScript dependency | Checks repository-specific named families and adapter forwarding through `pnpm check:components`; does not duplicate native framework diagnostics. | `scripts/check-component-conventions.mjs`, `scripts/check-component-composition.mjs`, their regression tests, `package.json` |
 | Responsiveness contracts | TypeScript compiler API | Uses the existing TypeScript dependency | Enforces viewport exports, no zoom restrictions, fluid widths <= 320px, and WCAG 2.2 touch targets through `pnpm check:responsiveness`. | `scripts/check-responsiveness.mjs`, `scripts/check-responsiveness.test.mjs`, `package.json` |
 | Duplication | jscpd | 5.4.1 | Reports meaningful duplicated code. | `.jscpd.json` |
@@ -57,6 +58,7 @@ outside pnpm and are only needed for the commands noted next to them:
 | --- | --- | --- |
 | Node.js `^22.22.1 \|\| ^24.5.0` | Everything (`engines` in `package.json`) | `node --version` |
 | Git | Biome VCS integration, hooks, Fallow hotspots | `git --version` |
+| `gh` | `setup:github` and GitHub issue tracking | `gh --version` |
 | Playwright browsers | `test:browser`, `test:e2e`, `test:a11y`, `test:visual` | `pnpm exec playwright install chromium` |
 | pre-commit | Repository-integrity checks in the Git hook | `pre-commit --version` |
 | Semgrep | `check:security` | `semgrep --version` |
@@ -96,16 +98,22 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | Command | Purpose |
 | --- | --- |
 | `pnpm dev` / `pnpm build` / `pnpm start` | Develop, build, and serve the Next.js application. |
+| `pnpm setup:github` | Configure repository settings and branch protection rulesets via GitHub CLI. |
 | `pnpm lint` / `pnpm lint:ci` / `pnpm format` | Biome check, CI check, and formatting. |
 | `pnpm typecheck` | Generate route types and run `tsc --noEmit -p tsconfig.build.json`. |
 | `pnpm test` | Fast `unit` Vitest project in `jsdom`. |
 | `pnpm test:watch` / `pnpm test:coverage` | Watch mode / coverage (writes `coverage/`). |
+| `pnpm test:logging` | Run logging and diagnostic test suite. |
 | `pnpm test:browser` | `browser` Vitest project in Chromium. |
 | `pnpm test:e2e` | Functional Playwright specs (excludes `@a11y` and `@visual`). |
+| `pnpm test:auth` | Run authentication-specific tests in Vitest. |
 | `pnpm test:a11y` | Axe accessibility scans. |
 | `pnpm test:visual` | Compare screenshots with baselines. Never rewrites them. Skipped locally; runs in CI (or with `PLAYWRIGHT_VISUAL=1`). |
 | `pnpm test:visual:update` | Rewrite baselines. Run it through the **Update visual baselines** workflow, not on your machine. |
 | `pnpm test:mutation` | Stryker on selected logic (manual dispatch only in hosted CI until verified; see limitations). |
+| `pnpm emulator` | Start local Firebase Auth Emulator. |
+| `pnpm emulator:seed` | Seed test user accounts into the running Firebase Auth Emulator (`node scripts/emulator/seed.mjs`). |
+| `pnpm emulator:clear` | Clear all accounts from the Firebase Auth Emulator (`node scripts/emulator/clear.mjs`). |
 | `pnpm ladle` / `pnpm ladle:build` | Serve or build the component workbench (`reports/ladle`). |
 | `pnpm check:architecture` | dependency-cruiser. |
 | `pnpm check:unused` | Knip. |
@@ -163,6 +171,7 @@ theming decision is recorded in ADR 0003.
 | `biome.json` | Biome formatting, linting, and custom-rule configuration. |
 | `.biome/rules/nextjs/*.grit` | GritQL source for project-specific Biome rules. |
 | `components.json` | shadcn/ui configuration and import aliases. |
+| `scripts/check-route-files.mjs`, `scripts/check-route-files.test.mjs` | Thin App Router entrypoint AST guard and tests. |
 | `scripts/check-component-conventions.mjs`, `scripts/check-component-composition.mjs` | Owned component naming/family conventions and adapter forwarding; regression tests are colocated `*.test.mjs` files. |
 | `scripts/check-responsiveness.mjs`, `scripts/check-responsiveness.test.mjs` | Enforces viewport metadata, rigid width prevention (>320px), and WCAG 2.2 touch target minimums; regression tests in colocated `*.test.mjs`. |
 | `vitest.config.mts` | `unit` and `browser` projects and coverage. |
@@ -180,6 +189,7 @@ theming decision is recorded in ADR 0003.
 | `.husky/`, `commitlint.config.mjs`, `.pre-commit-config.yaml` | Git hooks and commit validation. |
 | `.github/workflows/ci.yml` | Continuous integration. |
 | `.github/workflows/visual-baselines.yml` | Manual workflow that regenerates the visual baselines in CI. |
+| `.github/rulesets/default-branch.json` | Branch protection rules applied by `pnpm setup:github`. |
 | `.gitattributes` | Enforces LF line endings so Biome and hooks behave the same on Windows. |
 | `.agents/agents.json` | Agent and MCP configuration. |
 
@@ -195,6 +205,7 @@ valid and invalid tests, before registering a new custom rule.
 
 | Rule | Owner | Severity | Scope | Why it is not native |
 | --- | --- | --- | --- | --- |
+| `thin-route-entrypoints` | TypeScript AST (`scripts/check-route-files.mjs`) | error | App Router entrypoints (page.tsx, layout.tsx, template.tsx) | Next.js allows arbitrary state and branch logic inside route files. This enforces thin entrypoints where client state, effects, and mutation logic are extracted into semantic `_components` or `_hooks` modules. |
 | `responsiveness-contracts` | TypeScript AST (`scripts/check-responsiveness.mjs`) | error | Root layout, App Router routes, and owned components (`src/app/**`, `src/components/**`) | Next.js and TypeScript allow arbitrary viewport configs, rigid pixel widths, and tiny interactive controls. This enforces WCAG 1.4.4 viewport scalability, WCAG 1.4.10 reflow at 320px, and WCAG 2.2 SC 2.5.8 touch target minimums (24x24px). Tests live in `scripts/check-responsiveness.test.mjs`. |
 | `owned-component-composition` | TypeScript AST (`scripts/check-component-composition.mjs`) | error | All owned component modules, Server and Client, through `pnpm check:components` | TypeScript permits dropping inherited props and constructing static compound APIs; this enforces our separate-named-export and adapter-forwarding contract. Checks matching direct JSX roots, remaining props and extracted children/className. Tests live in `scripts/check-component-composition.test.mjs`. [Coverage and limits](CODING_STANDARDS.md#composition-guard-coverage). |
 | `owned-component-family` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | All owned component modules, Server and Client | Root-prefixed family names, filename/export matching, local function declarations, and exact filename-to-component term parity (`checkStemComponentTermParity`, e.g. `HomeSectionClient` in `src/app/_components/home-section-client.tsx`) are repository conventions that TypeScript and Next.js allow alternatives to. Preserves the existing direct client-boundary checks, with type-only imports excluded. The complete RSC graph remains a Next.js build responsibility. |

@@ -686,7 +686,7 @@ Integrations may delegate their environment access to focused hooks/helpers;
 review those implementations. `ProfileForm` persists through `useProfileSubmit`,
 so it remains in `profile-form-client.tsx`. `ProfileEmailField` uses only form
 context and translations, so it lives in `profile-email-field.tsx` while keeping
-`"use client"`. `ProfileAvatarField` accesses browser object URLs through its
+`"use client"`. `ProfileAvatarFieldClient` accesses browser object URLs through its
 hook and keeps `profile-avatar-field-client.tsx`. `LoadingIndicator` remains
 without a suffix and compatible with either graph.
 

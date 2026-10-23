@@ -16,7 +16,7 @@ import { standardSchemaResolver } from "@hookform/resolvers/standard-schema";
 
 import { Field, FieldLabel, FieldDescription, FieldError } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
+import { Spinner } from "@/components/ui/spinner";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
 type PhoneMultiFactorInfo = MultiFactorInfo & {
@@ -57,9 +57,9 @@ function SmsMultiFactorAssertionPhoneForm(props: SmsMultiFactorAssertionPhoneFor
         </FieldDescription>
       </Field>
       <div className="fui-recaptcha-container" ref={recaptchaContainerRef} />
-      <Button onClick={onSubmit} disabled={ui.state !== "idle"} aria-busy={ui.state !== "idle"}>
+      <Button onClick={onSubmit} disabled={ui.state !== "idle"}>
         {ui.state !== "idle" ? (
-          <LoadingIndicator label={getTranslation(ui, "labels", "sendCode")} className="text-inherit" />
+          <><Spinner data-icon="inline-start" aria-hidden="true" />{getTranslation(ui, "labels", "sendCode")}</>
         ) : (
           getTranslation(ui, "labels", "sendCode")
         )}
@@ -125,9 +125,9 @@ function SmsMultiFactorAssertionVerifyForm(props: SmsMultiFactorAssertionVerifyF
             </Field>
           )}
         />
-        <Button type="submit" disabled={ui.state !== "idle"} aria-busy={ui.state !== "idle"}>
+        <Button type="submit" disabled={ui.state !== "idle"}>
           {ui.state !== "idle" ? (
-            <LoadingIndicator label={getTranslation(ui, "labels", "verifyCode")} className="text-inherit" />
+            <><Spinner data-icon="inline-start" aria-hidden="true" />{getTranslation(ui, "labels", "verifyCode")}</>
           ) : (
             getTranslation(ui, "labels", "verifyCode")
           )}

@@ -1,8 +1,7 @@
-import { onAuthStateChanged } from "firebase/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { getFirebaseUI } from "@/lib/firebase/client";
+import { subscribeToSession } from "@/lib/auth/session";
 import { recordUsage } from "@/lib/usage/guard";
 
 export function useProtectedGate() {
@@ -18,35 +17,32 @@ export function useProtectedGate() {
   useEffect(() => {
     let active = true;
     setError(null);
-    let store: ReturnType<typeof getFirebaseUI>;
+    let unsubscribe: () => void;
     try {
-      store = getFirebaseUI();
+      unsubscribe = subscribeToSession((user) => {
+        const currentRevision = ++revision.current;
+        setReadyPath(null);
+        if (!user) {
+          const destination = window.location.pathname + window.location.search;
+          router.replace(`/sign-in?next=${encodeURIComponent(destination)}`);
+        } else {
+          void recordUsage({ type: "screen_view", name: pathname }).then(
+            () => {
+              if (active && revision.current === currentRevision)
+                setReadyPath(pathname);
+            },
+            () => {
+              if (active && revision.current === currentRevision)
+                setError("usageLogError");
+            },
+          );
+        }
+      });
     } catch (cause) {
       console.error(cause);
       setError("configurationError");
       return;
     }
-
-    const unsubscribe = onAuthStateChanged(store.get().auth, (user) => {
-      const currentRevision = ++revision.current;
-      setReadyPath(null);
-      if (!user) {
-        setReadyPath(null);
-        const destination = window.location.pathname + window.location.search;
-        router.replace(`/sign-in?next=${encodeURIComponent(destination)}`);
-      } else {
-        void recordUsage({ type: "screen_view", name: pathname }).then(
-          () => {
-            if (active && revision.current === currentRevision)
-              setReadyPath(pathname);
-          },
-          () => {
-            if (active && revision.current === currentRevision)
-              setError("usageLogError");
-          },
-        );
-      }
-    });
     return () => {
       active = false;
       unsubscribe();

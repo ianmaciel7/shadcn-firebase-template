@@ -21,7 +21,8 @@
     "backHome": "Back to Home",
     "errorTitle": "Something went wrong!",
     "errorMessage": "An unexpected error occurred while loading this page.",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "loading": "Loading…"
   },
   "Theme": {
     "toggle": "Toggle theme",

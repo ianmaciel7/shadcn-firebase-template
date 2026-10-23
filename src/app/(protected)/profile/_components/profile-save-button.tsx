@@ -2,7 +2,7 @@
 
 import type { ComponentProps } from "react";
 import { Button } from "@/components/ui/button";
-import { Loading } from "@/components/ui/extensions/loading";
+import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 import { useProfileSaveButton } from "../_hooks/use-profile-save-button";
 
@@ -23,15 +23,13 @@ function ProfileSaveButton({
     <Button
       {...props}
       type="submit"
-      aria-busy={isSubmitting}
       className={cn("w-full", className)}
       disabled={disabled || isDisabled}
     >
-      {isSubmitting ? (
-        <Loading>{children ?? t("savingProfile")}</Loading>
-      ) : (
-        (children ?? t("saveProfile"))
-      )}
+      {isSubmitting && <Spinner data-icon="inline-start" aria-hidden="true" />}
+      {isSubmitting
+        ? (children ?? t("savingProfile"))
+        : (children ?? t("saveProfile"))}
     </Button>
   );
 }

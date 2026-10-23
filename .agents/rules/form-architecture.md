@@ -18,7 +18,7 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
 - `useProfileStatus` derives the loading/hidden/error/ready states and resolves error text; the section only renders those states.
 - `useProfileController` is removed. `ProfileSection` uses `useProfileSection` to compose session and status hooks with translations; it does not assemble field or button props.
 - `ProfileForm` delegates its React Hook Form lifecycle and operation lock to `useProfileForm`, which uses `useProfileSubmit` for persistence. `ProfileValues` and `ProfileFormValues` live in `src/lib/profile.ts`.
-- `ProfileAvatarField` uses `useProfileAvatarField` for field state and avatar display data, with `useProfileAvatar` handling validation and preview. Only the selected `File` lives in React Hook Form so submission can upload it; preview URLs are released on replacement, successful reset and unmount. Failed saves retain the selection for retry.
+- `ProfileAvatarFieldClient` uses `useProfileAvatarFieldClient` for field state and avatar display data, with `useProfileAvatar` handling validation and preview. Only the selected `File` lives in React Hook Form so submission can upload it; preview URLs are released on replacement, successful reset and unmount. Failed saves retain the selection for retry.
 - `ProfileFormContent` and `ProfileFormFooter` are colocated exports in `profile-form-client.tsx`; AST safety checks inspect each function independently.
 
 ## Profile form action safety (repository guard)

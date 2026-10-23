@@ -5,11 +5,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Field, FieldContent, FieldTitle } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
-import { useProfileAvatarField } from "../_hooks/use-profile-avatar-field";
+import { useProfileAvatarFieldClient } from "../_hooks/use-profile-avatar-field-client";
 
-type ProfileAvatarFieldProps = ComponentProps<typeof Field>;
+type ProfileAvatarFieldClientProps = ComponentProps<typeof Field>;
 
-function ProfileAvatarField({ className, ...props }: ProfileAvatarFieldProps) {
+function ProfileAvatarFieldClient({
+  className,
+  ...props
+}: ProfileAvatarFieldClientProps) {
   const {
     t,
     disabled,
@@ -18,7 +21,7 @@ function ProfileAvatarField({ className, ...props }: ProfileAvatarFieldProps) {
     fallbackInitial,
     fileInputRef,
     handleAvatarChange,
-  } = useProfileAvatarField();
+  } = useProfileAvatarFieldClient();
 
   return (
     <Field
@@ -65,4 +68,4 @@ function ProfileAvatarField({ className, ...props }: ProfileAvatarFieldProps) {
   );
 }
 
-export { ProfileAvatarField };
+export { ProfileAvatarFieldClient };

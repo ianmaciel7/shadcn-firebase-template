@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 type RouteLoadingProps = ComponentProps<typeof LoadingIndicator>;
 
 function RouteLoading({ className, label, ...props }: RouteLoadingProps) {
-  const t = useTranslations("Home");
+  const t = useTranslations("App");
   return (
     <LoadingIndicator
       label={label ?? t("loading")}

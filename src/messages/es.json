@@ -21,7 +21,8 @@
     "backHome": "Volver al inicio",
     "errorTitle": "¡Algo salió mal!",
     "errorMessage": "Ocurrió un error inesperado al cargar esta página.",
-    "tryAgain": "Intentar de nuevo"
+    "tryAgain": "Intentar de nuevo",
+    "loading": "Cargando…"
   },
   "Theme": {
     "toggle": "Alternar tema",

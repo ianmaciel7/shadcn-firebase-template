@@ -19,7 +19,7 @@ it.each([
     </NextIntlClientProvider>,
   );
   const status = screen.getByRole("status");
-  expect(status.textContent).toBe(messages.Home.loading);
+  expect(status.textContent).toBe(messages.App.loading);
   expect(status.getAttribute("aria-live")).toBe("polite");
   expect(status.querySelector("svg")?.getAttribute("aria-hidden")).toBe("true");
 });

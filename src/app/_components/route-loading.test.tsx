@@ -15,7 +15,7 @@ describe("RouteLoading", () => {
     );
 
     const status = screen.getByRole("status");
-    expect(status.textContent).toBe(en.Home.loading);
+    expect(status.textContent).toBe(en.App.loading);
     expect(status.className).toContain("custom-loading");
     expect(status.getAttribute("data-testid")).toBe("route-loading");
   });

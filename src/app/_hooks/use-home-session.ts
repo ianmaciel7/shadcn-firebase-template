@@ -1,8 +1,8 @@
 "use client";
 
-import { onAuthStateChanged, type User } from "firebase/auth";
+import type { User } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { getFirebaseUI } from "@/lib/firebase/client";
+import { subscribeToSession } from "@/lib/auth/session";
 
 function useHomeSession() {
   const [session, setSession] = useState<{ ready: boolean; user: User | null }>(
@@ -10,8 +10,7 @@ function useHomeSession() {
   );
   useEffect(() => {
     try {
-      return onAuthStateChanged(
-        getFirebaseUI().get().auth,
+      return subscribeToSession(
         (user) => setSession({ ready: true, user }),
         () => setSession({ ready: true, user: null }),
       );
