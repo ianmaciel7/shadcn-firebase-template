@@ -7,7 +7,7 @@ These are **repository conventions**, not filename rules prescribed by Next.js o
 | Dimension | Convention | Examples |
 | --- | --- | --- |
 | Runtime | Import graphs determine membership; `"use client"` declares a boundary, while a shared module can compile in both graphs | `ProfileCard` may participate in a client subtree without its own directive |
-| Responsibility | Describe the composition or behavior, not its runtime | `ProfileCard`, `ProfileForm`, `ProfileAvatarFieldClient`, `AuthProvider`, `ProtectedGate`, `SignInAuthFlow` |
+| Responsibility | Describe the composition or behavior, not its runtime | `ProfileCard`, `ProfileFormClient`, `ProfileAvatarFieldClient`, `AuthProviderClient`, `ProtectedGateClient`, `SignInAuthFlowClient` |
 | Placement | Colocate route components in private `_components/`, hooks in `_hooks/` and shared components in `src/components/ui/extensions/` | App Router private folders do not become routes |
 
 The shadcn primitives live under `src/components/ui/`; Firebase registry output
@@ -32,7 +32,7 @@ from application naming checks. Application-owned extensions under
   integrations. Presentation components keep no suffix, including interactive
   presentation that declares `"use client"`. Existing legacy integration files
   in `LEGACY_SEMANTIC_STEM_ALLOWLIST` keep semantic exports and prop types
-  unchanged (such as `ProfileForm` and `ProfileFormProps` in `profile-form-client.tsx`),
+  unchanged only when the current source still uses that legacy shape.
   whereas new and modernized integration components enforce exact 1:1 term parity
   (such as `HomeSectionClient` and `HomeSectionClientProps` in `home-section-client.tsx`).
 - Integrations own application data, persistence, authentication, navigation or
@@ -66,7 +66,11 @@ Owned component files outside the legacy allowlist enforce exact 1:1 term parity
   - Component declaration and named export: `HomeSectionClient`
   - Prop type declaration: `HomeSectionClientProps` (`HomeSectionProps` is rejected)
   - Hook coordination: `useHomeSectionClient` in `src/app/_hooks/use-home-section-client.ts` (`useHomeSection` is rejected)
-- **Legacy allowlist (`LEGACY_SEMANTIC_STEM_ALLOWLIST`)**: Existing legacy integration components (such as `profile-form-client.tsx` exporting `ProfileForm`) maintain their semantic unsuffixed exports for backward compatibility. All new and modernized components enforce exact 1:1 term parity.
+- **Legacy allowlist (`LEGACY_SEMANTIC_STEM_ALLOWLIST`)**:
+  Read the actual list in `scripts/check-component-conventions.mjs` before
+  claiming any exception. Current profile integration exports include
+  `ProfileFormClient` from `profile-form-client.tsx`. New components
+  enforce exact filename and export term parity.
 
 Simple presentation hooks such as `useId`, `useTranslations`, and React Hook
 Form's `useFormContext` and `useWatch` may be called directly in a field.
@@ -113,10 +117,14 @@ Use `src/components/ui/card.tsx`, `button.tsx` and `field.tsx` as reference impl
 
 - Use a local named function followed by an explicit named export. Prefer `ComponentProps<typeof Primitive>` or `ComponentProps<"element">` for wrappers that forward standard element props. Specialized third-party component contracts (such as `UseFormProps`) are also valid when that is the real component API.
 - Forward applicable `className` and `...props` to the underlying component; use `cn(..., className)` for application-specific styles. Do not blindly spread HTML attributes into `useForm`.
-- Use `children` for genuine component composition, as in `Card` and `FieldGroup`. A compound `ProfileForm` can accept independently declared field components via `children` and provide `FormProvider` context.
-- Keep application-owned Card adapters **composable**: `ProfileCard`, `ProfileCardHeader`, `ProfileCardTitle`, `ProfileCardDescription` and `ProfileCardContent` each forward native Card primitive props and `children`; `ProfileSection` assembles data-backed form content and handles loading/error states. `ProfileFormContent` provides `FieldGroup`, not a second `CardContent`. The form content/footer remain children of the same native `<form>`. Do not confuse an application view that renders a Card with a Card primitive wrapper.
+- Use `children` for genuine component composition, as in `Card` and `FieldGroup`. The compound `ProfileFormClient` accepts independent fields as
+  `children` under one `FormProvider` context.
+- Keep application-owned Card adapters **composable**: `ProfileCard`, `ProfileCardHeader`, `ProfileCardTitle`, `ProfileCardDescription` and `ProfileCardContent` each forward native Card primitive props and `children`; `ProfileSectionClient` assembles data-backed form content and renders
+  status branches. `ProfileFormClientContent` provides exactly one
+  `FieldGroup`, not a second `CardContent` or nested field group. The form content/footer remain children of the same native `<form>`. Do not confuse an application view that renders a Card with a Card primitive wrapper.
 - Fields connected via `Controller name="displayName"` must use the semantically matching component/file name `ProfileDisplayNameField` / `profile-display-name-field.tsx`. The component may expose a friendly display label without renaming the Firebase field.
-- Prefer narrow component props; do not hand `ProfileForm` or `ProfileAvatarFieldClient` the entire profile controller as a `profile` prop.
+- Prefer narrow component props; do not hand `ProfileFormClient` or `ProfileAvatarFieldClient` the
+  entire profile controller as a `profile` prop.
 - `FieldGroup`, `FieldSet`, `Field` and `Controller` are real primitives/API integrations; do not introduce arbitrary *Fields wrapper components solely for visual grouping.
 - The family-root and root-prefixed-part convention applies to every owned module, including Server and Client Components. The profile Card and Form retain exact-part guards on top of the general contract. Upstream shadcn/ui files also export related primitives together; generated registries remain unchanged.
 

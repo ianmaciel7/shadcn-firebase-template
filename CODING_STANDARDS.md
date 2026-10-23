@@ -318,7 +318,7 @@ rules, without a schema resolver. Add one only when the feature needs it.
   change, choose RHF `values` or `reset` deliberately and preserve unsaved edits.
 - Follow [.agents/rules/form-architecture.md](.agents/rules/form-architecture.md)
   for the single form instance, compound children, Provider boundary, profile
-  operation lock, reset, avatar cleanup, and fixed button action types. These
+  submit state, reset, avatar cleanup, and fixed button action types. These
   are repository policies rather than universal shadcn/ui requirements.
 - Use `FieldGroup` for field layout and `FieldSet` with `FieldLegend` for
   semantically related controls. `*-fields.tsx` is available for a real grouped
@@ -696,7 +696,7 @@ do not establish an integration. A filename without a suffix does not guarantee 
 can run on the server. Shared presentation is the subset compatible with both.
 
 Integrations may delegate their environment access to focused hooks/helpers;
-review those implementations. `ProfileForm` persists through `useProfileSubmit`,
+review those implementations. `ProfileFormClient` persists through `useProfileSubmit`,
 so it remains in `profile-form-client.tsx`. `ProfileEmailField` uses only form
 context and translations, so it lives in `profile-email-field.tsx` while keeping
 `"use client"`. `ProfileAvatarFieldClient` accesses browser object URLs through its

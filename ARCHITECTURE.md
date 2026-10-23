@@ -12,7 +12,7 @@ configuration and repository documentation.
 ```text
 .
 ├── .agents/                 # Agent rules, workflows, and installed skills
-├── .biome/                  # Custom Biome GritQL rules and tests
+├── .biome/                  # Custom Biome GritQL rules, preview plugin and tests
 ├── .fallow/                 # Fallow complexity and hotspot tracking
 ├── .github/                 # GitHub Actions CI workflows and configurations
 ├── .ladle/                  # Ladle component workbench configuration and styling

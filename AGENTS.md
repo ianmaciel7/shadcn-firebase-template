@@ -54,6 +54,8 @@ Deliver correct, maintainable changes with minimal risk.
 - `ARCHITECTURE.md`: repository layout and application boundaries.
 - `CODING_STANDARDS.md`: conventions for TypeScript, React, Next.js, UI, and i18n.
 - `TOOLING.md`: package manager, commands, and configuration ownership.
+- `docs/quality-rule-ownership.md`: primary enforcement tools and rule limits.
+- `docs/biome-javascript-plugin-pilot.md`: separate Biome 2.6 pilot scope.
 - `TESTING.md`: required validation and test strategy.
 - `SECURITY.md`: vulnerability reporting and secure contribution practices.
 - `CONTRIBUTING.md`: branch, commit, release, and pull-request conventions.
@@ -68,8 +70,12 @@ Accepted ADRs are historical records; use `docs/adr/README.md` and current
 configuration to identify later operational changes. The seven installed skills
 and two configured MCP servers are indexed in `.agents/README.md`.
 
-Read the documentation relevant to the change before editing it. Keep these
-documents and the relevant ADR current when a durable project practice changes.
+Read the documentation relevant to the change before editing it. For changes
+to tooling, checks, or conventions, update the executable config, positive
+and negative tests, `TOOLING.md`, and the owning agent rule together.
+Recheck `TESTING.md` whenever a job or test suite changes. Accepted ADRs
+retain historical decisions; amend their current guidance by linking a
+new decision when necessary, not by silently editing history.
 
 ## Agent skills
 
