@@ -16,7 +16,7 @@ and a regression test.
 | Static responsive class heuristics | `scripts/check-responsiveness.mjs` | Supplemental; cannot prove actual rendered accessibility. |
 | Rendered reflow and touch target behavior | Playwright | `tests/responsive.spec.ts` measures real element bounds. |
 | Accessibility semantics and violations | axe-core with Playwright | Complements, rather than replaces, interaction tests. |
-| Firebase authentication flows | Playwright + Firebase Emulator | Required `auth-emulator` job with Auth, Firestore, and Functions; `recordUsage` gates protected routes and saves. The 2026-10-23 run failed because Functions was not started; verify the new job rather than considering presence of tests sufficient. |
+| Firebase authentication flows | Playwright + Firebase Emulator | Required `auth-emulator` job launches Auth, Firestore, and Functions for the `recordUsage` gate. All jobs passed in run 39973720187; retain these dependencies and watch for flaky browser interactions. |
 | Module dependency boundaries and cycles | dependency-cruiser | Owns dependency graph checks. |
 | Security patterns and tainted sinks | Semgrep | Avoid duplicating these in new lint scripts. |
 | Unused application code | Knip | Fallow supplies independent health and coverage signals. |
@@ -55,5 +55,6 @@ filename/export plugin remains a preview; no AST checker was removed to
 claim equivalence.
 
 Current release criterion: the `ci-result` job must pass **all** required
-jobs, including `auth-emulator`. On 2026-10-23 the emulator job failed;
-do not override required checks or hide failed browser journeys.
+jobs, including `auth-emulator`. The emulator configuration was fixed and
+validated in CI run 39973720187. Do not override required checks or hide
+failed browser journeys on subsequent revisions.

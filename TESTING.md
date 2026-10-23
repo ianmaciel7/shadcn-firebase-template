@@ -211,7 +211,7 @@ Cover the variants and states a reviewer needs to see, not every prop.
 | `static` | Biome 2.5, isolated Biome 2.6 plugin pilot, typecheck, coverage, architecture, Knip, jscpd, ast-grep, route/component/responsiveness guards, CSpell, markdownlint, Fallow, React Doctor | `pnpm verify:static` plus CI-only pilot |
 | `build` | Vitest Browser Mode, production build with size budgets, Ladle production build | `pnpm verify:build` |
 | `e2e` | Playwright functional, accessibility, and visual specs in the pinned Playwright container | `pnpm verify:e2e` |
-| `auth-emulator` | Local demo Firebase Auth and Firestore, auth/profile Playwright E2E and authenticated axe checks | `pnpm dlx firebase-tools@15.34.1 emulators:exec --project demo-test --only auth,firestore "pnpm exec playwright test --project=auth-emulator"` (with test environment variables) |
+| `auth-emulator` | Local demo Firebase Auth, Firestore, and Functions; auth/profile Playwright E2E and authenticated axe checks | `pnpm test:auth` after `npm ci --prefix functions --ignore-scripts` (with emulator environment variables) |
 | `security` | Semgrep rule tests and scan (`--error`), Gitleaks, actionlint, zizmor, `pnpm audit`, pre-commit | `pnpm verify:security` |
 | `pr-title` | Conventional Commit PR title (pull requests only) | `echo "feat: title" \| pnpm exec commitlint` |
 | `ci-result` | Aggregates all six jobs, including `auth-emulator`; any required failure blocks the PR | n/a |
@@ -260,18 +260,17 @@ accessibility. A successful redirect or URL match alone does not prove the
 profile rendered. Match selectors to the current visible and accessible
 labels rather than guessing from old screenshots or component names.
 
-**Known failure on 2026-10-23:** the run
+**Resolved emulator setup issue (2026-10-23):** Run
 [39970721905](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/39970721905)
-passed the static, build, security, and ordinary E2E jobs, but its
-`auth-emulator` job failed three profile cases: profile email rendering,
-language saving, and authenticated profile axe setup. The Google popup test
-was also flaky. Investigation found that the CI started only Auth and
-Firestore while `ProtectedGateClient` waits for the `recordUsage`
-callable before rendering `/profile`. CI now starts the Functions Emulator
-and installs its dependencies as well. Confirm the updated job passes
-before closing the incident; keep the required check and inspect uploaded
-`auth-emulator-playwright-report` artifacts if failures remain.
-Do not claim a green PR or label retries and skips as passing tests.
+failed profile email, locale, and authenticated accessibility scenarios
+because the Functions Emulator was missing while the protected gate awaited
+the `recordUsage` callable. The Google popup scenario also required a retry.
+After starting Auth, Firestore, and Functions together and installing the
+Functions dependencies, run
+[39973720187](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/39973720187)
+passed **all required CI jobs**. Preserve this three-emulator setup and
+keep watching for intermittent popup/browser regressions; one passing run
+does not establish the absence of flakiness.
 
 ### Automated accessibility limits
 

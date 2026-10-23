@@ -30,11 +30,10 @@ from application naming checks. Application-owned extensions under
   name by semantic role. Prohibit generic implementation terms (`View`, `Screen`, `Presentation`) in component identifiers.
 - Reserve `-client.tsx` for browser integrations and `-server.tsx` for server
   integrations. Presentation components keep no suffix, including interactive
-  presentation that declares `"use client"`. Existing legacy integration files
-  in `LEGACY_SEMANTIC_STEM_ALLOWLIST` keep semantic exports and prop types
-  unchanged only when the current source still uses that legacy shape.
-  whereas new and modernized integration components enforce exact 1:1 term parity
-  (such as `HomeSectionClient` and `HomeSectionClientProps` in `home-section-client.tsx`).
+  presentation that declares `"use client"`. Review
+  `LEGACY_SEMANTIC_STEM_ALLOWLIST` in the naming checker before applying an
+  exception; new and modernized integration components require exact filename
+  parity (for example, `HomeSectionClient` and `HomeSectionClientProps`).
 - Integrations own application data, persistence, authentication, navigation or
   platform access, directly or through focused hooks/helpers. Examples include
   Firebase, browser storage, object URLs, theme persistence and external fetches.

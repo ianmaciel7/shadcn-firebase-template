@@ -112,7 +112,7 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm test:logging` | Run logging and diagnostic test suite. |
 | `pnpm test:browser` | `browser` Vitest project in Chromium. |
 | `pnpm test:e2e` | Functional Playwright specs (excludes `@a11y` and `@visual`). |
-| `pnpm test:auth` | Run authentication-specific tests in Vitest; this does **not** run the Firebase Emulator browser E2E job. |
+| `pnpm test:auth` | Run Playwright's `auth-emulator` project with Firebase Auth, Firestore, and Functions via `firebase emulators:exec`; install the separate Functions dependencies first. |
 | `pnpm test:a11y` | Axe accessibility scans. |
 | `pnpm test:visual` | Compare screenshots with baselines. Never rewrites them. Skipped locally; runs in CI (or with `PLAYWRIGHT_VISUAL=1`). |
 | `pnpm test:visual:update` | Rewrite baselines. Run it through the **Update visual baselines** workflow, not on your machine. |
@@ -379,16 +379,14 @@ Recheck current documentation before adding a replacement rule.
   does not cover `ui/extensions/`; the experimental `.biome/` folder is
   excluded from health analysis but tested separately.
 - **React Doctor reports are advisory.** The currently observed React Compiler, repeated JSX, and public Firebase API key naming findings require code-level triage. They are not evidence that CI has enforced or fixed them.
-- **Firebase Emulator E2E needs confirmation after dependency fix.** On 2026-10-23 run
-  [39970721905](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/39970721905),
-  the `auth-emulator` job failed profile email, language, and accessible
-  profile cases; the popup case was flaky. The other five jobs passed.
-  Root-cause investigation found that the workflow did not launch the
-  Functions Emulator, although `ProtectedGateClient` and profile saving
-  require its `recordUsage` callable. The workflow now starts it and
-  installs the Functions package dependencies. This is not a validated
-  success until the new run passes; inspect the Playwright artifacts
-  if failures persist.
+- **Firebase Emulator setup regression resolved (2026-10-23).** Run
+  [39970721905](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/39970721905)
+  failed profile journeys and showed Google popup flakiness because the
+  `recordUsage` callable was unavailable. Run
+  [39973720187](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/39973720187)
+  passed all required jobs after CI installed the Functions package and
+  launched Auth, Firestore, and Functions together. Keep the three-emulator
+  setup in place and investigate any future popup retries.
 - **Visual tests run only in CI.** Baselines are Linux screenshots, generated and
   compared inside the pinned Playwright container (the `container` image in
   `ci.yml` and `visual-baselines.yml`), to reduce rendering differences between baseline generation and comparison.
