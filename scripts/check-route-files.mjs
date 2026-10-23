@@ -9,11 +9,7 @@ const permittedNextFunctions = new Set([
   "generateViewport",
   "generateStaticParams",
 ]);
-const forbiddenImports =
-  /^(firebase|firebase-admin)(\/|$)|^@\/lib\/firebase\/client$/;
-
 const messages = {
-    "Keep route entrypoints as Server Components; move client behavior to _components/.",
   branch:
     "Extract conditional, iterative, and error-handling logic out of route entrypoints.",
   mutation:
