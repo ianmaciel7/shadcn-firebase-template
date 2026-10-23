@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { type ComponentProps, useId } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -12,7 +13,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { isLocale, locales } from "@/i18n/routing";
-import { useTranslations } from "next-intl";
 import type { ProfileValues } from "@/lib/profile";
 
 type ProfileLocaleFieldProps = ComponentProps<typeof Field>;
