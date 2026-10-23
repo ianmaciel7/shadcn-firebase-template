@@ -8,8 +8,12 @@ import { useHomeSignOutButtonClient } from "../_hooks/use-home-sign-out-button";
 
 type HomeSignOutButtonClientProps = ComponentProps<"div">;
 
-function HomeSignOutButtonClient({ className, ...props }: HomeSignOutButtonClientProps) {
-  const { t, auth, isPending, isError, handleSignOut } = useHomeSignOutButtonClient();
+function HomeSignOutButtonClient({
+  className,
+  ...props
+}: HomeSignOutButtonClientProps) {
+  const { t, auth, isPending, isError, handleSignOut } =
+    useHomeSignOutButtonClient();
   const errorId = "home-sign-out-error";
 
   return (

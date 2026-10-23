@@ -6,7 +6,9 @@ import { useForgotPasswordAuthFlowClient } from "../_hooks/use-forgot-password-a
 
 type ForgotPasswordAuthFlowClientProps = ComponentProps<"div">;
 
-function ForgotPasswordAuthFlowClient(props: ForgotPasswordAuthFlowClientProps) {
+function ForgotPasswordAuthFlowClient(
+  props: ForgotPasswordAuthFlowClientProps,
+) {
   const { goToSignIn } = useForgotPasswordAuthFlowClient();
   return (
     <div {...props}>

@@ -8,7 +8,11 @@ import { useProfileFormClient } from "../_hooks/use-profile-form";
 
 type ProfileFormClientProps = Omit<ComponentProps<"form">, "onSubmit">;
 
-function ProfileFormClient({ children, className, ...props }: ProfileFormClientProps) {
+function ProfileFormClient({
+  children,
+  className,
+  ...props
+}: ProfileFormClientProps) {
   const { form, handleSubmit } = useProfileFormClient();
 
   return (
@@ -27,13 +31,19 @@ function ProfileFormClient({ children, className, ...props }: ProfileFormClientP
 
 type ProfileFormClientContentProps = ComponentProps<typeof FieldGroup>;
 
-function ProfileFormClientContent({ className, ...props }: ProfileFormClientContentProps) {
+function ProfileFormClientContent({
+  className,
+  ...props
+}: ProfileFormClientContentProps) {
   return <FieldGroup className={cn("gap-4", className)} {...props} />;
 }
 
 type ProfileFormClientFooterProps = ComponentProps<"div">;
 
-function ProfileFormClientFooter({ className, ...props }: ProfileFormClientFooterProps) {
+function ProfileFormClientFooter({
+  className,
+  ...props
+}: ProfileFormClientFooterProps) {
   return (
     <div className={cn("flex w-full flex-col gap-4", className)} {...props} />
   );

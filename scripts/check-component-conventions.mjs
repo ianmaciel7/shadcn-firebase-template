@@ -163,7 +163,7 @@ function checkStemComponentTermParity(source, fileStem, report) {
   }
 }
 
-function expectedComponentNames(source, stem) {
+function expectedComponentNames(source, _stem) {
   const path = source.fileName
     .replaceAll("\\", "/")
     .replace(/-(client|server)\.tsx$/, ".tsx");
@@ -629,7 +629,8 @@ function normalizeProfileTag(name) {
 
 function profileElements(elements, name) {
   return elements.filter(
-    (element) => normalizeProfileTag(element.name) === normalizeProfileTag(name),
+    (element) =>
+      normalizeProfileTag(element.name) === normalizeProfileTag(name),
   );
 }
 
@@ -691,7 +692,12 @@ function checkProfileSectionAction(source, elements, action, report) {
     source,
     elements,
     action,
-    ["ProfileFormClientFooter", "ProfileCardFooter", "ProfileFormClient", "ProfileCard"],
+    [
+      "ProfileFormClientFooter",
+      "ProfileCardFooter",
+      "ProfileFormClient",
+      "ProfileCard",
+    ],
     report,
   );
   for (const button of buttons) {
@@ -763,7 +769,10 @@ function checkProfileSectionSafety(source, elements, report) {
     profileElements(elements, "form").length ||
     profileElements(elements, "Card").length
   ) {
-    report(source, "ProfileSectionClient must delegate native Card and form roots.");
+    report(
+      source,
+      "ProfileSectionClient must delegate native Card and form roots.",
+    );
   }
 }
 
@@ -779,7 +788,10 @@ function checkProfileProviderSafety(source, elements, report) {
     );
   }
   if (profileElements(elements, "Card").length > 0) {
-    report(source, "ProfileFormClient must delegate the Card root to ProfileCard.");
+    report(
+      source,
+      "ProfileFormClient must delegate the Card root to ProfileCard.",
+    );
   }
   if (
     profileElements(elements, "FieldGroup").length ||
@@ -895,7 +907,8 @@ function checkProfileFormSafety(source, stem, report) {
     return;
   }
   if (stem === "profile-form-client" || stem === "profile-form") {
-    const namePrefix = stem === "profile-form-client" ? "ProfileFormClient" : "ProfileForm";
+    const namePrefix =
+      stem === "profile-form-client" ? "ProfileFormClient" : "ProfileForm";
     for (const [name, partCheck] of [
       [namePrefix, checkProfileProviderSafety],
       [`${namePrefix}Content`, checkProfileContentSafety],

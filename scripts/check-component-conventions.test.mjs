@@ -129,12 +129,12 @@ describe("owned component conventions", () => {
       server,
     );
     expectInvalid(
-      'function ProfileForm(props) { return <form {...props} />; } export { ProfileForm };',
+      "function ProfileForm(props) { return <form {...props} />; } export { ProfileForm };",
       /ProfileFormClient/,
       "src/app/(protected)/profile/_components/profile-form-client.tsx",
     );
     expectInvalid(
-      'function ProfileSection(props) { return <div {...props} />; } export { ProfileSection };',
+      "function ProfileSection(props) { return <div {...props} />; } export { ProfileSection };",
       /ProfileSectionClient/,
       "src/app/(protected)/profile/_components/profile-section-client.tsx",
     );
