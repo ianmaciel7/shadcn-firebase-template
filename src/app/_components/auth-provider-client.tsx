@@ -3,7 +3,7 @@
 import { FirebaseUIProvider } from "@firebase-oss/ui-react";
 import type { PropsWithChildren } from "react";
 import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
-import { useAuthProviderClient } from "../_hooks/use-auth-provider";
+import { useAuthProviderClient } from "../_hooks/use-auth-provider-client";
 
 type AuthProviderClientProps = PropsWithChildren;
 

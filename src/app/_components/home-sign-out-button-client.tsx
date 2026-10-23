@@ -4,7 +4,7 @@ import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
-import { useHomeSignOutButtonClient } from "../_hooks/use-home-sign-out-button";
+import { useHomeSignOutButtonClient } from "../_hooks/use-home-sign-out-button-client";
 
 type HomeSignOutButtonClientProps = ComponentProps<"div">;
 

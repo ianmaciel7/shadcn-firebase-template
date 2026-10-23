@@ -5,7 +5,7 @@ import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
 import { FieldGroup } from "@/components/ui/field";
-import { useProfileSectionClient } from "../_hooks/use-profile-section";
+import { useProfileSectionClient } from "../_hooks/use-profile-section-client";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
 import { ProfileAvatarFieldClient } from "./profile-avatar-field-client";
 import {

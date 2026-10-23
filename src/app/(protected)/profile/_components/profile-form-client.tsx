@@ -4,7 +4,7 @@ import type { ComponentProps } from "react";
 import { FormProvider } from "react-hook-form";
 import { FieldGroup } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
-import { useProfileFormClient } from "../_hooks/use-profile-form";
+import { useProfileFormClient } from "../_hooks/use-profile-form-client";
 
 type ProfileFormClientProps = Omit<ComponentProps<"form">, "onSubmit">;
 

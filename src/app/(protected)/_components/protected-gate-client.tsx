@@ -2,7 +2,7 @@
 
 import type { PropsWithChildren } from "react";
 import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
-import { useProtectedGateClient } from "../_hooks/use-protected-gate";
+import { useProtectedGateClient } from "../_hooks/use-protected-gate-client";
 
 type ProtectedGateClientProps = PropsWithChildren;
 
