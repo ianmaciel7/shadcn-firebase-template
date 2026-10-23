@@ -735,7 +735,7 @@ function checkProfileSectionSafety(source, elements, report) {
     source,
     elements,
     "ProfileDisplayNameField",
-    ["ProfileCardContent", "ProfileFormClient", "ProfileCard"],
+    ["FieldGroup", "ProfileCardContent", "ProfileFormClient", "ProfileCard"],
     report,
   );
   requireProfilePlacement(

@@ -43,8 +43,8 @@ describe("useProfileStatus", () => {
       isError: false,
       isHidden: false,
       isLoading: true,
-      message: "",
-      userId: "",
+      errorMessage: null,
+      userId: null,
     });
   });
 
@@ -56,8 +56,8 @@ describe("useProfileStatus", () => {
       isError: false,
       isHidden: true,
       isLoading: false,
-      message: "",
-      userId: "",
+      errorMessage: null,
+      userId: null,
     });
   });
 
@@ -74,8 +74,8 @@ describe("useProfileStatus", () => {
         isError: true,
         isHidden: false,
         isLoading: false,
-        message: expected,
-        userId: "",
+        errorMessage: expected,
+        userId: null,
       });
     },
   );
@@ -88,8 +88,8 @@ describe("useProfileStatus", () => {
       isError: true,
       isHidden: false,
       isLoading: false,
-      message: "Authentication failed",
-      userId: "",
+      errorMessage: "Authentication failed",
+      userId: null,
     });
   });
 
@@ -99,7 +99,7 @@ describe("useProfileStatus", () => {
       isError: false,
       isHidden: false,
       isLoading: false,
-      message: "",
+      errorMessage: null,
       userId: "user-123",
     });
   });

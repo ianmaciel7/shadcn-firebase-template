@@ -212,6 +212,21 @@ describe("ProfileSectionClient", () => {
     expect(container.querySelector('[data-slot="card"]')).toBeNull();
   });
 
+  it("renders an accessible error when preferences cannot load", async () => {
+    mocks.currentUser = { uid: "user-123" };
+    mocks.readPreferences.mockRejectedValue(new Error("Preferences failed"));
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    try {
+      render(<ProfileSectionClient />);
+      expect((await screen.findByRole("alert")).textContent).toBe(
+        "profileLoadError",
+      );
+    } finally {
+      log.mockRestore();
+    }
+  });
+
   it("keeps form fields in CardContent and buttons in CardFooter", async () => {
     mocks.currentUser = { uid: "user-123", email: "user@example.com" };
     render(<ProfileSectionClient />);

@@ -665,7 +665,7 @@ describe("owned component conventions", () => {
     );
     expectInvalid(
       "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileDisplayNameField /><ProfileCardFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
-      /ProfileDisplayNameField must be inside ProfileCardContent/,
+      /ProfileDisplayNameField must be inside/,
       section,
     );
   });

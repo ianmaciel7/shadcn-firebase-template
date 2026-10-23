@@ -1,30 +1,19 @@
 import { useTranslations } from "next-intl";
-import type { ComponentProps, PropsWithChildren } from "react";
+import type { ComponentProps } from "react";
 import { LabeledSpinner } from "@/components/ui/extensions/labeled-spinner";
+import type { ProfileStatus } from "../_hooks/use-profile-status";
 import { ProfileCard, ProfileCardContent } from "./profile-card";
 
-type ProfileSectionStateProps = PropsWithChildren<
-  ComponentProps<"div"> & {
-    isError: boolean;
-    isHidden: boolean;
-    isLoading: boolean;
-    message: string;
-  }
->;
+type ProfileSectionStateProps = ComponentProps<"div"> & {
+  state: ProfileStatus;
+};
 
-function ProfileSectionState({
-  children,
-  isError,
-  isHidden,
-  isLoading,
-  message,
-  ...props
-}: ProfileSectionStateProps) {
+function ProfileSectionState({ state, ...props }: ProfileSectionStateProps) {
   const t = useTranslations("Auth");
 
-  if (isHidden) return null;
+  if (state.isHidden) return null;
 
-  if (isLoading) {
+  if (state.isLoading) {
     return (
       <div {...props}>
         <LabeledSpinner className="w-full text-sm text-muted-foreground">
@@ -34,17 +23,17 @@ function ProfileSectionState({
     );
   }
 
-  if (isError) {
+  if (state.isError) {
     return (
       <ProfileCard {...props}>
         <ProfileCardContent>
-          <p role="alert">{message}</p>
+          <p role="alert">{state.errorMessage}</p>
         </ProfileCardContent>
       </ProfileCard>
     );
   }
 
-  return children;
+  return props.children;
 }
 
 export { ProfileSectionState };
