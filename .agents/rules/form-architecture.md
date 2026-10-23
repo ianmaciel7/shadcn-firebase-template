@@ -4,7 +4,7 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
 
 ## Compound forms
 
-- A composite form that renders nested field components (as with `ProfileForm`) creates exactly one `useForm` instance, wraps its content in `FormProvider {...form}` and uses `form.handleSubmit(onSubmit)`.
+- A composite form with nested field components (as with `ProfileFormClient`) uses exactly one `useForm` instance, wraps its content in `FormProvider {...form}`, and submits through `form.handleSubmit(onSubmit)`.
 - Child fields access `control` with `useFormContext<ProfileValues>()`; they compose shadcn/ui `Field`, `FieldLabel`, `Input` / `Select`, and `FieldError` with React Hook Form `Controller`.
 - Match each independently named `*-field.tsx` to its literal React Hook Form `Controller name`. For example `name="displayName"` is implemented by `ProfileDisplayNameField`, while the label may simply read "Name".
 - A reusable form can accept strongly typed `UseFormProps<Values>`, but

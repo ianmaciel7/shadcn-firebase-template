@@ -166,7 +166,7 @@ application orchestration to `useHomeSectionClient`.
 
 ### Banned generic naming terms
 
-Do not use `View` or `Screen` as words in owned component, hook, type, variable, parameter, import-binding or file names. Use the responsibility instead (`ProfileSection`, `useProfileSection`, `useProfileStatus`, `AuthContent`, `AuthFlow`). `useProfileStatus` replaces `useProfileView`; profile rendering consumes `state.status`.
+Do not use `View` or `Screen` as words in owned component, hook, type, variable, parameter, import-binding or file names. Use the responsibility instead (`ProfileSectionClient`, `useProfileSectionClient`, `useProfileStatus`, `AuthContent`, `AuthFlow`). `useProfileStatus` replaces generic view-state naming; profile rendering consumes `state.status`.
 
 `check:components` scans owned `.ts` and `.tsx` files throughout `src`, including hooks and library modules. CamelCase, kebab-case and numbered words are checked, so `AccountScreenState`, `AccountScreen2` and `use-account-view.ts` fail; unrelated words such as `Viewport` and `preview` remain valid. Generated registries and test/story files retain their exclusions. Preserve external API export names, but alias their local bindings (`SignInAuthScreen as SignInAuthContent`).
 
