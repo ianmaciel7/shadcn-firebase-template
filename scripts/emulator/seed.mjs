@@ -54,19 +54,20 @@ async function reportCreateUserResult(response, email) {
   if (response.ok) {
     const data = await response.json();
     console.log(`[seed] Created user: ${email} (UID: ${data.localId})`);
-    return;
+    return true;
   }
 
   const errorData = await response.json().catch(() => ({}));
   if (errorData?.error?.message === "EMAIL_EXISTS") {
     console.log(`[seed] User already exists: ${email}`);
-    return;
+    return true;
   }
 
   console.error(
     `[seed] Failed to create user ${email} (${response.status} ${response.statusText}):`,
     errorData?.error?.message || errorData,
   );
+  return false;
 }
 
 function reportSeedError(error, email) {
@@ -93,7 +94,10 @@ export async function seedUsers(users = DEFAULT_USERS) {
   for (const user of users) {
     try {
       const response = await createUser(endpoint, user);
-      await reportCreateUserResult(response, user.email);
+      if (!(await reportCreateUserResult(response, user.email))) {
+        process.exitCode = 1;
+        return;
+      }
     } catch (error) {
       reportSeedError(error, user.email);
       process.exitCode = 1;

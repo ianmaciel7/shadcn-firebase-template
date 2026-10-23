@@ -128,6 +128,30 @@ describe("ProtectedGateClient", () => {
     expect(mocks.router.replace).toHaveBeenCalled();
   });
 
+  it("recovers from a committed logging error on a new session", async () => {
+    let acknowledge: (() => void) | undefined;
+    mocks.currentUser = { uid: "user-123" };
+    mocks.recordUsage
+      .mockRejectedValueOnce(new Error("offline"))
+      .mockReturnValueOnce(
+        new Promise<void>((resolve) => {
+          acknowledge = resolve;
+        }),
+      );
+    render(<ProtectedGateClient>{"Protected Content"}</ProtectedGateClient>);
+    await screen.findByRole("alert");
+
+    await act(async () => {
+      mocks.subscribe.mock.calls[0][1]({ uid: "user-456" });
+    });
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(screen.getByRole("status")).toBeTruthy();
+    expect(screen.queryByText("Protected Content")).toBeNull();
+
+    await act(async () => acknowledge?.());
+    expect(screen.getByText("Protected Content")).toBeTruthy();
+  });
+
   it("ignores an obsolete logging failure after a newer session succeeds", async () => {
     let rejectOld: ((cause: Error) => void) | undefined;
     mocks.recordUsage.mockReturnValueOnce(

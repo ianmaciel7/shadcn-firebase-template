@@ -7,10 +7,12 @@ Run the checks relevant to a change before opening a pull request. See
 
 | Command | Use it for |
 | --- | --- |
-| `pnpm verify:fast` | Code changes: Biome CI, typecheck, unit tests, ast-grep structural rules, route-entrypoint guard, owned-component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Browser suites run separately. |
+| `pnpm verify:fast` | Code changes: Biome CI, typecheck, unit tests, logging and seed CLI regressions, ast-grep structural rules, route-entrypoint guard, owned-component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Browser suites run separately. |
 | `pnpm verify:full` | Before a pull request: `verify:static` (adds coverage thresholds, architecture, unused code, duplication, ast-grep structural checks, route/component/responsiveness guards, spelling, Markdown, complexity, React diagnostics) plus `verify:build` (browser tests, production build with size budgets, Ladle build). |
 | `pnpm verify:e2e` | Changes that affect pages or visual output: functional, accessibility, and visual Playwright specs. |
-| `pnpm verify:security` | Dependency or configuration changes: Semgrep rule tests and scan, Gitleaks, workflow lint, and `pnpm audit`. Needs the host tools in [TOOLING.md](TOOLING.md#host-prerequisites). |
+| `pnpm verify:security` | Dependency or configuration changes: Semgrep rule tests and scan, Gitleaks, workflow lint, `pnpm audit`, and the separate Functions lockfile audit. Needs the host tools in [TOOLING.md](TOOLING.md#host-prerequisites). |
+| `pnpm test:emulator` | Seed CLI process behavior with mocked requests; part of fast/static verification and requires no running emulator. |
+| `pnpm audit:functions` | Separate dependency audit of the deployed Cloud Functions npm lockfile; part of security verification and CI. |
 
 For documentation-only changes, run `pnpm check:markdown` and
 `pnpm check:spelling`, then verify relative links, referenced paths, and
@@ -18,9 +20,10 @@ commands against the repository. These checks do not replace CI; the pull
 request still runs the configured jobs. Markdown lint intentionally excludes
 agent files and ADRs 0001–0005, so review those manually when applicable.
 
-`pnpm verify:fast` runs the unit Vitest project and structural ast-grep
-checks, including migrated route rules for client directives, hooks, and JSX
-event handlers. Browser, end-to-end, visual, and mutation suites run separately.
+`pnpm verify:fast` runs the unit Vitest project, logging and seed CLI
+regressions, and structural ast-grep checks, including migrated route rules for
+client directives, hooks, and JSX event handlers. Browser, end-to-end, visual,
+and mutation suites run separately.
 
 For a manual smoke test, run `pnpm dev` and verify the affected route in a
 browser, including its loading, error, and localized states where applicable.
@@ -44,6 +47,15 @@ browser matters (for example, `use-mobile.browser.test.tsx` uses a real viewport
 instead of a stubbed `matchMedia`).
 
 ## Test placement and scope
+
+The review regressions in `prompt-input.test.tsx` and `speech-input.test.tsx`
+run in the existing unit project despite the registry's coverage exclusions.
+They verify newer edits, attachment ownership, resource cleanup, and obsolete
+async callbacks. Profile tests verify that session changes stop later writes.
+The seed CLI tests use a child process and mocked fetch/environment-file loading
+to assert actual exit status without contacting Firebase. Maintain these
+behavioral assertions when changing related `_hooks`, `_components`, `_lib`,
+or shared service code; do not replace them with source-text assertions.
 
 - Place Vitest unit tests for functions, utilities, hooks, and business logic
   next to their source module with `*.test.ts`.

@@ -21,7 +21,7 @@ language, as defined in `.agents/rules/language.md`.
 | [Glossary](../GLOSSARY.md) | Agreed product vocabulary; currently pending | Adopted product terminology |
 | [Entity-relationship diagram](../DER.md) | Pending product model and existing technical Firebase stores | Current SDK modules, Security Rules, and adopted domain constraints |
 | [Agent instructions](../AGENTS.md) | Repository-wide contributor guidance | Current guides and agent configuration |
-| [React reference](agents/react.md) | Complete official content inventory, runtime error catalog, and applicability review | Installed React/DOM/Compiler, official source revision, and lint config |
+| [React reference](agents/react.md) | Official content inventory, runtime error catalog, applicability review, and all 20 supplied topics with 15 examples | Installed React/DOM/Compiler, official source revision, and lint config |
 | [Next.js reference](agents/nextjs.md) | Complete stable/current docs and error-message inventory, compatibility, and lookup workflow | Official source revisions, installed Next.js, current config |
 | [shadcn/ui reference](agents/shadcn.md) | Official documentation coverage, source inventory, and lookup workflow | Official source revision and current local configuration |
 
@@ -29,6 +29,12 @@ language, as defined in `.agents/rules/language.md`.
 
 - [Logging](logging.md): Next.js server errors, authenticated Firebase usage
   events, Cloud Logging queries, and deployment requirements.
+
+## Review snapshots
+
+- [2026-10-23 code review](reviews/2026-10-23-code-review.md): findings,
+  reproductions, validation results, and environment limitations for the reviewed
+  revision. This is a dated assessment, not a replacement for the current guides.
 
 ## Decisions and agent references
 

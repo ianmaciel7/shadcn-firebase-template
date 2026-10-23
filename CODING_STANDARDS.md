@@ -656,7 +656,8 @@ verify actual behavior before changing it.
 
 New APIs described in current docs require installed runtime/type/framework
 support. In this review, `Activity`, `ViewTransition`, `addTransitionType`, `use`,
-and `useEffectEvent` exist in React 19.3.1; `browser` is not an installed export.
+and `useEffectEvent` exist in React 19.3.1. `browser` is exported by the installed
+React DOM 19.3.1 package and declared in its types; import it from `react-dom`.
 Availability alone is not a request to adopt an animation, browser-only-rendering,
 optimistic-state, or experimental Suspense feature.
 

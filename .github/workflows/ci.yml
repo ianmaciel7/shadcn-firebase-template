@@ -251,6 +251,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Dependency audit
         run: pnpm audit
+      - name: Cloud Functions dependency audit
+        run: pnpm audit:functions
       # Locally the Git hook skips these checks when pre-commit is missing, so
       # CI is where they are always enforced.
       - name: Repository integrity (pre-commit)

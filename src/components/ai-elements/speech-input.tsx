@@ -101,7 +101,9 @@ const SpeechInput = ({
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
+  const mountedRef = useRef(false);
+  const recordingRevisionRef = useRef(0);
+  const startingRef = useRef(false);
   const onTranscriptionChangeRef = useRef<
     SpeechInputProps["onTranscriptionChange"]
   >(onTranscriptionChange);
@@ -178,45 +180,69 @@ const SpeechInput = ({
   }, [mode, lang]);
 
   // Cleanup MediaRecorder and stream on unmount
-  useEffect(
-    () => () => {
-      if (mediaRecorderRef.current?.state === "recording") {
-        mediaRecorderRef.current.stop();
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      recordingRevisionRef.current += 1;
+      startingRef.current = false;
+      const recorder = mediaRecorderRef.current;
+      const stream = streamRef.current;
+      mediaRecorderRef.current = null;
+      streamRef.current = null;
+      // Release tracks even if stopping the recorder fails.
+      for (const track of stream?.getTracks() ?? []) {
+        track.stop();
       }
-      if (streamRef.current) {
-        for (const track of streamRef.current.getTracks()) {
-          track.stop();
-        }
+      if (recorder?.state === "recording") {
+        recorder.stop();
       }
-    },
-    [],
-  );
+    };
+  }, []);
 
   // Start MediaRecorder recording
   const startMediaRecorder = useCallback(async () => {
-    if (!onAudioRecordedRef.current) {
+    if (!onAudioRecordedRef.current || startingRef.current) {
       return;
     }
 
+    startingRef.current = true;
+    const revision = ++recordingRevisionRef.current;
+    const isCurrent = () =>
+      mountedRef.current && recordingRevisionRef.current === revision;
+    let stream: MediaStream | undefined;
+    let mediaRecorder: MediaRecorder | undefined;
+    const releaseStream = () => {
+      for (const track of stream?.getTracks() ?? []) {
+        track.stop();
+      }
+      if (streamRef.current === stream) streamRef.current = null;
+    };
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      if (!isCurrent()) {
+        releaseStream();
+        return;
+      }
       streamRef.current = stream;
-      const mediaRecorder = new MediaRecorder(stream);
-      audioChunksRef.current = [];
+      mediaRecorder = new MediaRecorder(stream);
+      const audioChunks: Blob[] = [];
 
       const handleDataAvailable = (event: BlobEvent) => {
         if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
+          audioChunks.push(event.data);
         }
       };
 
       const handleStop = async () => {
-        for (const track of stream.getTracks()) {
-          track.stop();
+        releaseStream();
+        if (mediaRecorderRef.current === mediaRecorder) {
+          mediaRecorderRef.current = null;
         }
-        streamRef.current = null;
+        if (!isCurrent()) return;
+        setIsListening(false);
 
-        const audioBlob = new Blob(audioChunksRef.current, {
+        const audioBlob = new Blob(audioChunks, {
           type: "audio/webm",
         });
 
@@ -224,23 +250,20 @@ const SpeechInput = ({
           setIsProcessing(true);
           try {
             const transcript = await onAudioRecordedRef.current(audioBlob);
-            if (transcript) {
+            if (transcript && isCurrent()) {
               onTranscriptionChangeRef.current?.(transcript);
             }
           } catch {
             // Error handling delegated to the onAudioRecorded caller
           } finally {
-            setIsProcessing(false);
+            if (isCurrent()) setIsProcessing(false);
           }
         }
       };
 
       const handleError = () => {
-        setIsListening(false);
-        for (const track of stream.getTracks()) {
-          track.stop();
-        }
-        streamRef.current = null;
+        releaseStream();
+        if (isCurrent()) setIsListening(false);
       };
 
       mediaRecorder.addEventListener("dataavailable", handleDataAvailable);
@@ -251,7 +274,13 @@ const SpeechInput = ({
       mediaRecorder.start();
       setIsListening(true);
     } catch {
-      setIsListening(false);
+      releaseStream();
+      if (mediaRecorderRef.current === mediaRecorder) {
+        mediaRecorderRef.current = null;
+      }
+      if (isCurrent()) setIsListening(false);
+    } finally {
+      if (isCurrent()) startingRef.current = false;
     }
   }, []);
 

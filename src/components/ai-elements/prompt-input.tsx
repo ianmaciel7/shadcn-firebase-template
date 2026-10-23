@@ -203,9 +203,14 @@ interface PromptInputControllerProps {
   ) => void;
 }
 
-const PromptInputController = createContext<PromptInputControllerProps | null>(
-  null,
-);
+interface InternalPromptInputControllerProps
+  extends PromptInputControllerProps {
+  /** Clears only the draft revision captured by this controller. */
+  __clearSubmittedInput: () => void;
+}
+
+const PromptInputController =
+  createContext<InternalPromptInputControllerProps | null>(null);
 const ProviderAttachmentsContext = createContext<AttachmentsContext | null>(
   null,
 );
@@ -250,8 +255,23 @@ const PromptInputProvider = ({
   children,
 }: PromptInputProviderProps) => {
   // ----- textInput state
-  const [textInput, setTextInput] = useState(initialTextInput);
-  const clearInput = useCallback(() => setTextInput(""), []);
+  const [textInput, setTextInput] = useState({
+    value: initialTextInput,
+    revision: 0,
+  });
+  const setInput = useCallback((value: string) => {
+    setTextInput((current) => ({ value, revision: current.revision + 1 }));
+  }, []);
+  const clearInput = useCallback(() => {
+    setTextInput((current) => ({ value: "", revision: current.revision + 1 }));
+  }, []);
+  const clearSubmittedInput = useCallback(() => {
+    setTextInput((current) =>
+      current.revision === textInput.revision
+        ? { value: "", revision: current.revision + 1 }
+        : current,
+    );
+  }, [textInput.revision]);
 
   // ----- attachments state (global when wrapped)
   const [attachmentFiles, setAttachmentFiles] = useState<
@@ -343,17 +363,25 @@ const PromptInputProvider = ({
     [],
   );
 
-  const controller = useMemo<PromptInputControllerProps>(
+  const controller = useMemo<InternalPromptInputControllerProps>(
     () => ({
+      __clearSubmittedInput: clearSubmittedInput,
       __registerFileInput,
       attachments,
       textInput: {
         clear: clearInput,
-        setInput: setTextInput,
-        value: textInput,
+        setInput,
+        value: textInput.value,
       },
     }),
-    [textInput, clearInput, attachments, __registerFileInput],
+    [
+      textInput.value,
+      setInput,
+      clearInput,
+      clearSubmittedInput,
+      attachments,
+      __registerFileInput,
+    ],
   );
 
   return (
@@ -529,6 +557,7 @@ const PromptInput = ({
   maxFileSize,
   onError,
   onSubmit,
+  onInputCapture,
   children,
   ...props
 }: PromptInputProps) => {
@@ -539,6 +568,7 @@ const PromptInput = ({
   // Refs
   const inputRef = useRef<HTMLInputElement | null>(null);
   const formRef = useRef<HTMLFormElement | null>(null);
+  const draftRevisionRef = useRef(0);
 
   // ----- Local attachments (only used when no provider)
   const [items, setItems] = useState<(FileUIPart & { id: string })[]>([]);
@@ -716,11 +746,6 @@ const PromptInput = ({
     ? controller.attachments.openFileDialog
     : openFileDialogLocal;
 
-  const clear = useCallback(() => {
-    clearAttachments();
-    clearReferencedSources();
-  }, [clearAttachments, clearReferencedSources]);
-
   // Let provider know about our hidden file input so external menus can call openFileDialog()
   useEffect(() => {
     if (!usingProvider) {
@@ -854,18 +879,13 @@ const PromptInput = ({
       event.preventDefault();
 
       const form = event.currentTarget;
+      const draftRevision = draftRevisionRef.current;
       const text = usingProvider
         ? controller.textInput.value
         : (() => {
             const formData = new FormData(form);
             return (formData.get("message") as string) || "";
           })();
-
-      // Reset form immediately after capturing text to avoid race condition
-      // where user input during async blob conversion would be lost
-      if (!usingProvider) {
-        form.reset();
-      }
 
       try {
         // Convert blob URLs to data URLs asynchronously
@@ -883,31 +903,31 @@ const PromptInput = ({
           }),
         );
 
-        const result = onSubmit({ files: convertedFiles, text }, event);
+        await onSubmit({ files: convertedFiles, text }, event);
 
-        // Handle both sync and async onSubmit
-        if (result instanceof Promise) {
-          try {
-            await result;
-            clear();
-            if (usingProvider) {
-              controller.textInput.clear();
-            }
-          } catch {
-            // Don't clear on error - user may want to retry
-          }
-        } else {
-          // Sync function completed without throwing, clear inputs
-          clear();
-          if (usingProvider) {
-            controller.textInput.clear();
-          }
+        // A successful submission owns only its captured draft and attachments.
+        for (const file of files) {
+          remove(file.id);
+        }
+        const submittedSources = new Set(
+          referencedSources.map((source) => source.id),
+        );
+        setReferencedSources((current) =>
+          current.filter((source) => !submittedSources.has(source.id)),
+        );
+        if (usingProvider) {
+          controller.__clearSubmittedInput();
+        } else if (
+          draftRevisionRef.current === draftRevision &&
+          new FormData(form).get("message") === text
+        ) {
+          form.reset();
         }
       } catch {
         // Don't clear on error - user may want to retry
       }
     },
-    [usingProvider, controller, files, onSubmit, clear],
+    [usingProvider, controller, files, onSubmit, remove, referencedSources],
   );
 
   // Render with or without local provider
@@ -928,6 +948,10 @@ const PromptInput = ({
         onSubmit={handleSubmit}
         ref={formRef}
         {...props}
+        onInputCapture={(event) => {
+          draftRevisionRef.current += 1;
+          onInputCapture?.(event);
+        }}
       >
         <InputGroup className="overflow-hidden">{children}</InputGroup>
       </form>

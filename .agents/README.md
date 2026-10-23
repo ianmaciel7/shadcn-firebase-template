@@ -65,4 +65,6 @@ ownership; existing route and component rules retain their stricter scope.
 The [React maintenance rule](rules/react.md) links current official sources to
 installed runtime/Compiler support and canonical guidance. The
 [React review](../docs/agents/react.md) records complete content coverage and
-the separate versioned error catalog.
+the separate versioned error catalog. Its detailed reference preserves all
+20 user-supplied topics and 15 examples; the rule contains matching
+implementation/review guidance for each topic.

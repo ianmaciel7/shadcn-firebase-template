@@ -21,6 +21,7 @@ export function useProtectedGateClient() {
     try {
       unsubscribe = subscribeToSession((user) => {
         const currentRevision = ++revision.current;
+        setError(null);
         setReadyPath(null);
         if (!user) {
           const destination = window.location.pathname + window.location.search;

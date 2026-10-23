@@ -136,3 +136,11 @@ Use native Biome diagnostics, the existing guards, and appropriate lifecycle /
 browser tests; do not claim coverage of every upstream ESLint or Compiler rule.
 Persist verified findings with the [save skill](.agents/skills/save/SKILL.md)
 in their canonical guide, preserving accepted ADRs and local changes.
+
+The [detailed React reference](docs/agents/react.md#user-supplied-react-1931-reference)
+preserves all 20 topics from the supplied catalog, including its 15 examples.
+The [React implementation and review rules](.agents/rules/react.md) cover the
+same 20 topics as actionable guidance. Consult both for hooks, components,
+React DOM rendering, forms, server boundaries, Compiler, lint, identity,
+legacy APIs, Fragment refs, experiments, version context, feature selection,
+and the implementation checklist.

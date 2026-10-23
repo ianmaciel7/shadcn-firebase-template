@@ -1,5 +1,7 @@
 # Security Policy
 
+<!-- cspell:words gaxios -->
+
 ## Supported versions
 
 Security fixes are applied to the current default branch of this template.
@@ -36,7 +38,7 @@ coordinate disclosure and remediation with the reporter.
   to Client Components.
 - Keep dependencies current and review security advisories before upgrades.
   Dependabot proposes weekly updates; CI runs Semgrep, Gitleaks, `pnpm audit`,
-  actionlint, and zizmor. Document any audit exception with its justification,
+  the separate Functions audit, actionlint, and zizmor. Document any audit exception with its justification,
   scope, and review condition rather than inheriting one you cannot justify.
 - **Template-specific accepted risk:** `pnpm-workspace.yaml` suppresses
   `GHSA-vfj7-8cjw-p6xm` for `braces` based on the **template's current,
@@ -61,6 +63,21 @@ The template currently uses Firebase Authentication, Firestore preferences, and
 Storage avatars. Projects derived from it must document their own access-control,
 data-retention, and incident-response requirements, including changes to these
 services or their Security Rules.
+
+## Cloud Functions dependency audit
+
+The Functions deployment has an independent `functions/package-lock.json`.
+The root pnpm audit does not cover that graph. Run `pnpm audit:functions`;
+the CI security job and `verify:security` include this separate audit.
+
+`functions/package.json` pins the transitive `uuid` override to CommonJS-compatible
+11.1.1 to address GHSA-w5hq-g745-h8pq (buffer bounds checking in v3/v5/v6).
+The affected consumers `gaxios`, `google-gax`, and `teeny-request` use `v4()`;
+their call sites and CommonJS resolution were inspected, and UUID generation
+plus Firebase Admin/callable initialization were checked without network calls.
+This is compatibility evidence, not a complete deployed integration test.
+Remove the override when the parent packages resolve a patched compatible
+version without it, and re-run the backend audit and relevant integration tests.
 
 ## Component registry updates
 
@@ -100,9 +117,11 @@ Rules; Firebase Admin would require a separate server authorization design.
 
 `NEXT_PUBLIC_*` values are public and inlined at build time. Also treat every
 entry in `next.config.ts`'s `env` object as public bundle configuration,
-regardless of its prefix. This project lists Auth and Firestore emulator host
-addresses there; never add credentials, Admin service-account data, private
-keys, or session secrets. A prefix-free name in that object is not secret.
+regardless of its prefix. The current configuration has no `env` object;
+browser emulator endpoints use explicit `NEXT_PUBLIC_*` configuration. Never
+add credentials, Admin service-account data, private keys, or session secrets
+to public bundle configuration. A prefix-free name in a future `env` object
+would not make its value secret.
 Changing a deployment environment does not rewrite already-built public values.
 
 Shared caching must preserve tenant/user isolation and permission changes.

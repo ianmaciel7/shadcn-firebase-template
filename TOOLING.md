@@ -46,7 +46,8 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Markdown | markdownlint-cli2 | 0.23.3 | Lints repository Markdown. | `.markdownlint-cli2.jsonc` |
 | Static security | Semgrep Community Edition | Host tool (CI pins 1.181.0) | Runs the project's security rules on `src` with `--error` so findings fail the run; `check:security:rules` tests them against an annotated fixture. | `tests/semgrep/rules.yml`, `tests/semgrep/rules.tsx`, `package.json` |
 | Secret scanning | Gitleaks | Host tool (CI pins 8.30.1) | Scans the Git history for secrets with `gitleaks git --redact`. `detect` is deprecated upstream. | `package.json` (`check:secrets`) |
-| Dependency audit | `pnpm audit` | Included with pnpm | Reports known vulnerable dependencies. | `pnpm-workspace.yaml` (`auditConfig`) |
+| Root dependency audit | `pnpm audit` | Included with pnpm | Reports known vulnerable dependencies in the root dependency graph. | `pnpm-workspace.yaml` (`auditConfig`) |
+| Functions dependency audit | `npm audit` through `pnpm audit:functions` | Included with npm | Reports known vulnerable dependencies in the independent backend graph. | `functions/package-lock.json`, `functions/package.json` (`overrides`) |
 | Continuous integration | GitHub Actions | Pinned by commit SHA | Runs `static`, `build`, `e2e`, `auth-emulator`, `security`, and `pr-title` in parallel, with a required `ci-result` aggregate. | `.github/workflows/ci.yml`, `TESTING.md` |
 | Workflow linting | actionlint, zizmor | Host tools | Lint and audit the GitHub Actions workflows. | `package.json` (`check:workflows`) |
 | Codebase graph | Graphify | Host tool | Builds an on-demand knowledge graph; output goes to the ignored `graphify-out/`. | None |
@@ -75,6 +76,12 @@ outside pnpm and are only needed for the commands noted next to them:
 Missing `pre-commit` does not block a commit; the hook prints a warning and skips
 only the integrity checks. Biome, Commitlint, and everything else run through
 pnpm. In CI or on production installs, set `HUSKY=0` to skip hook installation.
+
+On restricted hosts, use writable local caches through the supported
+`SEMGREP_SETTINGS_FILE`, `SEMGREP_LOG_FILE`, `XDG_CACHE_HOME`, and
+`PRE_COMMIT_HOME` settings when the default home cache is unavailable. Keep
+these paths local and untracked; do not change `HOME`, disable security audits,
+or commit machine-specific cache locations to make validation pass.
 
 On Windows, `pre-commit` can fail while building its Python virtual environment
 with `WinError 206` (path too long) when Python comes from the Microsoft Store.
@@ -110,6 +117,7 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm test` | Fast `unit` Vitest project in `jsdom`. |
 | `pnpm test:watch` / `pnpm test:coverage` | Watch mode / coverage (writes `coverage/`). |
 | `pnpm test:logging` | Run logging and diagnostic test suite. |
+| `pnpm test:emulator` | Test seed CLI exit status with mocked HTTP/network failures and idempotent existing-user responses; no emulator is contacted. |
 | `pnpm test:browser` | `browser` Vitest project in Chromium. |
 | `pnpm test:e2e` | Functional Playwright specs (excludes `@a11y` and `@visual`). |
 | `pnpm test:auth` | Run Playwright's `auth-emulator` project with Firebase Auth, Firestore, and Functions via `firebase emulators:exec`; install the separate Functions dependencies first. |
@@ -131,6 +139,7 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm check:spelling` / `pnpm check:markdown` | CSpell / markdownlint. |
 | `pnpm check:security` / `pnpm check:security:rules` | Semgrep scan of `src` (fails on findings) / tests of the Semgrep rules. Run inside a Git work tree. |
 | `pnpm check:secrets` / `pnpm audit` | Gitleaks / dependency audit. |
+| `pnpm audit:functions` | Audit the independent npm lockfile in `functions/`, including optional backend dependencies. |
 | `pnpm check:workflows` | actionlint and zizmor on `.github/workflows`. |
 | `pnpm analyze:health` | Unit tests with coverage, then Fallow complexity and CRAP. |
 | `pnpm analyze:react` | React Doctor. |
@@ -143,12 +152,12 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 
 | Command | Responsibility | Time |
 | --- | --- | --- |
-| `pnpm verify:fast` | Biome CI, typecheck, unit tests, ast-grep structural checks, route guard, component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Meant to run constantly. | seconds |
-| `pnpm verify:static` | Biome CI, typecheck, unit tests with coverage thresholds, architecture, unused code, duplication, structural rules, route/component/responsiveness guards, spelling, Markdown, Fallow health, and React Doctor. The CI `static` job. | minutes |
+| `pnpm verify:fast` | Biome CI, typecheck, unit tests, logging and seed CLI regressions, ast-grep structural checks, route guard, component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Meant to run constantly. | seconds |
+| `pnpm verify:static` | Biome CI, typecheck, unit tests with coverage thresholds, logging and seed CLI regressions, architecture, unused code, duplication, structural rules, route/component/responsiveness guards, spelling, Markdown, Fallow health, and React Doctor. The CI `static` job. | minutes |
 | `pnpm verify:build` | Browser tests, production build with size budgets, and the Ladle build. The CI `build` job. | minutes |
 | `pnpm verify:full` | `verify:static` then `verify:build`. | minutes |
 | `pnpm verify:e2e` | Ordinary Playwright suite: functional, accessibility, and visual; emulator cases run independently. | minutes |
-| `pnpm verify:security` | Semgrep rule tests and scan, Gitleaks, workflow linting, and the dependency audit. Needs the host tools; the same checks run in the CI `security` job. | seconds |
+| `pnpm verify:security` | Semgrep rule tests and scan, Gitleaks, workflow linting, root dependency audit, and the separate Functions audit. Needs the host tools; the same checks run in the CI `security` job. | seconds |
 
 `verify:full` intentionally excludes Playwright, security scanners, mutation
 testing, and Lighthouse because they are slow or need host tools. Run
@@ -329,6 +338,37 @@ Recheck current documentation before adding a replacement rule.
 - `Suspense` does not make an effect-based Firebase Auth subscription
   suspend. Do not wrap it in artificial Promises solely for loading UI.
   See [React standards](CODING_STANDARDS.md#suspense-actions-and-preserved-state).
+
+## Async lifecycle and review regressions
+
+Apply the same lifecycle and ownership checks in route-private `_hooks`,
+`_components`, and `_lib` modules, and shared `src/hooks`, `src/components`,
+and `src/lib` code. Keep orchestration in hooks, presentation in components,
+and persistence/operation boundaries in service modules. Shared profile
+services currently live in `src/lib`; do not create an empty `_lib` directory
+or move shared modules merely to satisfy a folder name.
+
+| Failure learned from the 2026-10-23 review | Required regression and owner |
+| --- | --- |
+| A committed access-log error survives a replacement session. | `protected-gate-client.test.tsx` fails unless a new session clears the error, waits for its own acknowledgment, and retains stale-response protection. |
+| A completed send erases a newer draft or attachment. | `prompt-input.test.tsx` checks provider draft revisions, identical text re-entered as a new revision, attachment identities, local edits, success reset, and failure preservation. |
+| Permission resolves after media cleanup, or recorder setup fails. | `speech-input.test.tsx` checks late-stream release, setup/start failures, duplicate pending requests, active-track cleanup, and obsolete transcription callbacks. |
+| A session changes during a profile operation. | `src/lib/profile.test.ts` checks that later profile/preference writes do not start after session validation fails. Keep Firebase Security Rules as the authoritative authorization boundary. |
+| A CLI logs HTTP errors but exits successfully. | `scripts/emulator/seed.test.mjs` checks process status and completion output for HTTP/network errors, successful creation, and `EMAIL_EXISTS`. |
+| Root audit misses a separately deployed dependency graph. | `pnpm audit:functions` audits `functions/package-lock.json` explicitly; both `verify:security` and the CI security job run it. |
+
+`pnpm test` includes the component lifecycle regressions even where copied
+registry code is excluded from some lint/coverage analyses. `test:emulator`
+is part of `verify:fast` and `verify:static`, so CI runs the seed regressions.
+The existing `check:components` covers private hook file/export parity and
+follows local helper imports, including `_lib`, for boundary classification.
+Keep its valid/invalid fixtures when changing those policies.
+
+Native TypeScript/Biome and the existing AST guards cover structure, imports,
+and declared contracts; they cannot prove async ownership or resource lifetime.
+Use behavior tests rather than a syntax rule that merely looks for `cleanup`
+or a ref. No test suite guarantees that all future race conditions are absent;
+these regressions specifically guard the observed failures.
 
 ## Known limitations
 

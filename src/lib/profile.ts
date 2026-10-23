@@ -75,21 +75,26 @@ export async function saveProfile(
 
   if (emailChanged) await dependencies.verifyBeforeUpdateEmail(authUser, email);
 
+  // Recheck after every asynchronous boundary before starting another write.
+  dependencies.getActiveUser(user);
   const photoURL = await dependencies.uploadAvatar(authUser, avatarFile);
   const avatarChanged = Boolean(avatarFile);
   if (nameChanged || avatarChanged) {
+    dependencies.getActiveUser(user);
     await dependencies.updateProfile(authUser, {
       ...(nameChanged ? { displayName: displayName || null } : {}),
       ...(avatarChanged ? { photoURL } : {}),
     });
   }
   if (preferencesChanged) {
+    dependencies.getActiveUser(user);
     await dependencies.writeUserPreferences(authUser.uid, {
       locale: values.locale,
       theme: values.theme,
     });
   }
 
+  dependencies.getActiveUser(user);
   return {
     photoURL,
     avatarChanged,
