@@ -46,9 +46,23 @@ test.describe("responsiveness and reflow suite", () => {
           await page.goto(route);
           await expect(page.locator("main")).toBeVisible();
 
+          // The auth forms need Firebase configuration; CI also exercises the
+          // explicit configuration-error fallback without those variables.
+          if (route !== "/") {
+            await expect(
+              page.locator("main input, main [role='alert']").first(),
+            ).toBeVisible();
+            if (await page.locator("main [role='alert']").isVisible()) {
+              test.skip(true, "Auth controls require Firebase configuration");
+            }
+          } else {
+            await expect(page.locator('a[href="/register"]')).toBeVisible();
+          }
+
           const targets = await page
             .locator("button, a, [role='button'], [role='link']")
             .all();
+          expect(targets.length).toBeGreaterThan(0);
 
           for (const target of targets) {
             await assertTouchTargetSize(target);
@@ -66,8 +80,8 @@ test.describe("responsiveness and reflow suite", () => {
     await page.goto("/");
     await expect(page.locator("main")).toBeVisible();
 
-    const signInLink = page.getByRole("link", { name: /sign in/i });
-    const getStartedLink = page.getByRole("link", { name: /get started/i });
+    const signInLink = page.locator('a[href="/sign-in"]');
+    const getStartedLink = page.locator('a[href="/register"]');
 
     await expect(signInLink).toBeVisible();
     await expect(getStartedLink).toBeVisible();
