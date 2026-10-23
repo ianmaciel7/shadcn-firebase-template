@@ -19,8 +19,10 @@ plugin diagnostic**, not merely due to a parse/config error.
 `scripts/check-component-conventions.mjs` as the source of truth for the
 following cases until corresponding plugin tests exist: missing root export;
 aliases and re-exports; all local component declarations; props types,
-parameter forwarding, and compound component composition. The experiment
-only enforces exported function name/filename parity, alongside the mature checker.
+parameter forwarding, and compound component composition. The experiment only enforces exported function name/filename parity,
+alongside the mature checker. It does not cover private hook file names,
+named hook exports, missing component roots, props forwarding, or native
+React hook semantics. Keep those with their current owners.
 
 If successful, a later change can upgrade the pinned Biome dependency and
 regenerate `pnpm-lock.yaml` using pnpm, then run the complete suite before

@@ -34,6 +34,7 @@ browser, including its loading, error, and localized states where applicable.
 | End-to-end / Responsiveness | `tests/*.spec.ts`, `tests/responsive.spec.ts` | Playwright | `pnpm test:e2e` | User journeys and responsive layout against a production build. `tests/responsive.spec.ts` covers multi-viewport matrix (320px, 390px, 768px, 1280px), horizontal overflow prevention (`scrollWidth <= clientWidth`), and WCAG 2.2 SC 2.5.8 touch target compliance. |
 | Accessibility | `tests/a11y.spec.ts`, titled `@a11y` | Playwright and axe-core | `pnpm test:a11y` | Automated WCAG 2.0, 2.1, and 2.2 A/AA scans (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) across desktop (`1280x800`) and mobile (`390x844`) viewports in light and dark mode. |
 | Visual regression | `tests/visual.spec.ts`, titled `@visual` | Playwright screenshots (CI only) | `pnpm test:visual` | Layout and theme changes in rendered pages. |
+| Firebase Auth and profile | `tests/firebase-auth.spec.ts` | Playwright with Firebase Auth and Firestore emulators | CI `auth-emulator` job | Sign-in, registration, recovery, profile, and authenticated axe checks. Not included in the ordinary `verify:e2e` suite. |
 | Mutation | `stryker.config.json` | Stryker | `pnpm test:mutation` | Command-runner mutation testing. Manual CI run until a hosted-run success is confirmed; see [TOOLING.md](TOOLING.md#known-limitations). |
 
 Choose the lightest layer that can fail for the right reason. Keep a behavior
@@ -57,17 +58,16 @@ instead of a stubbed `matchMedia`).
 - Do not write a test only to make a tool report success. When a tool has no
   suitable subject yet, leave it unused and say so.
 
-Six Vitest suites verify configuration rather than application behavior:
-`src/messages/messages.test.ts` checks that every locale catalog has the same
-keys and ICU arguments as the default locale and no empty messages, and
-`.biome/rules/nextjs/rules.test.ts` and `.biome/rules/dom/rules.test.ts` lint
-fixtures to prove each Grit rule reports invalid code and accepts valid code.
-`.biome/rules/react/rules.test.ts` verifies the hook error-flag convention
-and its file scope.
-`.biome/rules/nextjs/app-router-imports.test.ts` verifies the native App Router
-import policy and its exclusions.
-`.biome/rules/react/native-rules.test.ts` verifies native React diagnostic
-configuration, valid counterparts, and owned/vendor scope.
+Five Vitest suites verify configuration rather than application behavior:
+`src/messages/messages.test.ts` checks locale catalog keys and ICU arguments.
+`.biome/rules/nextjs/rules.test.ts` and `.biome/rules/dom/rules.test.ts`
+verify valid and invalid Grit fixtures.
+`.biome/rules/nextjs/app-router-imports.test.ts` verifies the native App
+Router import policy and exclusions.
+`.biome/rules/react/native-rules.test.ts` verifies native React diagnostics,
+allowed React 19 patterns, and discriminated status branches. The earlier
+`prefer-is-error` Grit policy and its test were removed because they forced
+redundant state flags; do not restore them.
 Semgrep rules are tested with `semgrep --test` (`pnpm check:security:rules`) and
 ast-grep rules with `ast-grep test`.
 
@@ -208,19 +208,20 @@ Cover the variants and states a reviewer needs to see, not every prop.
 
 | Job | Runs | Local equivalent |
 | --- | --- | --- |
-| `static` | Biome, typecheck, unit tests with coverage thresholds, architecture, Knip, jscpd, ast-grep, route/component/responsiveness guards, CSpell, markdownlint, Fallow, React Doctor | `pnpm verify:static` |
+| `static` | Biome 2.5, isolated Biome 2.6 plugin pilot, typecheck, coverage, architecture, Knip, jscpd, ast-grep, route/component/responsiveness guards, CSpell, markdownlint, Fallow, React Doctor | `pnpm verify:static` plus CI-only pilot |
 | `build` | Vitest Browser Mode, production build with size budgets, Ladle production build | `pnpm verify:build` |
 | `e2e` | Playwright functional, accessibility, and visual specs in the pinned Playwright container | `pnpm verify:e2e` |
+| `auth-emulator` | Local demo Firebase Auth and Firestore, auth/profile Playwright E2E and authenticated axe checks | `pnpm dlx firebase-tools@15.34.1 emulators:exec --project demo-test --only auth,firestore "pnpm exec playwright test --project=auth-emulator"` (with test environment variables) |
 | `security` | Semgrep rule tests and scan (`--error`), Gitleaks, actionlint, zizmor, `pnpm audit`, pre-commit | `pnpm verify:security` |
 | `pr-title` | Conventional Commit PR title (pull requests only) | `echo "feat: title" \| pnpm exec commitlint` |
-| `ci-result` | Aggregates the jobs above; use it as the single required status check | n/a |
+| `ci-result` | Aggregates all six jobs, including `auth-emulator`; any required failure blocks the PR | n/a |
 
 Pull-request runs cancel superseded runs (including when the title is edited,
 which re-runs the title check); pushes to `main` each get their own
 concurrency group and are never cancelled. The
 coverage report and the Playwright report and `test-results` are uploaded as
-artifacts for seven days, and coverage plus the job results are summarized on
-the run page. Run `pnpm check:workflows` after editing a workflow, and keep
+artifacts for seven days, with a separate auth-emulator Playwright report
+when available. Coverage and job results are summarized on the run page. Run `pnpm check:workflows` after editing a workflow, and keep
 actions and the Playwright container pinned by commit SHA or digest.
 
 Dependabot opens weekly grouped updates for npm and GitHub Actions
@@ -246,6 +247,25 @@ home page. Replace them after changing the UI, and regenerate reviewed
 screenshots through the manual `Update visual baselines` workflow. If your
 application removes the home page or its primary heading, adapt the smoke test
 to your app rather than disabling E2E or automatically accepting new baselines.
+
+### Firebase emulator regression coverage
+
+The standalone `auth-emulator` job starts Auth and Firestore in an isolated
+`demo-test` project. Browser Firebase SDK endpoints are explicit public
+development configuration, not server secrets. The tests must establish a
+ready authenticated profile before inspecting form fields, theme, locale, or
+accessibility. A successful redirect or URL match alone does not prove the
+profile rendered. Match selectors to the current visible and accessible
+labels rather than guessing from old screenshots or component names.
+
+**Known failure on 2026-10-23:** the run
+[39970721905](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/39970721905)
+passed the static, build, security, and ordinary E2E jobs, but its
+`auth-emulator` job failed three profile cases: profile email rendering,
+language saving, and authenticated profile axe setup. The Google popup test
+was also flaky. Keep this required job enabled, inspect its uploaded
+`auth-emulator-playwright-report` artifact, and fix the root causes.
+Do not claim a green PR or label retries and skips as passing tests.
 
 ### Automated accessibility limits
 

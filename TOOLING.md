@@ -47,7 +47,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Static security | Semgrep Community Edition | Host tool (CI pins 1.181.0) | Runs the project's security rules on `src` with `--error` so findings fail the run; `check:security:rules` tests them against an annotated fixture. | `tests/semgrep/rules.yml`, `tests/semgrep/rules.tsx`, `package.json` |
 | Secret scanning | Gitleaks | Host tool (CI pins 8.30.1) | Scans the Git history for secrets with `gitleaks git --redact`. `detect` is deprecated upstream. | `package.json` (`check:secrets`) |
 | Dependency audit | `pnpm audit` | Included with pnpm | Reports known vulnerable dependencies. | `pnpm-workspace.yaml` (`auditConfig`) |
-| Continuous integration | GitHub Actions | Pinned by commit SHA | Runs `static`, `build`, `e2e`, `security`, and `pr-title` jobs in parallel on pull requests, pushes to `main`, and manual dispatch, plus a `ci-result` aggregate (see TESTING.md). | `.github/workflows/ci.yml` |
+| Continuous integration | GitHub Actions | Pinned by commit SHA | Runs `static`, `build`, `e2e`, `auth-emulator`, `security`, and `pr-title` in parallel, with a required `ci-result` aggregate. | `.github/workflows/ci.yml`, `TESTING.md` |
 | Workflow linting | actionlint, zizmor | Host tools | Lint and audit the GitHub Actions workflows. | `package.json` (`check:workflows`) |
 | Codebase graph | Graphify | Host tool | Builds an on-demand knowledge graph; output goes to the ignored `graphify-out/`. | None |
 | Git hooks | Husky + lint-staged + Commitlint | 9.1.7 / 17.6.0 / 21.2.3 | Check staged files with Biome and validate commit messages. | `.husky/`, `package.json`, `commitlint.config.mjs` |
@@ -112,7 +112,7 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm test:logging` | Run logging and diagnostic test suite. |
 | `pnpm test:browser` | `browser` Vitest project in Chromium. |
 | `pnpm test:e2e` | Functional Playwright specs (excludes `@a11y` and `@visual`). |
-| `pnpm test:auth` | Run authentication-specific tests in Vitest. |
+| `pnpm test:auth` | Run authentication-specific tests in Vitest; this does **not** run the Firebase Emulator browser E2E job. |
 | `pnpm test:a11y` | Axe accessibility scans. |
 | `pnpm test:visual` | Compare screenshots with baselines. Never rewrites them. Skipped locally; runs in CI (or with `PLAYWRIGHT_VISUAL=1`). |
 | `pnpm test:visual:update` | Rewrite baselines. Run it through the **Update visual baselines** workflow, not on your machine. |
@@ -126,7 +126,7 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm check:duplicates` | jscpd. |
 | `pnpm check:structure` | ast-grep rule tests, then a scan of application code. |
 | `pnpm check:routes` | Enforce thin `page.tsx`, `layout.tsx` and `template.tsx` entrypoints with AST tests. |
-| `pnpm check:components` | Test and enforce owned component names, family-root/part exports, primitive-adapter forwarding, static-compound restrictions, and direct client-boundary checks; registry code excluded. |
+| `pnpm check:components` | Test/enforce hook filename/export parity for owned private hooks, component names, compound parts, props forwarding, profile action/parent safety, and client boundaries. Presentation-only hooks do not need wrapper hooks. Registry code excluded. |
 | `pnpm check:responsiveness` | Test and enforce responsive contracts: device-width viewports, no zoom restrictions, fluid widths <= 320px, and WCAG 2.2 touch targets (`node --test scripts/check-responsiveness.test.mjs && node scripts/check-responsiveness.mjs`). |
 | `pnpm check:spelling` / `pnpm check:markdown` | CSpell / markdownlint. |
 | `pnpm check:security` / `pnpm check:security:rules` | Semgrep scan of `src` (fails on findings) / tests of the Semgrep rules. Run inside a Git work tree. |
@@ -215,13 +215,12 @@ valid and invalid tests, before registering a new custom rule.
 | `responsiveness-contracts` | TypeScript AST (`scripts/check-responsiveness.mjs`) | error | Root layout, App Router routes, and owned components (`src/app/**`, `src/components/**`) | Next.js and TypeScript allow arbitrary viewport configs, rigid pixel widths, and tiny interactive controls. This enforces WCAG 1.4.4 viewport scalability, WCAG 1.4.10 reflow at 320px, and WCAG 2.2 SC 2.5.8 touch target minimums (24x24px). Tests live in `scripts/check-responsiveness.test.mjs`. |
 | `owned-component-composition` | TypeScript AST (`scripts/check-component-composition.mjs`) | error | All owned component modules, Server and Client, through `pnpm check:components` | TypeScript permits dropping inherited props and constructing static compound APIs; this enforces our separate-named-export and adapter-forwarding contract. Checks matching direct JSX roots, remaining props and extracted children/className. Tests live in `scripts/check-component-composition.test.mjs`. [Coverage and limits](CODING_STANDARDS.md#composition-guard-coverage). |
 | `owned-component-family` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | All owned component modules, Server and Client | Root-prefixed family names, filename/export matching, local function declarations, and exact filename-to-component term parity (`checkStemComponentTermParity`, e.g. `HomeSectionClient` in `src/app/_components/home-section-client.tsx`) are repository conventions that TypeScript and Next.js allow alternatives to. Preserves the existing direct client-boundary checks, with type-only imports excluded. The complete RSC graph remains a Next.js build responsibility. |
-| `owned-component-behavior` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | All owned component functions | Enforces component-named orchestration hooks, focused behavior ownership, and declarative rendering. React permits other arrangements; these are repository policies. See [.agents/rules/component-naming.md](.agents/rules/component-naming.md). |
+| `owned-component-behavior` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | Owned component functions | Enforces imported application orchestration hooks and declarative rendering. Native presentation hooks (`useId`, `useTranslations`, `useFormatter`, `useFormContext`, `useWatch`) may be called directly in any supported combination; this restriction is a local convention, not a React rule. See [.agents/rules/component-naming.md](.agents/rules/component-naming.md). |
 | `owned-component-naming` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | Owned TypeScript modules throughout `src` | Rejects generic View/Screen naming terms while preserving external API names through local aliases. Vendor and fixture exclusions apply. |
 | `profile-direct-parent-chain` | TypeScript AST (`scripts/check-component-conventions.mjs`) | error | Profile Card, Form, and action composition | Validates immediate JSX parent relationships and action safety. Extra wrappers can alter slots even when a matching ancestor exists. See [.agents/rules/form-architecture.md](.agents/rules/form-architecture.md#direct-parent-relationships). |
 | `prefer-page-props` | Grit (Biome plugin) | error | `export default async function Page({ params }: {...})` | Next.js accepts compatible hand-written types, so TypeScript will not reject them. This enforces the generated `PageProps<"/route">` helper ([Next.js docs](https://nextjs.org/docs/app/api-reference/file-conventions/page)). Convention, not a framework requirement. |
 | `prefer-layout-props` | Grit (Biome plugin) | error | `export default function Layout({ children }: { children: ReactNode })` | Same reasoning for `LayoutProps<"/route">`. `Readonly<{ children: ReactNode }>` is not matched. |
 | `prefer-route-context` | Grit (Biome plugin) | error | Route Handlers `GET`/`POST`/`PUT`/`PATCH`/`DELETE` with a hand-written `{ params }` | Same reasoning for `RouteContext<"/route">`. |
-| Discriminated feature statuses | React + TypeScript | Typechecked | Hooks expose a single `status` union for mutually exclusive loading, ready, hidden and error states. React components narrow by status; no redundant flags or forced Grit policy. | `src/app/(protected)/profile/_hooks/use-profile-status.ts`, `CODING_STANDARDS.md` |
 | `no-document-write` | Grit (Biome plugin) | error | `document.write`, `document.writeln`, `window.document.write`, `window.document.writeln` | Deprecated DOM APIs degrade HTML parser performance and introduce XSS risks. TypeScript only flags them as editor suggestions (`TS6387`), which `tsc --noEmit` omits in CI. |
 | `review-effect-custom-hook` | ast-grep | warning | `useEffect` and `React.useEffect` in app-owned TSX under `src/` | Prompts review of whether the Effect would be clearer inside a descriptive custom Hook, following [React's guidance](https://react.dev/learn/reusing-logic-with-custom-hooks#when-to-use-custom-hooks). This is a judgment call, so it warns without blocking commits or CI. |
 | `review-redundant-state-effect` | ast-grep | warning | `useEffect` calls setting state (`set[A-Z]...`) in `src/app`, `src/components`, `src/hooks` | Prompts review of setting state inside Effects based on dependencies, following React's [You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect) guideline. Derived values should be calculated during render, and state updates handled in event callbacks to avoid unnecessary cascading renders. |
@@ -310,6 +309,27 @@ Recheck current documentation before adding a replacement rule.
 - **Left to TypeScript:** component props, variants, Base UI and Accordion /
   ToggleGroup APIs, and async `params`. No Grit rule duplicates them.
 
+## State and integration ownership
+
+- Use one discriminated `status` union for mutually exclusive loading,
+  hidden, error, and ready branches. The `prefer-is-error` Grit plugin was
+  deleted because it required duplicate `isLoading`/`isError` flags.
+  TypeScript and component tests validate status branches; Biome keeps
+  native React lint rules. Do not reintroduce an equivalent custom rule.
+- Native presentation hooks may be composed directly. The AST hook guard
+  is scoped to application orchestration, not to every call beginning with
+  `use`. A one-line wrapper around `useId` and `useFormContext` does
+  not improve separation of concerns.
+- Use a typed adapter interface at service boundaries when it improves
+  test isolation (`ProfileDependencies` in `src/lib/profile.ts`).
+  Do not expose Firebase SDK instances to UI field components.
+- This profile has exactly one `FieldGroup` under
+  `ProfileFormClientContent`, and `formState.isSubmitting` is the
+  source of truth for submission activity.
+- `Suspense` does not make an effect-based Firebase Auth subscription
+  suspend. Do not wrap it in artificial Promises solely for loading UI.
+  See [React standards](CODING_STANDARDS.md#suspense-actions-and-preserved-state).
+
 ## Known limitations
 
 - **Firebase registry source has targeted tooling exclusions.** Biome (so
@@ -352,8 +372,19 @@ Recheck current documentation before adding a replacement rule.
   glob patterns. Remove the exception if the advisory is withdrawn or the chain
   drops `braces`; a local `pnpm patch` is not worth maintaining for this
   exposure.
-- **Fallow reports are advisory.** Health and unused-dependency metrics do not fail CI; review them alongside Knip. The direct-child `src/components/ui/*.tsx` glob intentionally does not match `ui/extensions/` with current glob semantics. The experimental `.biome/` plugin directory is excluded from Fallow's source traversal and is checked in its own CI step.
+- **Fallow has both blocking and advisory results.** Configured complexity
+  thresholds can fail `verify:static`; scores, hotspots, and unused
+  dependency suggestions also require review. Do not call a failed Fallow
+  threshold advisory. The direct-child `src/components/ui/*.tsx` glob
+  does not cover `ui/extensions/`; the experimental `.biome/` folder is
+  excluded from health analysis but tested separately.
 - **React Doctor reports are advisory.** The currently observed React Compiler, repeated JSX, and public Firebase API key naming findings require code-level triage. They are not evidence that CI has enforced or fixed them.
+- **Firebase Emulator E2E currently fails.** On 2026-10-23 run
+  [39970721905](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/39970721905),
+  the `auth-emulator` job failed profile email, language, and accessible
+  profile cases; the popup case was flaky. The other five jobs passed.
+  This is a known failing required check, not an acceptable exemption.
+  Inspect the uploaded Playwright trace and artifacts before revising tests.
 - **Visual tests run only in CI.** Baselines are Linux screenshots, generated and
   compared inside the pinned Playwright container (the `container` image in
   `ci.yml` and `visual-baselines.yml`), to reduce rendering differences between baseline generation and comparison.
