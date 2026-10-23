@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 
 type ProfileCardProps = ComponentProps<typeof Card>;
+type ProfileCardActionProps = ComponentProps<typeof CardAction>;
 type ProfileCardHeaderProps = ComponentProps<typeof CardHeader>;
 type ProfileCardTitleProps = ComponentProps<typeof CardTitle>;
 type ProfileCardDescriptionProps = ComponentProps<typeof CardDescription>;
@@ -23,7 +24,7 @@ function ProfileCard({ className, ...props }: ProfileCardProps) {
   );
 }
 
-function ProfileCardAction(props: ComponentProps<typeof CardAction>) {
+function ProfileCardAction(props: ProfileCardActionProps) {
   return <CardAction {...props} />;
 }
 
