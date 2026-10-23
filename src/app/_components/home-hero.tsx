@@ -36,7 +36,7 @@ function HomeHeroTitle({ className, ...props }: HomeHeroTitleProps) {
       data-slot="home-hero-title"
       {...props}
       className={cn(
-        "max-w-md text-3xl font-semibold leading-10 tracking-tight text-foreground",
+        "max-w-xs text-3xl font-semibold leading-10 tracking-tight text-foreground",
         className,
       )}
     />
