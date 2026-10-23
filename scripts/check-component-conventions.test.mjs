@@ -640,7 +640,7 @@ describe("owned component conventions", () => {
     const section =
       "src/app/(protected)/profile/_components/profile-section.tsx";
     expectValid(
-      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileDisplayNameField /></ProfileCardContent><ProfileCardFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
+      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><FieldGroup><ProfileDisplayNameField /></FieldGroup></ProfileCardContent><ProfileCardFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
       section,
     );
     expectInvalid(
@@ -673,11 +673,12 @@ describe("owned component conventions", () => {
   it("rejects wrappers between profile regions and their direct parents", () => {
     const path = "src/app/(protected)/profile/_components/profile-section.tsx";
     const valid =
-      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileDisplayNameField /></ProfileCardContent><ProfileCardFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };";
+      "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><FieldGroup><ProfileDisplayNameField /></FieldGroup></ProfileCardContent><ProfileCardFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };";
     expectValid(valid, path);
     const regions = [
       "<ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader>",
-      "<ProfileCardContent><ProfileDisplayNameField /></ProfileCardContent>",
+      "<ProfileCardContent><FieldGroup><ProfileDisplayNameField /></FieldGroup></ProfileCardContent>",
+      "<FieldGroup><ProfileDisplayNameField /></FieldGroup>",
       "<ProfileCardFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileCardFooter>",
       "<ProfileCardTitle />",
       "<ProfileCardDescription />",

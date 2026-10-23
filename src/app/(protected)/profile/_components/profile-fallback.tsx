@@ -4,16 +4,16 @@ import { LabeledSpinner } from "@/components/ui/extensions/labeled-spinner";
 import type { ProfileStatus } from "../_hooks/use-profile-status";
 import { ProfileCard, ProfileCardContent } from "./profile-card";
 
-type ProfileSectionStateProps = ComponentProps<"div"> & {
-  state: ProfileStatus;
+type ProfileFallbackProps = ComponentProps<"div"> & {
+  status: ProfileStatus;
 };
 
-function ProfileSectionState({ state, ...props }: ProfileSectionStateProps) {
+function ProfileFallback({ status, ...props }: ProfileFallbackProps) {
   const t = useTranslations("Auth");
 
-  if (state.isHidden) return null;
+  if (status.isHidden) return null;
 
-  if (state.isLoading) {
+  if (status.isLoading) {
     return (
       <div {...props}>
         <LabeledSpinner className="w-full text-sm text-muted-foreground">
@@ -23,11 +23,11 @@ function ProfileSectionState({ state, ...props }: ProfileSectionStateProps) {
     );
   }
 
-  if (state.isError) {
+  if (status.isError) {
     return (
       <ProfileCard {...props}>
         <ProfileCardContent>
-          <p role="alert">{state.errorMessage}</p>
+          <p role="alert">{status.errorMessage}</p>
         </ProfileCardContent>
       </ProfileCard>
     );
@@ -36,4 +36,4 @@ function ProfileSectionState({ state, ...props }: ProfileSectionStateProps) {
   return props.children;
 }
 
-export { ProfileSectionState };
+export { ProfileFallback };

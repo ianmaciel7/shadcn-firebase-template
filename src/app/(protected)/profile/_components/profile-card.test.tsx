@@ -60,6 +60,9 @@ describe("ProfileCard", () => {
     expect(cardContent?.className).toContain("w-full");
     expect(cardContent?.className).toContain("flex-col");
     expect(cardContent?.className).toContain("gap-4");
+    const fieldGroup = cardContent?.querySelector('[data-slot="field-group"]');
+    expect(fieldGroup?.textContent).toBe(content);
+    expect(fieldGroup?.className).toContain("gap-4");
     expect(card.querySelector('[data-slot="card-title"]')?.textContent).toBe(
       title,
     );
