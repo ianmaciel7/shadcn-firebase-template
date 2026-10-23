@@ -263,7 +263,8 @@ See the installed Next.js boundary guide and the
 `pnpm check:components` tests and runs the TypeScript AST guard for all owned
 components, without restricting the scan to files with `"use client"`.
 It enforces semantic filenames, a matching family root, locally declared named
-parts with the root prefix, matching props names, and separate named exports.
+parts with the root prefix, matching props names, separate named exports, and
+exact term parity (`checkStemComponentTermParity`) between filenames and component declarations for non-legacy modules (such as `HomeSectionClient` in `src/app/_components/home-section-client.tsx` requiring a 1:1 term match across component name, props type, and orchestration hook).
 It rejects static component-property assignment and direct `Object.assign`,
 `Object.defineProperty`, or `Object.defineProperties` on a component family.
 
