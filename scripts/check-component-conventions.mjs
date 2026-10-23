@@ -1326,7 +1326,14 @@ function namedHookExports(statement, report) {
   );
 }
 
-function validateHookExports(source, filename, stem, expected, exports, report) {
+function validateHookExports(
+  source,
+  filename,
+  stem,
+  expected,
+  exports,
+  report,
+) {
   if (!expected || !kebabCase.test(stem)) {
     if (exports.length || stem.startsWith("use-")) {
       report(
