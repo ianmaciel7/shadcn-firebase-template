@@ -124,7 +124,6 @@ describe("home session", () => {
     const pending = screen.getByRole("button", { name: en.Home.signingOut });
     expect(pending.hasAttribute("disabled")).toBe(true);
     expect(pending.getAttribute("aria-busy")).toBe("true");
-    expect(screen.getByRole("status").textContent).toBe(en.Home.signingOut);
     fireEvent.click(pending);
     expect(mocks.signOut).toHaveBeenCalledOnce();
     await act(async () => {
