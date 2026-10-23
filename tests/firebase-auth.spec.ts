@@ -183,7 +183,7 @@ test("profile displays user email and signs out successfully", async ({
   await expect(page).toHaveURL("/");
   await page.getByRole("link", { name: "My profile" }).click();
   await expect(page).toHaveURL(/\/profile$/);
-  await expect(page.getByText(email)).toBeVisible();
+  await expect(page.getByLabel("Email", { exact: true })).toHaveValue(email);
   await expect(page.getByRole("button", { name: "Sign Out" })).toHaveCount(0);
   await page.getByRole("link", { name: "Back to Home" }).click();
   await expect(page).toHaveURL("/");
