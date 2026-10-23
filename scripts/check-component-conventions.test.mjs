@@ -107,19 +107,36 @@ describe("owned component conventions", () => {
     );
   });
 
-  it("allows runtime filename suffixes without changing semantic exports", () => {
-    expectValid(
+  it("requires exact component names, including client and server suffixes", () => {
+    const client = "src/app/_components/account-client.tsx";
+    const server = "src/app/_components/account-server.tsx";
+    expectInvalid(
       '"use client"; function Account(props) { return <div {...props} />; } export { Account };',
-      "src/app/_components/account-client.tsx",
+      /missing term\\(s\\): "client"/,
+      client,
     );
     expectValid(
-      'import "server-only"; function Account(props) { return <div {...props} />; } export { Account };',
-      "src/app/_components/account-server.tsx",
+      '"use client"; function AccountClient(props) { return <div {...props} />; } export { AccountClient };',
+      client,
     );
     expectInvalid(
-      "function AccountUi() { return <div />; } export { AccountUi };",
-      /semantic role/,
-      "src/app/_components/account-ui.tsx",
+      'import "server-only"; function Account(props) { return <div {...props} />; } export { Account };',
+      /missing term\\(s\\): "server"/,
+      server,
+    );
+    expectValid(
+      'import "server-only"; function AccountServer(props) { return <div {...props} />; } export { AccountServer };',
+      server,
+    );
+    expectInvalid(
+      'function ProfileForm(props) { return <form {...props} />; } export { ProfileForm };',
+      /ProfileFormClient/,
+      "src/app/(protected)/profile/_components/profile-form-client.tsx",
+    );
+    expectInvalid(
+      'function ProfileSection(props) { return <div {...props} />; } export { ProfileSection };',
+      /ProfileSectionClient/,
+      "src/app/(protected)/profile/_components/profile-section-client.tsx",
     );
   });
 
@@ -882,8 +899,8 @@ describe("component integration naming", () => {
 describe("runtime suffixes preserve semantic safety checks", () => {
   it("keeps exact profile form families and field/property matching", () => {
     expectInvalid(
-      '"use client"; function ProfileForm(props) { return <form {...props} />; } export { ProfileForm };',
-      /ProfileFormContent/,
+      '"use client"; function ProfileFormClient(props) { return <form {...props} />; } export { ProfileFormClient };',
+      /ProfileFormClientContent/,
       "src/app/(protected)/profile/_components/profile-form-client.tsx",
     );
     expectInvalid(
@@ -895,7 +912,7 @@ describe("runtime suffixes preserve semantic safety checks", () => {
 
   it("rejects imports of local server component files from client boundaries", () => {
     expectInvalid(
-      '"use client"; import { Account } from "./account-server"; function Details(props) { return <div {...props} />; } export { Details };',
+      '"use client"; import { AccountServer } from "./account-server"; function DetailsClient(props) { return <div {...props} />; } export { DetailsClient };',
       /server-only/,
       "src/app/_components/details-client.tsx",
     );
