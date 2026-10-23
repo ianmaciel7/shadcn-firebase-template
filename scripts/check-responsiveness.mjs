@@ -150,7 +150,7 @@ function isHitAreaExpander(token) {
 
 function hasAxisMinimumSize(base, axis) {
   const minimum = base.match(
-    /^min-(h|w|size)-(?:([6-9]|[1-9]\\d+)|\\[(\\d+)px\\])$/,
+    /^min-(h|w|size)-(?:([6-9]|[1-9]\d+)|\[(\d+)px\])$/,
   );
   if (!minimum) return false;
   return (
@@ -160,7 +160,7 @@ function hasAxisMinimumSize(base, axis) {
 }
 
 function hasAxisPadding(base, axis) {
-  const padding = base.match(/^(p|px|py)-(?:([\\d.]+)|\\[(\\d+)px\\])$/);
+  const padding = base.match(/^(p|px|py)-(?:([\d.]+)|\[(\d+)px\])$/);
   if (!padding) return false;
   const padPx =
     padding[3] === undefined ? Number(padding[2]) * 4 : Number(padding[3]);
