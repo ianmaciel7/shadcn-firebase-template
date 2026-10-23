@@ -7,7 +7,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ProfileSection } from "./profile-section-client";
+import { ProfileSectionClient } from "./profile-section-client";
 
 const mocks = vi.hoisted(() => ({
   router: { replace: vi.fn(), push: vi.fn(), refresh: vi.fn() },
@@ -100,7 +100,7 @@ vi.mock("@/lib/firebase/firestore/user-preferences", () => ({
   writeUserPreferences: mocks.writePreferences,
 }));
 
-describe("ProfileSection", () => {
+describe("ProfileSectionClient", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.getUI.mockReturnValue({
@@ -129,14 +129,14 @@ describe("ProfileSection", () => {
 
   it("renders nothing when user is null", () => {
     mocks.currentUser = null;
-    const { container } = render(<ProfileSection />);
+    const { container } = render(<ProfileSectionClient />);
     expect(container.firstChild).toBeNull();
     expect(mocks.router.replace).toHaveBeenCalledWith("/sign-in");
   });
 
   it("renders user information with fallback when fields are not set", async () => {
     mocks.currentUser = { uid: "user-123", email: null, displayName: null };
-    render(<ProfileSection />);
+    render(<ProfileSectionClient />);
 
     await waitFor(() => {
       expect(screen.getByText("personalInfoTitle")).toBeTruthy();
@@ -154,7 +154,7 @@ describe("ProfileSection", () => {
       displayName: "Ada Lovelace",
       photoURL: "https://example.com/photo.jpg",
     };
-    render(<ProfileSection />);
+    render(<ProfileSectionClient />);
 
     await waitFor(() => {
       expect(
@@ -172,7 +172,7 @@ describe("ProfileSection", () => {
   it("renders language and theme preferences", async () => {
     mocks.currentUser = { uid: "user-123" };
 
-    render(<ProfileSection />);
+    render(<ProfileSectionClient />);
 
     await waitFor(() => {
       expect(screen.getByLabelText("languageLabel")).toBeTruthy();
@@ -192,7 +192,7 @@ describe("ProfileSection", () => {
     mocks.currentUser = { uid: "user-123" };
     mocks.readPreferences.mockReturnValue(new Promise(() => {}));
 
-    const { container } = render(<ProfileSection />);
+    const { container } = render(<ProfileSectionClient />);
 
     await screen.findByRole("status");
     expect(container.querySelector('[data-slot="card"]')).toBeNull();
@@ -200,7 +200,7 @@ describe("ProfileSection", () => {
 
   it("keeps form fields in CardContent and buttons in CardFooter", async () => {
     mocks.currentUser = { uid: "user-123", email: "user@example.com" };
-    render(<ProfileSection />);
+    render(<ProfileSectionClient />);
 
     const saveButton = await screen.findByRole("button", {
       name: "saveProfile",
@@ -226,7 +226,7 @@ describe("ProfileSection", () => {
       uid: "user-123",
       email: "user@example.com",
     };
-    render(<ProfileSection />);
+    render(<ProfileSectionClient />);
 
     const file = new File(["avatar"], "avatar.png", { type: "image/png" });
     fireEvent.change(
@@ -255,7 +255,7 @@ describe("ProfileSection", () => {
 
   it("shows error toast when invalid avatar is chosen", async () => {
     mocks.currentUser = { uid: "user-123", email: "user@example.com" };
-    render(<ProfileSection />);
+    render(<ProfileSectionClient />);
 
     const file = new File(["test"], "test.txt", { type: "text/plain" });
     fireEvent.change(
@@ -277,7 +277,7 @@ describe("ProfileSection", () => {
     mocks.currentUser = { uid: "user-123" };
     mocks.readPreferences.mockResolvedValue({ locale: "es", theme: "dark" });
 
-    render(<ProfileSection />);
+    render(<ProfileSectionClient />);
 
     await waitFor(() => expect(mocks.setTheme).toHaveBeenCalledWith("dark"));
     expect(mocks.readPreferences).toHaveBeenCalledWith("user-123");
@@ -285,7 +285,7 @@ describe("ProfileSection", () => {
 
   it("saves a changed theme preference and shows success toast", async () => {
     mocks.currentUser = { uid: "user-123", email: "user@example.com" };
-    render(<ProfileSection />);
+    render(<ProfileSectionClient />);
 
     fireEvent.click(await screen.findByLabelText("themeLabel"));
     const darkOption = await screen.findByRole("option", {
@@ -316,7 +316,7 @@ describe("ProfileSection", () => {
       email: "old@example.com",
       displayName: "Old Name",
     };
-    render(<ProfileSection />);
+    render(<ProfileSectionClient />);
 
     fireEvent.change(await screen.findByLabelText("displayNameLabel"), {
       target: { value: "New Name" },
@@ -343,7 +343,7 @@ describe("ProfileSection", () => {
 
   it("saves a changed language preference and refreshes without a locale-prefixed route", async () => {
     mocks.currentUser = { uid: "user-123", email: "user@example.com" };
-    render(<ProfileSection />);
+    render(<ProfileSectionClient />);
 
     fireEvent.click(await screen.findByLabelText("languageLabel"));
     const spanishOption = await screen.findByRole("option", {
@@ -377,7 +377,7 @@ describe("ProfileSection", () => {
       authCallback = callback;
       return () => {};
     });
-    render(<ProfileSection />);
+    render(<ProfileSectionClient />);
     const dynamicUser = {
       uid: "uid-dynamic",
       email: "dynamic@example.com",
@@ -405,7 +405,7 @@ describe("ProfileSection", () => {
         finish = resolve;
       }),
     );
-    render(<ProfileSection />);
+    render(<ProfileSectionClient />);
     fireEvent.change(await screen.findByLabelText("displayNameLabel"), {
       target: { value: "After" },
     });
@@ -424,7 +424,7 @@ describe("ProfileSection", () => {
     mocks.uploadBytes.mockRejectedValueOnce(new Error("Upload failed"));
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
     try {
-      render(<ProfileSection />);
+      render(<ProfileSectionClient />);
       const input = (await screen.findByLabelText("profilePhotoChange", {
         selector: "input",
       })) as HTMLInputElement;

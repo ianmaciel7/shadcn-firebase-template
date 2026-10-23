@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import ProfilePage from "./profile/page";
 
 vi.mock("./profile/_components/profile-section-client", () => ({
-  ProfileSection: () => <div data-testid="profile-section">{"Profile"}</div>,
+  ProfileSectionClient: () => <div data-testid="profile-section">{"Profile"}</div>,
 }));
 
 afterEach(cleanup);

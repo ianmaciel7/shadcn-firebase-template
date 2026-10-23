@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import ProtectedLayout from "./layout";
 
 vi.mock("./_components/protected-gate-client", () => ({
-  ProtectedGate: ({ children }: { children: React.ReactNode }) => (
+  ProtectedGateClient: ({ children }: { children: React.ReactNode }) => (
     <section data-testid="protected-gate">{children}</section>
   ),
 }));
