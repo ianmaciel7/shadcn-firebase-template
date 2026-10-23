@@ -622,15 +622,25 @@ function jsxEntries(source, root = source) {
   return elements;
 }
 
+function normalizeProfileTag(name) {
+  // Normalize colocated compound form variants for composition checks.
+  return name.replace(/^ProfileFormClient/, "ProfileForm");
+}
+
 function profileElements(elements, name) {
-  return elements.filter((element) => element.name === name);
+  return elements.filter(
+    (element) => normalizeProfileTag(element.name) === normalizeProfileTag(name),
+  );
 }
 
 function isInsideProfile(element, ancestors) {
   const parents = element.ancestors.slice(-ancestors.length).reverse();
   return (
     parents.length === ancestors.length &&
-    ancestors.every((name, index) => parents[index] === name)
+    ancestors.every(
+      (name, index) =>
+        normalizeProfileTag(parents[index]) === normalizeProfileTag(name),
+    )
   );
 }
 
@@ -867,7 +877,9 @@ function checkProfileFormSafety(source, stem, report) {
   const checks = {
     "profile-card": checkProfileCardSafety,
     "profile-section-client": checkProfileSectionSafety,
+    "profile-section": checkProfileSectionSafety,
     "profile-form-client": checkProfileProviderSafety,
+    "profile-form": checkProfileProviderSafety,
     "profile-form-content": checkProfileContentSafety,
     "profile-form-footer": checkProfileFooterSafety,
     "profile-save-button": (file, elements, addIssue) =>
@@ -882,11 +894,12 @@ function checkProfileFormSafety(source, stem, report) {
   ) {
     return;
   }
-  if (stem === "profile-form-client") {
+  if (stem === "profile-form-client" || stem === "profile-form") {
+    const namePrefix = stem === "profile-form-client" ? "ProfileFormClient" : "ProfileForm";
     for (const [name, partCheck] of [
-      ["ProfileFormClient", checkProfileProviderSafety],
-      ["ProfileFormClientContent", checkProfileContentSafety],
-      ["ProfileFormClientFooter", checkProfileFooterSafety],
+      [namePrefix, checkProfileProviderSafety],
+      [`${namePrefix}Content`, checkProfileContentSafety],
+      [`${namePrefix}Footer`, checkProfileFooterSafety],
     ]) {
       const declaration = source.statements.find(
         (statement) =>
