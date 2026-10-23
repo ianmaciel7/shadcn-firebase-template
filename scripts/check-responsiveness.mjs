@@ -86,8 +86,10 @@ function extractClassStrings(node) {
   }
   if (ts.isTemplateExpression(node)) return extractTemplateClassStrings(node);
   if (ts.isJsxExpression(node)) return extractClassStrings(node.expression);
-  if (ts.isCallExpression(node)) return node.arguments.flatMap(extractClassStrings);
-  if (ts.isArrayLiteralExpression(node)) return node.elements.flatMap(extractClassStrings);
+  if (ts.isCallExpression(node))
+    return node.arguments.flatMap(extractClassStrings);
+  if (ts.isArrayLiteralExpression(node))
+    return node.elements.flatMap(extractClassStrings);
   return extractBranchClassStrings(node);
 }
 
@@ -123,11 +125,10 @@ function isInteractiveElement(element) {
 
 function tinyAxesForToken(token) {
   const base = token.split(":").pop() ?? "";
-  const standard = base.match(
-    /^(size|h|w)-(0|0\.5|1|1\.5|2|2\.5|3|3\.5|4|5)$/,
-  );
+  const standard = base.match(/^(size|h|w)-(0|0\.5|1|1\.5|2|2\.5|3|3\.5|4|5)$/);
   const pixels = base.match(/^(size|h|w)-\[(\d+(?:\.\d+)?)px\]$/);
-  const axis = standard?.[1] ?? (pixels && Number(pixels[2]) < 24 ? pixels[1] : null);
+  const axis =
+    standard?.[1] ?? (pixels && Number(pixels[2]) < 24 ? pixels[1] : null);
   if (axis === "size") return ["h", "w"];
   return axis ? [axis] : [];
 }
@@ -148,16 +149,22 @@ function isHitAreaExpander(token) {
 }
 
 function isPaddingOrMinSize(base, axis) {
-  const minimum = base.match(/^min-(h|w|size)-(?:([6-9]|[1-9]\d+)|\[(\d+)px\])$/);
+  const minimum = base.match(
+    /^min-(h|w|size)-(?:([6-9]|[1-9]\d+)|\[(\d+)px\])$/,
+  );
   if (minimum) {
-    return (minimum[1] === axis || minimum[1] === "size") &&
-      (minimum[3] === undefined || Number(minimum[3]) >= 24);
+    return (
+      (minimum[1] === axis || minimum[1] === "size") &&
+      (minimum[3] === undefined || Number(minimum[3]) >= 24)
+    );
   }
 
   const padding = base.match(/^(p|px|py)-(?:([\d.]+)|\[(\d+)px\])$/);
   if (!padding) return false;
-  const padPx = padding[3] === undefined ? Number(padding[2]) * 4 : Number(padding[3]);
-  const matchingAxis = padding[1] === "p" ||
+  const padPx =
+    padding[3] === undefined ? Number(padding[2]) * 4 : Number(padding[3]);
+  const matchingAxis =
+    padding[1] === "p" ||
     (axis === "h" ? padding[1] === "py" : padding[1] === "px");
   return matchingAxis && padPx >= 6;
 }
@@ -186,8 +193,7 @@ function checkViewportInitialScale(prop, initText, fail) {
 }
 
 function hasDisabledZoomValue(propName, value) {
-  return propName === "userScalable" &&
-    ["false", "no", "0"].includes(value);
+  return propName === "userScalable" && ["false", "no", "0"].includes(value);
 }
 
 function checkMaximumScaleRestriction(prop, value, fail) {
@@ -207,7 +213,8 @@ function checkViewportZoomRestrictions(prop, propName, init, initText, fail) {
       "Disabling user zoom (userScalable: false) is strictly forbidden for accessibility (WCAG 1.4.4).",
     );
   }
-  if (propName === "maximumScale") checkMaximumScaleRestriction(prop, initText, fail);
+  if (propName === "maximumScale")
+    checkMaximumScaleRestriction(prop, initText, fail);
   if (ts.isStringLiteral(init) && /user-scalable\s*=\s*no/i.test(init.text)) {
     fail(
       prop,
@@ -418,9 +425,12 @@ function checkJsxClassName(node, fail) {
   const classAttr = node.attributes.properties.find(
     (attr) => ts.isJsxAttribute(attr) && attr.name.getText() === "className",
   );
-  if (!classAttr || !ts.isJsxAttribute(classAttr) || !classAttr.initializer) return;
+  if (!classAttr || !ts.isJsxAttribute(classAttr) || !classAttr.initializer)
+    return;
   const classStrings = extractClassStrings(classAttr.initializer);
-  const tokens = classStrings.flatMap((value) => value.split(/\s+/)).filter(Boolean);
+  const tokens = classStrings
+    .flatMap((value) => value.split(/\s+/))
+    .filter(Boolean);
   checkClassTokens(tokens, classAttr, node, fail);
 }
 
@@ -429,7 +439,8 @@ function checkJsxInlineStyle(node, fail) {
     (attr) => ts.isJsxAttribute(attr) && attr.name.getText() === "style",
   );
   if (!styleAttr || !ts.isJsxAttribute(styleAttr)) return;
-  if (!styleAttr.initializer || !ts.isJsxExpression(styleAttr.initializer)) return;
+  if (!styleAttr.initializer || !ts.isJsxExpression(styleAttr.initializer))
+    return;
   const expression = styleAttr.initializer.expression;
   if (expression && ts.isObjectLiteralExpression(expression)) {
     checkInlineStyleObject(expression, styleAttr, fail);
@@ -437,7 +448,8 @@ function checkJsxInlineStyle(node, fail) {
 }
 
 function checkJsxElement(node, fail) {
-  if (!ts.isJsxOpeningElement(node) && !ts.isJsxSelfClosingElement(node)) return;
+  if (!ts.isJsxOpeningElement(node) && !ts.isJsxSelfClosingElement(node))
+    return;
   checkJsxMetaElement(node, fail);
   checkJsxClassName(node, fail);
   checkJsxInlineStyle(node, fail);
