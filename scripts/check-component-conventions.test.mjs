@@ -537,12 +537,12 @@ describe("owned component conventions", () => {
     );
     expectInvalid(
       "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileCardContent><ProfileFormContent /></ProfileCardContent><ProfileSaveButton /><ProfileCardFooter><ProfileFormFooter><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
-      /ProfileSaveButton must be inside ProfileFormFooter/,
+      /ProfileSaveButton must be inside ProfileFormClientFooter/,
       section,
     );
     expectInvalid(
       "function ProfileSection() { return <ProfileCard><ProfileForm><ProfileCardHeader><ProfileCardTitle /><ProfileCardDescription /></ProfileCardHeader><ProfileFormContent /><ProfileCardFooter><ProfileFormFooter><ProfileSaveButton /><ProfileSignOutButton /></ProfileFormFooter></ProfileCardFooter></ProfileForm></ProfileCard>; } export { ProfileSection };",
-      /ProfileFormContent must be inside ProfileCardContent/,
+      /ProfileFormClientContent must be inside ProfileCardContent/,
       section,
     );
   });
