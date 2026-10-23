@@ -29,9 +29,7 @@ function getFirebaseConfig(): FirebaseOptions {
 }
 
 function getEmulatorUrl(): string | undefined {
-  const host = (
-    process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST
-  )?.trim();
+  const host = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST?.trim();
 
   if (!host) return undefined;
 
