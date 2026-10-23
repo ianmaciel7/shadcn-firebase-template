@@ -25,9 +25,10 @@ When standards conflict, apply them in this order:
   feature-local custom hook would make its purpose and data flow clearer. React
   recommends considering a custom hook for each Effect ([Reusing Logic with
   Custom Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks#when-to-use-custom-hooks)). Remove unnecessary Effects first, and extract a hook only when it creates a useful boundary; do not add one solely to shorten a component.
-- Model UI phases with explicit boolean flags such as `isLoading`, `isHidden`,
-  and `isError`. Components should branch on the applicable flag and keep
-  payloads such as `message` and `userId` nullable when unavailable.
+- Do not model UI phases with a `status` tag. Use explicit boolean flags such
+  as `isLoading`, `isHidden`, and `isError`; components should branch on the
+  applicable flag and keep payloads such as `message` and `userId` nullable
+  when unavailable.
   Boolean flags remain appropriate for independent conditions.
 - **State derivation and Effect elimination**:
   - Do not use `useEffect` to copy, derive, or mirror state from props or other state variables. Calculate derived values during rendering or synchronize atomic changes directly in event handlers ([You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect)).

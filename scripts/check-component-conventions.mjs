@@ -11,6 +11,7 @@ const screenStem = /(^|-)(screen|view|page)$/;
 const semanticStem = (stem) => stem.replace(/-(client|server)$/, "");
 const serverImports =
   /^(next\/(headers|cache|server)|next-intl\/server|server-only|firebase-admin)(\/|$)/;
+const uiPhaseStatuses = new Set(["loading", "hidden", "error", "ready"]);
 
 export function isOwnedComponent(filename) {
   const path = filename.replaceAll("\\", "/");
@@ -1398,6 +1399,73 @@ export function inspectHookFilename(content, filename) {
   return findings;
 }
 
+function isUiPhaseStatusLiteral(node) {
+  return (
+    Boolean(node) && ts.isStringLiteral(node) && uiPhaseStatuses.has(node.text)
+  );
+}
+
+function hasUiPhaseStatusType(node) {
+  return (
+    node && ts.isLiteralTypeNode(node) && isUiPhaseStatusLiteral(node.literal)
+  );
+}
+
+export function inspectUiPhaseStatus(content, filename) {
+  const path = filename.replaceAll("\\", "/");
+  if (
+    !path.startsWith("src/") ||
+    !/\.tsx?$/.test(path) ||
+    /\.(test|spec|stories)\.tsx?$/.test(path)
+  )
+    return [];
+  const source = ts.createSourceFile(
+    filename,
+    content,
+    ts.ScriptTarget.Latest,
+    true,
+    filename.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS,
+  );
+  const findings = [];
+  function report(node) {
+    const pos = source.getLineAndCharacterOfPosition(node.getStart(source));
+    findings.push({
+      file: filename,
+      line: pos.line + 1,
+      column: pos.character + 1,
+      message:
+        "Do not model UI phases with status; use isLoading, isHidden, isError, or isReady.",
+    });
+  }
+  function visit(node) {
+    if (
+      (ts.isPropertyAssignment(node) || ts.isPropertySignature(node)) &&
+      node.name.getText(source) === "status" &&
+      (isUiPhaseStatusLiteral(node.initializer) ||
+        hasUiPhaseStatusType(node.type))
+    )
+      report(node);
+    if (
+      ts.isBinaryExpression(node) &&
+      (node.operatorToken.kind === ts.SyntaxKind.EqualsEqualsEqualsToken ||
+        node.operatorToken.kind === ts.SyntaxKind.EqualsEqualsToken ||
+        node.operatorToken.kind ===
+          ts.SyntaxKind.ExclamationEqualsEqualsToken ||
+        node.operatorToken.kind === ts.SyntaxKind.ExclamationEqualsToken) &&
+      ((ts.isPropertyAccessExpression(node.left) &&
+        node.left.name.text === "status" &&
+        isUiPhaseStatusLiteral(node.right)) ||
+        (ts.isPropertyAccessExpression(node.right) &&
+          node.right.name.text === "status" &&
+          isUiPhaseStatusLiteral(node.left)))
+    )
+      report(node);
+    ts.forEachChild(node, visit);
+  }
+  visit(source);
+  return findings;
+}
+
 function scan(directory) {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const path = join(directory, entry.name);
@@ -1425,6 +1493,7 @@ export function checkComponents(root) {
       ...inspectComponentRuntime(content, path, modules),
       ...inspectNaming(content, path),
       ...inspectHookFilename(content, path),
+      ...inspectUiPhaseStatus(content, path),
       ...inspectComponent(content, path),
     ];
   });

@@ -6,6 +6,7 @@ import {
   inspectComponentRuntime,
   inspectHookFilename,
   inspectNaming,
+  inspectUiPhaseStatus,
   isOwnedComponent,
   isOwnedHookModule,
 } from "./check-component-conventions.mjs";
@@ -1050,6 +1051,33 @@ describe("Node integration client boundary protection", () => {
         "src/app/_components/details-client.tsx",
       );
     }
+  });
+});
+
+describe("UI phase flags", () => {
+  const file = "src/app/_hooks/use-session.ts";
+
+  it("rejects UI phase status tags in types, values, and branches", () => {
+    const findings = inspectUiPhaseStatus(
+      'type State = { status: "loading" } | { status: "ready" }; const state: State = { status: "loading" }; if (state.status === "loading") console.log("loading");',
+      file,
+    );
+    assert.equal(findings.length, 4);
+    for (const finding of findings)
+      assert.match(
+        finding.message,
+        /use isLoading, isHidden, isError, or isReady/,
+      );
+  });
+
+  it("allows explicit UI phase flags and unrelated domain statuses", () => {
+    assert.deepEqual(
+      inspectUiPhaseStatus(
+        'type State = { isLoading: boolean; isReady: boolean }; const state: State = { isLoading: true, isReady: false }; const order = { status: "active" };',
+        file,
+      ),
+      [],
+    );
   });
 });
 
