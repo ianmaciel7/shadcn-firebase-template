@@ -73,7 +73,7 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
                   href="/profile"
                   className={buttonVariants({
                     className:
-                      "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
+                      "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium sm:w-[158px]",
                   })}
                 >
                   {t("manageAccount")}
@@ -86,7 +86,7 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
                   href="/sign-in"
                   className={buttonVariants({
                     className:
-                      "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
+                      "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium sm:w-[158px]",
                   })}
                 >
                   {t("signIn")}
@@ -96,7 +96,7 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
                   className={buttonVariants({
                     variant: "outline",
                     className:
-                      "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium md:w-[158px]",
+                      "flex h-12 w-full items-center justify-center rounded-full px-5 text-base font-medium sm:w-[158px]",
                   })}
                 >
                   {t("getStarted")}
