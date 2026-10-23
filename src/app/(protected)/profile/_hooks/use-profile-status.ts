@@ -3,31 +3,17 @@ import type { useProfileSession } from "./use-profile-session";
 
 export type ProfileStatus =
   | {
-      errorMessage: null;
-      isError: false;
-      isHidden: false;
-      isLoading: true;
-      userId: null;
+      status: "loading";
     }
   | {
-      errorMessage: null;
-      isError: false;
-      isHidden: true;
-      isLoading: false;
-      userId: null;
+      status: "hidden";
     }
   | {
+      status: "error";
       errorMessage: string;
-      isError: true;
-      isHidden: false;
-      isLoading: false;
-      userId: null;
     }
   | {
-      errorMessage: null;
-      isError: false;
-      isHidden: false;
-      isLoading: false;
+      status: "ready";
       userId: string;
     };
 
@@ -38,33 +24,19 @@ export function useProfileStatus(
   const { user, error, defaultValues, authReady, preferencesReady } = session;
   if (!authReady || (user && !preferencesReady))
     return {
-      isError: false,
-      isHidden: false,
-      isLoading: true,
-      errorMessage: null,
-      userId: null,
+      status: "loading",
     };
   if (!user && !error)
     return {
-      isError: false,
-      isHidden: true,
-      isLoading: false,
-      errorMessage: null,
-      userId: null,
+      status: "hidden",
     };
   if (!user || !defaultValues)
     return {
-      isError: true,
-      isHidden: false,
-      isLoading: false,
+      status: "error",
       errorMessage: error ?? t("profileLoadError"),
-      userId: null,
     };
   return {
-    isError: false,
-    isHidden: false,
-    isLoading: false,
-    errorMessage: null,
+    status: "ready",
     userId: user.uid,
   };
 }
