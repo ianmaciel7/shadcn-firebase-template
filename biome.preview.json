@@ -3,7 +3,11 @@
   "plugins": [
     {
       "path": "./.biome/plugins/match-component-filename.js",
-      "includes": ["tests/biome-preview/fixtures/**/*.tsx"]
+      "includes": [
+        "src/app/**/_components/**/*.tsx",
+        "src/components/ui/extensions/**/*.tsx",
+        "tests/biome-preview/fixtures/**/*.tsx"
+      ]
     }
   ],
   "linter": {

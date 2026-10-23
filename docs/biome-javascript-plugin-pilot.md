@@ -12,15 +12,15 @@ permitted in `profile-card.tsx`).
 To exercise the pilot, run the CI step `Biome 2.6 plugin pilot`. The step
 uses a temporary `pnpm dlx @biomejs/biome@2.6.2` executable, a separate
 `biome.preview.json`, and valid/invalid fixtures. CI verifies that the
-valid fixture passes and that the invalid fixture fails **for the expected
+valid fixtures and the owned project components pass, and invalid fixtures fail **for the expected
 plugin diagnostic**, not merely due to a parse/config error.
 
-**No enforcement was migrated yet.** Keep
+**Production source is now scanned in CI as a preview check.** Keep
 `scripts/check-component-conventions.mjs` as the source of truth for the
 following cases until corresponding plugin tests exist: missing root export;
 aliases and re-exports; all local component declarations; props types,
 parameter forwarding, and compound component composition. The experiment
-only proves exported function name/filename parity.
+only enforces exported function name/filename parity, alongside the mature checker.
 
 If successful, a later change can upgrade the pinned Biome dependency and
 regenerate `pnpm-lock.yaml` using pnpm, then run the complete suite before
