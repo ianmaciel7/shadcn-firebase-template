@@ -25,7 +25,9 @@ async function waitForInteractiveUi(page: Page, route: string) {
   }
 
   // The CI runner may intentionally lack Firebase configuration.
-  await expect(page.locator("main input, main [role='alert']").first()).toBeVisible();
+  await expect(
+    page.locator("main input, main [role='alert']").first(),
+  ).toBeVisible();
   if (await page.locator("main [role='alert']").isVisible()) {
     test.skip(true, "Auth controls require Firebase configuration");
   }
