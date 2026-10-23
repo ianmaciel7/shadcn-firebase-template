@@ -139,9 +139,9 @@ describe("ProfileSectionClient", () => {
     render(<ProfileSectionClient data-testid="profile-section" />);
 
     await waitFor(() => {
-      expect(screen.getByTestId("profile-section").getAttribute("data-slot")).toBe(
-        "card",
-      );
+      expect(
+        screen.getByTestId("profile-section").getAttribute("data-slot"),
+      ).toBe("card");
     });
   });
 
