@@ -51,17 +51,20 @@ const defaultProfileDependencies: ProfileDependencies = {
   writeUserPreferences,
 };
 
-export async function saveProfile({
-  user,
-  previous,
-  values,
-  avatarFile,
-}: {
-  user: User;
-  previous: ProfileValues;
-  values: ProfileValues;
-  avatarFile: File | null;
-}, dependencies: ProfileDependencies = defaultProfileDependencies): Promise<SavedProfile> {
+export async function saveProfile(
+  {
+    user,
+    previous,
+    values,
+    avatarFile,
+  }: {
+    user: User;
+    previous: ProfileValues;
+    values: ProfileValues;
+    avatarFile: File | null;
+  },
+  dependencies: ProfileDependencies = defaultProfileDependencies,
+): Promise<SavedProfile> {
   const authUser = dependencies.getActiveUser(user);
   const displayName = values.displayName.trim();
   const email = values.email.trim();

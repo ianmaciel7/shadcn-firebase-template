@@ -52,7 +52,11 @@ export function useProfileSession() {
       .catch((cause) => {
         console.error(cause);
         if (active)
-          setPreferences({ uid, status: "error", message: t("profileLoadError") });
+          setPreferences({
+            uid,
+            status: "error",
+            message: t("profileLoadError"),
+          });
       });
 
     return () => {

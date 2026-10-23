@@ -26,14 +26,11 @@ export function useProfileAuth() {
     }
 
     try {
-      return subscribeToSession(
-        (user) => {
-          setAuth({ status: "ready", user, error: null });
-          setPhotoURL(user?.photoURL ?? null);
-          if (!user) router.replace("/sign-in");
-        },
-        onError,
-      );
+      return subscribeToSession((user) => {
+        setAuth({ status: "ready", user, error: null });
+        setPhotoURL(user?.photoURL ?? null);
+        if (!user) router.replace("/sign-in");
+      }, onError);
     } catch (cause) {
       onError(cause instanceof Error ? cause : new Error(String(cause)));
     }
