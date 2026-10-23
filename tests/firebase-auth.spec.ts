@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import esMessages from "../src/messages/es.json";
 
@@ -231,4 +232,49 @@ test("saving the profile language keeps the unprefixed route and translates afte
     page.getByText(esMessages.Auth.personalInfoTitle, { exact: true }),
   ).toBeVisible();
   await expect(page).toHaveURL(`${authTestOrigin}/profile`);
+});
+
+const accessibilityTags = [
+  "wcag2a",
+  "wcag2aa",
+  "wcag21a",
+  "wcag21aa",
+  "wcag22aa",
+];
+
+for (const route of ["/sign-in", "/register", "/forgot-password"]) {
+  test(`@a11y emulator renders accessible ${route} form`, async ({ page }) => {
+    await page.goto(route);
+    await expect(page.locator("main input").first()).toBeVisible();
+
+    const results = await new AxeBuilder({ page })
+      .withTags(accessibilityTags)
+      .analyze();
+    expect(results.violations).toEqual([]);
+  });
+}
+
+test("@a11y authenticated profile has no detected WCAG A/AA violations", async ({
+  page,
+  request,
+}) => {
+  const email = `a11y-profile-${crypto.randomUUID()}@example.test`;
+  const created = await request.post(
+    `${emulator}/identitytoolkit.googleapis.com/v1/accounts:signUp?key=emulator-only`,
+    { data: { email, password, returnSecureToken: true } },
+  );
+  expect(created.ok()).toBeTruthy();
+
+  await page.goto("/sign-in");
+  await page.getByLabel("Email Address").fill(email);
+  await page.locator("#password").fill(password);
+  await page.getByRole("button", { name: "Sign In", exact: true }).click();
+  await expect(page).toHaveURL("/");
+  await page.goto("/profile");
+  await expect(page.getByLabel("Language", { exact: true })).toBeVisible();
+
+  const results = await new AxeBuilder({ page })
+    .withTags(accessibilityTags)
+    .analyze();
+  expect(results.violations).toEqual([]);
 });

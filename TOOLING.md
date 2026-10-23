@@ -24,6 +24,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Browser component testing | Vitest Browser Mode + `vitest-browser-react` | Chromium through Playwright | Runs `*.browser.test.tsx` files in a real browser (`browser` project). | `vitest.config.mts`, `package.json` |
 | End-to-end testing | Playwright | `^1.64.1` | Runs `tests/*.spec.ts` against a production build. | `playwright.config.ts`, `tests/` |
 | Accessibility testing | `@axe-core/playwright` | 4.14.0 | Scans pages for WCAG 2.x A/AA violations in Playwright (`@a11y`). | `tests/a11y.spec.ts` |
+| Firebase Emulator E2E (CI) | Firebase CLI 15.34.1 (pinned via pnpm dlx) | CI on demo-test only | Exercises registration, sign-in, recovery, profile, popup/redirect, and axe on authenticated forms; requires no production Firebase secrets. | `.github/workflows/ci.yml`, `tests/firebase-auth.spec.ts`, `firebase.json` |
 | Visual regression | Playwright screenshots | Linux baselines generated and compared in CI | Compares full-page screenshots against baselines (`@visual`). | `tests/visual.spec.ts`, `tests/visual.spec.ts-snapshots/` |
 | Mutation testing | Stryker with the `command` runner | 10.0.0 (see [Known limitations](#known-limitations)) | On-demand mutation analysis of selected logic; runs the unit tests once per mutant. | `stryker.config.json`, `vitest.mutation.config.mts` |
 | Unused code | Knip | 6.41.0 | Finds unused files, exports, and dependencies. | `knip.jsonc` |
@@ -142,7 +143,7 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm verify:static` | Biome CI, typecheck, unit tests with coverage thresholds, architecture, unused code, duplication, structural rules, route/component/responsiveness guards, spelling, Markdown, Fallow health, and React Doctor. The CI `static` job. | minutes |
 | `pnpm verify:build` | Browser tests, production build with size budgets, and the Ladle build. The CI `build` job. | minutes |
 | `pnpm verify:full` | `verify:static` then `verify:build`. | minutes |
-| `pnpm verify:e2e` | The whole Playwright suite: functional, accessibility, and visual. | minutes |
+| `pnpm verify:e2e` | Ordinary Playwright suite: functional, accessibility, and visual; emulator cases run independently. | minutes |
 | `pnpm verify:security` | Semgrep rule tests and scan, Gitleaks, workflow linting, and the dependency audit. Needs the host tools; the same checks run in the CI `security` job. | seconds |
 
 `verify:full` intentionally excludes Playwright, security scanners, mutation
