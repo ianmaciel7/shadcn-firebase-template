@@ -4,7 +4,7 @@ import type { ProfileFormValues } from "@/lib/profile";
 import { useProfileSessionContext } from "./use-profile-session-context";
 import { useProfileSubmit } from "./use-profile-submit";
 
-export function useProfileForm() {
+export function useProfileFormClient() {
   const session = useProfileSessionContext();
   const [isSaving, setIsSaving] = useState(false);
   const { onSubmit } = useProfileSubmit(session);

@@ -6,7 +6,7 @@ import { getSafeReturnUrl } from "@/lib/auth/return-url";
 import { subscribeToSession } from "@/lib/auth/session";
 import { getFirebaseUI } from "@/lib/firebase/client";
 
-export function useAuthProvider() {
+export function useAuthProviderClient() {
   const locale = useLocale();
   const t = useTranslations("Auth");
   const router = useRouter();
