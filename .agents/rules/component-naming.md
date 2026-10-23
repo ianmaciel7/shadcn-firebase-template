@@ -30,10 +30,11 @@ from application naming checks. Application-owned extensions under
   name by semantic role. Prohibit generic implementation terms (`View`, `Screen`, `Presentation`) in component identifiers.
 - Reserve `-client.tsx` for browser integrations and `-server.tsx` for server
   integrations. Presentation components keep no suffix, including interactive
-  presentation that declares `"use client"`. Review
-  `LEGACY_SEMANTIC_STEM_ALLOWLIST` in the naming checker before applying an
-  exception; new and modernized integration components require exact filename
-  parity (for example, `HomeSectionClient` and `HomeSectionClientProps`).
+  presentation that declares `"use client"`. Owned component exports and
+  props types must match their complete filename stem, including `Client`
+  or `Server`. The checker no longer defines a legacy semantic suffix
+  exception. For example, `HomeSectionClient` uses
+  `HomeSectionClientProps` in `home-section-client.tsx`.
 - Integrations own application data, persistence, authentication, navigation or
   platform access, directly or through focused hooks/helpers. Examples include
   Firebase, browser storage, object URLs, theme persistence and external fetches.
@@ -56,7 +57,8 @@ from application naming checks. Application-owned extensions under
 
 ### Exact filename stem and component term parity (`checkStemComponentTermParity`)
 
-Owned component files outside the legacy allowlist enforce exact 1:1 term parity between the filename stem and component identifiers:
+Owned component files enforce exact 1:1 term parity between the filename
+stem and component identifiers:
 
 - **Term-for-term matching**: The kebab-case filename stem and PascalCase component identifiers are tokenized into semantic terms (e.g., `home-section-client` -> `["home", "section", "client"]`). Every term present in the filename stem must exist in the component name, and no extraneous terms may appear.
 - **No missing terms**: Declaring a component that drops terms from the filename (such as declaring `HomeSection` in `home-section-client.tsx`, which omits `Client`) triggers an error: `missing term(s): "client"`.
@@ -65,11 +67,11 @@ Owned component files outside the legacy allowlist enforce exact 1:1 term parity
   - Component declaration and named export: `HomeSectionClient`
   - Prop type declaration: `HomeSectionClientProps` (`HomeSectionProps` is rejected)
   - Hook coordination: `useHomeSectionClient` in `src/app/_hooks/use-home-section-client.ts` (`useHomeSection` is rejected)
-- **Legacy allowlist (`LEGACY_SEMANTIC_STEM_ALLOWLIST`)**:
-  Read the actual list in `scripts/check-component-conventions.mjs` before
-  claiming any exception. Current profile integration exports include
-  `ProfileFormClient` from `profile-form-client.tsx`. New components
-  enforce exact filename and export term parity.
+- **Profile example:** `profile-form-client.tsx` exports
+  `ProfileFormClient`, with compound parts sharing the same root. This
+  naming contract supersedes only the semantic export naming aspect of ADR
+  0016; integration versus presentation placement remains unchanged. See
+  [ADR 0017](../../docs/adr/0017-enforce-exact-component-export-names.md).
 
 Simple presentation hooks such as `useId`, `useTranslations`, and React Hook
 Form's `useFormContext` and `useWatch` may be called directly in a field.

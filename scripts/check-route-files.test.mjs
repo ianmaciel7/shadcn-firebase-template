@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import { inspectRouteSource, isRouteEntrypoint } from "./check-route-files.mjs";
 
@@ -14,6 +15,18 @@ function expectRejected(source, reason, path) {
 }
 
 describe("route entrypoint guard", () => {
+  it("keeps migrated structural route checks in verify:fast", () => {
+    const packageJson = JSON.parse(
+      readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+    );
+    assert.match(
+      packageJson.scripts["verify:fast"],
+      /pnpm check:structure(?:\\s|$)/,
+    );
+    assert.match(packageJson.scripts["verify:static"], /pnpm check:structure/);
+  });
+
+
   it("scans route special files but not private components", () => {
     assert.equal(isRouteEntrypoint("src/app/page.tsx"), true);
     assert.equal(isRouteEntrypoint("src/app/(group)/layout.tsx"), true);

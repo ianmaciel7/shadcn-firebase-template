@@ -24,7 +24,8 @@ original date. Read current operational details in the
 | [0013](0013-capture-nextjs-server-errors.md) | Accepted | Next.js server error logging |
 | [0014](0014-consolidate-owned-component-placement.md) | Accepted | Shared application components in UI extensions and route-private components in private folders |
 | [0015](0015-adopt-component-runtime-suffixes.md) | Superseded in classification by 0016 | Client/server filename suffixes with shared presentation names |
-| [0016](0016-name-components-by-integration-responsibility.md) | Accepted | Integration suffixes independent of presentation runtime |
+| [0016](0016-name-components-by-integration-responsibility.md) | Accepted; export naming superseded by 0017 | Integration suffixes independent of presentation runtime |
+| [0017](0017-enforce-exact-component-export-names.md) | Accepted | Match owned component, props, and orchestration hook names to full file stem |
 
 ## Current operational clarifications
 

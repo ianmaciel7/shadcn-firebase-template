@@ -7,7 +7,7 @@ Run the checks relevant to a change before opening a pull request. See
 
 | Command | Use it for |
 | --- | --- |
-| `pnpm verify:fast` | Code changes: Biome CI, typecheck, unit tests, route-entrypoint guard, owned-component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Browser suites run separately. |
+| `pnpm verify:fast` | Code changes: Biome CI, typecheck, unit tests, ast-grep structural rules, route-entrypoint guard, owned-component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Browser suites run separately. |
 | `pnpm verify:full` | Before a pull request: `verify:static` (adds coverage thresholds, architecture, unused code, duplication, ast-grep structural checks, route/component/responsiveness guards, spelling, Markdown, complexity, React diagnostics) plus `verify:build` (browser tests, production build with size budgets, Ladle build). |
 | `pnpm verify:e2e` | Changes that affect pages or visual output: functional, accessibility, and visual Playwright specs. |
 | `pnpm verify:security` | Dependency or configuration changes: Semgrep rule tests and scan, Gitleaks, workflow lint, and `pnpm audit`. Needs the host tools in [TOOLING.md](TOOLING.md#host-prerequisites). |
@@ -18,8 +18,9 @@ commands against the repository. These checks do not replace CI; the pull
 request still runs the configured jobs. Markdown lint intentionally excludes
 agent files and ADRs 0001–0005, so review those manually when applicable.
 
-`pnpm verify:fast` must stay fast. It runs only the `unit` Vitest project; browser,
-end-to-end, visual, and mutation tests are deliberately outside it.
+`pnpm verify:fast` runs the unit Vitest project and structural ast-grep
+checks, including migrated route rules for client directives, hooks, and JSX
+event handlers. Browser, end-to-end, visual, and mutation suites run separately.
 
 For a manual smoke test, run `pnpm dev` and verify the affected route in a
 browser, including its loading, error, and localized states where applicable.

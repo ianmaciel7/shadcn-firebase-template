@@ -143,7 +143,7 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 
 | Command | Responsibility | Time |
 | --- | --- | --- |
-| `pnpm verify:fast` | Biome CI, typecheck, unit tests, route guard, component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Meant to run constantly. | seconds |
+| `pnpm verify:fast` | Biome CI, typecheck, unit tests, ast-grep structural checks, route guard, component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Meant to run constantly. | seconds |
 | `pnpm verify:static` | Biome CI, typecheck, unit tests with coverage thresholds, architecture, unused code, duplication, structural rules, route/component/responsiveness guards, spelling, Markdown, Fallow health, and React Doctor. The CI `static` job. | minutes |
 | `pnpm verify:build` | Browser tests, production build with size budgets, and the Ladle build. The CI `build` job. | minutes |
 | `pnpm verify:full` | `verify:static` then `verify:build`. | minutes |

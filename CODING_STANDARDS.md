@@ -703,8 +703,10 @@ context and translations, so it lives in `profile-email-field.tsx` while keeping
 hook and keeps `profile-avatar-field-client.tsx`. `LoadingIndicator` remains
 without a suffix and compatible with either graph.
 
-Exports and orchestration hooks keep semantic names without suffixes. Colocated
-tests/stories follow the component stem. A fetch alone does not determine
+Owned component exports, props types, and component-named orchestration hooks
+use the complete filename stem, including `Client` or `Server` where present.
+For example, `home-section-client.tsx` exports `HomeSectionClient` and uses
+`useHomeSectionClient`. Colocated tests and stories follow the component stem. A fetch alone does not determine
 runtime: the component boundary determines where that request executes.
 Composing an integration component does not make presentation an integration.
 Mandatory Next.js filenames, registry output, hooks and non-component modules
