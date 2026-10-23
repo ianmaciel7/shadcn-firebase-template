@@ -4,12 +4,12 @@ import type { ComponentProps } from "react";
 import { FormProvider } from "react-hook-form";
 import { FieldGroup } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
-import { useProfileForm } from "../_hooks/use-profile-form";
+import { useProfileFormClient } from "../_hooks/use-profile-form";
 
-type ProfileFormProps = Omit<ComponentProps<"form">, "onSubmit">;
+type ProfileFormClientProps = Omit<ComponentProps<"form">, "onSubmit">;
 
-function ProfileForm({ children, className, ...props }: ProfileFormProps) {
-  const { form, handleSubmit } = useProfileForm();
+function ProfileFormClient({ children, className, ...props }: ProfileFormClientProps) {
+  const { form, handleSubmit } = useProfileFormClient();
 
   return (
     <FormProvider {...form}>
@@ -25,18 +25,18 @@ function ProfileForm({ children, className, ...props }: ProfileFormProps) {
   );
 }
 
-type ProfileFormContentProps = ComponentProps<typeof FieldGroup>;
+type ProfileFormClientContentProps = ComponentProps<typeof FieldGroup>;
 
-function ProfileFormContent({ className, ...props }: ProfileFormContentProps) {
+function ProfileFormClientContent({ className, ...props }: ProfileFormClientContentProps) {
   return <FieldGroup className={cn("gap-4", className)} {...props} />;
 }
 
-type ProfileFormFooterProps = ComponentProps<"div">;
+type ProfileFormClientFooterProps = ComponentProps<"div">;
 
-function ProfileFormFooter({ className, ...props }: ProfileFormFooterProps) {
+function ProfileFormClientFooter({ className, ...props }: ProfileFormClientFooterProps) {
   return (
     <div className={cn("flex w-full flex-col gap-4", className)} {...props} />
   );
 }
 
-export { ProfileForm, ProfileFormContent, ProfileFormFooter };
+export { ProfileFormClient, ProfileFormClientContent, ProfileFormClientFooter };

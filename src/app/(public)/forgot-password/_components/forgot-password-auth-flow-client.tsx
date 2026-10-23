@@ -2,12 +2,12 @@
 
 import type { ComponentProps } from "react";
 import { ForgotPasswordAuthScreen as ForgotPasswordAuthContent } from "@/components/firebase/forgot-password-auth-screen";
-import { useForgotPasswordAuthFlow } from "../_hooks/use-forgot-password-auth-flow";
+import { useForgotPasswordAuthFlowClient } from "../_hooks/use-forgot-password-auth-flow";
 
-type ForgotPasswordAuthFlowProps = ComponentProps<"div">;
+type ForgotPasswordAuthFlowClientProps = ComponentProps<"div">;
 
-function ForgotPasswordAuthFlow(props: ForgotPasswordAuthFlowProps) {
-  const { goToSignIn } = useForgotPasswordAuthFlow();
+function ForgotPasswordAuthFlowClient(props: ForgotPasswordAuthFlowClientProps) {
+  const { goToSignIn } = useForgotPasswordAuthFlowClient();
   return (
     <div {...props}>
       <ForgotPasswordAuthContent onBackToSignInClick={goToSignIn} />
@@ -15,4 +15,4 @@ function ForgotPasswordAuthFlow(props: ForgotPasswordAuthFlowProps) {
   );
 }
 
-export { ForgotPasswordAuthFlow };
+export { ForgotPasswordAuthFlowClient };

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
 import { FieldGroup } from "@/components/ui/field";
-import { useProfileSection } from "../_hooks/use-profile-section";
+import { useProfileSectionClient } from "../_hooks/use-profile-section";
 import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
 import { ProfileAvatarFieldClient } from "./profile-avatar-field-client";
 import {
@@ -18,16 +19,18 @@ import {
 import { ProfileDisplayNameField } from "./profile-display-name-field";
 import { ProfileEmailField } from "./profile-email-field";
 import {
-  ProfileForm,
-  ProfileFormContent,
-  ProfileFormFooter,
+  ProfileFormClient,
+  ProfileFormClientContent,
+  ProfileFormClientFooter,
 } from "./profile-form-client";
 import { ProfileLocaleField } from "./profile-locale-field";
 import { ProfileSaveButton } from "./profile-save-button";
 import { ProfileThemeField } from "./profile-theme-field";
 
-function ProfileSection() {
-  const { profile, state, t } = useProfileSection();
+type ProfileSectionClientProps = ComponentProps<"div">;
+
+function ProfileSectionClient(_props: ProfileSectionClientProps) {
+  const { profile, state, t } = useProfileSectionClient();
 
   if (state.isLoading) {
     return (
@@ -52,7 +55,7 @@ function ProfileSection() {
   return (
     <ProfileSessionContext value={profile}>
       <ProfileCard>
-        <ProfileForm key={state.userId}>
+        <ProfileFormClient key={state.userId}>
           <ProfileCardHeader>
             <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
             <ProfileCardDescription>
@@ -60,7 +63,7 @@ function ProfileSection() {
             </ProfileCardDescription>
           </ProfileCardHeader>
           <ProfileCardContent>
-            <ProfileFormContent>
+            <ProfileFormClientContent>
               <ProfileAvatarFieldClient />
               <FieldGroup>
                 <ProfileDisplayNameField />
@@ -68,10 +71,10 @@ function ProfileSection() {
                 <ProfileLocaleField />
                 <ProfileThemeField />
               </FieldGroup>
-            </ProfileFormContent>
+            </ProfileFormClientContent>
           </ProfileCardContent>
           <ProfileCardFooter>
-            <ProfileFormFooter>
+            <ProfileFormClientFooter>
               <ProfileSaveButton />
               <Link
                 href="/"
@@ -83,12 +86,12 @@ function ProfileSection() {
               >
                 {t("backToHome")}
               </Link>
-            </ProfileFormFooter>
+            </ProfileFormClientFooter>
           </ProfileCardFooter>
-        </ProfileForm>
+        </ProfileFormClient>
       </ProfileCard>
     </ProfileSessionContext>
   );
 }
 
-export { ProfileSection };
+export { ProfileSectionClient };

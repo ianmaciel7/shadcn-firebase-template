@@ -3,12 +3,12 @@
 import { FirebaseUIProvider } from "@firebase-oss/ui-react";
 import type { PropsWithChildren } from "react";
 import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
-import { useAuthProvider } from "../_hooks/use-auth-provider";
+import { useAuthProviderClient } from "../_hooks/use-auth-provider";
 
-type AuthProviderProps = PropsWithChildren;
+type AuthProviderClientProps = PropsWithChildren;
 
-function AuthProvider({ children }: AuthProviderProps) {
-  const state = useAuthProvider();
+function AuthProviderClient({ children }: AuthProviderClientProps) {
+  const state = useAuthProviderClient();
   const { t } = state;
 
   if (state.isError)
@@ -29,4 +29,4 @@ function AuthProvider({ children }: AuthProviderProps) {
   return <FirebaseUIProvider ui={state.ui}>{children}</FirebaseUIProvider>;
 }
 
-export { AuthProvider };
+export { AuthProviderClient };
