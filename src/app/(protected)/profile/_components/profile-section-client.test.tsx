@@ -222,6 +222,9 @@ describe("ProfileSectionClient", () => {
     const displayName = screen.getByLabelText("displayNameLabel");
 
     expect(displayName.closest('[data-slot="card-content"]')).toBeTruthy();
+    expect(document.querySelectorAll('[data-slot="field-group"]')).toHaveLength(
+      1,
+    );
     expect(saveButton.closest('[data-slot="card-footer"]')).toBeTruthy();
     const form = saveButton.closest("form");
     expect(form).toBeTruthy();
