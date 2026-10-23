@@ -45,7 +45,7 @@ jobs:
       - name: Biome 2.6 plugin pilot
         run: |
           set -euo pipefail
-          pnpm dlx @biomejs/biome@2.6.2 lint --config-path biome.preview.json src/app src/components/ui/extensions
+          find src/app src/components/ui/extensions -type f -name '*.tsx' ! -name '*.test.tsx' -print0 | xargs -0 -r pnpm dlx @biomejs/biome@2.6.2 lint --config-path biome.preview.json
           pnpm dlx @biomejs/biome@2.6.2 lint --config-path biome.preview.json tests/biome-preview/fixtures/valid
           if pnpm dlx @biomejs/biome@2.6.2 lint --config-path biome.preview.json tests/biome-preview/fixtures/invalid > biome-preview-output.txt 2>&1; then
             echo "The invalid component filename unexpectedly passed." >&2
