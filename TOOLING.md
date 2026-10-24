@@ -49,9 +49,9 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Functions dependency audit | `npm audit` through `pnpm audit:functions` | Included with npm | Reports known vulnerable dependencies in the independent backend graph. | `functions/package-lock.json`, `functions/package.json` (`overrides`) |
 | Continuous integration | GitHub Actions | Pinned by commit SHA | Runs `static`, `build`, `e2e`, `auth-emulator`, `security`, and `pr-title` in parallel, with a required `ci-result` aggregate. | `.github/workflows/ci.yml`, `TESTING.md` |
 | Workflow linting | actionlint, zizmor | Host tools | Lint and audit the GitHub Actions workflows. | `package.json` (`check:workflows`) |
-| Codebase graph | Graphify | Host tool | Builds an on-demand knowledge graph; output goes to the ignored `graphify-out/`. | None |
+| Codebase graph | Graphify | Host tool | Builds an on-demand knowledge graph; versioned products are `graphify-out/graph.json`, `GRAPH_REPORT.md`, and the portable `manifest.json`; the rest of `graphify-out/` is machine-local and ignored. `graphify hook install` (run once per clone) adds the Husky `post-commit`/`post-checkout` rebuild hooks and registers the local `graph.json` merge driver; after `git pull`/`merge`, run `graphify update .` to re-anchor `manifest.json`. | `.gitignore`, `.gitattributes`, `.husky/post-commit`, `.husky/post-checkout` |
 | Git hooks | Husky + lint-staged + Commitlint | 9.1.7 / 17.6.0 / 21.2.3 | Check staged files with Biome and validate commit messages. | `.husky/`, `package.json`, `commitlint.config.mjs` |
-| Repository integrity | pre-commit | Host tool | Runs file-integrity hooks (large files, case conflicts, JSON/YAML, merge markers). | `.pre-commit-config.yaml` |
+| Repository integrity | pre-commit | Host tool | Runs file-integrity hooks (large files, except the generated `graphify-out/graph.json`; case conflicts, JSON/YAML, merge markers). | `.pre-commit-config.yaml` |
 | Agent documentation | Seven installed skills | Project-local `save` plus six external skills | See [.agents/skills/README.md](.agents/skills/README.md) for names, provenance, and entrypoints. | `.agents/skills/`, `skills-lock.json` |
 | Agent configuration | Agents CLI | Repository configuration; CLI is externally provided | Synchronizes reusable agent skills and MCP settings (Serena, Next.js DevTools). | `.agents/agents.json`, `.agents/skills/` |
 
@@ -208,7 +208,8 @@ theming decision is recorded in ADR 0003.
 | `.agents/agents.json` | Agent and MCP configuration. |
 
 Generated output (`reports/`, `coverage/`, `.next/`, `test-results/`,
-`playwright-report/`, `.stryker-tmp/`, `graphify-out/`) is ignored. Ladle
+`playwright-report/`, `.stryker-tmp/`) is ignored, as is machine-local
+`graphify-out/` state (cache, `.graphify_*`, `graph.html`, dated snapshots). Ladle
 configuration in `.ladle/` is versioned; only its build output is ignored.
 
 ## Custom rule registry
@@ -464,6 +465,16 @@ These observations describe this session, not universal package requirements:
 - Scratch TypeScript under the repository can enter the configured compiler and
   lint globs. Use a separate `work/` directory outside the application repository
   or a non-source extension; do not mistake scratch diagnostics for app failures.
+- **Graphify semantic extraction is manual and can be shallow.** `graphify update .`
+  refreshes code with AST extraction and needs no LLM; documents and images need
+  `/graphify --update`, which dispatches subagents and spends tokens. Subagents
+  may read only the first lines of large files, so instruct them to read each file
+  fully and check the reported coverage. `graphify cluster-only .` exited
+  successfully without regenerating `GRAPH_REPORT.md`; compare the report's node
+  count with `graph.json`. Node IDs must not start with `_`: `.agents/...` became
+  `_agents_...` and duplicated the AST IDs (`agents_...`), so merge or rename them
+  before building the graph. Community names default to `Community N` and reset on
+  rebuild.
 
 Hook recovery and reporting belong in [Contributing](CONTRIBUTING.md#commit-hook-environment-failures).
 
