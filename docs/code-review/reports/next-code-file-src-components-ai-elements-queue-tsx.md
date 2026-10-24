@@ -18,7 +18,7 @@
 
 Queue items use list semantics, the section trigger composes one native button through Base UI `render`, and static attachment thumbnails are marked decorative by default.
 
-# Findings
+## Findings
 
 ## AI-QUEUE-ACTION-001
 

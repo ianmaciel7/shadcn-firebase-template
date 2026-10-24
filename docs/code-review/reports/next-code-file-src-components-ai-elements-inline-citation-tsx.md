@@ -18,7 +18,7 @@
 
 The previous/next controls are native buttons with a default `type="button"` and explicit accessible names. Carousel API subscription is coordinated with an effect and unsubscription.
 
-# Findings
+## Findings
 
 ## AI-CITATION-URL-001
 
