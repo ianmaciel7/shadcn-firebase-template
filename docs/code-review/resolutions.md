@@ -162,3 +162,7 @@ while keeping semantic responsibility review distinct from metric enforcement.
 ## Newly validated review reports
 
 [Review validation run 40134059605](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134059605) accepted 166 new source reviews, not their remediation. The source concerns in [findings](findings.md#additional-source-inspection-findings-pending-remediation-triage) remain open or require separate status verification against current code. No blanket claim of corrective implementation, deployed behavior or emulator verification is made for these additions.
+
+## Evaluation runner remediation backlog
+
+Both `EVAL-RUNNER-CLI-001` and `EVAL-RUNNER-TRACE-001` remain **open** after the evaluation review reports were completed. The repository quality and documentation checks validate the review artifacts but do not execute the external agent evaluation suite or prove either behavior corrected.

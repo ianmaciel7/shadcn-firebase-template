@@ -17,3 +17,7 @@ As of the validated UI checkpoint, the active inventory has 680 project items an
 ## Validated source-review completion scope
 
 The updated manifest records 330 completed items (including coordinator and documentary reviews) out of 1210. The additional source-review reports passed English, spelling and Markdown validations at [run 40134059605](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134059605); this is not an exhaustive installed Next.js 16.4.2 documentation review, nor a framework-wide compatibility certification.
+
+## Evaluation scope
+
+The separate agent-evaluation fixture and runner files are not Next.js route conventions. Their source-level reviews contribute to project inventory coverage only; they do not increase the count of reviewed installed Next.js documentation files or certify runtime behavior.

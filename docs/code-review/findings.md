@@ -1,6 +1,6 @@
 # Findings
 
-<!-- cspell:ignore AUDIOPLAYER NXLAYOUT NEXTERR DOCSTART DOCUPGRADE INTLPROVIDER AIELEMENTS pending TOTP WEBPREVIEW FILETREE OPENIN NONSEEK -->
+<!-- cspell:ignore AUDIOPLAYER NXLAYOUT NEXTERR DOCSTART DOCUPGRADE INTLPROVIDER AIELEMENTS pending TOTP WEBPREVIEW FILETREE OPENIN NONSEEK EVAL -->
 
 This is the historical finding consolidation at audit checkpoint `d8e5df2`. The user subsequently authorized implementation. See [remediation status and validation limits](resolutions.md) for current dispositions; the evidence below is preserved as the original review record.
 
@@ -224,3 +224,10 @@ The 166 validated individual reviews include provisional concerns referenced bel
 - [`FIREBASE-OAUTH-001`](reports/next-code-file-src-components-firebase-oauth-button-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
 - [`UI-CHART-CSS-001`](reports/next-code-file-src-components-ui-chart-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
 - [`UI-FIELD-MEMO-001`](reports/next-code-file-src-components-ui-field-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+
+## Evaluation tool-runner concerns
+
+- **`EVAL-RUNNER-CLI-001` (Low, open):** In `scripts/evals/run-tool-usage-evals.mjs`, an unavailable external executable can produce a null output that reaches `writeFileSync` before error handling, potentially preventing a complete per-case failure report. Guard missing output and record the failed case explicitly.
+- **`EVAL-RUNNER-TRACE-001` (Low, open):** A matched tool name within a general command event is not sufficient evidence that a particular external connector completed successfully. Tighten event-type and outcome checks and add negative test cases.
+
+These are static inspection findings from [the individual runner report](reports/next-code-file-scripts-evals-run-tool-usage-evals-mjs.md). The test runner itself was not invoked against a live external agent. The user must not interpret source-review CI as proof of external evaluation success.

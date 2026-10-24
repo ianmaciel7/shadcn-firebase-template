@@ -21,3 +21,7 @@ Ten previously untracked evaluation items were added: four directories and six f
 ## Validated source-report expansion
 
 Current completed project-item reviews: 305/695, including 3 additional directory boundaries and 163 additional source files. The review corpus now covers significant portions of Firebase UI, AI Elements, and shared shadcn UI, but the pending audit has 880 remaining items in total, including many installed Next.js documentation files. Conclusions remain scoped to reviewed paths.
+
+## Evaluation boundary review
+
+The `evals/`, `evals/general/`, `evals/tool-usage/` and `scripts/evals/` directories each have an independently validated folder report. Fixture inputs are kept separate from the runner and from the Next.js application runtime. The runner's two low-severity robustness concerns remain open; the audit did not execute live agent scenarios.
