@@ -1,4 +1,4 @@
-# Form Architecture & Context Standards
+# Form architecture and context standards
 
 These are project conventions aligned with the current shadcn/ui and React Hook Form documentation, not universal framework requirements.
 
@@ -91,14 +91,6 @@ The profile components were compared with all maintained UI component modules un
 - Use `useId()` for reusable field label/control pairs; do not hard-code duplicate `id` values when a profile form might mount more than once.
 - Keep `type="submit"` fixed after props spreads. This is an explicit repository convention, not a mandatory official shadcn file structure.
 
-## Primary sources
-
-- [shadcn/ui React Hook Form](https://ui.shadcn.com/docs/forms/react-hook-form)
-- [shadcn/ui Field](https://ui.shadcn.com/docs/components/field)
-- [React Hook Form useForm](https://react-hook-form.com/docs/useform)
-- [React Hook Form FormProvider](https://react-hook-form.com/docs/formprovider)
-- [Next.js Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components)
-
 ## Direct parent relationships
 
 The JSX guard requires the immediate parent chain, not just an ancestor.
@@ -112,3 +104,12 @@ they change the intended slot layout.
 ## React Form Actions are not a migration
 
 Preserve the React Hook Form and Firebase profile architecture. The React `<form action>` example in the [React reference](../../docs/agents/react.md#user-supplied-react-1931-reference) is explanatory, not a request to migrate. Preserve controlled and React Hook Form-owned values when using `requestFormReset`.
+
+## Official references
+
+- [shadcn/ui React Hook Form](https://ui.shadcn.com/docs/forms/react-hook-form)
+- [shadcn/ui Field](https://ui.shadcn.com/docs/components/field)
+- [React Hook Form useForm](https://react-hook-form.com/docs/useform)
+- [React Hook Form FormProvider](https://react-hook-form.com/docs/formprovider)
+- [Next.js Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components) (`node_modules/next/dist/docs/01-app/01-getting-started/05-server-and-client-components.md`)
+- [Next.js Form component](https://nextjs.org/docs/app/api-reference/components/form) (`node_modules/next/dist/docs/01-app/03-api-reference/02-components/form.md`)

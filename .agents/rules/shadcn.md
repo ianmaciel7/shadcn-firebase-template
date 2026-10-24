@@ -1,7 +1,7 @@
 # shadcn/ui maintenance
 
 Apply this rule to UI work and shadcn/ui documentation updates. Load
-`../skills/shadcn/SKILL.md` for the upstream workflow. This file adds repository
+[../skills/shadcn/SKILL.md](../skills/shadcn/SKILL.md) for the upstream workflow. This file adds repository
 context; it does not replace or duplicate the upstream rule examples.
 
 ## Establish project context
@@ -10,7 +10,7 @@ context; it does not replace or duplicate the upstream rule examples.
   CLI's project information. This project uses `base-nova` with Base UI,
   Tailwind v4, Lucide, TypeScript, and the `@/*` aliases.
 - Run the installed CLI through pnpm. Obtain and read component docs before
-  advising on or changing an API. Follow `TOOLING.md#shadcnui-cli-workflow`.
+  advising on or changing an API. Follow [TOOLING.md](../../TOOLING.md#shadcnui-cli-workflow).
 - Read the Base UI variant. Do not infer `asChild`, Radix state attributes,
   Sonner, or React Aria props from a generic example. Installed component
   source and primitive types define the API available to this project.

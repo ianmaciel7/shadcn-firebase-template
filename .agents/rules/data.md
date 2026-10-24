@@ -1,13 +1,13 @@
-# Data Layer Module Conventions
+# Data layer module conventions
 
 This rule establishes the architectural responsibilities and naming conventions for data access and domain data transfer files across the application.
 
-## Core Module Responsibilities
+## Core module responsibilities
 
 When structuring data modeling, access control, and persistence operations, organize code into the following designated files:
 
 | File | Primary Responsibility | Scope & Typical Contents |
-| :--- | :--- | :--- |
+| --- | --- | --- |
 | `definitions.ts` | **Types, contracts, and schemas** | TypeScript `type` and `interface` definitions, data contracts, and schema validation objects (e.g., Zod schemas) that represent domain models or data shapes. |
 | `dto.ts` | **Select and structure transferred data** | Data Transfer Object (DTO) transformers, mappers, and projection functions that sanitize, shape, or format data crossing system or client/server boundaries. |
 | `dal.ts` | **Protected data access** | Data Access Layer (DAL) ensuring authorization, permission verification, context validation, and boundary protection before delegating to queries or mutations. |
@@ -15,7 +15,7 @@ When structuring data modeling, access control, and persistence operations, orga
 | `auth.ts` | **User authentication** | Authentication operations and credential verification ("Who are you?"), user sign-up, sign-in, credential validation, password recovery, and sign-out. |
 | `session.ts` | **Session lifecycle & state** | Session management ("Are you authenticated and what is your active session?"), token signing/verification, session storage/cookies, and session persistence. |
 
-## Architectural Guidelines
+## Architectural guidelines
 
 Authentication helpers remain flat modules under `src/lib`: use `auth.ts`,
 `session.ts`, and `return-url.ts`. Do not create `src/lib/auth/` for these
@@ -61,3 +61,10 @@ Do not place these helpers in hook modules or force them into `data.ts` merely
 because they are under `_lib`. Keep actual hooks in `_hooks`; a type-only reference
 to a hook return type does not execute that hook or create a runtime dependency.
 Enforcement scope is documented in [component composition](composition.md#private-hook-module-support-declarations).
+
+## Official references
+
+- [Next.js data security and DAL](https://nextjs.org/docs/app/guides/data-security) (`node_modules/next/dist/docs/01-app/02-guides/data-security.md`)
+- [Next.js authentication](https://nextjs.org/docs/app/guides/authentication) (`node_modules/next/dist/docs/01-app/02-guides/authentication.md`)
+- [Next.js fetching data](https://nextjs.org/docs/app/getting-started/fetching-data) (`node_modules/next/dist/docs/01-app/01-getting-started/06-fetching-data.md`)
+- [Next.js mutating data](https://nextjs.org/docs/app/getting-started/mutating-data) (`node_modules/next/dist/docs/01-app/01-getting-started/07-mutating-data.md`)

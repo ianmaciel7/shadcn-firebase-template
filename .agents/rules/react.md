@@ -1,12 +1,11 @@
-# React implementation and review rules: Hooks, Component Primitives, and Core APIs
-
-<!-- cspell:words preinit Pipeable unobserve Rects -->
+# React implementation and review rules: hooks, component primitives, and core APIs
 
 Apply this rule to React implementation, review, and reference maintenance.
-The 20 topics from the React 19.3.1 reference are organized contextually across 3 rules:
-- **Hooks, Primitives, and Core APIs** (`react.md`): Sections 1â€“4, 12
-- [**DOM, Forms, and Server Architecture**](react-dom.md): Sections 5â€“8, 14, 15
-- [**Quality, Compiler, and Review**](react-quality.md): Sections 9â€“11, 13, 16â€“20
+Contextual organization across the 3 React rule files:
+
+- **Hooks, component primitives, and core APIs** (`react.md`): Sections 1–4, 12
+- [**DOM, forms, and server architecture**](react-dom.md): Sections 5–8, 14, 15
+- [**Quality, Compiler, and review**](react-quality.md): Sections 9–11, 13, 16–20
 
 Read the [detailed reference and examples](../../docs/agents/react.md#user-supplied-react-1931-reference)
 for full explanations, 15 examples, API tables, and evidence boundaries.
@@ -128,5 +127,3 @@ framework integrations. Handle asynchronous callbacks and event-handler failures
 at their own boundary. Suspense handles suspension, Error Boundaries handle
 render failures, Activity manages visibility/state, and ViewTransition animates
 visual changes. None substitutes for the others.
-
-

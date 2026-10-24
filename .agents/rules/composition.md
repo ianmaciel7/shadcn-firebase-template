@@ -1,7 +1,7 @@
-# Component Architecture and Naming: Composition, Hooks, and Enforcement
+# Component architecture and naming: composition, hooks, and enforcement
 
 These are **repository conventions**, not filename rules prescribed by Next.js or shadcn/ui.
-This rule covers component composition and hooks; see also [Component Dimensions and File Contracts](components.md).
+This rule covers component composition, hooks, and enforcement; see also [Component architecture and naming: dimensions and file contracts](components.md).
 
 ## Composition matching local shadcn/ui primitives
 
@@ -94,8 +94,6 @@ colocated tests and barrel files) outside the `ui`, `firebase`, and `ai-elements
 registry trees under `src/components`. Existing registry trees remain allowed;
 their generated source retains its existing exclusions. This is repository
 policy, not a Next.js requirement.
-
-
 
 ## Private hook module support declarations
 

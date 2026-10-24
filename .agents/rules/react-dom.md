@@ -1,12 +1,13 @@
-# React implementation and review rules: DOM, Forms, and Server Architecture
+# React implementation and review rules: DOM, forms, and server architecture
 
 <!-- cspell:words preinit Pipeable unobserve Rects -->
 
 Apply this rule to React rendering boundaries, DOM integration, form workflows, and Server Component contracts.
 Contextual organization across the 3 React rule files:
-- [**Hooks, Primitives, and Core APIs**](react.md): Sections 1â€“4, 12
-- **DOM, Forms, and Server Architecture** (`react-dom.md`): Sections 5â€“8, 14, 15
-- [**Quality, Compiler, and Review**](react-quality.md): Sections 9â€“11, 13, 16â€“20
+
+- [**Hooks, component primitives, and core APIs**](react.md): Sections 1–4, 12
+- **DOM, forms, and server architecture** (`react-dom.md`): Sections 5–8, 14, 15
+- [**Quality, Compiler, and review**](react-quality.md): Sections 9–11, 13, 16–20
 
 Read the [detailed reference and examples](../../docs/agents/react.md#user-supplied-react-1931-reference)
 for full explanations, 15 examples, API tables, and evidence boundaries.
@@ -104,5 +105,3 @@ Check the runtime channel and framework integration before use. Object/value
 tainting cannot replace authentication, authorization, input validation, or
 control of sensitive derived data. Do not adopt an experimental dependency
 simply because a live reference describes it.
-
-

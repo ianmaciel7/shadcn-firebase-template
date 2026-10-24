@@ -24,12 +24,12 @@ The repository contains nine skills: `ask-matt`, `context7-cli`,
 `setup-matt-pocock-skills`, `shadcn`, and `verify`. See the
 [skill inventory](skills/README.md) for entrypoints and provenance.
 
-Persistent rules cover [language](rules/language.md),
+Persistent rules (see [rules/README.md](rules/README.md)) cover [language](rules/language.md),
 [ADR history](rules/adr.md), [component contracts](rules/components.md),
 [component composition](rules/composition.md),
 [compound forms](rules/forms.md),
 [data modules](rules/data.md),
-[route entrypoints](rules/routes.md), and
+[route entrypoints](rules/routes.md),
 [shadcn/ui maintenance](rules/shadcn.md), and
 [Serena external-research memory](rules/serena.md). The
 [shadcn/ui reference](../docs/agents/shadcn.md) records upstream coverage.
@@ -65,7 +65,7 @@ installed docs to the [complete source review](../docs/agents/nextjs.md).
 Use that reference for App Router, Cache Components, and framework diagnostic
 ownership; existing route and component rules retain their stricter scope.
 
-The [React maintenance rules](rules/react.md) (`react`, `react-dom`, `react-quality`) link current official sources to
+The [React maintenance rules](rules/react.md) ([react.md](rules/react.md), [react-dom.md](rules/react-dom.md), [react-quality.md](rules/react-quality.md)) link current official sources to
 installed runtime/Compiler support and canonical guidance. The
 [React review](../docs/agents/react.md) records complete content coverage and
 the separate versioned error catalog. Its detailed reference preserves all

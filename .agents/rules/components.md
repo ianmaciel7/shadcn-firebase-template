@@ -1,7 +1,7 @@
-# Component Architecture and Naming: Dimensions and File Contracts
+# Component architecture and naming: dimensions and file contracts
 
 These are **repository conventions**, not filename rules prescribed by Next.js or shadcn/ui.
-This rule covers component contracts; see also [Component Composition, Hooks, and Enforcement](composition.md).
+This rule covers component dimensions and file contracts; see also [Component architecture and naming: composition, hooks, and enforcement](composition.md).
 
 ## Three independent dimensions
 
@@ -111,11 +111,8 @@ exact term parity (`checkStemComponentTermParity`), and existing composition/for
 
 ## Official references
 
-- [Next.js Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components)
-- [Next.js use client directive](https://nextjs.org/docs/app/api-reference/directives/use-client)
-- [Next.js private folders/project structure](https://nextjs.org/docs/app/getting-started/project-structure)
+- [Next.js Server and Client Components](https://nextjs.org/docs/app/getting-started/server-and-client-components) (`node_modules/next/dist/docs/01-app/01-getting-started/05-server-and-client-components.md`)
+- [Next.js use client directive](https://nextjs.org/docs/app/api-reference/directives/use-client) (`node_modules/next/dist/docs/01-app/03-api-reference/01-directives/use-client.md`)
+- [Next.js private folders/project structure](https://nextjs.org/docs/app/getting-started/project-structure) (`node_modules/next/dist/docs/01-app/01-getting-started/02-project-structure.md`)
 - [shadcn/ui components.json](https://ui.shadcn.com/docs/components-json)
 - [shadcn/ui Card composition](https://ui.shadcn.com/docs/components/base/card)
-
-
-

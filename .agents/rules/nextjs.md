@@ -28,5 +28,14 @@ are references until the installed version supports their APIs.
   provider, agent-skill, or hosting migration. Preserve accepted ADRs and local
   changes. Follow the [verification strategy](../../TESTING.md#nextjs-documentation-and-framework-verification)
   and report unavailable tools accurately.
-
 - Next.js owns application roots, hydration, compilation and partial prerendering; do not replace them with isolated React DOM recipes. React `cache()` does not establish Next.js cache invalidation policy.
+
+## Official references
+
+- [Next.js documentation index](https://nextjs.org/docs) (`node_modules/next/dist/docs/index.md`)
+- [Next.js App Router index](https://nextjs.org/docs/app) (`node_modules/next/dist/docs/01-app/index.md`)
+- [Next.js caching](https://nextjs.org/docs/app/getting-started/caching) (`node_modules/next/dist/docs/01-app/01-getting-started/08-caching.md`)
+- [Next.js revalidating](https://nextjs.org/docs/app/getting-started/revalidating) (`node_modules/next/dist/docs/01-app/01-getting-started/09-revalidating.md`)
+- [Next.js adopting Partial Prefetching](https://nextjs.org/docs/app/guides/adopting-partial-prefetching) (`node_modules/next/dist/docs/01-app/02-guides/adopting-partial-prefetching.md`)
+- [Next.js migrating to Cache Components](https://nextjs.org/docs/app/guides/migrating-to-cache-components) (`node_modules/next/dist/docs/01-app/02-guides/migrating-to-cache-components.md`)
+- [Next.js internationalization](https://nextjs.org/docs/app/guides/internationalization) (`node_modules/next/dist/docs/01-app/02-guides/internationalization.md`)

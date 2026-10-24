@@ -1,4 +1,4 @@
-# Next.js Route Special Files Logic
+# Next.js route special files logic
 
 Repository policy: `page.tsx`, `layout.tsx`, and `template.tsx` stay as
 thin **Server Component** entrypoints. This is stricter than the Next.js API,
@@ -22,6 +22,9 @@ which permits data access in pages/layouts and Client Components in templates.
 - `loading.tsx`, `error.tsx`, and `not-found.tsx` retain their individual
   Next.js conventions and are outside this three-file enforcement.
 
-References: [Next.js page](https://nextjs.org/docs/app/api-reference/file-conventions/page),
-[layout](https://nextjs.org/docs/app/api-reference/file-conventions/layout),
-[template](https://nextjs.org/docs/app/api-reference/file-conventions/template).
+## Official references
+
+- [Next.js layouts and pages](https://nextjs.org/docs/app/getting-started/layouts-and-pages) (`node_modules/next/dist/docs/01-app/01-getting-started/03-layouts-and-pages.md`)
+- [Next.js page](https://nextjs.org/docs/app/api-reference/file-conventions/page) (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/page.md`)
+- [Next.js layout](https://nextjs.org/docs/app/api-reference/file-conventions/layout) (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/layout.md`)
+- [Next.js template](https://nextjs.org/docs/app/api-reference/file-conventions/template) (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/template.md`)

@@ -1,12 +1,11 @@
-# React implementation and review rules: Quality, Compiler, and Review
-
-<!-- cspell:words preinit Pipeable unobserve Rects -->
+# React implementation and review rules: quality, Compiler, and review
 
 Apply this rule to React Compiler optimization, Rules of React, lint diagnostics, legacy migration, feature selection, and verification workflows.
 Contextual organization across the 3 React rule files:
-- [**Hooks, Primitives, and Core APIs**](react.md): Sections 1â€“4, 12
-- [**DOM, Forms, and Server Architecture**](react-dom.md): Sections 5â€“8, 14, 15
-- **Quality, Compiler, and Review** (`react-quality.md`): Sections 9â€“11, 13, 16â€“20
+
+- [**Hooks, component primitives, and core APIs**](react.md): Sections 1–4, 12
+- [**DOM, forms, and server architecture**](react-dom.md): Sections 5–8, 14, 15
+- **Quality, Compiler, and review** (`react-quality.md`): Sections 9–11, 13, 16–20
 
 Read the [detailed reference and examples](../../docs/agents/react.md#user-supplied-react-1931-reference)
 for full explanations, 15 examples, API tables, and evidence boundaries.
@@ -189,5 +188,3 @@ concrete code instead of requiring every listed feature in every project.
 When refreshing this rule, preserve topic coverage, keep examples and evidence
 in the detailed reference, and update both files when a verified capability
 or applicability constraint changes.
-
-
