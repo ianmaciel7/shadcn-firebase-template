@@ -18,3 +18,7 @@ These are recommendations for future implementation. This audit changed no appli
 
 - Keep the focused UI regression tests and the independent review-validation workflow running on this branch; avoid disabling quality gates when generated documentation outside `docs/code-review/` has lint violations.
 - Review the seven modified historical source files again and complete the remaining per-item reports. Treat existing external drafts as unverified until they are applied to the current inventory and validated.
+
+## New source-review batch follow-up
+
+Use the 166 individual reviews as a scoped triage queue. Reproduce higher-impact authentication, authorization, navigation and accessibility findings before patching. Add dedicated unit or browser regressions for issues with measurable behavior. Do not expand completion counts for the 880 remaining items without individual source or documentation evidence.

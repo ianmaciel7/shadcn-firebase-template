@@ -194,3 +194,33 @@ Focused tests for both cases and blocked URL schemes passed in [run 40131931671]
 ## Verified citation URL finding
 
 - **Low — Invalid citation input:** The citation trigger previously called the URL constructor directly during React render and could throw on malformed input. It now displays a safe fallback for invalid or relative sources. Four unit cases passed in [run 40133019315](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40133019315).
+
+## Additional source-inspection findings pending remediation triage
+
+The 166 validated individual reviews include provisional concerns referenced below. These are **source findings**, not claims of a reproducible exploit or a completed code fix. IDs already present in earlier findings are omitted. The historical severity summary above remains unchanged until severity and duplicates are formally reconciled.
+
+- [`FIREBASE-ROLE-001`](reports/next-code-folder-functions.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`FIREBASE-SW-001`](reports/next-code-folder-public.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-CONVERSATION-A11Y-001`](reports/next-code-file-src-components-ai-elements-conversation-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-ENV-COPY-001`](reports/next-code-file-src-components-ai-elements-environment-variables-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-FILETREE-KEYBOARD-001`](reports/next-code-file-src-components-ai-elements-file-tree-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-IMAGE-ALT-001`](reports/next-code-file-src-components-ai-elements-image-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-JSX-STREAM-001`](reports/next-code-file-src-components-ai-elements-jsx-preview-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-MESSAGE-BRANCH-KEY-001`](reports/next-code-file-src-components-ai-elements-message-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-MIC-MEDIA-001`](reports/next-code-file-src-components-ai-elements-mic-selector-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-OPENIN-TRIGGER-001`](reports/next-code-file-src-components-ai-elements-open-in-chat-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-PERSONA-THEME-001`](reports/next-code-file-src-components-ai-elements-persona-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-PROMPT-ACCEPT-001`](reports/next-code-file-src-components-ai-elements-prompt-input-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-QUESTION-RADIO-001`](reports/next-code-file-src-components-ai-elements-question-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-QUEUE-ACTION-001`](reports/next-code-file-src-components-ai-elements-queue-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-SPEECH-ACCESSIBLE-001`](reports/next-code-file-src-components-ai-elements-speech-input-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-STACK-COPY-001`](reports/next-code-file-src-components-ai-elements-stack-trace-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-TERMINAL-A11Y-001`](reports/next-code-file-src-components-ai-elements-terminal-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-TEST-PROGRESS-001`](reports/next-code-file-src-components-ai-elements-test-results-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-TOOL-INPUT-001`](reports/next-code-file-src-components-ai-elements-tool-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`AI-TRANSCRIPTION-NONSEEK-001`](reports/next-code-file-src-components-ai-elements-transcription-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`FIREBASE-COUNTRY-001`](reports/next-code-file-src-components-firebase-country-selector-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`FIREBASE-REDIRECT-001`](reports/next-code-file-src-components-firebase-email-link-auth-screen-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`FIREBASE-OAUTH-001`](reports/next-code-file-src-components-firebase-oauth-button-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`UI-CHART-CSS-001`](reports/next-code-file-src-components-ui-chart-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.
+- [`UI-FIELD-MEMO-001`](reports/next-code-file-src-components-ui-field-tsx.md): see the source evidence, limitations and regression recommendations in the individual report.

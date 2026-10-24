@@ -1,8 +1,8 @@
 <!-- cspell:ignore totp facebook scroller -->
 
-# Validated report import queue
+# Validated and reconciled report import
 
-The following 166 distinct per-item English review drafts were imported from static source-inspection batches prepared at historical checkpoints (86e65b4, 2a1d988 and 098dcd8). Their individual findings and limitations are preserved verbatim. The audit does not claim that missing runtime tests passed. Their manifest statuses remain Pending until the live CI confirms spelling and Markdown and the review coordinator reconciles indexes and evidence.
+The following 166 distinct per-item English review drafts were imported from static source-inspection batches prepared at historical checkpoints (86e65b4, 2a1d988 and 098dcd8). Their individual findings and limitations are preserved verbatim. The audit does not claim that missing runtime tests passed. Their manifest statuses became Completed after project-quality and report checks passed in [workflow run 40134059605](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134059605); the original review findings and runtime limitations remain explicitly recorded.
 
 ## Exclusions
 

@@ -13,3 +13,7 @@ Subsequent implementation retains the installed error-boundary retry API. [ADR 0
 ## Current reviewed source status
 
 As of the validated UI checkpoint, the active inventory has 680 project items and 514 official installed-documentation items. The three new UI corrections are not Next.js-specific API upgrades; their focused unit tests and TypeScript checks passed in the branch review workflow. No complete compatibility certification is claimed for the remaining 1036 pending items.
+
+## Validated source-review completion scope
+
+The updated manifest records 330 completed items (including coordinator and documentary reviews) out of 1210. The additional source-review reports passed English, spelling and Markdown validations at [run 40134059605](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134059605); this is not an exhaustive installed Next.js 16.4.2 documentation review, nor a framework-wide compatibility certification.

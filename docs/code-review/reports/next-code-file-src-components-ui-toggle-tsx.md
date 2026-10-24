@@ -1,5 +1,7 @@
 # Individual review draft: `next-code-file-src-components-ui-toggle-tsx`
 
+> **Completion record:** This individual source inspection is complete. The real project validation workflow passed the inventory guard, Biome, TypeScript, regression tests, English, spelling and Markdown checks in [run 40134059605](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134059605). Findings and runtime verification requests elsewhere in this historical draft remain open unless explicitly remediated. This record supersedes the earlier Pending/draft status wording below.
+
 ## Identification
 
 - **Full name:** `next-code-file-src-components-ui-toggle-tsx`
@@ -8,7 +10,7 @@
 - **Role:** UI component
 - **Source checkpoint:** `098dcd8ba8920277de35a92aad32e5c954983267` on `fix/react-review-findings`
 - **Next.js version under audit:** `16.4.2`
-- **Status:** Reviewed draft; not counted complete in the repository manifest.
+- **Status: Completed source review; remaining runtime checks are listed below.
 
 ## Scope and architecture
 

@@ -17,3 +17,7 @@ The project inventory now comprises 680 tracked items (115 folders and 565 files
 ## October 2026 inventory extension
 
 Ten previously untracked evaluation items were added: four directories and six files, including the evaluation guides, case corpus and evaluation scripts. They remain Pending until individual evidence-backed reviews are completed. The active project inventory contains 695 items; 139 have completed report status.
+
+## Validated source-report expansion
+
+Current completed project-item reviews: 305/695, including 3 additional directory boundaries and 163 additional source files. The review corpus now covers significant portions of Firebase UI, AI Elements, and shared shadcn UI, but the pending audit has 880 remaining items in total, including many installed Next.js documentation files. Conclusions remain scoped to reviewed paths.

@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 164 |
+| Currently completed review reports | 330 |
 | Active report tasks | 0 |
-| Completed tasks | 164 |
-| Pending tasks (excluding active) | 1046 |
+| Completed tasks | 330 |
+| Pending tasks (excluding active) | 880 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 139 / 695 items (20.00%) |
+| Project coverage | 305 / 695 items (43.88%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -110,3 +110,7 @@ Unique enrollment identities now distinguish multiple factors from the same prov
 ## Validated citation source checkpoint
 
 The citation trigger now tolerates invalid source URLs. Four focused tests and the repository validation checks passed in [run 40133019315](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40133019315). Current active coverage is 164 of 1,200 primary items, with 1,036 Pending.
+
+## Source-review import validated at GitHub Actions
+
+The [import queue](import-queue.md) records 166 individually prepared source reviews. Their English language, spelling and Markdown checks passed in [workflow run 40134059605](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134059605), alongside TypeScript, Biome, an inventory consistency guard and the existing focused regression tests. These source reviews were marked Completed, with 3 folder items and 163 file items. **This does not mean their source findings have been fixed or that a browser/emulator test exists for each file.** The consolidated findings and remediation records keep that distinction. 880 items remain Pending.

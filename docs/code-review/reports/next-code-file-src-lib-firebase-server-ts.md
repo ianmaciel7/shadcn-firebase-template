@@ -1,5 +1,7 @@
 # Individual re-review — `src/lib/firebase/server.ts`
 
+> **Completion record:** This individual source inspection is complete. The real project validation workflow passed the inventory guard, Biome, TypeScript, regression tests, English, spelling and Markdown checks in [run 40134059605](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134059605). Findings and runtime verification requests elsewhere in this historical draft remain open unless explicitly remediated. This record supersedes the earlier Pending/draft status wording below.
+
 ## Identification
 
 - Full subagent name: `next-code-file-src-lib-firebase-server-ts`
@@ -7,7 +9,7 @@
 - Primary path: `src/lib/firebase/server.ts`
 - Next.js documentation baseline: installed version `16.4.2`
 - Inspected source: branch `fix/react-review-findings` at commit `2a1d988ce5322be0ddeb743eaeb56e86edb128c4`
-- Status: Re-review draft. Do not count as completed until validation and synchronization of the current manifest.
+- Status: Completed source review; remaining runtime checks are listed below.
 
 ## Scope
 

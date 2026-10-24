@@ -5,12 +5,12 @@
 | Project folders inventoried | 119 |
 | Project files inventoried | 576 |
 | Total project review items | 695 |
-| Folder reports completed | 33 |
-| File reports completed | 106 |
-| Items reviewed | 139 |
-| Coverage | 20.00% |
+| Folder reports completed | 36 |
+| File reports completed | 269 |
+| Items reviewed | 305 |
+| Coverage | 43.88% |
 | Active reports | 0 |
-| Pending items | 556 |
+| Pending items | 390 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -50,3 +50,7 @@ A dedicated duplicate-key regression for multiple phone factors passed in run 40
 ## Validated citation source
 
 A dedicated four-case regression covers safe citation URL rendering and passed in run 40133019315. Current project coverage is 139 of 685 items; 546 remain pending.
+
+## Completed source-review import
+
+The current project coverage is **305 / 695 (43.88%)**, comprising 36 folder and 269 file reports. These totals supersede historical prose above. An additional 166 item reviews passed documentation and project quality gates in [run 40134059605](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134059605); source defects reported by those items are not automatically remediated.
