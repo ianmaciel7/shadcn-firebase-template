@@ -96,3 +96,26 @@ their generated source retains its existing exclusions. This is repository
 policy, not a Next.js requirement.
 
 
+
+## Private hook module support declarations
+
+Route-private `_hooks/**/*.ts` and `.tsx` modules contain hook implementations,
+imports, exports and types. Move module-level support functions and values to
+that route's `_lib/`: this includes constants, lookup collections and React
+context objects. A filename starting with `use-` does not make helpers inside
+that module part of the hook. `getAvatarSource` and avatar limits live in
+`profile/_lib/avatar.ts`; the session context object lives in
+`profile/_lib/profile-session-context.ts`.
+
+The hook itself may be a named `useX` function declaration or a `useX` variable
+initialized directly with an arrow/function expression. Local constants,
+handlers, closures and lifecycle callbacks inside the hook remain valid. Do not
+move code that depends on hook-local state merely to satisfy a module-level rule.
+
+The blocking ast-grep rules `no-module-support-in-hooks-ts` and `-tsx` run in
+`check:structure`, already included in fast/static verification. They inspect
+top-level declarations, including exported declarations, and intentionally exclude
+test/spec/story files and directories outside App Router private `_hooks`.
+Type declarations and imports are allowed. This is project architecture policy,
+not a React rule, a purity analysis, or proof that every `useX` function is a hook.
+Wrapped factory initializers are not accepted as direct hook declarations.

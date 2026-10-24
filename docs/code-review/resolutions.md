@@ -70,3 +70,32 @@ Correction verification: 40 unit files / 232 tests passed, including seven
 cookie-resolution regressions. The lower total removes the rejected Proxy and
 internal-route tests. Biome CI, Markdown, route/component/responsiveness guards
 and diff checks passed. No production-build success is claimed.
+
+## Private hook placement follow-up
+
+The maintainer clarified that helper functions and support values declared outside
+a hook belong in the route's `_lib`, including constants and context objects.
+The new blocking ast-grep rules are registered in Tooling and the rule-ownership
+guide. This is a new repository placement contract, not a React requirement or
+additional completed audit coverage.
+
+The initial native scan found four declarations: avatar URL selection, two avatar
+validation constants and the profile session context. All four were extracted to
+`profile/_lib/avatar.ts` and `profile/_lib/profile-session-context.ts`. Imports were
+updated without changing hook-local callbacks or introducing another context
+instance. The new rule's source scan now reports zero violations.
+
+Verification: 239 unit tests passed across 42 files; both new rule fixtures pass
+(19 cases per language) and the complete ast-grep suite passes all 18 rule groups.
+Native CLI tests verify real TS/TSX path scopes and exclusions. Biome, dependency
+boundaries, Markdown, scoped spelling and diff checks passed. The native CLI
+subprocess tests required the environment permission grant after an initial
+`EPERM`; no tests were skipped to avoid that failure.
+
+The full component checker reports 14 existing UI-phase diagnostics. Running the
+same checker against an archived copy of the pre-change HEAD produced exactly
+the same 14 messages, with no added or removed diagnostics. The pnpm static entry
+point still fails in package-manager setup, and direct TypeScript reports the
+three existing missing `LayoutProps` declarations due to unavailable Next.js type
+generation. These are not successful full static/type checks. Agent synchronization
+also remains unavailable because its host CLI is not installed.

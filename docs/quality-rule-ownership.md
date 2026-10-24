@@ -11,6 +11,7 @@ and a regression test.
 | Route-only Firebase SDK import boundaries | Biome `noRestrictedImports` | Specific to `page.tsx`, `layout.tsx`, and `template.tsx`. |
 | Route client directives, hook calls, JSX handlers | ast-grep | Structural rules with YAML regression tests. |
 | Other route logic and mutation restrictions | `scripts/check-route-files.mjs` | Kept until equivalent structural rules are tested. |
+| Private hook module support declarations | ast-grep | Top-level helpers, constants and contexts belong in route `_lib`; hooks retain local state and callbacks. YAML fixtures plus native CLI path-scope tests cover TS/TSX and exclusions. The naming checker remains separate. |
 | Component and hook naming contracts | `scripts/check-component-conventions.mjs` | Exact kebab-case/private hook export parity, including Client suffixes; catches aliases and reexports missing from the Biome 2.6 pilot. |
 | shadcn component composition contracts | `scripts/check-component-composition.mjs` | Includes JSX and TypeScript props forwarding checks, not arbitrary runtime behavior. |
 | Static responsive class heuristics | `scripts/check-responsiveness.mjs` | Supplemental; cannot prove actual rendered accessibility. |

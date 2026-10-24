@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { useFormContext, useWatch } from "react-hook-form";
+import { getAvatarSource } from "../_lib/avatar";
 import type { ProfileFormValues } from "../_lib/definitions";
 import { useProfileAvatar } from "./use-profile-avatar";
 import { useProfileSessionContext } from "./use-profile-session-context";
@@ -33,15 +34,4 @@ export function useProfileAvatarFieldClient() {
     fileInputRef,
     handleAvatarChange,
   };
-}
-
-function getAvatarSource(
-  preview: string | null,
-  photoURL: string | null,
-  version: number,
-) {
-  if (preview) return preview;
-  if (!photoURL || !version) return photoURL ?? undefined;
-
-  return `${photoURL}${photoURL.includes("?") ? "&" : "?"}v=${version}`;
 }

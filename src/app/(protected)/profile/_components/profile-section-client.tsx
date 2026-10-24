@@ -2,7 +2,7 @@
 
 import type { ComponentProps } from "react";
 import { useProfileSectionClient } from "../_hooks/use-profile-section-client";
-import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
+import { ProfileSessionContext } from "../_lib/profile-session-context";
 import { ProfileAvatarFieldClient } from "./profile-avatar-field-client";
 import { ProfileBackToHomeButton } from "./profile-back-to-home-button";
 import {

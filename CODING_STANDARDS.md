@@ -41,6 +41,12 @@ When standards conflict, apply them in this order:
   Keep route-specific hooks in private `_hooks` folders. Any combination
   of the supported presentation hooks may be called directly. React itself
   does not require one orchestration hook per component.
+- **Hook modules do not own module-level support declarations**: Put helper
+  functions, constants, lookup sets and context objects outside the hook in the
+  route's `_lib/`. Private `_hooks` modules keep imports, types and the hook
+  implementations themselves. Constants and event/lifecycle callbacks inside a
+  hook remain valid. The blocking ast-grep rules and syntax limits are documented
+  in [the hook module contract](.agents/rules/components-composition.md#private-hook-module-support-declarations).
 - **No inline state derivation or type guards in JSX**: Owned components must not
   perform inline type discrimination (such as `"userId" in status ? status.userId : undefined`),
   ternary logic for keys, or derived state calculations within JSX attributes or render bodies.

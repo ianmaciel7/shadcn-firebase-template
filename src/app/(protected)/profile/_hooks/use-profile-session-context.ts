@@ -1,9 +1,5 @@
-import { createContext, useContext } from "react";
-import type { useProfileSession } from "./use-profile-session";
-
-export const ProfileSessionContext = createContext<ReturnType<
-  typeof useProfileSession
-> | null>(null);
+import { useContext } from "react";
+import { ProfileSessionContext } from "../_lib/profile-session-context";
 
 export function useProfileSessionContext() {
   const session = useContext(ProfileSessionContext);

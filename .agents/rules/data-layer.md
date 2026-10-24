@@ -40,3 +40,13 @@ active Firebase session, and `return-url.ts` owns safe post-auth navigation.
   `src/app/(protected)/profile/_lib/data.ts`, so logic can be tested independently of
   Firebase. Do not pass service containers through presentational fields.
 - A Firebase Auth Effect subscription does not suspend automatically. Retain a tested loading branch instead of inventing a Promise wrapper.
+
+## Route-private support modules
+
+`_lib/` also owns route-private non-hook support declarations, not just persistence
+operations. Use descriptive modules such as `avatar.ts` for avatar URL selection
+and upload limits, and `profile-session-context.ts` for the shared context object.
+Do not place these helpers in hook modules or force them into `data.ts` merely
+because they are under `_lib`. Keep actual hooks in `_hooks`; a type-only reference
+to a hook return type does not execute that hook or create a runtime dependency.
+Enforcement scope is documented in [component composition](components-composition.md#private-hook-module-support-declarations).

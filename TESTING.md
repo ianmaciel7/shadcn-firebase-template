@@ -538,3 +538,21 @@ Historical counts, commands and limits are recorded in
 to a revision: the final cookie-only correction passed 232 unit tests, while the
 rejected locale-route checkpoint had a different test set. Neither result means
 the full audit or production verification is complete.
+
+## Private hook support placement regressions
+
+`pnpm check:structure` runs the `no-module-support-in-hooks-ts` and `-tsx`
+ast-grep fixtures. Negative cases cover ordinary/exported functions, arrow and
+function-expression helpers, constants, context objects, destructuring, mixed
+hook/helper declarations and non-function values disguised with a hook name.
+Positive cases retain imports, types, direct hook declarations and callbacks or
+constants inside hook bodies.
+
+`tests/unit/hook-module-scope.test.ts` invokes the installed ast-grep executable
+on temporary source trees. It verifies root and nested private hook directories
+are scanned while `_lib`, shared/vendor directories and test/spec/story files
+are excluded. It runs in the existing unit project without adding a scanner or
+changing CI entry points. `profile/_lib/avatar.test.ts` preserves preview priority,
+missing-photo behavior, versioned URL query parameters and upload limits after
+extracting the support declarations. Existing profile component tests exercise
+the same context singleton from its `_lib` owner.
