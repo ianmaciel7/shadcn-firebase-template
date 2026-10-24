@@ -24,7 +24,7 @@ report results. The tiers are defined in [TESTING.md](../../../TESTING.md) and
 - Run independent checks sequentially and stop at the first failing command
   unless the user asks for the full list.
 - Report each failure with the command, the file and line, and the owning tool
-  (see `docs/quality-rule-ownership.md`).
+  (see `docs/quality-enforcement.md`).
 - State plainly which tiers were skipped and why. Never claim a host tool
   (Semgrep, Gitleaks, actionlint, the Agents CLI) passed if it was unavailable.
 - Do not edit code to make a check pass unless the user asks.

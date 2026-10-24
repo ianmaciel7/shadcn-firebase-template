@@ -32,6 +32,27 @@ Deliver correct, maintainable changes with minimal risk.
 - Local MCP overrides/secrets: `.agents/local.json`
 - Project skills: `.agents/skills/*/SKILL.md`
 
+## Tool selection
+
+`TOOLING.md` is the operational inventory for this repository. Before choosing
+an implementation, diagnosis, research, or verification approach, read the
+relevant inventory and command entry. Prefer the installed or configured tool
+whose stated purpose covers the task; do not recreate its checks, scripts, or
+external lookups ad hoc.
+
+- For library, framework, SDK, API, CLI, or cloud-service documentation, use
+  the native Context7 plugin (`resolve-library-id`, then `query-docs`) when it
+  is available. Otherwise use the installed `context7-cli` skill. Use web
+  research only to complement Context7 or for material outside its corpus.
+- Use the configured MCP server or project skill when one is applicable before
+  reaching for shell commands. For example: Next.js DevTools for runtime
+  diagnostics, Playwright for browser verification (CUA only when it is the
+  available browser fallback), Serena or Graphify for symbol-aware code
+  navigation, and the project `verify` skill for scoped validation.
+- Treat the `Purpose` and `Source of truth` columns in `TOOLING.md` as the
+  decision guide. If a listed tool is unavailable, say so clearly and use the
+  smallest safe fallback; never claim that its check or lookup ran.
+
 ## MCP & Skills workflow
 
 1. Add or update MCP entries in `.agents/agents.json`.
@@ -56,7 +77,7 @@ Deliver correct, maintainable changes with minimal risk.
 - `ARCHITECTURE.md`: repository layout and application boundaries.
 - `CODING_STANDARDS.md`: conventions for TypeScript, React, Next.js, UI, and i18n.
 - `TOOLING.md`: package manager, commands, and configuration ownership.
-- `docs/quality-rule-ownership.md`: primary enforcement tools and rule limits.
+- `docs/quality-enforcement.md`: primary enforcement tools and rule limits.
 - `TESTING.md`: required validation and test strategy.
 - `SECURITY.md`: vulnerability reporting and secure contribution practices.
 - `CONTRIBUTING.md`: branch, commit, release, and pull-request conventions.

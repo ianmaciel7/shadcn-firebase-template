@@ -13,6 +13,7 @@ Run the checks relevant to a change before opening a pull request. See
 | `pnpm verify:security` | Dependency or configuration changes: Semgrep rule tests and scan, Gitleaks, workflow lint, `pnpm audit`, and the separate Functions lockfile audit. Needs the host tools in [TOOLING.md](TOOLING.md#host-prerequisites). |
 | `pnpm test:emulator` | Seed CLI process behavior with mocked requests; part of fast/static verification and requires no running emulator. |
 | `pnpm audit:functions` | Separate dependency audit of the deployed Cloud Functions npm lockfile; part of security verification and CI. |
+| `pnpm eval:tool-usage` | On-demand evaluation of Codex tool selection. Requires authenticated Codex plus configured MCP/plugin tools; saves JSONL traces and a report under ignored `reports/tool-usage-evals/`. It is intentionally outside CI because agent results and external tool availability are non-deterministic. |
 
 For documentation-only changes, run `pnpm check:markdown` and
 `pnpm check:spelling`, then verify relative links, referenced paths, and
@@ -27,6 +28,17 @@ and mutation suites run separately.
 
 For a manual smoke test, run `pnpm dev` and verify the affected route in a
 browser, including its loading, error, and localized states where applicable.
+
+## Agent evaluations
+
+`pnpm eval:tool-usage` runs the five core scenarios defined in
+`evals/tool-usage/cases.json` through `codex exec --json` with a read-only
+sandbox. The runner checks both trace tool calls and the schema-constrained
+final receipt, so a tool merely named in prose does not pass. Its unit tests
+are `scripts/evals/run-tool-usage-evals.test.mjs`; run them with
+`node --test scripts/evals/run-tool-usage-evals.test.mjs` when changing the
+runner or cases. See [agent evaluations](docs/agents/evals.md) for the general
+rubric, manual review, and failure follow-up.
 
 ## Test layers
 

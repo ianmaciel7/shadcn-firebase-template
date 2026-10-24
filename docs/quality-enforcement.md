@@ -1,4 +1,4 @@
-# Quality rule ownership
+# Quality enforcement
 
 This project favors the native capabilities of its installed tools over custom
 TypeScript AST scanners. Every policy should have one primary enforcement tool
@@ -27,6 +27,7 @@ and a regression test.
 | Discriminated status, form submission state | React + TypeScript + React Hook Form | Model mutually exclusive branches using `status`; use `formState.isSubmitting`, not duplicate flags. |
 | Persistence and dependency injection | Typed service adapter | `saveProfile` defaults to Firebase implementations but accepts `ProfileDependencies` for unit tests. |
 | Complexity, health, and warnings | Fallow + React Doctor | Fallow thresholds can fail CI; React Doctor diagnostics can be advisory. Do not confuse a successful process exit with no warnings. |
+| Agent tool-selection behavior | `pnpm eval:tool-usage` | On-demand Codex trace evaluation. The runner has deterministic Node tests and evaluates the agent's tool calls plus a structured receipt; it stays outside CI because configured MCP/plugin availability and agent behavior are external and non-deterministic. |
 
 ## Maintaining the boundary
 

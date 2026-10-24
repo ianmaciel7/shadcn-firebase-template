@@ -1,4 +1,4 @@
-# Biome 2.6 JavaScript plugin pilot
+# Biome plugin preview
 
 This is an **isolated proof of concept**; the application's supported linter
 remains Biome 2.5.15. ESLint is neither used nor installed.
