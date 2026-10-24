@@ -10,7 +10,17 @@ exports.helloWorld = onRequest((_request, response) => {
   response.send("Hello from Firebase Functions!");
 });
 
+const { initializeApp } = require("firebase-admin/app");
+const { getAuth } = require("firebase-admin/auth");
 const { createUsageLogHandler } = require("./usage-logs.cjs");
+const { createSetUserRoleHandler } = require("./user-roles.cjs");
+
+initializeApp();
+
+exports.setUserRole = onCall(
+  { timeoutSeconds: 15, maxInstances: 5 },
+  createSetUserRoleHandler({ auth: getAuth(), HttpsError }),
+);
 
 exports.recordUsage = onCall(
   { timeoutSeconds: 15, maxInstances: 10 },

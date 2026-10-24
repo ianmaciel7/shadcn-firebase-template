@@ -1,13 +1,12 @@
 import "server-only";
 
-import { initializeServerApp } from "firebase/app";
-import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { headers } from "next/headers";
-import { connection } from "next/server";
-import { getFirebaseConfig } from "./config";
+import { readUserRole, type UserRole } from "@/lib/user/definitions";
+import { getAdminAuth } from "./admin";
 
 type FirebaseServerSession = {
   isBridgeActive: boolean;
+  role: UserRole;
   userId: string | null;
 };
 
@@ -18,50 +17,33 @@ function readBearerToken(requestHeaders: Headers) {
     : undefined;
 }
 
-function connectServerAuthEmulator(auth: ReturnType<typeof getAuth>) {
-  const emulatorHost =
-    process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST?.trim();
-  if (process.env.NODE_ENV !== "development" || !emulatorHost) return;
-  connectAuthEmulator(
-    auth,
-    emulatorHost.includes("://") ? emulatorHost : `http://${emulatorHost}`,
-  );
-}
-
-async function verifyIdToken(authIdToken: string, requestHeaders: Headers) {
+async function verifyIdToken(authIdToken: string) {
   try {
-    // Firebase Auth reads the clock while initializing; defer it to request time.
-    await connection();
-
-    const app = initializeServerApp(getFirebaseConfig(), {
-      authIdToken,
-      releaseOnDeref: requestHeaders,
-    });
-    const auth = getAuth(app);
-    connectServerAuthEmulator(auth);
-
-    await auth.authStateReady();
-    return auth.currentUser?.uid ?? null;
+    // checkRevoked rejects tokens of disabled users and revoked sessions, so a
+    // demoted role stops working as soon as its refresh tokens are revoked.
+    const claims = await getAdminAuth().verifyIdToken(authIdToken, true);
+    return { role: readUserRole(claims), userId: claims.uid };
   } catch {
-    // A malformed bearer token is an unverifiable session, not a server fault.
-    return null;
+    // A malformed or revoked bearer token is an unverifiable session, not a
+    // server fault.
+    return { role: readUserRole({}), userId: null };
   }
 }
 
 /**
  * Reads only a worker-injected, refreshed ID token. An absent worker is not an
  * unauthenticated verdict: the existing browser guard remains the first-load
- * fallback until the worker controls the tab.
+ * fallback until the worker controls the tab. Authorization that must not
+ * depend on that fallback belongs in `@/lib/user/dal`.
  */
 export async function getFirebaseServerSession(): Promise<FirebaseServerSession> {
   const requestHeaders = await headers();
   const isBridgeActive = requestHeaders.get("x-firebase-auth-bridge") === "1";
   const authIdToken = readBearerToken(requestHeaders);
 
-  if (!isBridgeActive || !authIdToken) return { isBridgeActive, userId: null };
+  if (!isBridgeActive || !authIdToken) {
+    return { isBridgeActive, role: readUserRole({}), userId: null };
+  }
 
-  return {
-    isBridgeActive,
-    userId: await verifyIdToken(authIdToken, requestHeaders),
-  };
+  return { isBridgeActive, ...(await verifyIdToken(authIdToken)) };
 }

@@ -147,3 +147,7 @@ component-source migration.
 - [ADR 0019: Restore cookie-only locale resolution](0019-restore-cookie-only-locale-resolution.md)
   supersedes ADR 0018 in full at the maintainer's request. Routes live directly
   under `src/app/`; locale selection uses `NEXT_LOCALE` without Proxy.
+
+- [ADR 0021: Authorize with role custom claims](0021-authorize-with-role-custom-claims.md)
+  adds a `role` custom claim, Admin SDK token verification with revocation
+  checks, the `requireRole` DAL boundary and the `setUserRole` Cloud Function.

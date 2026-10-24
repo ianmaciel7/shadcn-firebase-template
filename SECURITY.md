@@ -117,8 +117,10 @@ and authenticate and authorize the operation at its data-access boundary.
 Page redirects, client guards, Proxy matchers, hidden buttons, encrypted action
 identifiers, and closed-over values do not replace those checks. Review response
 serialization, upload limits, error disclosure, and cookie options with the
-new endpoint. The current Firebase Web SDK continues to rely on its Security
-Rules; Firebase Admin would require a separate server authorization design.
+new endpoint. Role-based authorization follows [ADR 0021](docs/adr/0021-authorize-with-role-custom-claims.md):
+verify tokens with Firebase Admin (`checkRevoked`) and gate protected data
+through `requireRole` in `src/lib/user/dal.ts`; Security Rules remain the
+enforcement point for browser access.
 
 `NEXT_PUBLIC_*` values are public and inlined at build time. Also treat every
 entry in `next.config.ts`'s `env` object as public bundle configuration,

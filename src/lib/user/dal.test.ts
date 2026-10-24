@@ -1,0 +1,55 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const mocks = vi.hoisted(() => ({
+  getFirebaseServerSession: vi.fn(),
+  notFound: vi.fn(() => {
+    throw new Error("NOT_FOUND");
+  }),
+  redirectToSignIn: vi.fn(() => {
+    throw new Error("SIGN_IN");
+  }),
+}));
+
+vi.mock("next/navigation", () => ({ notFound: mocks.notFound }));
+vi.mock("@/lib/firebase/server", () => ({
+  getFirebaseServerSession: mocks.getFirebaseServerSession,
+}));
+vi.mock("@/lib/navigation", () => ({
+  redirectToSignIn: mocks.redirectToSignIn,
+}));
+
+import { requireRole } from "./dal";
+
+describe("requireRole", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("sends callers without a verified session to sign-in, even if the bridge is off", async () => {
+    mocks.getFirebaseServerSession.mockResolvedValue({
+      isBridgeActive: false,
+      role: "user",
+      userId: null,
+    });
+    await expect(requireRole("user")).rejects.toThrow("SIGN_IN");
+  });
+
+  it("answers an insufficient role as not found", async () => {
+    mocks.getFirebaseServerSession.mockResolvedValue({
+      isBridgeActive: true,
+      role: "user",
+      userId: "u1",
+    });
+    await expect(requireRole("admin")).rejects.toThrow("NOT_FOUND");
+  });
+
+  it("returns the verified identity when the role suffices", async () => {
+    mocks.getFirebaseServerSession.mockResolvedValue({
+      isBridgeActive: true,
+      role: "admin",
+      userId: "a1",
+    });
+    await expect(requireRole("user")).resolves.toEqual({
+      role: "admin",
+      userId: "a1",
+    });
+  });
+});

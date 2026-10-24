@@ -17,7 +17,7 @@ function runSeed(response) {
     process.env.FIREBASE_AUTH_EMULATOR_HOST = "127.0.0.1:9099";
     process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID = "demo-seed-test";
     process.env.TEST_USER_PASSWORD = "local-test-placeholder";
-    globalThis.fetch = async () => ${response};
+    globalThis.fetch = async (url) => ${response};
     await import(${JSON.stringify(script)});
   `,
     ],
@@ -38,10 +38,19 @@ test("HTTP failures fail the seed process without a success message", () => {
 
 test("existing users remain an idempotent success", () => {
   const result = runSeed(
-    '({ ok: false, status: 400, json: async () => ({ error: { message: "EMAIL_EXISTS" } }) })',
+    '(String(url).includes("signUp") ? { ok: false, status: 400, json: async () => ({ error: { message: "EMAIL_EXISTS" } }) } : { ok: true, json: async () => ({ localId: "test-user" }) })',
   );
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /Seeding completed/);
+});
+
+test("a failed role assignment fails the seed process", () => {
+  const result = runSeed(
+    '(String(url).includes("signUp") ? { ok: true, json: async () => ({ localId: "test-user" }) } : { ok: false, status: 400, json: async () => ({}) })',
+  );
+  assert.equal(result.status, 1, result.stderr);
+  assert.match(result.stderr, /Failed to assign role admin/);
+  assert.doesNotMatch(result.stdout, /Seeding completed/);
 });
 
 test("successful creation completes normally", () => {
