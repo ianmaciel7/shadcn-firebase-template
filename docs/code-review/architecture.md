@@ -13,3 +13,7 @@ The 12 resumed file reports identified localized library-level composition, acce
 ## Current-branch synchronization
 
 The project inventory now comprises 680 tracked items (115 folders and 565 files); 134 have current completed individual reports. The seven stale source reports have been returned to Pending, and retired paths remain historical rather than active coverage. The three reviewed UI components are validated in workflow run 40130032176. These results do not imply that pending folders or documentation were validated.
+
+## October 2026 inventory extension
+
+Ten previously untracked evaluation items were added: four directories and six files, including the evaluation guides, case corpus and evaluation scripts. They remain Pending until individual evidence-backed reviews are completed. The active project inventory contains 695 items; 139 have completed report status.

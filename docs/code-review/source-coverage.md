@@ -2,15 +2,15 @@
 
 | Measure | Count |
 | --- | ---: |
-| Project folders inventoried | 115 |
-| Project files inventoried | 570 |
-| Total project review items | 685 |
+| Project folders inventoried | 119 |
+| Project files inventoried | 576 |
+| Total project review items | 695 |
 | Folder reports completed | 33 |
 | File reports completed | 106 |
 | Items reviewed | 139 |
-| Coverage | 20.29% |
+| Coverage | 20.00% |
 | Active reports | 0 |
-| Pending items | 546 |
+| Pending items | 556 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
