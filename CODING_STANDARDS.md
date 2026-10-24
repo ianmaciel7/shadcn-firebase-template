@@ -41,6 +41,17 @@ When standards conflict, apply them in this order:
   Keep route-specific hooks in private `_hooks` folders. Any combination
   of the supported presentation hooks may be called directly. React itself
   does not require one orchestration hook per component.
+- **No inline state derivation or type guards in JSX**: Owned components must not
+  perform inline type discrimination (such as `"userId" in status ? status.userId : undefined`),
+  ternary logic for keys, or derived state calculations within JSX attributes or render bodies.
+  All conditional identifiers and resolved properties must be derived inside the
+  component-named orchestration hook and exposed as clean, ready-to-consume values
+  (for example, exposing `userId` so JSX can simply pass `key={userId}`).
+- **Self-contained fallback components**: Status and fallback wrapper components
+  (such as `ProfileFallback`) must encapsulate their internal presentation logic,
+  localized spinner text, and error card structures directly using local translations,
+  rather than requiring callers to pass down redundant presentation labels (for example,
+  avoid passing `loadingLabel={t("loading")}`).
 - **Dependency inversion without prop drilling**: Inject infrastructure
   through typed service functions at the persistence boundary when behavior
   benefits from independent testing. `saveProfile` accepts

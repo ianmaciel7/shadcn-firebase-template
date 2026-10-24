@@ -1096,6 +1096,28 @@ function checkHookResponsibilities(source, report) {
         "Resolve error-message fallbacks in a custom hook, not in component rendering.",
       );
     }
+    if (
+      ts.isBinaryExpression(node) &&
+      node.operatorToken.kind === ts.SyntaxKind.InKeyword
+    ) {
+      report(
+        node,
+        "Do not use inline type guards ('in' operator) in components; derive resolved values in a custom hook.",
+      );
+    }
+    if (
+      ts.isJsxAttribute(node) &&
+      node.name.text === "key" &&
+      node.initializer &&
+      ts.isJsxExpression(node.initializer) &&
+      node.initializer.expression &&
+      ts.isConditionalExpression(node.initializer.expression)
+    ) {
+      report(
+        node.initializer.expression,
+        "Derive component key identifiers in a custom hook instead of inline ternary expressions.",
+      );
+    }
   }
   function visit(node) {
     checkDerivedState(node);

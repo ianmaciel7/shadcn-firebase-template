@@ -360,6 +360,23 @@ describe("owned component conventions", () => {
     );
     expectInvalid(
       component(
+        'return <div key={"userId" in status ? status.userId : undefined} />;',
+      ),
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      component("return <div key={status ? status.userId : undefined} />;"),
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      component('if ("userId" in status) return <div />; return null;'),
+      /custom hook/,
+      path,
+    );
+    expectInvalid(
+      component(
         "const loading = !profile.authReady || !profile.preferencesReady;",
       ),
       /custom hook/,

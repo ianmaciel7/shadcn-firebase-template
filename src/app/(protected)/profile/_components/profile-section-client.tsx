@@ -25,15 +25,13 @@ import { ProfileThemeField } from "./profile-theme-field";
 type ProfileSectionClientProps = ComponentProps<"div">;
 
 function ProfileSectionClient(props: ProfileSectionClientProps) {
-  const { profile, status, t } = useProfileSectionClient();
+  const { profile, status, userId, t } = useProfileSectionClient();
 
   return (
     <ProfileFallback status={status} {...props}>
       <ProfileSessionContext value={profile}>
         <ProfileCard {...props}>
-          <ProfileFormClient
-            key={"userId" in status ? status.userId : undefined}
-          >
+          <ProfileFormClient key={userId}>
             <ProfileCardHeader>
               <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
               <ProfileCardDescription>

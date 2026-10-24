@@ -6,5 +6,6 @@ export function useProfileSectionClient() {
   const profile = useProfileSession();
   const status = useProfileStatus(profile);
   const t = useTranslations("Auth");
-  return { profile, status, t };
+  const userId = status.status === "ready" ? status.userId : undefined;
+  return { profile, status, userId, t };
 }

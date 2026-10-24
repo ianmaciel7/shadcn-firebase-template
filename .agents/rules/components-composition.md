@@ -44,7 +44,9 @@ Owned components keep rendering, translations, primitive prop forwarding and sim
 A component coordinating application behavior must use the imported
 `use<ComponentName>` hook in a separate module. For example,
 `ProfileSectionClient` calls `useProfileSectionClient`, which composes
-`useProfileSession`, `useProfileStatus`, and translations. Stateful avatar
+`useProfileSession`, `useProfileStatus`, and translations, and resolves
+conditional properties (such as `userId`) so component JSX remains free of
+inline `in` operator guards or ternary expressions. Stateful avatar
 fields, save actions, and auth flows use focused hooks; simple display name,
 email, locale, and theme fields do **not** need one-line wrappers around
 standard hooks. This is a stricter project policy, not a React rule.
