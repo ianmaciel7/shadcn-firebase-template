@@ -1,0 +1,40 @@
+name: Review Validation
+
+on:
+  push:
+    branches:
+      - fix/react-review-findings
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: review-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Reviewed changes and report checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: TypeScript
+        run: pnpm typecheck
+      - name: Regression tests
+        run: pnpm exec vitest run --project unit src/components/ui/carousel.test.tsx src/components/ui/sidebar.test.tsx src/components/ui/code-block.test.tsx
+      - name: Repository English guard
+        run: node scripts/checks/check-english.mjs
+      - name: Audit spelling
+        run: pnpm exec cspell lint "docs/code-review/**/*.md" --no-progress
+      - name: Audit Markdown
+        run: pnpm exec markdownlint-cli2 "docs/code-review/**/*.md"
