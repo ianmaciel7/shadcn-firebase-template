@@ -13,7 +13,16 @@ vi.mock("@/lib/firebase/client", () => ({
   getFirebaseUI: () => ({ get: () => ({ auth: mocks.auth }) }),
 }));
 
-import { getActiveUser, subscribeToSession } from "./session";
+import { getActiveUser, getSessionUser, subscribeToSession } from "./session";
+
+describe("getSessionUser", () => {
+  it("returns the current user, or null without a session", () => {
+    mocks.auth.currentUser = { uid: "u1" };
+    expect(getSessionUser()).toBe(mocks.auth.currentUser);
+    mocks.auth.currentUser = null;
+    expect(getSessionUser()).toBeNull();
+  });
+});
 
 describe("subscribeToSession", () => {
   beforeEach(() => vi.clearAllMocks());

@@ -1,6 +1,6 @@
-import { getFirebaseUI } from "@/lib/firebase/client";
 import { readUserPreferences } from "@/lib/firebase/firestore/user-preferences";
 import type { Locale } from "@/lib/locale";
+import { getSessionUser } from "@/lib/session";
 import type { ProfileValues } from "./definitions";
 
 export async function readProfileDefaults(
@@ -10,7 +10,7 @@ export async function readProfileDefaults(
 ) {
   const preferences = await readUserPreferences(uid);
   if (!isActive()) return null;
-  const currentUser = getFirebaseUI().get().auth.currentUser;
+  const currentUser = getSessionUser();
   if (!currentUser || currentUser.uid !== uid) return null;
   const values: ProfileValues = {
     displayName: currentUser.displayName ?? "",

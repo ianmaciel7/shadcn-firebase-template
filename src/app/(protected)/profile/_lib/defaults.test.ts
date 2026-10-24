@@ -1,7 +1,7 @@
 import { beforeEach, expect, it, vi } from "vitest";
 
-const mocks = vi.hoisted(() => ({ read: vi.fn(), getUI: vi.fn() }));
-vi.mock("@/lib/firebase/client", () => ({ getFirebaseUI: mocks.getUI }));
+const mocks = vi.hoisted(() => ({ read: vi.fn(), getUser: vi.fn() }));
+vi.mock("@/lib/session", () => ({ getSessionUser: mocks.getUser }));
 vi.mock("@/lib/firebase/firestore/user-preferences", () => ({
   readUserPreferences: mocks.read,
 }));
@@ -11,10 +11,10 @@ import { readProfileDefaults } from "./defaults";
 beforeEach(() => {
   vi.resetAllMocks();
   mocks.read.mockResolvedValue({});
-  mocks.getUI.mockReturnValue({
-    get: () => ({
-      auth: { currentUser: { uid: "user", displayName: null, email: null } },
-    }),
+  mocks.getUser.mockReturnValue({
+    uid: "user",
+    displayName: null,
+    email: null,
   });
 });
 
@@ -41,12 +41,10 @@ it("does not read a client session after the owning lifecycle was cancelled", as
   active = false;
   read.resolve({});
   expect(await pending).toBeNull();
-  expect(mocks.getUI).not.toHaveBeenCalled();
+  expect(mocks.getUser).not.toHaveBeenCalled();
 });
 
 it("rejects defaults resolved after the active user changes", async () => {
-  mocks.getUI.mockReturnValue({
-    get: () => ({ auth: { currentUser: { uid: "other" } } }),
-  });
+  mocks.getUser.mockReturnValue({ uid: "other" });
   expect(await readProfileDefaults("user", "en", () => true)).toBeNull();
 });

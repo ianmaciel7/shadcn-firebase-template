@@ -9,9 +9,14 @@ export function subscribeToSession(
   return onAuthStateChanged(getFirebaseUI().get().auth, onChange, onError);
 }
 
+/** Return the signed-in user, or null when there is no session. */
+export function getSessionUser(): User | null {
+  return getFirebaseUI().get().auth.currentUser;
+}
+
 /** Return the active user, requiring it to match the expected uid. */
 export function getActiveUser(expectedUser: User): User {
-  const currentUser = getFirebaseUI().get().auth.currentUser;
+  const currentUser = getSessionUser();
   if (!currentUser || currentUser.uid !== expectedUser.uid) {
     throw new Error("Authentication session unavailable");
   }
