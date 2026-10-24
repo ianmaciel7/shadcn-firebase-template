@@ -1,3 +1,5 @@
+<!-- cspell:ignore totp facebook scroller -->
+
 # Validated report import queue
 
 The following 166 distinct per-item English review drafts were imported from static source-inspection batches prepared at historical checkpoints (86e65b4, 2a1d988 and 098dcd8). Their individual findings and limitations are preserved verbatim. The audit does not claim that missing runtime tests passed. Their manifest statuses remain Pending until the live CI confirms spelling and Markdown and the review coordinator reconciles indexes and evidence.
