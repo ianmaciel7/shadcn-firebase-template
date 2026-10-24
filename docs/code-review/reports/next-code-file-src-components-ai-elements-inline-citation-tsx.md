@@ -7,7 +7,7 @@
 - Primary path: `src/components/ai-elements/inline-citation.tsx`
 - Associated documentation: installed Next.js 16.4.2 Client Component guidance, applicable React/ARIA conventions, and local component ownership rules. Library-specific runtime contracts have not been independently exercised.
 - Next.js version: `16.4.2`
-- Status: Reviewed draft; repository tracking remains Pending until required validation.
+- Status: Completed after focused source correction and tests in GitHub Actions run 40133019315.
 
 ## Scope
 
@@ -35,3 +35,7 @@ The previous/next controls are native buttons with a default `type="button"` and
 - Classification: Partially compliant.
 - Context and limits: The optional `openDelay` and `closeDelay` props are discarded; verify whether these are intentionally unsupported before treating that as an additional defect.
 - Remediation is not claimed; track any finding separately from the review count and validate with the installed dependency versions.
+
+## Verified remediation
+
+The citation hostname is parsed with a guarded URL constructor and falls back to a safe label for malformed, relative or empty source strings. Four regression cases cover valid absolute, relative, malformed and empty URLs. TypeScript, Biome, unit tests, the inventory guard, English, spelling and Markdown all passed in [validation run 40133019315](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40133019315). A full application browser test was not run for this component.

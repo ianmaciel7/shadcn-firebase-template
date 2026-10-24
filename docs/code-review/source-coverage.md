@@ -6,11 +6,11 @@
 | Project files inventoried | 570 |
 | Total project review items | 685 |
 | Folder reports completed | 33 |
-| File reports completed | 105 |
-| Items reviewed | 138 |
-| Coverage | 20.15% |
+| File reports completed | 106 |
+| Items reviewed | 139 |
+| Coverage | 20.29% |
 | Active reports | 0 |
-| Pending items | 547 |
+| Pending items | 546 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -46,3 +46,7 @@ The preview component now has an individually verified report, with three focuse
 ## Validated multi-factor chooser
 
 A dedicated duplicate-key regression for multiple phone factors passed in run 40132646413. Current project coverage is 138 of 684 items; 546 remain pending.
+
+## Validated citation source
+
+A dedicated four-case regression covers safe citation URL rendering and passed in run 40133019315. Current project coverage is 139 of 685 items; 546 remain pending.

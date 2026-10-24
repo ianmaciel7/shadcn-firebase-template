@@ -190,3 +190,7 @@ Focused tests for both cases and blocked URL schemes passed in [run 40131931671]
 ## Verified multi-factor selection finding
 
 - **Low — Repeated factor identity:** The enrollment chooser previously reused `hint.factorId` as the React key, even when two hints represented different enrolled devices of the same method. It now uses `hint.uid`. A regression test confirmed unique identity and correct selection of the second enrolled factor in [run 40132646413](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40132646413).
+
+## Verified citation URL finding
+
+- **Low — Invalid citation input:** The citation trigger previously called the URL constructor directly during React render and could throw on malformed input. It now displays a safe fallback for invalid or relative sources. Four unit cases passed in [run 40133019315](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40133019315).

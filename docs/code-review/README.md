@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 570 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1200 |
-| Currently completed review reports | 163 |
+| Currently completed review reports | 164 |
 | Active report tasks | 0 |
-| Completed tasks | 163 |
-| Pending tasks (excluding active) | 1037 |
+| Completed tasks | 164 |
+| Pending tasks (excluding active) | 1036 |
 | Not applicable | 3 |
-| Consolidated findings from completed reports | 5 medium, 21 low, 0 high/critical |
+| Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 138 / 685 items (20.15%) |
+| Project coverage | 139 / 685 items (20.29%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -106,3 +106,7 @@ The sandbox security boundary and URL editor behavior passed dedicated tests in 
 ## Validated multi-factor chooser checkpoint
 
 Unique enrollment identities now distinguish multiple factors from the same provider family. [Review run 40132646413](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40132646413) passed all required checks. Current coverage is 163 of 1,199 primary items; 1,036 remain Pending.
+
+## Validated citation source checkpoint
+
+The citation trigger now tolerates invalid source URLs. Four focused tests and the repository validation checks passed in [run 40133019315](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40133019315). Current active coverage is 164 of 1,200 primary items, with 1,036 Pending.
