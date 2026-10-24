@@ -4,12 +4,12 @@ import { LabeledSpinner } from "@/components/ui/extensions/labeled-spinner";
 import type { ProfileStatus } from "../_hooks/use-profile-status";
 import { ProfileCard, ProfileCardContent } from "./profile-card";
 
-type ProfileFallbackProps = ComponentProps<"div"> & {
+type ProfileGuardProps = ComponentProps<"div"> & {
   status: ProfileStatus;
   children: ReactNode;
 };
 
-function ProfileFallback({ status, children, ...props }: ProfileFallbackProps) {
+function ProfileGuard({ status, children, ...props }: ProfileGuardProps) {
   const t = useTranslations("Auth");
 
   if (status.isHidden) return null;
@@ -37,4 +37,4 @@ function ProfileFallback({ status, children, ...props }: ProfileFallbackProps) {
   return children;
 }
 
-export { ProfileFallback };
+export { ProfileGuard };

@@ -10,7 +10,7 @@ type HomeSession = {
   user: User | null;
 };
 
-function useHomeSession() {
+export function useHomeSession() {
   const [session, setSession] = useState<HomeSession>({
     isError: false,
     isLoading: true,
@@ -28,5 +28,3 @@ function useHomeSession() {
   }, []);
   return session;
 }
-
-export { useHomeSession };

@@ -55,7 +55,7 @@ When standards conflict, apply them in this order:
   component-named orchestration hook and exposed as clean, ready-to-consume values
   (for example, exposing `userId` so JSX can simply pass `key={userId}`).
 - **Self-contained fallback components**: Status and fallback wrapper components
-  (such as `ProfileFallback`) must encapsulate their internal presentation logic,
+  (such as `ProfileGuard`) must encapsulate their internal presentation logic,
   localized spinner text, and error card structures directly using local translations,
   rather than requiring callers to pass down redundant presentation labels (for example,
   avoid passing `loadingLabel={t("loading")}`).
@@ -796,6 +796,31 @@ shared extension placement; no new container directory is required.
 See [the naming rule](.agents/rules/components-contracts.md#ci-enforcement) for
 executable coverage and limits. [ADR 0016](docs/adr/0016-name-components-by-integration-responsibility.md)
 supersedes the broader runtime naming policy from ADR 0015.
+
+## Source naming and export style
+
+Owned source (`src/`, `scripts/`, `functions/`, `tests/`) follows one style:
+
+- Files and folders use lowercase `kebab-case`. Tests use `.test.ts(x)` or
+  `.spec.ts`; browser tests add `.browser.test.tsx`.
+- Components declare a local `function` and export it with a trailing
+  `export { ... }`. Hooks live in `use-<stem>.ts` and export `use<Stem>` inline
+  with `export function`.
+- Use `type` aliases, not `interface`. Props are named `<ComponentName>Props`.
+- Only module-level constants use `SCREAMING_CASE`.
+- Message files (`en`, `es`, `pt-BR`) keep an identical key set.
+
+Documented exceptions, not to be renamed:
+
+- Next.js route groups and private folders (`(public)`, `_components`), dotfiles
+  and root documents in uppercase (`AGENTS.md`).
+- Vendored Firebase skill references in `snake_case` under
+  `.agents/skills/firebase-basics/` and `.agents/skills/firebase-auth-basics/`
+  (mirrored in `.gemini/` and pinned by `skills-lock.json`), and
+  `.agents/skills/ask-matt/PHASE-BOUNDARIES.md`.
+- `src/hooks/use-mobile.ts` exports `useIsMobile` (shadcn registry output).
+- Top-level message namespaces in PascalCase (`App`, `Auth`, `Home`), the
+  `next-intl` convention.
 
 ## SDK and provider adapter contracts
 

@@ -16,8 +16,8 @@ import {
 } from "./profile-card";
 import { ProfileDisplayNameField } from "./profile-display-name-field";
 import { ProfileEmailField } from "./profile-email-field";
-import { ProfileFallback } from "./profile-fallback";
 import { ProfileFormClient } from "./profile-form-client";
+import { ProfileGuard } from "./profile-guard";
 import { ProfileLocaleField } from "./profile-locale-field";
 import { ProfileSaveButton } from "./profile-save-button";
 import { ProfileThemeField } from "./profile-theme-field";
@@ -28,7 +28,7 @@ function ProfileSectionClient(props: ProfileSectionClientProps) {
   const { profile, status, userId, t } = useProfileSectionClient();
 
   return (
-    <ProfileFallback status={status} {...props}>
+    <ProfileGuard status={status} {...props}>
       <ProfileSessionContext value={profile}>
         <ProfileCard {...props}>
           <ProfileFormClient key={userId}>
@@ -54,7 +54,7 @@ function ProfileSectionClient(props: ProfileSectionClientProps) {
           </ProfileFormClient>
         </ProfileCard>
       </ProfileSessionContext>
-    </ProfileFallback>
+    </ProfileGuard>
   );
 }
 
