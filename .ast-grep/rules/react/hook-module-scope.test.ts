@@ -15,7 +15,7 @@ it.each(["ts", "tsx"])(
   "enforces private hook module scope without flagging _lib, tests or vendor code (%s)",
   (extension) => {
     const rule = resolve(
-      `.ast-grep/rules/no-module-support-in-hooks-${extension}.yml`,
+      `.ast-grep/rules/react/no-module-support-in-hooks-${extension}.yml`,
     );
     const directory = mkdtempSync(join(tmpdir(), "hook-module-scope-"));
     const invalid = [

@@ -17,7 +17,7 @@ function expectRejected(source, reason, path) {
 describe("route entrypoint guard", () => {
   it("keeps migrated structural route checks in verify:fast", () => {
     const packageJson = JSON.parse(
-      readFileSync(new URL("../package.json", import.meta.url), "utf8"),
+      readFileSync(new URL("../../package.json", import.meta.url), "utf8"),
     );
     assert.ok(
       packageJson.scripts["verify:fast"]

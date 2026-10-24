@@ -22,7 +22,7 @@
       "!.agents",
       "!.claude",
       "!.serena",
-      "!tests/semgrep",
+      "!.semgrep",
       "!src/components/firebase",
       "!public/*.svg"
     ]
@@ -80,6 +80,12 @@
         "src/components/ui/**",
         "!src/components/ui/extensions/**"
       ],
+      "formatter": {
+        "enabled": false
+      },
+      "assist": {
+        "enabled": false
+      },
       "linter": {
         "rules": {
           "a11y": {
@@ -118,19 +124,6 @@
             "useExportsLast": "error"
           }
         }
-      }
-    },
-    {
-      "includes": [
-        "src/components/ai-elements/**",
-        "src/components/ui/**",
-        "!src/components/ui/extensions/**"
-      ],
-      "formatter": {
-        "enabled": false
-      },
-      "assist": {
-        "enabled": false
       }
     },
     {

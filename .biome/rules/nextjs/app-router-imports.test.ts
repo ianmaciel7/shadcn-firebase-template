@@ -1,16 +1,25 @@
-import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
+import {
+  createTempDirs,
+  diagnosticsForFile,
+  lintJson,
+  lintText,
+  removeTempPaths,
+  root,
+  sweepStaleTempDirs,
+} from "../test-helpers";
 
-const root = resolve(__dirname, "../../..");
-const biome = join(root, "node_modules/@biomejs/biome/bin/biome");
-const directories = [
+const targetParents = [
   "src/app",
   "src/components",
   "src/hooks",
   "src/components/ui/extensions",
-].map((path) => mkdtempSync(join(root, path, "next-import-rules-")));
+] as const;
+
+sweepStaleTempDirs(["src/components/ui"], "next-import-");
+const directories = createTempDirs(targetParents, "next-import-rules-");
 const vendorFile = join(
   root,
   "src/components/ui",
@@ -18,43 +27,35 @@ const vendorFile = join(
 );
 
 afterAll(() => {
-  for (const directory of directories)
-    rmSync(directory, { recursive: true, force: true });
-  rmSync(vendorFile, { force: true });
+  removeTempPaths([...directories, vendorFile]);
 });
 
-function lint(file: string, source: string) {
+const restrictedRuleFlag = ["--only=style/noRestrictedImports"] as const;
+
+function lintSingle(file: string, source: string) {
   writeFileSync(file, source);
-  try {
-    return execFileSync(
-      process.execPath,
-      [biome, "lint", "--only=style/noRestrictedImports", file],
-      {
-        cwd: root,
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"],
-      },
-    );
-  } catch (error) {
-    const { stdout = "", stderr = "" } = error as {
-      stdout?: string;
-      stderr?: string;
-    };
-    return `${stdout}${stderr}`;
-  }
+  return lintText(file, restrictedRuleFlag);
 }
 
 describe("native App Router import policy", () => {
   it.each(["next/router", "next/head", "next/document", "next/app"])(
     "rejects %s throughout owned application code",
     (path) => {
-      for (const directory of directories) {
-        const output = lint(
-          join(directory, "invalid.tsx"),
-          `import Legacy from "${path}"; export { Legacy };`,
+      const files = directories.map((directory) => {
+        const file = join(directory, "invalid.tsx");
+        writeFileSync(file, `import Legacy from "${path}"; export { Legacy };`);
+        return file;
+      });
+      const result = lintJson(files, restrictedRuleFlag);
+      for (const file of files) {
+        const fileDiagnostics = diagnosticsForFile(result, file);
+        expect(fileDiagnostics).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              category: "lint/style/noRestrictedImports",
+            }),
+          ]),
         );
-        expect(output).toContain("lint/style/noRestrictedImports");
-        expect(output).toContain("App Router");
       }
     },
   );
@@ -66,7 +67,7 @@ describe("native App Router import policy", () => {
     "next/headers",
     "next/cache",
   ])("accepts the App Router API %s", (path) => {
-    const output = lint(
+    const output = lintSingle(
       join(directories[0], "valid.tsx"),
       `import * as NextApi from "${path}"; export { NextApi };`,
     );
@@ -76,7 +77,7 @@ describe("native App Router import policy", () => {
 
   it("rejects re-exports of the legacy router", () => {
     expect(
-      lint(
+      lintSingle(
         join(directories[0], "re-export.ts"),
         'export { useRouter } from "next/router";',
       ),
@@ -85,7 +86,10 @@ describe("native App Router import policy", () => {
 
   it("keeps untouched vendor components outside this policy", () => {
     expect(
-      lint(vendorFile, 'import Router from "next/router"; export { Router };'),
+      lintSingle(
+        vendorFile,
+        'import Router from "next/router"; export { Router };',
+      ),
     ).not.toContain("lint/style/noRestrictedImports");
   });
 });
@@ -99,17 +103,30 @@ describe("route-only Firebase import restrictions", () => {
     "firebase-admin/auth",
     "@/lib/firebase/client",
   ])("rejects %s in Next.js route entrypoints", (modulePath) => {
-    for (const entry of ["page.tsx", "layout.tsx", "template.tsx"]) {
-      const output = lint(
-        join(directories[0], entry),
+    const entries = ["page.tsx", "layout.tsx", "template.tsx"];
+    const files = entries.map((entry) => {
+      const file = join(directories[0], entry);
+      writeFileSync(
+        file,
         `import * as SDK from "${modulePath}"; export { SDK };`,
       );
-      expect(output).toContain("lint/style/noRestrictedImports");
+      return file;
+    });
+    const result = lintJson(files, restrictedRuleFlag);
+    for (const file of files) {
+      const fileDiagnostics = diagnosticsForFile(result, file);
+      expect(fileDiagnostics).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            category: "lint/style/noRestrictedImports",
+          }),
+        ]),
+      );
     }
   });
 
   it("allows Firebase imports in dedicated client components and data modules", () => {
-    const output = lint(
+    const output = lintSingle(
       join(directories[0], "_components.tsx"),
       'import { getAuth } from "firebase/auth"; export { getAuth };',
     );
@@ -117,7 +134,7 @@ describe("route-only Firebase import restrictions", () => {
   });
 
   it("allows route entrypoints to import an application data module", () => {
-    const output = lint(
+    const output = lintSingle(
       join(directories[0], "page.tsx"),
       'import { readProfile } from "@/lib/firebase/firestore/user-preferences"; export { readProfile };',
     );
@@ -125,7 +142,7 @@ describe("route-only Firebase import restrictions", () => {
   });
 
   it("keeps legacy Next.js imports prohibited in route entrypoints", () => {
-    const output = lint(
+    const output = lintSingle(
       join(directories[0], "page.tsx"),
       'import { useRouter } from "next/router"; export { useRouter };',
     );

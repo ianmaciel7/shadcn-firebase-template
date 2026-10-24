@@ -11,11 +11,11 @@ and a regression test.
 | Filename/export matching preview | Biome 2.6.2 plugin (CI-only) | Developer Preview, scoped to TSX; component AST guard remains authoritative until parity is demonstrated. |
 | Route-only Firebase SDK import boundaries | Biome `noRestrictedImports` | Specific to `page.tsx`, `layout.tsx`, and `template.tsx`. |
 | Route client directives, hook calls, JSX handlers | ast-grep | Structural rules with YAML regression tests. |
-| Other route logic and mutation restrictions | `scripts/check-route-files.mjs` | Kept until equivalent structural rules are tested. |
+| Other route logic and mutation restrictions | `scripts/checks/check-route-files.mjs` | Kept until equivalent structural rules are tested. |
 | Private hook module support declarations | ast-grep | Top-level helpers, constants and contexts belong in route `_lib`; hooks retain local state and callbacks. YAML fixtures plus native CLI path-scope tests cover TS/TSX and exclusions. The naming checker remains separate. |
-| Component and hook naming contracts | `scripts/check-component-conventions.mjs` | Exact kebab-case/private hook export parity, including Client suffixes; catches aliases and reexports missing from the Biome 2.6 pilot. |
-| shadcn component composition contracts | `scripts/check-component-composition.mjs` | Includes JSX and TypeScript props forwarding checks, not arbitrary runtime behavior. |
-| Static responsive class heuristics | `scripts/check-responsiveness.mjs` | Supplemental; cannot prove actual rendered accessibility. |
+| Component and hook naming contracts | `scripts/checks/check-component-conventions.mjs` | Exact kebab-case/private hook export parity, including Client suffixes; catches aliases and reexports missing from the Biome 2.6 pilot. |
+| shadcn component composition contracts | `scripts/checks/check-component-composition.mjs` | Includes JSX and TypeScript props forwarding checks, not arbitrary runtime behavior. |
+| Static responsive class heuristics | `scripts/checks/check-responsiveness.mjs` | Supplemental; cannot prove actual rendered accessibility. |
 | Rendered reflow and touch target behavior | Playwright | `tests/responsive.spec.ts` measures real element bounds. |
 | Accessibility semantics and violations | axe-core with Playwright | Complements, rather than replaces, interaction tests. |
 | Firebase authentication flows | Playwright + Firebase Emulator | Required `auth-emulator` job launches Auth, Firestore, and Functions for the `recordUsage` guard. All jobs passed in run 39973720187; retain these dependencies and watch for flaky browser interactions. |

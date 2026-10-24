@@ -566,7 +566,7 @@ if (
   process.argv[1] &&
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
-  const repoRoot = fileURLToPath(new URL("../", import.meta.url));
+  const repoRoot = fileURLToPath(new URL("../../", import.meta.url));
   const violations = runResponsivenessCheck(repoRoot);
   if (violations.length > 0) {
     for (const v of violations) {

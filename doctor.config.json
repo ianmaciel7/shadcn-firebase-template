@@ -8,7 +8,7 @@
       "reports/**",
       ".next/**",
       "coverage/**",
-      "tests/semgrep/**"
+      ".semgrep/**"
     ]
   }
 }

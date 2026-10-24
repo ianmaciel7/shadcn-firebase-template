@@ -103,15 +103,15 @@ Read [TOOLING.md](../../../TOOLING.md) (tool inventory, commands, custom rule re
 | --- | --- |
 | Code style, lint, import order, unsafe patterns | Biome native rule, then a Biome GritQL plugin in `.biome/rules/` |
 | Structural or syntactic patterns in code | ast-grep rule in `.ast-grep/` with snapshot tests |
-| Type contracts, props, route shapes | TypeScript types, then a TypeScript-AST script in `scripts/check-*.mjs` |
+| Type contracts, props, route shapes | TypeScript types, then a TypeScript-AST script in `scripts/checks/check-*.mjs` |
 | Layering and dependency direction | dependency-cruiser (`.dependency-cruiser.cjs`) |
 | Dead code, unused exports and dependencies | Knip; duplication via jscpd; complexity via Fallow |
-| Security patterns and secrets | Semgrep rules in `tests/semgrep/`, Gitleaks, `pnpm audit` |
+| Security patterns and secrets | Semgrep rules in `.semgrep/`, Gitleaks, `pnpm audit` |
 | Behavior and regressions | Vitest, Vitest Browser Mode, Playwright, axe, Stryker |
-| Docs, spelling, prose, language | markdownlint, CSpell, a `scripts/check-*.mjs` guard |
+| Docs, spelling, prose, language | markdownlint, CSpell, a `scripts/checks/check-*.mjs` guard |
 | Commit and branch conventions | Commitlint, Husky, lint-staged |
 | Workflow and CI correctness | actionlint, zizmor |
-| Rule that no tool above can express | A small dependency-free `scripts/check-<topic>.mjs` with a `node --test` suite |
+| Rule that no tool above can express | A small dependency-free `scripts/checks/check-<topic>.mjs` with a `node --test` suite |
 
 ### 2. Test the safeguard
 

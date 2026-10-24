@@ -16,7 +16,7 @@ valid fixtures and the owned project components pass, and invalid fixtures fail 
 plugin diagnostic**, not merely due to a parse/config error.
 
 **Production source is now scanned in CI as a preview check.** Keep
-`scripts/check-component-conventions.mjs` as the source of truth for the
+`scripts/checks/check-component-conventions.mjs` as the source of truth for the
 following cases until corresponding plugin tests exist: missing root export;
 aliases and re-exports; all local component declarations; props types,
 parameter forwarding, and compound component composition. The experiment only enforces exported function name/filename parity,

@@ -48,7 +48,7 @@ export default defineConfig({
           include: [
             "src/**/*.test.{ts,tsx}",
             ".biome/**/*.test.ts",
-            "tests/unit/**/*.test.ts",
+            ".ast-grep/**/*.test.ts",
           ],
           exclude: ["src/**/*.browser.test.{ts,tsx}"],
         },

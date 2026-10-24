@@ -1522,7 +1522,7 @@ if (
   resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 ) {
   const findings = checkComponents(
-    fileURLToPath(new URL("../", import.meta.url)),
+    fileURLToPath(new URL("../../", import.meta.url)),
   );
   for (const issue of findings) {
     console.error(

@@ -13,7 +13,7 @@ const exemptPaths = [
   /^test-results\//,
   /^reports\//,
   /^pnpm-lock\.yaml$/,
-  /^scripts\/check-english(\.test)?\.mjs$/,
+  /^scripts\/checks\/check-english(\.test)?\.mjs$/,
   /^\.agents\/skills\/save\/SKILL\.md$/,
 ];
 const accentedPattern = /[ãõçÃÕÇ]/;
@@ -135,7 +135,7 @@ function checkFiles(root, paths) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  const root = resolve(fileURLToPath(import.meta.url), "..", "..");
+  const root = resolve(fileURLToPath(import.meta.url), "..", "..", "..");
   const [first, ...rest] = process.argv.slice(2);
   let violations;
   if (first === "--message") {

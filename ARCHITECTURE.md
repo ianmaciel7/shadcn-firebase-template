@@ -32,7 +32,7 @@ configuration and repository documentation.
 │   ├── lib/                 # Framework-independent utilities
 │   ├── messages/            # Locale message catalogs
 │   └── types/               # Shared TypeScript declarations
-├── tests/                   # Playwright E2E tests, visual baselines, and Semgrep rules
+├── tests/                   # Playwright E2E tests and visual baselines
 ├── AGENTS.md
 ├── ARCHITECTURE.md
 ├── CODING_STANDARDS.md
@@ -79,7 +79,7 @@ When an unauthenticated user requests a protected route, the client guard redire
 - Colocate Ladle stories (`*.stories.tsx`) next to UI primitives under
   `src/components/ui/` for isolated component development and visual inspection.
 - Keep repository tooling guard self-tests beside their scripts, such as
-  `scripts/check-component-conventions.test.mjs`. Do not introduce a global
+  `scripts/checks/check-component-conventions.test.mjs`. Do not introduce a global
   `tests/unit/` hierarchy for application tests.
 - Keep Playwright E2E specifications in root `tests/` with `*.spec.ts`.
   Feature-specific fixtures and helpers stay with their consumer unless shared

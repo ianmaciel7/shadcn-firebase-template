@@ -62,7 +62,7 @@ original date. Read current operational details in the
     - GritQL DOM rule (`no-document-write.grit`).
     - 3 GritQL Next.js rules (`prefer-page-props.grit`, `prefer-layout-props.grit`, `prefer-route-context.grit`).
     - 4 ast-grep rules (`no-dynamic-tailwind-class`, `no-hardcoded-ui-attribute`, `no-manual-memoization-ts`, `no-manual-memoization-tsx`).
-    - 9 Semgrep security rules (`tests/semgrep/rules.yml`).
+    - 9 Semgrep security rules (`.semgrep/rules.yml`).
   - Verification is layered into `verify:fast`, `verify:static`, `verify:build`,
     `verify:security`, and `verify:full`.
   - Husky in `.husky/pre-commit` sets `VIRTUALENV_OVERRIDE_APP_DATA` on Windows to

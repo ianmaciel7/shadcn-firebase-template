@@ -1,10 +1,14 @@
-import { execFileSync } from "node:child_process";
-import { mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
+import {
+  createTempDirs,
+  lintJson,
+  removeTempPaths,
+  root,
+  sweepStaleTempDirs,
+} from "../test-helpers";
 
-const root = resolve(__dirname, "../../..");
-const biome = join(root, "node_modules/@biomejs/biome/bin/biome");
 const locations = [
   "src/app/_hooks",
   "src/app/(protected)/_hooks",
@@ -17,46 +21,30 @@ const locations = [
   "src/hooks",
   "src/i18n",
   "src/components/ui/extensions",
-];
-// Interrupted runs skip afterAll, so sweep fixtures they left behind.
-for (const directory of locations)
-  for (const entry of readdirSync(join(root, directory)))
-    if (entry.startsWith("complexity-native-"))
-      rmSync(join(root, directory, entry), { recursive: true, force: true });
+] as const;
 
-const directories = locations.map((directory) =>
-  mkdtempSync(join(root, directory, "complexity-native-")),
-);
-const vendorFiles = ["src/components/ui", "src/components/ai-elements"].map(
-  (directory) => join(root, directory, `complexity-native-${process.pid}.tsx`),
+const vendorParents = [
+  "src/components/ui",
+  "src/components/ai-elements",
+] as const;
+sweepStaleTempDirs(vendorParents, "complexity-native-");
+
+const directories = createTempDirs(locations, "complexity-native-");
+const vendorFiles = vendorParents.map((directory) =>
+  join(root, directory, `complexity-native-${process.pid}.tsx`),
 );
 
 afterAll(() => {
-  for (const directory of directories)
-    rmSync(directory, { recursive: true, force: true });
-  for (const file of vendorFiles) rmSync(file, { force: true });
+  removeTempPaths([...directories, ...vendorFiles]);
 });
 
-type Result = {
-  diagnostics: Array<{ category: string; severity: string; message: string }>;
-};
-
-function lint(source: string, file = join(directories[0], "fixture.ts")) {
+function lint(
+  source: string,
+  file = join(directories[0], "fixture.ts"),
+  extraFlags: readonly string[] = [],
+) {
   writeFileSync(file, source);
-  const args = [biome, "lint", file, "--reporter=json"];
-  try {
-    return JSON.parse(
-      execFileSync(process.execPath, args, {
-        cwd: root,
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "pipe"],
-      }),
-    ) as Result;
-  } catch (error) {
-    const { stdout } = error as { stdout?: string };
-    if (!stdout) throw error;
-    return JSON.parse(stdout) as Result;
-  }
+  return lintJson(file, extraFlags);
 }
 
 function branches(count: number) {
@@ -84,6 +72,12 @@ const categories = {
   callbacks: "lint/nursery/noExcessiveNestedCallbacks",
 };
 
+const ruleFlags = {
+  cognitive: ["--only=complexity/noExcessiveCognitiveComplexity"],
+  lines: ["--only=complexity/noExcessiveLinesPerFunction"],
+  callbacks: ["--only=nursery/noExcessiveNestedCallbacks"],
+} as const;
+
 describe("owned function complexity budgets", () => {
   it.each([
     ["cognitive", branches(8), branches(9)],
@@ -92,12 +86,13 @@ describe("owned function complexity budgets", () => {
   ] as const)(
     "accepts the exact %s limit and blocks the next value",
     (kind, valid, invalid) => {
+      const flags = ruleFlags[kind];
       expect(
-        lint(valid).diagnostics.filter(
+        lint(valid, undefined, flags).diagnostics.filter(
           ({ category }) => category === categories[kind],
         ),
       ).toEqual([]);
-      expect(lint(invalid).diagnostics).toEqual(
+      expect(lint(invalid, undefined, flags).diagnostics).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             category: categories[kind],
@@ -113,9 +108,11 @@ describe("owned function complexity budgets", () => {
     (location) => {
       const directory = directories[locations.indexOf(location)];
       expect(
-        lint(lines(41), join(directory, "fixture.ts")).diagnostics.some(
-          ({ category }) => category === categories.lines,
-        ),
+        lint(
+          lines(41),
+          join(directory, "fixture.ts"),
+          ruleFlags.lines,
+        ).diagnostics.some(({ category }) => category === categories.lines),
       ).toBe(true);
     },
   );
@@ -123,7 +120,7 @@ describe("owned function complexity budgets", () => {
   it("does not let an IIFE bypass the function size budget", () => {
     const source = `export const value = (() => {\n${Array.from({ length: 41 }, () => 'console.log("step");').join("\n")}\n})();`;
     expect(
-      lint(source).diagnostics.some(
+      lint(source, undefined, ruleFlags.lines).diagnostics.some(
         ({ category }) => category === categories.lines,
       ),
     ).toBe(true);
@@ -131,17 +128,21 @@ describe("owned function complexity budgets", () => {
 
   it("also covers TSX hook functions", () => {
     expect(
-      lint(branches(9), join(directories[0], "fixture.tsx")).diagnostics.some(
-        ({ category }) => category === categories.cognitive,
-      ),
+      lint(
+        branches(9),
+        join(directories[0], "fixture.tsx"),
+        ruleFlags.cognitive,
+      ).diagnostics.some(({ category }) => category === categories.cognitive),
     ).toBe(true);
   });
 
   it("keeps blank lines from consuming the function budget", () => {
     expect(
-      lint(lines(40).replaceAll("\n", "\n\n")).diagnostics.filter(
-        ({ category }) => category === categories.lines,
-      ),
+      lint(
+        lines(40).replaceAll("\n", "\n\n"),
+        undefined,
+        ruleFlags.lines,
+      ).diagnostics.filter(({ category }) => category === categories.lines),
     ).toEqual([]);
   });
 

@@ -20,8 +20,8 @@
     "check:structure": "ast-grep test && ast-grep scan",
     "check:spelling": "cspell lint \"**/*.{ts,tsx,md,json}\" --no-progress",
     "check:markdown": "markdownlint-cli2 \"**/*.md\" \"#node_modules\" \"#.next\"",
-    "check:security": "semgrep scan --config tests/semgrep/rules.yml --error --metrics=off --disable-version-check src next.config.ts",
-    "check:security:rules": "semgrep --test tests/semgrep",
+    "check:security": "semgrep scan --config .semgrep/rules.yml --error --metrics=off --disable-version-check src next.config.ts",
+    "check:security:rules": "semgrep --test .semgrep",
     "check:secrets": "gitleaks git --no-banner --redact",
     "check:workflows": "actionlint && zizmor .github/workflows",
     "audit": "pnpm audit",
@@ -57,15 +57,15 @@
     "test:visual:update": "playwright test --grep @visual --update-snapshots",
     "analyze:fallow": "fallow health --coverage coverage/coverage-final.json",
     "analyze:health": "pnpm test:coverage && pnpm analyze:fallow",
-    "check:routes": "node --test scripts/check-route-files.test.mjs && node scripts/check-route-files.mjs",
-    "check:components": "node --test scripts/check-component-conventions.test.mjs scripts/check-component-composition.test.mjs && node scripts/check-component-conventions.mjs",
-    "check:english": "node --test scripts/check-english.test.mjs && node scripts/check-english.mjs",
-    "check:responsiveness": "node --test scripts/check-responsiveness.test.mjs && node scripts/check-responsiveness.mjs",
+    "check:routes": "node --test scripts/checks/check-route-files.test.mjs && node scripts/checks/check-route-files.mjs",
+    "check:components": "node --test scripts/checks/check-component-conventions.test.mjs scripts/checks/check-component-composition.test.mjs && node scripts/checks/check-component-conventions.mjs",
+    "check:english": "node --test scripts/checks/check-english.test.mjs && node scripts/checks/check-english.mjs",
+    "check:responsiveness": "node --test scripts/checks/check-responsiveness.test.mjs && node scripts/checks/check-responsiveness.mjs",
     "doctor": "react-doctor --no-score --no-telemetry --no-supply-chain"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,jsonc,css}": "biome check --write --no-errors-on-unmatched",
-    "*.{md,mdx,mjs,cjs,yml,yaml}": "node scripts/check-english.mjs"
+    "*.{md,mdx,mjs,cjs,yml,yaml}": "node scripts/checks/check-english.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

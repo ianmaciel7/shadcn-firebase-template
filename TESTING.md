@@ -71,8 +71,12 @@ or shared service code; do not replace them with source-text assertions.
 - Do not write a test only to make a tool report success. When a tool has no
   suitable subject yet, leave it unused and say so.
 
-Five Vitest suites verify configuration rather than application behavior:
-`src/messages/messages.test.ts` checks locale catalog keys and ICU arguments.
+Seven Vitest suites verify configuration rather than application behavior:
+`src/messages/messages.test.ts` checks locale catalog keys and ICU arguments,
+alongside the 6 rule-configuration suites (`.biome/rules/nextjs/rules.test.ts`,
+`.biome/rules/dom/rules.test.ts`, `.biome/rules/nextjs/app-router-imports.test.ts`,
+`.biome/rules/react/native-rules.test.ts`, `.biome/rules/complexity/native-rules.test.ts`,
+and `.ast-grep/rules/react/hook-module-scope.test.ts`):
 `.biome/rules/nextjs/rules.test.ts` and `.biome/rules/dom/rules.test.ts`
 verify valid and invalid Grit fixtures.
 `.biome/rules/nextjs/app-router-imports.test.ts` verifies the native App
@@ -81,6 +85,10 @@ Router import policy and exclusions.
 allowed React 19 patterns, and explicit UI phase flags. The earlier
 `prefer-is-error` Grit policy remains removed; use the project's named flags
 when a component exposes loading, hidden, or error state.
+`.biome/rules/complexity/native-rules.test.ts` verifies cognitive complexity,
+function length, and callback nesting depth limits.
+`.ast-grep/rules/react/hook-module-scope.test.ts` verifies private hook module
+scope and path exclusions.
 Semgrep rules are tested with `semgrep --test` (`pnpm check:security:rules`) and
 ast-grep rules with `ast-grep test`.
 
@@ -107,7 +115,7 @@ Vitest Browser Mode component tests, and Playwright end-to-end specifications.
 
 ### 1. Static responsiveness guard (`pnpm check:responsiveness`)
 
-`scripts/check-responsiveness.mjs` runs in `pnpm verify:fast` and `pnpm verify:static`
+`scripts/checks/check-responsiveness.mjs` runs in `pnpm verify:fast` and `pnpm verify:static`
 to catch responsive anti-patterns and accessibility regressions before runtime:
 
 - **Viewport scalability (WCAG 1.4.4 Resize Text)**: The root layout (`src/app/layout.tsx`)
@@ -395,7 +403,7 @@ transitive RSC imports; builds and behavior tests still validate those paths.
 
 ## Responsiveness guard regression tests
 
-`pnpm check:responsiveness` executes `scripts/check-responsiveness.test.mjs` before scanning
+`pnpm check:responsiveness` executes `scripts/checks/check-responsiveness.test.mjs` before scanning
 application files. The suite tests both valid implementations and rejected anti-patterns:
 
 - **Path classifiers**: Confirms discrimination between owned application components, App
@@ -548,7 +556,7 @@ hook/helper declarations and non-function values disguised with a hook name.
 Positive cases retain imports, types, direct hook declarations and callbacks or
 constants inside hook bodies.
 
-`tests/unit/hook-module-scope.test.ts` invokes the installed ast-grep executable
+`.ast-grep/rules/react/hook-module-scope.test.ts` invokes the installed ast-grep executable
 on temporary source trees. It verifies root and nested private hook directories
 are scanned while `_lib`, shared/vendor directories and test/spec/story files
 are excluded. It runs in the existing unit project without adding a scanner or

@@ -1,40 +1,16 @@
-import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
+import { createTempDirs, lintText, removeTempPaths } from "../test-helpers";
 
-const root = resolve(__dirname, "../../..");
-const biome = join(root, "node_modules/@biomejs/biome/bin/biome");
-// Biome 2.5 expects explicitly checked files to be under the workspace root.
-// Keep fixtures inside the repository and remove them after the test suite.
-const dir = mkdtempSync(join(root, ".biome", "grit-rules-"));
+const [dir] = createTempDirs([".biome"], "grit-rules-nextjs-");
 
-afterAll(() => rmSync(dir, { recursive: true, force: true }));
+afterAll(() => removeTempPaths([dir]));
 
-// Biome has no test harness for GritQL plugins, so lint a fixture with the
-// project configuration and return everything the CLI printed.
 function lint(name: string, source: string) {
   const file = join(dir, name);
   writeFileSync(file, source);
-  const args = [
-    biome,
-    "lint",
-    `--config-path=${join(root, "biome.json")}`,
-    file,
-  ];
-  try {
-    return execFileSync(process.execPath, args, {
-      cwd: root,
-      encoding: "utf8",
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-  } catch (error) {
-    const { stdout = "", stderr = "" } = error as {
-      stdout?: string;
-      stderr?: string;
-    };
-    return `${stdout}${stderr}`;
-  }
+  return lintText(file, ["--only=plugin"]);
 }
 
 describe("prefer-page-props", () => {
@@ -44,6 +20,14 @@ describe("prefer-page-props", () => {
     const output = lint(
       "page-invalid.tsx",
       "export default async function Page({ params }: { params: Promise<{ id: string }> }) {\n  return (await params).id;\n}\n",
+    );
+    expect(output).toContain(message);
+  });
+
+  it("reports a route-named page component with a hand-written params type", () => {
+    const output = lint(
+      "profile-page-invalid.tsx",
+      "export default async function ProfilePage({ params }: { params: Promise<{ id: string }> }) {\n  return (await params).id;\n}\n",
     );
     expect(output).toContain(message);
   });
