@@ -4,6 +4,7 @@ import {
   hasResponsiveBreakpoint,
   inspectResponsivenessSource,
   isOwnedComponent,
+  isRootLayout,
   isRouteFile,
 } from "./check-responsiveness.mjs";
 
@@ -73,6 +74,20 @@ describe("responsiveness guard", () => {
       assert.equal(isRouteFile("src/app/not-found.tsx"), true);
       assert.equal(isRouteFile("src/app/page.test.tsx"), false);
     });
+  });
+
+  it("enforces viewport checks on the internal locale root without treating nested layouts as roots", () => {
+    assert.equal(isRootLayout("src/app/[locale]/layout.tsx"), true);
+    assert.equal(
+      isRootLayout(String.raw`C:\repo\src\app\[locale]\layout.tsx`),
+      true,
+    );
+    assert.equal(isRootLayout("src/app/[locale]/(public)/layout.tsx"), false);
+    expectRejected(
+      "export default function Root() { return <html><body /></html>; }",
+      /viewport/,
+      "src/app/[locale]/layout.tsx",
+    );
   });
 
   describe("viewport accessibility rules (WCAG 1.4.4)", () => {

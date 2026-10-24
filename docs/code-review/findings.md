@@ -2,7 +2,7 @@
 
 <!-- cspell:ignore AUDIOPLAYER -->
 
-This is a provisional consolidation of the completed individual reports. No code changes have been made.
+This is the historical finding consolidation at audit checkpoint `d8e5df2`. The user subsequently authorized implementation. See [remediation status and validation limits](resolutions.md) for current dispositions; the evidence below is preserved as the original review record.
 
 ## Medium
 

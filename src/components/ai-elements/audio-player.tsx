@@ -14,7 +14,7 @@ import {
   MediaVolumeRange,
 } from "media-chrome/react";
 import type { ComponentProps, CSSProperties } from "react";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { ButtonGroup, ButtonGroupText } from "@/components/ui/button-group";
 import { cn } from "@/lib/utils";
 
@@ -94,19 +94,26 @@ type AudioPlayerPlayButtonProps = ComponentProps<typeof MediaPlayButton>;
 
 const AudioPlayerPlayButton = ({
   className,
+  disabled,
+  preventClick,
+  ref,
   ...props
 }: AudioPlayerPlayButtonProps) => (
-  <Button
-    size="icon-sm"
-    variant="outline"
-    render={
-      <MediaPlayButton
-        className={cn("bg-transparent", className)}
-        data-slot="audio-player-play-button"
-        {...props}
-      />
-    }
-  ></Button>
+  <MediaPlayButton
+    className={cn(
+      buttonVariants({ size: "icon-sm", variant: "outline" }),
+      "bg-transparent",
+      className,
+    )}
+    disabled={disabled}
+    ref={(element) => {
+      if (element) element.preventClick = Boolean(disabled || preventClick);
+      if (typeof ref === "function") return ref(element);
+      if (ref) ref.current = element;
+    }}
+    data-slot="audio-player-play-button"
+    {...props}
+  />
 );
 
 type AudioPlayerSeekBackwardButtonProps = ComponentProps<
@@ -114,20 +121,29 @@ type AudioPlayerSeekBackwardButtonProps = ComponentProps<
 >;
 
 const AudioPlayerSeekBackwardButton = ({
+  className,
+  disabled,
+  preventClick,
+  ref,
   seekOffset = 10,
   ...props
 }: AudioPlayerSeekBackwardButtonProps) => (
-  <Button
-    size="icon-sm"
-    variant="outline"
-    render={
-      <MediaSeekBackwardButton
-        data-slot="audio-player-seek-backward-button"
-        seekOffset={seekOffset}
-        {...props}
-      />
-    }
-  ></Button>
+  <MediaSeekBackwardButton
+    className={cn(
+      buttonVariants({ size: "icon-sm", variant: "outline" }),
+      "bg-transparent",
+      className,
+    )}
+    disabled={disabled}
+    ref={(element) => {
+      if (element) element.preventClick = Boolean(disabled || preventClick);
+      if (typeof ref === "function") return ref(element);
+      if (ref) ref.current = element;
+    }}
+    data-slot="audio-player-seek-backward-button"
+    seekOffset={seekOffset}
+    {...props}
+  />
 );
 
 type AudioPlayerSeekForwardButtonProps = ComponentProps<
@@ -135,20 +151,29 @@ type AudioPlayerSeekForwardButtonProps = ComponentProps<
 >;
 
 const AudioPlayerSeekForwardButton = ({
+  className,
+  disabled,
+  preventClick,
+  ref,
   seekOffset = 10,
   ...props
 }: AudioPlayerSeekForwardButtonProps) => (
-  <Button
-    size="icon-sm"
-    variant="outline"
-    render={
-      <MediaSeekForwardButton
-        data-slot="audio-player-seek-forward-button"
-        seekOffset={seekOffset}
-        {...props}
-      />
-    }
-  ></Button>
+  <MediaSeekForwardButton
+    className={cn(
+      buttonVariants({ size: "icon-sm", variant: "outline" }),
+      "bg-transparent",
+      className,
+    )}
+    disabled={disabled}
+    ref={(element) => {
+      if (element) element.preventClick = Boolean(disabled || preventClick);
+      if (typeof ref === "function") return ref(element);
+      if (ref) ref.current = element;
+    }}
+    data-slot="audio-player-seek-forward-button"
+    seekOffset={seekOffset}
+    {...props}
+  />
 );
 
 type AudioPlayerTimeDisplayProps = ComponentProps<typeof MediaTimeDisplay>;

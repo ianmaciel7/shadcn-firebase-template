@@ -1,6 +1,6 @@
 # Next.js code review
 
-This is an in-progress, read-only audit against the installed Next.js **16.4.2** documentation in `node_modules/next/dist/docs/`. The full one-agent-per-item inventory was generated and validated before review began.
+This began as an in-progress, read-only audit against the installed Next.js **16.4.2** documentation in `node_modules/next/dist/docs/`. The full one-agent-per-item inventory was generated and validated before review began.
 
 ## Current metrics
 
@@ -27,7 +27,7 @@ This is an in-progress, read-only audit against the installed Next.js **16.4.2**
 
 This session supports seven concurrent agents, including the coordinator, so up to six item reviewers run at once. Work therefore proceeds in individual batches. Required display names and complete paths are in [the manifest](agents-manifest.md); each row maps to its own report under [`reports/`](reports/). Runtime task identifiers use underscores because the agent tool rejects hyphens; the mandated display names remain intact in the manifest and reports.
 
-No project code has been changed as part of this review. Failed or active agent tasks remain pending until a report exists. The full audit is not complete.
+The audit itself changed no project code. Subsequent user-authorized corrections are tracked in [remediation status](resolutions.md), separately from historical review coverage. Failed or active agent tasks remain pending until a report exists. The full audit is not complete.
 
 ## Scope and exclusions
 
@@ -42,3 +42,7 @@ Resumed from branch `fix/react-review-findings` at `f7b7221`, containing audit c
 The historical inventory contains 12 generated documentation paths absent from this installation. They remain pending, as explained in [documentation coverage](documentation-coverage.md). The project pending count was corrected from an inconsistent 600 to the count derived from the manifest and completed reports.
 
 Validation: the installed Markdown CLI reports 48 pre-existing issues in the manifest and the historical `tsconfig.json` report, with no issues in the 12 new reports. The configured spelling scan reports 308 issues in 14 files; individual reports are excluded by the existing configuration and were reviewed manually. The pnpm wrappers failed during environment setup, so the installed tool executables were used directly. No build or browser suite was run for these documentation-only changes.
+
+## Remediation phase
+
+After checkpoint `d8e5df2`, the user authorized fixes and parallel implementation. See [resolutions](resolutions.md) for every consolidated finding, local mitigations for upstream documentation, validation boundaries and the internal locale-route migration. Coverage counts above remain historical; route moves and new files require inventory reconciliation before the audit resumes.

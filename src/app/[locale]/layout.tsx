@@ -1,13 +1,13 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { IntlProviderServer } from "@/components/ui/extensions/intl-provider-server";
 import { ThemeProviderClient } from "@/components/ui/extensions/theme-provider-client";
 import { Spinner } from "@/components/ui/spinner";
 import { Toaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import "./globals.css";
+import "../globals.css";
 
 const geist = Geist({
   variable: "--font-geist",
@@ -37,10 +37,17 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export function generateStaticParams() {
+  return [{ locale: "en" }, { locale: "pt-BR" }, { locale: "es" }];
+}
+
+export default async function RootLayout({
+  children,
+}: LayoutProps<"/[locale]">) {
+  const locale = await getLocale();
   return (
     <html
-      lang="en"
+      lang={locale}
       suppressHydrationWarning
       className={`${geist.variable} ${geistMono.variable} h-full antialiased`}
     >

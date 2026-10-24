@@ -27,6 +27,8 @@ original date. Read current operational details in the
 | [0016](0016-name-components-by-integration-responsibility.md) | Accepted; export naming superseded by 0017 | Integration suffixes independent of presentation runtime |
 | [0017](0017-enforce-exact-component-export-names.md) | Accepted | Match owned component, props, and orchestration hook names to full file stem |
 
+| [0018](0018-render-document-language-from-internal-locale-routes.md) | Accepted | Cookie-selected internal locale routes with server-rendered document language and unprefixed public URLs |
+
 ## Current operational clarifications
 
 - **ADR 0006: Testing layers and standards**:

@@ -16,7 +16,8 @@ are references until the installed version supports their APIs.
   invalid and valid cases for a new project policy.
 - Preserve the stricter [thin-route policy](nextjs-route-files.md),
   [component contracts](components-contracts.md), cookie-driven unprefixed locale
-  architecture, Firebase authorization boundary, and generated-source exclusions.
+  architecture (Proxy rewrites to the internal `[locale]` root; ADR 0018), Firebase
+  authorization boundary, and generated-source exclusions.
 - Apply [security guidance](../../SECURITY.md#nextjs-server-and-environment-boundaries)
   when introducing server data, cache scopes, environment values, or endpoints.
   Syntax guards are not authorization or complete import-graph proofs.

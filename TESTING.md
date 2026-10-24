@@ -110,7 +110,7 @@ Vitest Browser Mode component tests, and Playwright end-to-end specifications.
 `scripts/check-responsiveness.mjs` runs in `pnpm verify:fast` and `pnpm verify:static`
 to catch responsive anti-patterns and accessibility regressions before runtime:
 
-- **Viewport scalability (WCAG 1.4.4 Resize Text)**: The root layout (`src/app/layout.tsx`)
+- **Viewport scalability (WCAG 1.4.4 Resize Text)**: The root layout (`src/app/[locale]/layout.tsx`)
   must export a `viewport` configuration (or `generateViewport`) declaring
   `width: 'device-width'` and `initialScale: 1`. Disabling zoom via `userScalable: false`,
   `maximumScale: 1`, or string `user-scalable=no` is strictly prohibited.
@@ -251,9 +251,13 @@ Reusable checks: the Vitest and Playwright configs, axe scan, and
 configured locale cookies and safe new-tab links. These tests no longer depend
 on the starter headline, document title or starter link labels. They are smoke
 tests, not proof that each locale's translated UI text is correct; add
-behavior-specific localization tests for the derived application, including
-translated text and the document language. The current root layout fixes
-`html lang` to `en`; the cookie smoke tests do not validate that attribute.
+behavior-specific localization tests for the derived application. The locale
+smoke tests check server HTML and hydrated `html lang` for every supported
+cookie, fallback to English, navigation/back behavior, cookie changes at the
+same public URL, localized unknown routes and static assets. `src/proxy.test.ts`
+checks internal rewrites, canonical redirects, query/RSC preservation and
+infrastructure exclusions. These assertions still require a production build
+and browser run; passing unit tests does not establish deployment cache behavior.
 
 Template-specific fixtures: `home-*` visual baselines capture the starter
 home page. Replace them after changing the UI, and regenerate reviewed
@@ -442,8 +446,9 @@ does not prove production prerendering or cache isolation.
 Async Server Components remain E2E subjects; do not add jsdom rendering
 workarounds for unsupported Vitest behavior. Server mutation/API introductions
 need authorization and invalid-input tests at the new boundary. Cookie-based
-translations and static `html lang` are separate contracts; a language-attribute
-change must cover accessibility and Cache Components rendering behavior.
+selection and internal locale root parameters are separate boundaries. Document
+language changes must cover raw server HTML, client navigation, cache variation
+and Cache Components rendering behavior.
 
 Local missing native bindings, blocked external lookups, and unavailable MCP
 runtime sessions are environment limitations, not successful checks. Keep CI
@@ -505,3 +510,9 @@ Next.js build and a deployed Cloud Logging smoke test remain separate checks; mo
 prove provider ingestion or IAM configuration. Native SWC loading failures can
 prevent Next.js type generation and leave `LayoutProps` unresolved in TypeScript;
 report the environment failure rather than treating those checks as passed.
+
+## Review finding regressions
+
+The unit project resolves the `server-only` marker to Next.js's bundled empty server implementation for direct provider-contract tests. This alias applies only to unit tests; it does not relax production or browser import boundaries. The provider tests verify request-owned props and preservation of the global console.
+
+AI Elements regressions exercise full-content token cache identity, asynchronous SDK schema conversion, pricing distribution, accessible names, shared primitive IDs and keyboard operation. Browser cases cover attachment focus visibility and Media Chrome activation without a second keyboard-event owner. Run these in the existing unit and browser projects; isolated Chromium checks do not replace Next.js production tests.

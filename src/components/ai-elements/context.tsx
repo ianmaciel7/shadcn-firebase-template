@@ -28,7 +28,18 @@ interface ContextSchema {
   modelId?: ModelId;
 }
 
-const ContextContext = createContext<ContextSchema | null>(null);
+interface ContextValue extends ContextSchema {
+  tokens: {
+    input: number;
+    output: number;
+    cacheReads: number;
+    cacheWrites: number;
+    reasoning: number;
+  };
+  costs: ReturnType<typeof getUsage>["costUSD"];
+}
+
+const ContextContext = createContext<ContextValue | null>(null);
 
 const useContextValue = () => {
   const context = useContext(ContextContext);
@@ -49,10 +60,32 @@ const Context = ({
   modelId,
   ...props
 }: ContextProps) => {
-  const contextValue = useMemo(
-    () => ({ maxTokens, modelId, usage, usedTokens }),
-    [maxTokens, modelId, usage, usedTokens],
-  );
+  const contextValue = useMemo(() => {
+    const cacheReads = usage?.inputTokenDetails.cacheReadTokens ?? 0;
+    const cacheWrites = usage?.inputTokenDetails.cacheWriteTokens ?? 0;
+    const tokens = {
+      input:
+        usage?.inputTokenDetails.noCacheTokens ??
+        Math.max(0, (usage?.inputTokens ?? 0) - cacheReads - cacheWrites),
+      output: usage?.outputTokens ?? 0,
+      cacheReads,
+      cacheWrites,
+      reasoning: usage?.outputTokenDetails.reasoningTokens ?? 0,
+    };
+    // AI SDK output includes reasoning. Do not charge it a second time.
+    const costs = modelId
+      ? getUsage({
+          modelId,
+          usage: {
+            input: tokens.input,
+            output: tokens.output,
+            cacheReads,
+            cacheWrites,
+          },
+        }).costUSD
+      : undefined;
+    return { maxTokens, modelId, usage, usedTokens, tokens, costs };
+  }, [maxTokens, modelId, usage, usedTokens]);
 
   return (
     <ContextContext.Provider value={contextValue}>
@@ -135,11 +168,14 @@ const ContextContent = ({ className, ...props }: ContextContentProps) => (
   />
 );
 
-type ContextContentHeaderProps = ComponentProps<"div">;
+type ContextContentHeaderProps = ComponentProps<"div"> & {
+  progressLabel?: string;
+};
 
 const ContextContentHeader = ({
   children,
   className,
+  progressLabel = "Model context usage",
   ...props
 }: ContextContentHeaderProps) => {
   const { usedTokens, maxTokens } = useContextValue();
@@ -166,7 +202,11 @@ const ContextContentHeader = ({
             </p>
           </div>
           <div className="space-y-2">
-            <Progress className="bg-muted" value={usedPercent * PERCENT_MAX} />
+            <Progress
+              aria-label={progressLabel}
+              className="bg-muted"
+              value={usedPercent * PERCENT_MAX}
+            />
           </div>
         </>
       )}
@@ -193,16 +233,8 @@ const ContextContentFooter = ({
   className,
   ...props
 }: ContextContentFooterProps) => {
-  const { modelId, usage } = useContextValue();
-  const costUSD = modelId
-    ? getUsage({
-        modelId,
-        usage: {
-          input: usage?.inputTokens ?? 0,
-          output: usage?.outputTokens ?? 0,
-        },
-      }).costUSD?.totalUSD
-    : undefined;
+  const { costs } = useContextValue();
+  const costUSD = costs?.totalUSD;
   const totalCost = new Intl.NumberFormat("en-US", {
     currency: "USD",
     style: "currency",
@@ -252,8 +284,8 @@ const ContextInputUsage = ({
   children,
   ...props
 }: ContextInputUsageProps) => {
-  const { usage, modelId } = useContextValue();
-  const inputTokens = usage?.inputTokens ?? 0;
+  const { tokens, costs } = useContextValue();
+  const inputTokens = tokens.input;
 
   if (children) {
     return children;
@@ -263,12 +295,7 @@ const ContextInputUsage = ({
     return null;
   }
 
-  const inputCost = modelId
-    ? getUsage({
-        modelId,
-        usage: { input: inputTokens, output: 0 },
-      }).costUSD?.totalUSD
-    : undefined;
+  const inputCost = costs?.inputUSD;
   const inputCostText = new Intl.NumberFormat("en-US", {
     currency: "USD",
     style: "currency",
@@ -279,7 +306,7 @@ const ContextInputUsage = ({
       className={cn("flex items-center justify-between text-xs", className)}
       {...props}
     >
-      <span className="text-muted-foreground">Input</span>
+      <span className="text-muted-foreground">Input (uncached)</span>
       <TokensWithCost costText={inputCostText} tokens={inputTokens} />
     </div>
   );
@@ -292,8 +319,8 @@ const ContextOutputUsage = ({
   children,
   ...props
 }: ContextOutputUsageProps) => {
-  const { usage, modelId } = useContextValue();
-  const outputTokens = usage?.outputTokens ?? 0;
+  const { tokens, costs } = useContextValue();
+  const outputTokens = tokens.output;
 
   if (children) {
     return children;
@@ -303,12 +330,7 @@ const ContextOutputUsage = ({
     return null;
   }
 
-  const outputCost = modelId
-    ? getUsage({
-        modelId,
-        usage: { input: 0, output: outputTokens },
-      }).costUSD?.totalUSD
-    : undefined;
+  const outputCost = costs?.outputUSD;
   const outputCostText = new Intl.NumberFormat("en-US", {
     currency: "USD",
     style: "currency",
@@ -332,8 +354,8 @@ const ContextReasoningUsage = ({
   children,
   ...props
 }: ContextReasoningUsageProps) => {
-  const { usage, modelId } = useContextValue();
-  const reasoningTokens = usage?.outputTokenDetails.reasoningTokens ?? 0;
+  const { tokens, costs } = useContextValue();
+  const reasoningTokens = tokens.reasoning;
 
   if (children) {
     return children;
@@ -343,12 +365,11 @@ const ContextReasoningUsage = ({
     return null;
   }
 
-  const reasoningCost = modelId
-    ? getUsage({
-        modelId,
-        usage: { reasoningTokens },
-      }).costUSD?.totalUSD
-    : undefined;
+  // Informational subset of Output, rather than an additional charge.
+  const reasoningCost =
+    costs?.outputUSD === undefined || !tokens.output
+      ? undefined
+      : (costs.outputUSD * reasoningTokens) / tokens.output;
   const reasoningCostText = new Intl.NumberFormat("en-US", {
     currency: "USD",
     style: "currency",
@@ -359,7 +380,9 @@ const ContextReasoningUsage = ({
       className={cn("flex items-center justify-between text-xs", className)}
       {...props}
     >
-      <span className="text-muted-foreground">Reasoning</span>
+      <span className="text-muted-foreground">
+        Reasoning (included in output)
+      </span>
       <TokensWithCost costText={reasoningCostText} tokens={reasoningTokens} />
     </div>
   );
@@ -372,8 +395,8 @@ const ContextCacheUsage = ({
   children,
   ...props
 }: ContextCacheUsageProps) => {
-  const { usage, modelId } = useContextValue();
-  const cacheTokens = usage?.inputTokenDetails.cacheReadTokens ?? 0;
+  const { tokens, costs } = useContextValue();
+  const cacheTokens = tokens.cacheReads + tokens.cacheWrites;
 
   if (children) {
     return children;
@@ -383,11 +406,8 @@ const ContextCacheUsage = ({
     return null;
   }
 
-  const cacheCost = modelId
-    ? getUsage({
-        modelId,
-        usage: { cacheReads: cacheTokens, input: 0, output: 0 },
-      }).costUSD?.totalUSD
+  const cacheCost = costs
+    ? (costs.cacheReadUSD ?? 0) + (costs.cacheWriteUSD ?? 0)
     : undefined;
   const cacheCostText = new Intl.NumberFormat("en-US", {
     currency: "USD",

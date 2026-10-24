@@ -13,8 +13,9 @@ This rule covers component contracts; see also [Component Composition, Hooks, an
 
 The shadcn primitives live under `src/components/ui/`; Firebase registry output
 lives under `src/components/firebase/`; generated AI Elements live under
-`src/components/ai-elements/`. Those folders are vendor-owned and excluded
-from application naming checks. Application-owned extensions under
+`src/components/ai-elements/`. That copied registry source is locally maintained and adaptable, and excluded
+from application naming checks; this exclusion preserves upstream API shapes
+and does not transfer maintenance ownership to vendors. Application-owned extensions under
 `src/components/ui/extensions/` **are** checked.
 
 ## Component file contracts

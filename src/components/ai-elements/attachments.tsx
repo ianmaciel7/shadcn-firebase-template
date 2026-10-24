@@ -340,13 +340,13 @@ const AttachmentRemove = ({
         variant === "grid" && [
           "absolute top-2 right-2 size-6 rounded-full p-0",
           "bg-background/80 backdrop-blur-sm",
-          "opacity-0 transition-opacity group-hover:opacity-100",
+          "opacity-100 transition-opacity [@media(hover:hover)]:opacity-0 group-hover:opacity-100 focus-visible:opacity-100 group-focus-within:opacity-100",
           "hover:bg-background",
           "[&>svg]:size-3",
         ],
         variant === "inline" && [
           "size-5 rounded p-0",
-          "opacity-0 transition-opacity group-hover:opacity-100",
+          "opacity-100 transition-opacity [@media(hover:hover)]:opacity-0 group-hover:opacity-100 focus-visible:opacity-100 group-focus-within:opacity-100",
           "[&>svg]:size-2.5",
         ],
         variant === "list" && ["size-8 shrink-0 rounded p-0", "[&>svg]:size-4"],
@@ -372,17 +372,40 @@ type AttachmentHoverCardProps = ComponentProps<typeof HoverCard> & {
   closeDelay?: number;
 };
 
+const AttachmentHoverCardDelays = createContext({ delay: 0, closeDelay: 0 });
+
 const AttachmentHoverCard = ({
   openDelay = 0,
   closeDelay = 0,
   ...props
-}: AttachmentHoverCardProps) => <HoverCard {...props} />;
+}: AttachmentHoverCardProps) => {
+  const delays = useMemo(
+    () => ({ delay: openDelay, closeDelay }),
+    [openDelay, closeDelay],
+  );
+  return (
+    <AttachmentHoverCardDelays.Provider value={delays}>
+      <HoverCard {...props} />
+    </AttachmentHoverCardDelays.Provider>
+  );
+};
 
 type AttachmentHoverCardTriggerProps = ComponentProps<typeof HoverCardTrigger>;
 
-const AttachmentHoverCardTrigger = (props: AttachmentHoverCardTriggerProps) => (
-  <HoverCardTrigger {...props} />
-);
+const AttachmentHoverCardTrigger = ({
+  delay,
+  closeDelay,
+  ...props
+}: AttachmentHoverCardTriggerProps) => {
+  const delays = useContext(AttachmentHoverCardDelays);
+  return (
+    <HoverCardTrigger
+      delay={delay ?? delays.delay}
+      closeDelay={closeDelay ?? delays.closeDelay}
+      {...props}
+    />
+  );
+};
 
 type AttachmentHoverCardContentProps = ComponentProps<typeof HoverCardContent>;
 

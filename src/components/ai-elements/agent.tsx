@@ -1,9 +1,9 @@
 "use client";
 
-import type { Tool } from "ai";
+import { asSchema, type Tool } from "ai";
 import { BotIcon } from "lucide-react";
 import type { ComponentProps } from "react";
-import { memo } from "react";
+import { memo, useEffect, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -89,10 +89,23 @@ type AgentToolProps = ComponentProps<typeof AccordionItem> & {
 
 const AgentTool = memo(
   ({ className, tool, value, ...props }: AgentToolProps) => {
-    const schema =
-      "jsonSchema" in tool && tool.jsonSchema
-        ? tool.jsonSchema
-        : tool.inputSchema;
+    const [schema, setSchema] = useState<{ input: Tool["inputSchema"]; code: string } | null>(null);
+    useEffect(() => {
+      let cancelled = false;
+      const resolveSchema = async () => {
+        let code = "Schema unavailable";
+        try {
+          const json = await asSchema(tool.inputSchema).jsonSchema;
+          code = JSON.stringify(json, null, 2) ?? code;
+        } catch {
+          // Unsupported or failed conversion must not break the tool accordion.
+        }
+        if (!cancelled) setSchema({ input: tool.inputSchema, code });
+      };
+      void resolveSchema();
+      return () => { cancelled = true; };
+    }, [tool.inputSchema]);
+    const code = schema?.input === tool.inputSchema ? schema.code : "Loading schema…";
 
     return (
       <AccordionItem
@@ -107,7 +120,7 @@ const AgentTool = memo(
         </AccordionTrigger>
         <AccordionContent className="px-3 pb-3">
           <div className="rounded-md bg-muted/50">
-            <CodeBlock code={JSON.stringify(schema, null, 2)} language="json" />
+            <CodeBlock code={code} language="json" />
           </div>
         </AccordionContent>
       </AccordionItem>

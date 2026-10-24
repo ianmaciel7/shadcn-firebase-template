@@ -92,17 +92,23 @@ commands and implementation conventions.
 
 ## Internationalization
 
-The internationalization architecture is 100% cookie-driven (`NEXT_LOCALE`)
-without `middleware.ts` and without a `[locale]` folder segment in the App
-Router. The application serves `src/app/page.tsx` directly at `/`; there are no
-localized URL route prefixes or proxy scripts.
+The public internationalization contract remains cookie-driven (`NEXT_LOCALE`)
+with unprefixed URLs such as `/`, `/sign-in`, and `/profile`. `src/proxy.ts`
+resolves the supported cookie before rendering and rewrites internally to
+`src/app/[locale]/`. It leaves framework assets, API routes, and Firebase
+emulator endpoints alone. Visible locale-prefixed URLs redirect to their
+unprefixed canonical form; this does not change the selected cookie.
 
 `src/i18n/routing.ts` defines `en`, `pt-BR`, and `es`, defaulting to `en`, and
 exports `localeCookie = "NEXT_LOCALE"` along with the `isLocale` type guard.
 `src/i18n/routing.test.ts` verifies this guard with property-based testing
-(`fast-check`). `src/i18n/request.ts` reads the cookie (or explicit request
-locale) and imports `src/messages/${locale}.json`, cleanly falling back to `en`
-if an invalid locale is received.
+(`fast-check`). Invalid or absent locale cookies fall back to `en` in Proxy.
+`src/i18n/request.ts` reads the prerenderable `locale` root parameter from
+`next/root-params` (or an explicit server translation override) and loads the
+matching catalog. It no longer reads request cookies inside the render tree.
+The internal destination is different for each locale; the rewrite response
+also varies on Cookie. CDN deployments must preserve the rewrite destination
+and response variation rather than caching solely by the public URL.
 
 Message catalogs (`src/messages/*.json`) adhere to a structural testing
 contract in `src/messages/messages.test.ts`, which validates key parity across
@@ -111,15 +117,18 @@ placeholders match the reference catalog. Global message type safety is enforced
 by augmenting the `IntlMessages` interface in `src/types/global.d.ts`. Spelling
 validation integrates `@cspell/dict-pt-br`.
 
-The root layout (`src/app/layout.tsx`) currently declares a static `<html
-lang="en">` attribute even when translated content is rendered through
-`IntlProvider` via the cookie. A dynamic server-rendered `lang` needs an explicit locale/rendering design:
-with Cache Components, awaiting a request cookie at the root above all
-`Suspense` boundaries can block prerendering. Moving the existing cookie read
-there is not a complete fix. Preserve the current behavior until that design
-and its accessibility tests are implemented. See
-[ADR 0004](docs/adr/0004-configure-internationalization.md) for the complete
-decision.
+The root layout (`src/app/[locale]/layout.tsx`) generates all three locale
+parameters and renders the effective `html lang` on the server, before
+JavaScript. This preserves Cache Components and partial prefetching without a
+request cookie read above Suspense. A localized catch-all page handles unknown
+public routes inside the same locale root. Shared `src/app/_components/` and
+`_hooks/` remain outside the segment; route-private public and protected trees
+live underneath it. Navigation hrefs stay unprefixed, and the exported pathname
+helper removes an internal locale prefix if Next exposes one.
+
+[ADR 0018](docs/adr/0018-render-document-language-from-internal-locale-routes.md)
+supersedes only ADR 0004's cookie lookup and route-layout placement; it preserves
+catalogs, supported languages, provider responsibilities and public URLs.
 
 ## Runtime and component boundaries
 
@@ -153,14 +162,14 @@ The authentication modules intentionally remain flat under `src/lib`:
 Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`; Firestore
 operations live in descriptive modules under `src/lib/firebase/firestore/`, such
 as `user-preferences.ts`. The profile route's `useProfileSubmit` hook coordinates the save
-workflow; `saveProfile` in `src/app/(protected)/profile/_lib/data.ts` injects typed Firebase
+workflow; `saveProfile` in `src/app/[locale]/(protected)/profile/_lib/data.ts` injects typed Firebase
 persistence adapters for independent tests.
 `useProfileFormClient` owns the React Hook Form lifecycle and uses the
 native submitting state. `useProfileSectionClient` composes session,
 status, and translation hooks; `ProfileSectionClient` renders a
 discriminated `status` and composes Card and Form parts with one
 `FieldGroup`. Profile value types live in
-`src/app/(protected)/profile/_lib/definitions.ts`, alongside the route-private profile
+`src/app/[locale]/(protected)/profile/_lib/definitions.ts`, alongside the route-private profile
 workflow. The canonical profile
 responsibilities live in
 [the form rule](.agents/rules/forms-architecture.md). Profile preferences use

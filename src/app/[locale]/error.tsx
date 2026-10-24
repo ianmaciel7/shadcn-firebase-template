@@ -6,10 +6,10 @@ import { Button } from "@/components/ui/button";
 
 export default function ErrorPage({
   error,
-  reset,
+  retry,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  retry: () => void;
 }) {
   const t = useTranslations("App");
 
@@ -23,7 +23,7 @@ export default function ErrorPage({
         {t("errorTitle")}
       </h2>
       <p className="mt-2 text-muted-foreground">{t("errorMessage")}</p>
-      <Button onClick={() => reset()} className="mt-6">
+      <Button onClick={() => retry()} className="mt-6">
         {t("tryAgain")}
       </Button>
     </main>

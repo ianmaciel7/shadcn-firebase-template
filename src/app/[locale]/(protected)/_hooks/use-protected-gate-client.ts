@@ -1,6 +1,6 @@
-import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { subscribeToSession } from "@/lib/session";
 import { recordUsage } from "@/lib/usage/guard";
 
