@@ -76,9 +76,6 @@ opencode.json
 .junie/skills
 .kilo/skills
 
-# serena local state
-.serena/
-
 # local analysis state
 .fallow/
 

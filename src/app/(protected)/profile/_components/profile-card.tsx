@@ -47,11 +47,8 @@ function ProfileCardContent({
   ...props
 }: ProfileCardContentProps) {
   return (
-    <CardContent
-      className={cn("flex w-full flex-col gap-4", className)}
-      {...props}
-    >
-      <FieldGroup className="gap-4">{children}</FieldGroup>
+    <CardContent className="flex w-full flex-col gap-4" {...props}>
+      <FieldGroup className={cn("gap-4", className)}>{children}</FieldGroup>
     </CardContent>
   );
 }
