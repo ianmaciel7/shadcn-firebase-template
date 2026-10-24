@@ -7,6 +7,12 @@ const root = resolve(__dirname, "../../..");
 const biome = join(root, "node_modules/@biomejs/biome/bin/biome");
 const locations = [
   "src/app/_hooks",
+  "src/app/(protected)/_hooks",
+  "src/app/(protected)/profile/_hooks",
+  "src/app/(public)/_hooks",
+  "src/app/(public)/forgot-password/_hooks",
+  "src/app/(public)/register/_hooks",
+  "src/app/(public)/sign-in/_hooks",
   "src/app/_lib",
   "src/lib",
   "src/hooks",

@@ -129,3 +129,16 @@ declarations. The pnpm static entry point fails before checks during package-man
 setup. These results are not a passing full static check or a production build.
 Responsibility cohesion remains a review obligation; numeric budgets alone cannot
 prove that a hook has one purpose.
+
+## All-hook coverage confirmation
+
+At the post-`ecb6cd8` checkpoint, a source inventory found 25 hook modules with
+25 hook declarations across eight directories (seven private App Router hook
+directories plus shared `src/hooks`). The full configured Biome source scan
+reported zero diagnostics. This inventory is a dated observation, not a hardcoded
+limit on future hooks or a claim of semantic architectural completeness.
+
+The complexity regression locations now explicitly cover all eight current hook
+directories, in addition to support/shared modules. The agent rule requires full
+scope validation after each hook change, covering existing hooks and sub-hooks,
+while keeping semantic responsibility review distinct from metric enforcement.

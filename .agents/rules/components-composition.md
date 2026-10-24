@@ -135,3 +135,12 @@ orchestrators and their support modules. Those syntactic budgets do not establis
 that a function has a single responsibility; review its dependencies and lifecycle
 as well. Preserve cancellation, stale-result checks and authorization checks at
 asynchronous boundaries during refactoring.
+
+For every hook change, inventory the affected responsibility tree and validate all
+owned hook directories and support modules. Do not finish with only the named
+example or a changed-file lint result. Run the full Biome source/configured project
+scan and the private hook structure rules; CI already uses these complete scopes.
+Include existing hooks, new sub-hooks and shared hooks in the check. Preserve the
+documented registry exclusions, and report global blockers separately from a
+passing complexity scan. Main-hook cohesion and lifecycle ownership still need
+manual review beyond the numeric checks.

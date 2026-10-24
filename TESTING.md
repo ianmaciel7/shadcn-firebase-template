@@ -580,3 +580,10 @@ them with assertions about implementation call counts.
 Do not run source-wide scans while configuration regression tests have temporary
 invalid fixtures inside `src/`. Finish the unit process and its cleanup before
 running Biome, ast-grep, dependency or component scans against the source tree.
+
+The native complexity regression locations explicitly include every current hook
+directory: shared hooks, root App Router hooks, protected and profile hooks, public
+hooks, and the sign-in, register and forgot-password hook directories. The
+configured `src/**` scope also covers future owned directories and support modules.
+After hook changes, finish with a full source scan after fixture cleanup; checking
+one orchestrator or only staged files does not verify the rest of the hook tree.
