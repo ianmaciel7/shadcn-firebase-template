@@ -18,7 +18,7 @@
 
 Stable callback wrappers reduce unintended Rive reinitialization. The component delays initialization one animation frame, cancels that pending frame on cleanup, and updates the Rive machine inputs when the persona state changes. Browser themes have observers with explicit cleanup.
 
-# Findings
+## Findings
 
 ## AI-PERSONA-THEME-001
 
