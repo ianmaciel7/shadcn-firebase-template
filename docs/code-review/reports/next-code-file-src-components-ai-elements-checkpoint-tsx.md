@@ -1,51 +1,51 @@
-# Relatório individual — `next-code-file-src-components-ai-elements-checkpoint-tsx`
+# Individual report — `next-code-file-src-components-ai-elements-checkpoint-tsx`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-code-file-src-components-ai-elements-checkpoint-tsx`.
-- Tipo: `CODE_FILE`.
-- Caminho principal: `src/components/ai-elements/checkpoint.tsx`.
-- Documentação associada: documentação instalada do Next.js, `01-app/01-getting-started/05-server-and-client-components.md` e `01-app/03-api-reference/01-directives/use-client.md`; contratos locais de composição e acessibilidade.
-- Versão do Next.js: `16.4.2`, confirmada em `node_modules/next/package.json`.
-- Status: Concluído.
+- Full subagent name: `next-code-file-src-components-ai-elements-checkpoint-tsx`.
+- Type: `CODE_FILE`.
+- Primary path: `src/components/ai-elements/checkpoint.tsx`.
+- Associated documentation: installed Next.js documentation, `01-app/01-getting-started/05-server-and-client-components.md` and `01-app/03-api-reference/01-directives/use-client.md`; local composition and accessibility contracts.
+- Next.js version: `16.4.2`, confirmed in `node_modules/next/package.json`.
+- Status: Completed.
 
-## Escopo
+## Scope
 
-- Responsabilidade: revisão integral e individual das 78 linhas do módulo Checkpoint, suas três partes exportadas e respectivos tipos públicos.
-- Arquivos consultados: arquivo principal; `src/components/ui/button.tsx`, `tooltip.tsx`, `separator.tsx`; `src/lib/utils.ts`; `components.json`; `package.json`; `AGENTS.md`; `CODING_STANDARDS.md`; `ARCHITECTURE.md`; `.agents/rules/components-contracts.md`, `components-composition.md`, `shadcn-ui-maintenance.md`, `react-hooks-core.md`; skill shadcn disponível no contexto; os dois documentos instalados acima; implementações e tipos instalados de Base UI TooltipTrigger e Separator; implementação instalada do Lucide.
-- Dependências analisadas: React e seus tipos de props HTML, Lucide, wrappers locais de Button/Tooltip/Separator, primitivos Base UI e utilitário `cn`.
-- Busca de integração: `rg` não encontrou consumidores de `Checkpoint` em `src/`, fora do próprio arquivo. Isso limita a avaliação de comportamento a seu contrato reutilizável, sem demonstrar um fluxo de aplicação em execução.
+- Responsibility: full, individual review of the 78 lines of the Checkpoint module, its three exported parts, and their public types.
+- Files consulted: primary file; `src/components/ui/button.tsx`, `tooltip.tsx`, `separator.tsx`; `src/lib/utils.ts`; `components.json`; `package.json`; `AGENTS.md`; `CODING_STANDARDS.md`; `ARCHITECTURE.md`; `.agents/rules/components-contracts.md`, `components-composition.md`, `shadcn-ui-maintenance.md`, `react-hooks-core.md`; the shadcn skill available in context; the two installed documents above; installed implementations and types of Base UI TooltipTrigger and Separator; the installed Lucide implementation.
+- Dependencies analyzed: React and its HTML prop types, Lucide, local Button/Tooltip/Separator wrappers, Base UI primitives, and the `cn` utility.
+- Integration search: `rg` found no consumers of `Checkpoint` in `src/`, outside the file itself. This limits the behavior assessment to its reusable contract, without demonstrating a running application flow.
 
 ## Code Review
 
-Implementações corretas:
+Correct implementations:
 
-- A diretiva `"use client"` está antes dos imports (linha 1), estabelecendo uma fronteira adequada para Tooltip interativo e handlers de botão fornecidos pelo consumidor. Os imports não acessam APIs server-only. A documentação instalada distingue essa fronteira de uma exigência de sufixo no nome de cada componente.
-- `Checkpoint` encaminha `children`, atributos HTML e `className` para o contêiner (linhas 15–27). A linha visual usa o Separator existente, e não uma implementação independente. As cores vêm de tokens semânticos.
-- `CheckpointIcon` permite substituir o ícone por `children` e encaminha props SVG ao Bookmark padrão (linhas 30–39). O fallback é determinístico; não depende de relógio, browser ou estado global durante renderização.
-- `CheckpointTrigger` deriva as props do Button realmente instalado (linha 41), preserva atributos como `disabled`, `aria-label`, `className` e handlers por meio de `...props`, e usa `type="button"` por padrão em ambos os ramos (linhas 56 e 66). Um consumidor pode substituir o tipo explicitamente.
-- O ramo com tooltip usa o contrato Base UI `render={<Button ... />}` (linhas 53–64), em vez de assumir `asChild` de outra família de primitivos. TooltipTrigger recebe o conteúdo como `children`; seu mecanismo instalado de renderização aplica os props ao Button, evitando a criação explícita de dois botões aninhados no JSX deste módulo.
-- O módulo não mantém estado, não instala efeitos, não faz chamadas remotas nem possui recursos externos a liberar. O render é apresentação pura. Cache, autorização, Server Actions e APIs de request não se aplicam a este item.
-- A família possui exports nomeados relacionados (linhas 71–78). A forma com arrow functions não é tratada como infração das regras estritas de funções/nomenclatura de componentes de aplicação: `.agents/rules/components-contracts.md` exclui o diretório gerado `ai-elements` dessas checagens.
+- The `"use client"` directive is before the imports (line 1), establishing an appropriate boundary for the interactive Tooltip and for button handlers provided by the consumer. The imports do not access server-only APIs. The installed documentation distinguishes this boundary from a suffix requirement in each component's name.
+- `Checkpoint` forwards `children`, HTML attributes, and `className` to the container (lines 15–27). The visual line uses the existing Separator rather than an independent implementation. Colors come from semantic tokens.
+- `CheckpointIcon` allows replacing the icon through `children` and forwards SVG props to the default Bookmark (lines 30–39). The fallback is deterministic; it does not depend on a clock, browser, or global state during rendering.
+- `CheckpointTrigger` derives the props from the actually installed Button (line 41), preserves attributes such as `disabled`, `aria-label`, `className`, and handlers through `...props`, and uses `type="button"` by default in both branches (lines 56 and 66). A consumer can override the type explicitly.
+- The tooltip branch uses the Base UI contract `render={<Button ... />}` (lines 53–64), rather than assuming `asChild` from another primitive family. TooltipTrigger receives the content as `children`; its installed rendering mechanism applies the props to the Button, avoiding the explicit creation of two nested buttons in this module's JSX.
+- The module holds no state, installs no effects, makes no remote calls, and owns no external resources to release. The render is pure presentation. Cache, authorization, Server Actions, and request APIs do not apply to this item.
+- The family has related named exports (lines 71–78). The arrow-function form is not treated as a violation of the strict function/component-naming rules for application components: `.agents/rules/components-contracts.md` excludes the generated `ai-elements` directory from those checks.
 
-Riscos e recomendações de integração:
+Integration risks and recommendations:
 
-- Um botão composto somente com um ícone decorativo precisa receber nome acessível localizado, por exemplo por `aria-label` ou texto visível. `tooltip` é conteúdo auxiliar; o contrato não promete convertê-lo automaticamente em nome. Como não há consumidor encontrado e as props necessárias são encaminhadas, não há evidência de um controle efetivamente sem nome na aplicação.
-- Se o consumidor substituir `CheckpointIcon` por `children`, as props SVG do wrapper deixam de ser aplicadas ao elemento substituto; ele deve fornecer atributos e estilos ao seu próprio elemento. Esse é o comportamento explícito de substituição das linhas 36–38, sem falha demonstrada.
-- O contêiner usa `overflow-hidden` e uma linha horizontal de largura integral. Verificar largura disponível, texto longo, zoom e foco visível no contexto de uso antes de incorporar o componente a uma tela; esta revisão de fonte não comprova layout ou ausência de clipping no browser.
-- Não foi encontrado teste específico do Checkpoint. Em uma integração futura, testar o botão com e sem tooltip, ativação por teclado, estado disabled, nome acessível e ausência de submit acidental dentro de formulário.
+- A button composed only with a decorative icon needs to receive a localized accessible name, for example through `aria-label` or visible text. `tooltip` is auxiliary content; the contract does not promise to convert it automatically into a name. Since no consumer was found and the necessary props are forwarded, there is no evidence of an actually nameless control in the application.
+- If the consumer replaces `CheckpointIcon` through `children`, the wrapper's SVG props stop being applied to the substitute element; it must provide attributes and styles to its own element. This is the explicit replacement behavior of lines 36–38, with no demonstrated failure.
+- The container uses `overflow-hidden` and a full-width horizontal line. Verify available width, long text, zoom, and visible focus in the usage context before incorporating the component into a screen; this source review does not prove layout or the absence of clipping in the browser.
+- No specific Checkpoint test was found. In a future integration, test the button with and without a tooltip, keyboard activation, disabled state, accessible name, and absence of accidental submit inside a form.
 
-Validação e limites:
+Validation and limits:
 
-- Revisão estática integral do item, conferência dos imports diretos, da composição Base UI instalada e busca de consumidores realizadas.
-- A tentativa `pnpm exec shadcn docs button tooltip separator` falhou antes de executar a CLI: pnpm tentou criar `/home/agent/.local/share/pnpm` e recebeu `ENOENT`. A revisão usou os fontes e tipos já instalados; não declara consulta online ou CLI bem-sucedida.
-- Não foram executados build, testes de componente, axe, navegação por teclado ou renderização em browser. Esses resultados não são inferidos da inspeção de código. Nenhum arquivo-fonte foi alterado nesta revisão.
+- Full static review of the item, verification of the direct imports and the installed Base UI composition, and a consumer search were performed.
+- The attempt `pnpm exec shadcn docs button tooltip separator` failed before running the CLI: pnpm tried to create `/home/agent/.local/share/pnpm` and received `ENOENT`. The review used the already installed sources and types; it does not claim a successful online or CLI query.
+- No build, component tests, axe, keyboard navigation, or browser rendering were run. Those results are not inferred from code inspection. No source file was changed in this review.
 
 ## Findings
 
-Nenhum finding acionável demonstrado neste arquivo. Os riscos de integração acima permanecem explicitamente não verificados; não foram contabilizados como defeitos confirmados.
+No actionable finding demonstrated in this file. The integration risks above remain explicitly unverified; they were not counted as confirmed defects.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Conforme, no escopo da revisão estática.
-- Explicação: o limite Client Component, a composição dos primitivos locais e o encaminhamento das props são compatíveis com o código e a documentação instalados. Sem consumidor encontrado, a classificação não certifica acessibilidade, responsividade ou interação de uma tela futura, nem substitui testes em browser.
+- Classification: Compliant, within the scope of the static review.
+- Explanation: the Client Component boundary, the composition of the local primitives, and the props forwarding are compatible with the installed code and documentation. With no consumer found, the classification does not certify the accessibility, responsiveness, or interaction of a future screen, nor does it replace browser tests.

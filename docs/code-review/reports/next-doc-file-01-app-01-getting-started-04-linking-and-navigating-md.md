@@ -1,31 +1,31 @@
 # Review: Linking and Navigating
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-doc-file-01-app-01-getting-started-04-linking-and-navigating-md`
-- Tipo: `DOC_FILE`
-- Caminho principal: `node_modules/next/dist/docs/01-app/01-getting-started/04-linking-and-navigating.md`
-- Documentação associada: `next/link`, `loading.tsx`, prefetching, streaming, App Router navigation hooks
-- Versão do Next.js: `16.4.2`
-- Status: Concluído
+- Full subagent name: `next-doc-file-01-app-01-getting-started-04-linking-and-navigating-md`
+- Type: `DOC_FILE`
+- Primary path: `node_modules/next/dist/docs/01-app/01-getting-started/04-linking-and-navigating.md`
+- Associated documentation: `next/link`, `loading.tsx`, prefetching, streaming, App Router navigation hooks
+- Next.js version: `16.4.2`
+- Status: Completed
 
-## Escopo
+## Scope
 
-- Responsabilidade: leitura integral desta página instalada, avaliação da aplicabilidade ao projeto e comparação das orientações pertinentes com a navegação atual.
-- Arquivos consultados: esta página; `src/app/_components/home-section-client.tsx`; `src/app/not-found.tsx`; `src/app/(protected)/profile/_components/profile-back-to-home-button.tsx`; `src/app/(protected)/_hooks/use-protected-gate-client.ts`; `src/app/(public)/_hooks/use-auth-navigation.ts`; `src/app/_hooks/use-auth-provider-client.ts`; `src/app/(protected)/profile/_hooks/use-profile-submit.ts`; os `loading.tsx` de `src/app/`, `src/app/(public)/` e `src/app/(protected)/`; `CODING_STANDARDS.md`; `docs/agents/nextjs.md`.
-- Dependências analisadas: uso de `next/link`, `next/navigation`, `next-intl` navigation wrapper e comportamento de atualização do router. O projeto usa App Router, Cache Components e Partial Prefetching conforme seu registro de arquitetura.
+- Responsibility: full reading of this installed page, assessment of its applicability to the project, and comparison of the pertinent guidance with the current navigation.
+- Files consulted: this page; `src/app/_components/home-section-client.tsx`; `src/app/not-found.tsx`; `src/app/(protected)/profile/_components/profile-back-to-home-button.tsx`; `src/app/(protected)/_hooks/use-protected-gate-client.ts`; `src/app/(public)/_hooks/use-auth-navigation.ts`; `src/app/_hooks/use-auth-provider-client.ts`; `src/app/(protected)/profile/_hooks/use-profile-submit.ts`; the `loading.tsx` files of `src/app/`, `src/app/(public)/`, and `src/app/(protected)/`; `CODING_STANDARDS.md`; `docs/agents/nextjs.md`.
+- Dependencies analyzed: use of `next/link`, `next/navigation`, the `next-intl` navigation wrapper, and router refresh behavior. The project uses the App Router, Cache Components, and Partial Prefetching per its architecture record.
 
 ## Code Review
 
-- Implementações corretas: navegação declarativa interna usa `next/link` para home, perfil, autenticação e página not-found. A navegação programática usa `next/navigation` ou o wrapper `@/i18n/navigation`; `router.refresh()` é usado após atualizar o cookie de locale, para solicitar nova renderização que observe o cookie. Existem boundaries `loading.tsx` no root e nos grupos público e protegido, cobrindo o carregamento das respectivas árvores.
-- Problemas encontrados: nenhum desvio comprovado em relação às orientações aplicáveis desta página.
-- Riscos: a página documenta opções de otimização (`useLinkStatus`, controle de prefetch e History API) como ferramentas contextuais, não requisitos. Não há evidência nesta revisão de que a aplicação precise dessas opções; também não foram executados testes de navegação em navegador.
-- Recomendações: preservar a distinção entre `router.refresh()` e invalidação de cache do servidor. Se rotas ou listas de links crescerem, medir prefetch e feedback de navegação antes de adotar as opções da página. Não copiar o exemplo de `replaceState` para troca de locale sem adaptar ao modelo local de cookie e internacionalização.
+- Correct implementations: declarative internal navigation uses `next/link` for home, profile, authentication, and the not-found page. Programmatic navigation uses `next/navigation` or the `@/i18n/navigation` wrapper; `router.refresh()` is used after updating the locale cookie, to request a new render that observes the cookie. There are `loading.tsx` boundaries at the root and in the public and protected groups, covering the loading of the respective trees.
+- Issues found: no proven deviation from the applicable guidance on this page.
+- Risks: the page documents optimization options (`useLinkStatus`, prefetch control, and the History API) as contextual tools, not requirements. There is no evidence in this review that the application needs those options; browser navigation tests were also not run.
+- Recommendations: preserve the distinction between `router.refresh()` and server cache invalidation. If routes or link lists grow, measure prefetch and navigation feedback before adopting the page's options. Do not copy the `replaceState` example for locale switching without adapting it to the local cookie and internationalization model.
 
 ## Findings
 
-Nenhum finding comprovado.
+No proven finding.
 
-## Conclusão
+## Conclusion
 
-**Conforme.** Os padrões de navegação usados no projeto correspondem à orientação instalada: `Link` para links internos, router do App Router para navegação programática e boundaries de carregamento presentes nos segmentos relevantes. Recursos opcionais citados no documento não são lacunas por si só. A análise foi estática; a resposta visual e o comportamento de prefetch sob rede lenta permanecem não verificados em navegador.
+**Compliant.** The navigation patterns used in the project match the installed guidance: `Link` for internal links, the App Router's router for programmatic navigation, and loading boundaries present in the relevant segments. Optional features cited in the document are not gaps in themselves. The analysis was static; the visual response and prefetch behavior on a slow network remain unverified in a browser.

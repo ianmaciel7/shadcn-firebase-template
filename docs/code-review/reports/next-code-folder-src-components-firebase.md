@@ -1,23 +1,23 @@
 # Folder review: `src/components/firebase/`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-code-folder-src-components-firebase`
-- Tipo: `CODE_FOLDER`
-- Caminho principal: `src/components/firebase/`
-- Documentação associada: [Architecture](../../../ARCHITECTURE.md), [component contracts](../../../.agents/rules/components-contracts.md), [ADR 0008](../../../docs/adr/0008-install-firebase-ui-registry.md), [ADR 0009](../../../docs/adr/0009-integrate-firebase-authentication.md), and the installed Next.js 16.4.2 Server/Client Component and project-structure guides.
-- Versão do Next.js: `16.4.2`
-- Status: Concluído.
+- Full subagent name: `next-code-folder-src-components-firebase`
+- Type: `CODE_FOLDER`
+- Primary path: `src/components/firebase/`
+- Associated documentation: [Architecture](../../../ARCHITECTURE.md), [component contracts](../../../.agents/rules/components-contracts.md), [ADR 0008](../../../docs/adr/0008-install-firebase-ui-registry.md), [ADR 0009](../../../docs/adr/0009-integrate-firebase-authentication.md), and the installed Next.js 16.4.2 Server/Client Component and project-structure guides.
+- Next.js version: `16.4.2`
+- Status: Completed.
 
-## Escopo
+## Scope
 
-- Responsabilidade: avaliar exclusivamente a organização, responsabilidades, dependências e runtime boundaries da pasta como unidade arquitetural; não substitui a revisão individual dos arquivos.
-- Arquivos consultados: all 30 `.tsx` files under `src/components/firebase/` for names, directives, imports, and relationships; `src/app/(public)/sign-in/_components/sign-in-auth-flow-client.tsx`; `src/app/(public)/register/_components/register-auth-flow-client.tsx`; `src/app/(public)/forgot-password/_components/forgot-password-auth-flow-client.tsx`; `src/app/(public)/routes.test.tsx`; `package.json`; `tsconfig.build.json`; `ARCHITECTURE.md`; `.agents/rules/components-contracts.md`; `docs/adr/0008-install-firebase-ui-registry.md`; and `docs/adr/0009-integrate-firebase-authentication.md`.
-- Dependências analisadas: `@firebase-oss/ui-core`, `@firebase-oss/ui-react`, Firebase Web Auth SDK, local `src/components/ui/` primitives, and route-private auth flow components.
+- Responsibility: evaluate exclusively the organization, responsibilities, dependencies, and runtime boundaries of the folder as an architectural unit; it does not replace the individual review of the files.
+- Files consulted: all 30 `.tsx` files under `src/components/firebase/` for names, directives, imports, and relationships; `src/app/(public)/sign-in/_components/sign-in-auth-flow-client.tsx`; `src/app/(public)/register/_components/register-auth-flow-client.tsx`; `src/app/(public)/forgot-password/_components/forgot-password-auth-flow-client.tsx`; `src/app/(public)/routes.test.tsx`; `package.json`; `tsconfig.build.json`; `ARCHITECTURE.md`; `.agents/rules/components-contracts.md`; `docs/adr/0008-install-firebase-ui-registry.md`; and `docs/adr/0009-integrate-firebase-authentication.md`.
+- Dependencies analyzed: `@firebase-oss/ui-core`, `@firebase-oss/ui-react`, Firebase Web Auth SDK, local `src/components/ui/` primitives, and route-private auth flow components.
 
 ## Code Review
 
-### Organização e responsabilidades
+### Organization and responsibilities
 
 The directory contains 30 registry-derived Firebase UI components. Its flat placement matches the explicit Firebase registry grouping decision in ADR 0008. Within that group, the modules are organized by auth responsibility: provider-specific buttons share `oauth-button.tsx`; sign-in, sign-up, email-link, phone, and password recovery each separate forms and screens; multi-factor assertion and enrollment separate their screen/form layers and SMS/TOTP implementations. Shared policy links and redirect error presentation are isolated in their own modules.
 
@@ -35,18 +35,18 @@ The folder-level graph was not independently executed through the dependency-cru
 
 #### FIREBASE-FOLDER-001
 
-- Identificador: `FIREBASE-FOLDER-001`
-- Severidade: Baixa
-- Categoria: Documentação / propriedade da fonte
-- Caminho e linha: `.agents/rules/components-contracts.md:14-18`; compared with `docs/adr/0008-install-firebase-ui-registry.md:477-485` and `ARCHITECTURE.md:135-137`.
-- Evidência concreta: the component-contract rule describes the Firebase registry directory as “vendor-owned”. The accepted ADR amendment explicitly supersedes the immutable upstream model and says the copied registry files are project source that may be adapted; Architecture likewise calls them locally owned shadcn source. The rule's wording can be read as ownership by the upstream vendor, despite its intended exception being about registry origin and excluded naming checks.
-- Impacto: contributors may mistakenly treat the copied source as immutable, or misread the convention exclusion as conflicting with the current local source-ownership decision.
-- Correção recomendada: describe the directory as “registry-originated source” and state separately that generated registry trees are excluded from the owned-component naming checks, while remaining locally owned and reviewable as source.
-- Teste sugerido: run the repository Markdown/link check after aligning the wording; verify that the rule and ADR continue to express the same ownership model.
+- Identifier: `FIREBASE-FOLDER-001`
+- Severity: Low
+- Category: Documentation / source ownership
+- Path and line: `.agents/rules/components-contracts.md:14-18`; compared with `docs/adr/0008-install-firebase-ui-registry.md:477-485` and `ARCHITECTURE.md:135-137`.
+- Concrete evidence: the component-contract rule describes the Firebase registry directory as “vendor-owned”. The accepted ADR amendment explicitly supersedes the immutable upstream model and says the copied registry files are project source that may be adapted; Architecture likewise calls them locally owned shadcn source. The rule's wording can be read as ownership by the upstream vendor, despite its intended exception being about registry origin and excluded naming checks.
+- Impact: contributors may mistakenly treat the copied source as immutable, or misread the convention exclusion as conflicting with the current local source-ownership decision.
+- Recommended fix: describe the directory as “registry-originated source” and state separately that generated registry trees are excluded from the owned-component naming checks, while remaining locally owned and reviewable as source.
+- Suggested test: run the repository Markdown/link check after aligning the wording; verify that the rule and ADR continue to express the same ownership model.
 
 No other folder-level architecture finding was proven in this scoped review.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Parcialmente conforme.
-- Explicação: the folder's placement, internal grouping, reuse of shared primitives, and direction of composition align with the current architecture and Firebase UI decisions. A low-severity documentation wording conflict remains about ownership of registry-originated files. Cycle absence and per-component behavior are not established by this folder review; each source file still requires its own report.
+- Classification: Partially compliant.
+- Explanation: the folder's placement, internal grouping, reuse of shared primitives, and direction of composition align with the current architecture and Firebase UI decisions. A low-severity documentation wording conflict remains about ownership of registry-originated files. Cycle absence and per-component behavior are not established by this folder review; each source file still requires its own report.

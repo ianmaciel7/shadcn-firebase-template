@@ -1,46 +1,46 @@
 # Code review: `src/components/ui/button.tsx`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-code-file-src-components-ui-button-tsx`
-- Tipo: `CODE_FILE`
-- Caminho principal: `src/components/ui/button.tsx`
-- Documentação associada: `.agents/rules/shadcn-ui-maintenance.md`; `.agents/rules/components-composition.md`; `.agents/rules/components-contracts.md`; `CODING_STANDARDS.md`; `docs/agents/shadcn.md`; installed Base UI button types at `node_modules/@base-ui/react/button/Button.d.ts` and `node_modules/@base-ui/react/internals/types.d.ts`.
-- Versão do Next.js: `16.4.2`
-- Status: concluído
+- Full subagent name: `next-code-file-src-components-ui-button-tsx`
+- Type: `CODE_FILE`
+- Primary path: `src/components/ui/button.tsx`
+- Associated documentation: `.agents/rules/shadcn-ui-maintenance.md`; `.agents/rules/components-composition.md`; `.agents/rules/components-contracts.md`; `CODING_STANDARDS.md`; `docs/agents/shadcn.md`; installed Base UI button types at `node_modules/@base-ui/react/button/Button.d.ts` and `node_modules/@base-ui/react/internals/types.d.ts`.
+- Next.js version: `16.4.2`
+- Status: completed
 
-## Escopo
+## Scope
 
-- Responsabilidade: revisão individual do wrapper compartilhado `Button`, de suas variantes e do contrato de props encaminhado à primitiva Base UI.
-- Arquivos consultados: `src/components/ui/button.tsx`, `src/components/ui/button.browser.test.tsx`, `components.json`, `package.json`, os guias/regras listados acima e as declarações instaladas de `@base-ui/react/button`.
-- Dependências analisadas: `@base-ui/react` (`^1.9.0`), `class-variance-authority`, `cn` e as classes Tailwind v4 definidas pelo projeto.
+- Responsibility: individual review of the shared `Button` wrapper, its variants, and the props contract forwarded to the Base UI primitive.
+- Files consulted: `src/components/ui/button.tsx`, `src/components/ui/button.browser.test.tsx`, `components.json`, `package.json`, the guides/rules listed above, and the installed declarations of `@base-ui/react/button`.
+- Dependencies analyzed: `@base-ui/react` (`^1.9.0`), `class-variance-authority`, `cn`, and the Tailwind v4 classes defined by the project.
 
 ## Code Review
 
-Implementações corretas:
+Correct implementations:
 
-- `Button` é uma função nomeada seguida de export nomeado, e o arquivo simples exporta apenas o componente raiz e seu helper de variantes, em conformidade com a convenção local para uma primitiva simples.
-- O wrapper herda `ButtonPrimitive.Props` e `VariantProps`, encaminha as props restantes e mescla `className` com `cn` (linhas 42–53). Isso preserva o contrato Base UI em vez de criar um conjunto paralelo de atributos.
-- A primitiva e as tipagens instaladas suportam `render` para composição Base UI; o wrapper encaminha essa prop sem assumir a API `asChild` de Radix. O tipo base deriva de `ComponentPropsWithRef`, mantendo o contrato de `ref` no React instalado.
-- As variantes e tamanhos são declarados por `cva`, incluindo variantes semânticas, estados inválidos/expandidos e tamanhos de ícone. As classes usam os tokens e os estados documentados pelo projeto; o seletor de ícones preserva dimensionamento padrão sem impedir dimensões explícitas por `size-*`.
-- A acessibilidade fica compatível com o papel nativo da primitiva, foco visível, estado disabled e uso de `aria-label` para botão de ícone. O helper `buttonVariants` também permite que navegação verdadeira mantenha um `<a>`/`Link`, conforme a orientação local em `docs/agents/shadcn.md`.
-- O teste de navegador colocalizado cobre clique e foco por teclado, disabled sem disparo do evento, reflow responsivo e alvo mínimo de toque de 24×24 px (`button.browser.test.tsx:7-111`). O teste de ícone fornece um nome acessível via `aria-label`.
+- `Button` is a named function followed by a named export, and the simple file exports only the root component and its variants helper, in compliance with the local convention for a simple primitive.
+- The wrapper inherits `ButtonPrimitive.Props` and `VariantProps`, forwards the remaining props, and merges `className` with `cn` (lines 42–53). This preserves the Base UI contract instead of creating a parallel set of attributes.
+- The installed primitive and typings support `render` for Base UI composition; the wrapper forwards that prop without assuming Radix's `asChild` API. The base type derives from `ComponentPropsWithRef`, keeping the `ref` contract in the installed React.
+- Variants and sizes are declared through `cva`, including semantic variants, invalid/expanded states, and icon sizes. The classes use the tokens and states documented by the project; the icon selector preserves default sizing without preventing explicit dimensions through `size-*`.
+- Accessibility is compatible with the primitive's native role, visible focus, disabled state, and the use of `aria-label` for an icon button. The `buttonVariants` helper also lets true navigation keep an `<a>`/`Link`, per the local guidance in `docs/agents/shadcn.md`.
+- The colocated browser test covers click and keyboard focus, disabled without firing the event, responsive reflow, and a 24×24 px minimum touch target (`button.browser.test.tsx:7-111`). The icon test provides an accessible name via `aria-label`.
 
-Problemas encontrados:
+Issues found:
 
-- Nenhum problema comprovado neste arquivo.
+- No proven issue in this file.
 
-Riscos e limites da verificação:
+Risks and verification limits:
 
-- A primitiva de ícone não consegue exigir estaticamente um nome acessível, pois seu conteúdo pode vir de SVG, texto ou composição; os chamadores precisam fornecer nome acessível quando o botão não possui texto visível. O teste atual exemplifica esse contrato com `aria-label`.
-- O wrapper não define `type="button"`; portanto, preserva o comportamento HTML nativo (`submit` dentro de formulário). Isso é uma decisão de API comum para wrappers de botão e não foi tratado como defeito sem evidência de incompatibilidade com o uso existente.
-- Não executei testes nem build nesta tarefa. A análise foi estática, com leitura do teste existente e dos tipos instalados.
+- The icon primitive cannot statically require an accessible name, since its content can come from SVG, text, or composition; callers must provide an accessible name when the button has no visible text. The current test exemplifies this contract with `aria-label`.
+- The wrapper does not set `type="button"`; therefore it preserves native HTML behavior (`submit` inside a form). This is a common API decision for button wrappers and was not treated as a defect without evidence of incompatibility with existing use.
+- I did not run tests or a build in this task. The analysis was static, reading the existing test and the installed types.
 
 ## Findings
 
-Nenhum finding.
+No findings.
 
-## Conclusão
+## Conclusion
 
-- Classificação: **Conforme**.
-- Explicação: o wrapper mantém o contrato Base UI instalado, encaminha props e `className`, oferece variantes coerentes com o design system e possui cobertura de navegador para interação, foco, disabled, layout e dimensão mínima. Nenhuma divergência comprovada foi encontrada no escopo deste arquivo.
+- Classification: **Compliant**.
+- Explanation: the wrapper keeps the installed Base UI contract, forwards props and `className`, offers variants consistent with the design system, and has browser coverage for interaction, focus, disabled, layout, and minimum size. No proven divergence was found within the scope of this file.

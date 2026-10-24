@@ -1,38 +1,38 @@
-# Relatório individual — `next-code-file-tsconfig-json`
+# Individual report — `next-code-file-tsconfig-json`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-code-file-tsconfig-json`
-- Tipo: `CODE_FILE`
-- Caminho principal: `tsconfig.json`
-- Documentação associada: `node_modules/next/dist/docs/01-app/01-getting-started/01-installation.md` (Set up TypeScript; Set up Absolute Imports and Module Path Aliases) and `node_modules/next/dist/docs/01-app/03-api-reference/05-config/02-typescript.md` (TypeScript plugin, generated route types, and type checking)
-- Versão do Next.js: `16.4.2`
-- Status: Concluído
+- Full subagent name: `next-code-file-tsconfig-json`
+- Type: `CODE_FILE`
+- Primary path: `tsconfig.json`
+- Associated documentation: `node_modules/next/dist/docs/01-app/01-getting-started/01-installation.md` (Set up TypeScript; Set up Absolute Imports and Module Path Aliases) and `node_modules/next/dist/docs/01-app/03-api-reference/05-config/02-typescript.md` (TypeScript plugin, generated route types, and type checking)
+- Next.js version: `16.4.2`
+- Status: Completed
 
-## Escopo
+## Scope
 
-- Responsabilidade: revisão individual da configuração TypeScript e de sua compatibilidade com a configuração instalada do Next.js.
-- Arquivos consultados: `tsconfig.json`, `tsconfig.build.json`, `package.json`, `node_modules/next/dist/docs/01-app/01-getting-started/01-installation.md`, `node_modules/next/dist/docs/01-app/01-getting-started/02-project-structure.md`, `node_modules/next/dist/docs/01-app/03-api-reference/05-config/02-typescript.md`.
-- Dependências analisadas: integração `next` com o plugin TypeScript; script `typecheck` que executa `next typegen` e depois `tsc --noEmit -p tsconfig.build.json`.
+- Responsibility: individual review of the TypeScript configuration and its compatibility with the installed Next.js configuration.
+- Files consulted: `tsconfig.json`, `tsconfig.build.json`, `package.json`, `node_modules/next/dist/docs/01-app/01-getting-started/01-installation.md`, `node_modules/next/dist/docs/01-app/01-getting-started/02-project-structure.md`, `node_modules/next/dist/docs/01-app/03-api-reference/05-config/02-typescript.md`.
+- Dependencies analyzed: `next` integration with the TypeScript plugin; the `typecheck` script that runs `next typegen` and then `tsc --noEmit -p tsconfig.build.json`.
 
 ## Code Review
 
-- Implementações corretas:
-  - `strict`, `noEmit`, `moduleResolution: "bundler"`, `isolatedModules`, `jsx: "react-jsx"` e o plugin `next` dão suporte ao typecheck sem conflitar com a compilação do framework (`tsconfig.json:6-19`).
-  - O alias `@/*` mapeia para `./src/*`, alinhado ao uso documentado pelo Next.js para `paths` (`tsconfig.json:21-23`; documentação instalada `01-installation.md`, seção “Set up Absolute Imports and Module Path Aliases”).
-  - O `include` cobre `next-env.d.ts`, TypeScript/TSX, tipos de rota gerados em `.next/types` e `.next/dev/types`, além de `.mts` (`tsconfig.json:25-32`). Os dois diretórios de tipos estavam presentes no ambiente inspecionado.
-  - A referência TypeScript instalada exige `next-env.d.ts` e documenta `.next/types/**/*.ts` para os tipos de rota; o projeto inclui ambos e também os tipos gerados pelo servidor de desenvolvimento (`02-typescript.md`, seções “next-env.d.ts” e “Route-Aware Type Helpers”).
-  - `tsconfig.build.json` herda estas opções e define exclusões explícitas para dependências e testes Semgrep; o script de typecheck utiliza esse projeto de build (`tsconfig.build.json:1-2`, `package.json` script `typecheck`).
-- Problemas encontrados: nenhum problema comprovado.
-- Riscos: `allowJs: true` permite que arquivos JavaScript importados participem da verificação, embora os padrões de `include` atuais selecionem explicitamente `.ts`, `.tsx` e `.mts`; isso é uma opção válida e não foi observado como defeito nesta configuração.
-- Recomendações: manter os padrões de inclusão de tipos gerados sincronizados com o fluxo `next typegen`; se houver mudança no comando de typecheck ou no diretório gerado pelo framework, conferir a referência instalada e validar o script do projeto.
+- Correct implementations:
+  - `strict`, `noEmit`, `moduleResolution: "bundler"`, `isolatedModules`, `jsx: "react-jsx"`, and the `next` plugin support the typecheck without conflicting with the framework's compilation (`tsconfig.json:6-19`).
+  - The `@/*` alias maps to `./src/*`, aligned with the use Next.js documents for `paths` (`tsconfig.json:21-23`; installed documentation `01-installation.md`, section "Set up Absolute Imports and Module Path Aliases").
+  - The `include` covers `next-env.d.ts`, TypeScript/TSX, generated route types in `.next/types` and `.next/dev/types`, as well as `.mts` (`tsconfig.json:25-32`). Both type directories were present in the inspected environment.
+  - The installed TypeScript reference requires `next-env.d.ts` and documents `.next/types/**/*.ts` for route types; the project includes both and also the types generated by the development server (`02-typescript.md`, sections "next-env.d.ts" and "Route-Aware Type Helpers").
+  - `tsconfig.build.json` inherits these options and sets explicit exclusions for dependencies and Semgrep tests; the typecheck script uses that build project (`tsconfig.build.json:1-2`, `package.json` script `typecheck`).
+- Issues found: no proven issue.
+- Risks: `allowJs: true` lets imported JavaScript files participate in checking, although the current `include` patterns explicitly select `.ts`, `.tsx`, and `.mts`; this is a valid option and was not observed as a defect in this configuration.
+- Recommendations: keep the generated-type include patterns in sync with the `next typegen` flow; if the typecheck command or the framework's generated directory changes, check the installed reference and validate the project script.
 
 ## Findings
 
-Nenhum finding.
+No findings.
 
-## Conclusão
+## Conclusion
 
-- Conforme.
-- A configuração fornece opções TypeScript estritas, o plugin oficial do Next.js, aliases suportados e os diretórios de tipos de rota gerados usados pelo comando de typecheck do projeto. Não foi identificada incompatibilidade com Next.js 16.4.2.
-- Testes sugeridos para este arquivo: executar `pnpm typecheck` após alterações futuras à configuração; conferir também o `next build` quando a mudança tocar tipos gerados ou convenções de rota. Não executei testes nesta tarefa de revisão.
+- Compliant.
+- The configuration provides strict TypeScript options, the official Next.js plugin, supported aliases, and the generated route-type directories used by the project's typecheck command. No incompatibility with Next.js 16.4.2 was identified.
+- Suggested tests for this file: run `pnpm typecheck` after future changes to the configuration; also check `next build` when the change touches generated types or route conventions. I did not run tests in this review task.

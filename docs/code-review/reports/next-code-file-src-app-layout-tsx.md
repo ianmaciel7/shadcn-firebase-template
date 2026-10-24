@@ -1,44 +1,44 @@
 # Review: `src/app/layout.tsx`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-code-file-src-app-layout-tsx`
-- Tipo: `CODE_FILE`
-- Caminho principal: `src/app/layout.tsx`
-- Documentação associada: Next.js 16.4.2, `01-app/03-api-reference/03-file-conventions/layout.md`, `01-app/01-getting-started/05-server-and-client-components.md`, `01-app/01-getting-started/14-metadata-and-og-images.md`; React server/client and project architecture rules.
-- Versão do Next.js: `16.4.2`
-- Status: Concluído
+- Full subagent name: `next-code-file-src-app-layout-tsx`
+- Type: `CODE_FILE`
+- Primary path: `src/app/layout.tsx`
+- Associated documentation: Next.js 16.4.2, `01-app/03-api-reference/03-file-conventions/layout.md`, `01-app/01-getting-started/05-server-and-client-components.md`, `01-app/01-getting-started/14-metadata-and-og-images.md`; React server/client and project architecture rules.
+- Next.js version: `16.4.2`
+- Status: Completed
 
-## Escopo
+## Scope
 
-- Responsabilidade: revisão individual do root layout, suas exportações de metadata/viewport, renderização e composição de providers.
-- Arquivos consultados: `src/app/layout.tsx`, `src/components/ui/extensions/intl-provider-server.tsx`, `src/i18n/request.ts`, `ARCHITECTURE.md`, `CODING_STANDARDS.md`, `.agents/rules/nextjs-maintenance.md`, `.agents/rules/react-dom-server.md`, `.agents/rules/react-quality.md`, `.agents/rules/react-hooks-core.md`.
-- Dependências analisadas: `next/font/google`, `next-intl/server`, React `Suspense`, provider client de tema, provider server de locale, tooltip provider e toaster.
+- Responsibility: individual review of the root layout, its metadata/viewport exports, rendering, and provider composition.
+- Files consulted: `src/app/layout.tsx`, `src/components/ui/extensions/intl-provider-server.tsx`, `src/i18n/request.ts`, `ARCHITECTURE.md`, `CODING_STANDARDS.md`, `.agents/rules/nextjs-maintenance.md`, `.agents/rules/react-dom-server.md`, `.agents/rules/react-quality.md`, `.agents/rules/react-hooks-core.md`.
+- Dependencies analyzed: `next/font/google`, `next-intl/server`, React `Suspense`, the client theme provider, the server locale provider, the tooltip provider, and the toaster.
 
 ## Code Review
 
-Implementações corretas:
+Correct implementations:
 
-- O root layout mantém o formato de Server Component, declara `<html>` e `<body>` e usa o tipo global `LayoutProps<"/">`, conforme o contrato instalado do Next.js.
-- `generateMetadata` e `viewport` são exports server-side adequados; o código não adiciona tags `<head>` manualmente.
-- O provider assíncrono de internacionalização está dentro de `Suspense`, e o provider de tema/clientes é composto abaixo da fronteira server/client.
-- As fontes são configuradas com `next/font/google`, e os providers compartilhados ficam no layout raiz.
+- The root layout keeps the Server Component shape, declares `<html>` and `<body>`, and uses the global `LayoutProps<"/">` type, per the installed Next.js contract.
+- `generateMetadata` and `viewport` are appropriate server-side exports; the code does not add `<head>` tags manually.
+- The asynchronous internationalization provider is inside `Suspense`, and the theme/client providers are composed below the server/client boundary.
+- Fonts are configured with `next/font/google`, and the shared providers live in the root layout.
 
 ## Findings
 
 ### NXLAYOUT-001
 
-- Identificador: `NXLAYOUT-001`
-- Severidade: Média
-- Categoria: Acessibilidade / internacionalização
-- Caminho e linha: `src/app/layout.tsx:43`
-- Evidência concreta: o documento HTML declara `lang="en"`, enquanto `IntlProviderServer` resolve o locale pela configuração de request/cookie em `src/components/ui/extensions/intl-provider-server.tsx:7-8` e `src/i18n/request.ts:5-16`. Assim, quando a interface está em português ou espanhol, o idioma declarado ao navegador e às tecnologias assistivas continua inglês.
-- Referência à documentação: a documentação oficial instalada exige o root layout e apresenta o idioma no elemento `<html>` (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/layout.md`, seção “Root Layout”). A arquitetura do projeto registra explicitamente esse descompasso e observa que a leitura dinâmica de cookie acima das fronteiras `Suspense` pode bloquear prerenderização (`ARCHITECTURE.md:115-123`).
-- Impacto: leitores de tela e ferramentas de idioma podem pronunciar o conteúdo localizado com regras de inglês; indexadores também recebem um idioma de documento impreciso.
-- Correção recomendada: manter o comportamento atual conforme a decisão arquitetural registrada, mas tratar como dívida conhecida. Ao definir a estratégia de locale no root, emitir um atributo `lang` correspondente ao locale efetivo sem mover uma leitura dinâmica de cookie para fora da fronteira de streaming; adicionar cobertura de acessibilidade para `en`, `pt-BR` e `es` antes de alterar a implementação.
-- Teste sugerido: teste de navegador que selecione cada locale pelo mecanismo suportado, confirme o texto localizado e verifique o atributo `document.documentElement.lang` correspondente, incluindo a renderização inicial.
+- Identifier: `NXLAYOUT-001`
+- Severity: Medium
+- Category: Accessibility / internationalization
+- Path and line: `src/app/layout.tsx:43`
+- Concrete evidence: the HTML document declares `lang="en"`, while `IntlProviderServer` resolves the locale from the request/cookie configuration in `src/components/ui/extensions/intl-provider-server.tsx:7-8` and `src/i18n/request.ts:5-16`. So when the interface is in Portuguese or Spanish, the language declared to the browser and to assistive technologies remains English.
+- Documentation reference: the installed official documentation requires the root layout and shows the language on the `<html>` element (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/layout.md`, "Root Layout" section). The project architecture explicitly records this mismatch and notes that reading a dynamic cookie above `Suspense` boundaries can block prerendering (`ARCHITECTURE.md:115-123`).
+- Impact: screen readers and language tools may pronounce localized content with English rules; indexers also receive an inaccurate document language.
+- Recommended fix: keep the current behavior per the recorded architectural decision, but treat it as known debt. When defining the locale strategy at the root, emit a `lang` attribute that matches the effective locale without moving a dynamic cookie read outside the streaming boundary; add accessibility coverage for `en`, `pt-BR`, and `es` before changing the implementation.
+- Suggested test: a browser test that selects each locale through the supported mechanism, confirms the localized text, and verifies the matching `document.documentElement.lang` attribute, including the initial render.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Parcialmente conforme.
-- Explicação: o layout segue os contratos do Next.js 16.4.2 e respeita a composição Server/Client e o modelo de streaming documentados. Há um descompasso conhecido entre o locale do conteúdo e `html lang`; a própria arquitetura registra o impacto e determina que uma correção depende de uma estratégia de renderização e testes de acessibilidade. Nenhum outro problema comprovado foi identificado neste arquivo.
+- Classification: Partially compliant.
+- Explanation: the layout follows the Next.js 16.4.2 contracts and respects the documented Server/Client composition and streaming model. There is a known mismatch between the content locale and `html lang`; the architecture itself records the impact and states that a fix depends on a rendering strategy and accessibility tests. No other proven issue was identified in this file.

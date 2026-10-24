@@ -1,43 +1,43 @@
-# Relatório individual — `next-doc-file-01-app-02-guides-upgrading-index-md`
+# Individual report — `next-doc-file-01-app-02-guides-upgrading-index-md`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-doc-file-01-app-02-guides-upgrading-index-md`
-- Tipo: `DOC_FILE`
-- Caminho principal: `node_modules/next/dist/docs/01-app/02-guides/upgrading/index.md`
-- Documentação associada: índice dos guias de upgrade do App Router.
-- Versão do Next.js: `16.4.2`
-- Status: Concluído.
+- Full subagent name: `next-doc-file-01-app-02-guides-upgrading-index-md`
+- Type: `DOC_FILE`
+- Primary path: `node_modules/next/dist/docs/01-app/02-guides/upgrading/index.md`
+- Associated documentation: index of the App Router upgrade guides.
+- Next.js version: `16.4.2`
+- Status: Completed.
 
-## Escopo
+## Scope
 
-- Responsabilidade: ler integralmente este índice e avaliar sua orientação e aplicabilidade ao projeto.
-- Arquivos consultados: o índice principal; `node_modules/next/package.json`; nomes dos documentos irmãos na pasta `01-app/02-guides/upgrading/`; `package.json` do projeto.
-- Dependências analisadas: versão instalada do Next.js e organização dos guias de versão, codemods e upgrade com agente.
+- Responsibility: read this index in full and assess its guidance and applicability to the project.
+- Files consulted: the main index; `node_modules/next/package.json`; names of the sibling documents in the `01-app/02-guides/upgrading/` folder; the project's `package.json`.
+- Dependencies analyzed: the installed Next.js version and the organization of the version guides, codemods, and agent upgrade.
 
 ## Code Review
 
-O documento é um índice editorial, sem requisitos técnicos de implementação. O projeto usa Next.js 16.4.2, portanto uma orientação genérica para consultar guias de upgrade é condicional; ela não demonstra que o projeto precise de atualização ou codemod.
+The document is an editorial index, with no technical implementation requirements. The project uses Next.js 16.4.2, so generic guidance to consult upgrade guides is conditional; it does not demonstrate that the project needs an update or codemod.
 
-O diretório contém `agent-upgrade.md`, `codemods.md`, `version-14.md`, `version-15.md` e `version-16.md`. O corpo do índice termina na frase “Learn how to upgrade Next.js, with a coding agent or by following a version-specific guide:” e não apresenta links nem conteúdo após os dois-pontos. Isso deixa incompleta a instrução de navegação anunciada pelo próprio documento.
+The directory contains `agent-upgrade.md`, `codemods.md`, `version-14.md`, `version-15.md`, and `version-16.md`. The body of the index ends with the sentence "Learn how to upgrade Next.js, with a coding agent or by following a version-specific guide:" and presents no links or content after the colon. This leaves the navigation instruction announced by the document itself incomplete.
 
-Nenhuma divergência de implementação do projeto é aplicável a este índice. Não foi recomendada alteração em `node_modules` nem atualização de dependências.
+No project implementation divergence applies to this index. No change to `node_modules` or dependency update was recommended.
 
 ## Findings
 
 ### DOCUPGRADE-001
 
-- Identificador: `DOCUPGRADE-001`
-- Severidade: Baixa
-- Categoria: Navegação / completude documental
-- Caminho e linha: `node_modules/next/dist/docs/01-app/02-guides/upgrading/index.md:7`
-- Evidência concreta: a frase introdutória termina com dois-pontos após anunciar que haverá guias de versão, mas o arquivo termina sem lista, links ou continuação. Há documentos de upgrade correspondentes na pasta irmã, incluindo o guia da versão 16.
-- Referência à documentação: o arquivo principal e os documentos irmãos instalados em `node_modules/next/dist/docs/01-app/02-guides/upgrading/`.
-- Impacto: o índice não leva o leitor aos guias prometidos pelo texto; a descoberta depende de navegação externa ou da árvore lateral do site.
-- Correção recomendada: no conteúdo oficial de origem, adicionar links para os guias de versão e recursos de upgrade anunciados, ou remover os dois-pontos e reformular a frase caso a navegação lateral seja intencional. Não editar a cópia vendorizada em `node_modules` como correção do aplicativo.
-- Teste sugerido: verificação editorial de que o índice contém links para os guias listados ou texto completo sem introdução pendente.
+- Identifier: `DOCUPGRADE-001`
+- Severity: Low
+- Category: Navigation / documentation completeness
+- Path and line: `node_modules/next/dist/docs/01-app/02-guides/upgrading/index.md:7`
+- Concrete evidence: the introductory sentence ends with a colon after announcing that version guides will follow, but the file ends with no list, links, or continuation. There are corresponding upgrade documents in the sibling folder, including the version 16 guide.
+- Documentation reference: the main file and the sibling documents installed in `node_modules/next/dist/docs/01-app/02-guides/upgrading/`.
+- Impact: the index does not lead the reader to the guides the text promises; discovery depends on external navigation or the site's side tree.
+- Recommended fix: in the official source content, add links to the version guides and upgrade resources announced, or remove the colon and reword the sentence if side navigation is intentional. Do not edit the vendored copy in `node_modules` as an application fix.
+- Suggested test: an editorial check that the index contains links to the listed guides or complete text without a pending introduction.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Parcialmente conforme.
-- Explicação: o índice identifica corretamente o tema e a pasta contém guias de upgrade, mas o texto termina com uma introdução incompleta sem destinos no corpo do arquivo. Não há requisito de código aplicável, e o projeto já está na versão instalada 16.4.2; o finding é editorial e não justifica upgrade.
+- Classification: Partially compliant.
+- Explanation: the index correctly identifies the topic and the folder contains upgrade guides, but the text ends with an incomplete introduction with no destinations in the body of the file. There is no applicable code requirement, and the project is already on the installed version 16.4.2; the finding is editorial and does not justify an upgrade.

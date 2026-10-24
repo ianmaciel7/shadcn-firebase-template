@@ -1,40 +1,40 @@
 # Review: `src/app/page.tsx`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-code-file-src-app-page-tsx`
-- Tipo: `CODE_FILE`
-- Caminho principal: `src/app/page.tsx`
-- Documentação associada: `node_modules/next/dist/docs/01-app/01-getting-started/03-layouts-and-pages.md`; `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/page.md`; `.agents/rules/nextjs-route-files.md`
-- Versão do Next.js: `16.4.2`
-- Status: Concluído
+- Full subagent name: `next-code-file-src-app-page-tsx`
+- Type: `CODE_FILE`
+- Primary path: `src/app/page.tsx`
+- Associated documentation: `node_modules/next/dist/docs/01-app/01-getting-started/03-layouts-and-pages.md`; `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/page.md`; `.agents/rules/nextjs-route-files.md`
+- Next.js version: `16.4.2`
+- Status: Completed
 
-## Escopo
+## Scope
 
-- Responsabilidade: revisão individual da página raiz e de sua composição com o componente da home.
-- Arquivos consultados: `src/app/page.tsx`, `src/app/_components/home-section-client.tsx`, `src/app/_components/home-section-client.test.tsx`, `.agents/rules/nextjs-route-files.md`, `.agents/rules/nextjs-maintenance.md`, `CODING_STANDARDS.md`, e os dois documentos Next.js listados acima.
-- Dependências analisadas: `HomeSectionClient` (somente para entender a fronteira de composição); o teste colocalizado do componente.
+- Responsibility: individual review of the root page and its composition with the home component.
+- Files consulted: `src/app/page.tsx`, `src/app/_components/home-section-client.tsx`, `src/app/_components/home-section-client.test.tsx`, `.agents/rules/nextjs-route-files.md`, `.agents/rules/nextjs-maintenance.md`, `CODING_STANDARDS.md`, and the two Next.js documents listed above.
+- Dependencies analyzed: `HomeSectionClient` (only to understand the composition boundary); the component's colocated test.
 
 ## Code Review
 
-### Implementações corretas
+### Correct implementations
 
-- O arquivo default-exporta um componente React a partir do arquivo de convenção `page.tsx`, conforme `03-layouts-and-pages.md` e a referência instalada de `page`.
-- O componente não declara `"use client"`, então permanece Server Component, como esperado pelo App Router e exigido pela política local mais restrita de rotas.
-- A implementação limita-se a compor a UI da rota: importa `HomeSectionClient` e o renderiza. Não inclui hooks, chamadas ao Firebase, APIs do navegador, handlers, lógica condicional, loops, tratamento de exceções nem helpers inline — em conformidade com `.agents/rules/nextjs-route-files.md`.
-- A interação e estado de autenticação ficam no componente privado `src/app/_components/home-section-client.tsx`, que declara a fronteira cliente. O componente tem teste colocalizado em `home-section-client.test.tsx` cobrindo estados de carregamento, visitante, usuário autenticado e falha de configuração.
-- A leitura da página não utiliza `params` ou `searchParams`; não há necessidade de props de rota nem de tornar a página dinâmica.
+- The file default-exports a React component from the `page.tsx` convention file, per `03-layouts-and-pages.md` and the installed `page` reference.
+- The component does not declare `"use client"`, so it remains a Server Component, as the App Router expects and as the stricter local route policy requires.
+- The implementation is limited to composing the route UI: it imports `HomeSectionClient` and renders it. It includes no hooks, Firebase calls, browser APIs, handlers, conditional logic, loops, exception handling, or inline helpers — in compliance with `.agents/rules/nextjs-route-files.md`.
+- Authentication interaction and state live in the private component `src/app/_components/home-section-client.tsx`, which declares the client boundary. The component has a colocated test in `home-section-client.test.tsx` covering loading, visitor, authenticated user, and configuration failure states.
+- The page does not use `params` or `searchParams`; there is no need for route props or for making the page dynamic.
 
-### Problemas e riscos
+### Issues and risks
 
-- Nenhum problema comprovado neste arquivo.
-- Não executei build, teste de navegador ou `pnpm check:routes` nesta revisão individual. A composição é curta e a regra local permite apenas esta forma de lógica; um smoke test de rota no navegador pode cobrir o resultado integrado, mas sua ausência não configura finding para este arquivo.
+- No proven issue in this file.
+- I did not run a build, a browser test, or `pnpm check:routes` in this individual review. The composition is short and the local rule allows only this form of logic; a browser route smoke test could cover the integrated result, but its absence is not a finding for this file.
 
 ## Findings
 
-Nenhum finding.
+No findings.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Conforme.
-- Explicação: a página segue a convenção instalada do Next.js 16.4.2, preserva o limite Server Component e delega a UI interativa a um componente client colocalizado e testado. Não encontrei divergências comprovadas entre o documento, a política local e este arquivo.
+- Classification: Compliant.
+- Explanation: the page follows the installed Next.js 16.4.2 convention, preserves the Server Component boundary, and delegates the interactive UI to a colocated, tested client component. I found no proven divergence between the documentation, the local policy, and this file.

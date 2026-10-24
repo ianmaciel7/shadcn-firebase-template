@@ -1,47 +1,47 @@
-# Relatório individual — next-doc-file-01-app-01-getting-started-01-installation-md
+# Individual report — next-doc-file-01-app-01-getting-started-01-installation-md
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-doc-file-01-app-01-getting-started-01-installation-md`
-- Tipo: `DOC_FILE`
-- Caminho principal: `node_modules/next/dist/docs/01-app/01-getting-started/01-installation.md`
-- Documentação associada: instalação, requisitos de ambiente, App Router, TypeScript, linting e aliases.
-- Versão do Next.js: `16.4.2` (instalada).
-- Status: concluído.
+- Full subagent name: `next-doc-file-01-app-01-getting-started-01-installation-md`
+- Type: `DOC_FILE`
+- Primary path: `node_modules/next/dist/docs/01-app/01-getting-started/01-installation.md`
+- Associated documentation: installation, environment requirements, App Router, TypeScript, linting, and aliases.
+- Next.js version: `16.4.2` (installed).
+- Status: completed.
 
-## Escopo
+## Scope
 
-- Responsabilidade: interpretar exclusivamente o documento de instalação e verificar sua aplicabilidade demonstrável ao projeto.
-- Arquivos consultados: o documento principal, `package.json`, `README.md`, `next.config.ts`, `tsconfig.json` e `src/app/layout.tsx`.
-- Dependências analisadas: `next@16.4.2`, `react@19.3.1`, `react-dom@19.3.1`, TypeScript, Biome e pnpm.
+- Responsibility: interpret exclusively the installation document and verify its demonstrable applicability to the project.
+- Files consulted: the primary document, `package.json`, `README.md`, `next.config.ts`, `tsconfig.json`, and `src/app/layout.tsx`.
+- Dependencies analyzed: `next@16.4.2`, `react@19.3.1`, `react-dom@19.3.1`, TypeScript, Biome, and pnpm.
 
 ## Code Review
 
-### Implementações corretas
+### Correct implementations
 
-- `package.json` fixa Next.js `16.4.2` e declara React e React DOM explicitamente, compatível com a orientação de instalação manual do documento.
-- `engines.node` exige `^22.22.1 || ^24.5.0`, acima do mínimo Node.js 20.9 indicado pela documentação.
-- O App Router reside em `src/app`, e `src/app/layout.tsx:31` fornece o root layout com os elementos `html` e `body` exigidos.
-- `tsconfig.json:16-21` configura o plugin TypeScript do Next.js e o alias `@/*`; a configuração é usada pelos imports em `src/app/layout.tsx:5-9`.
-- `package.json:8-12` disponibiliza os comandos `next dev`, `next build` e `next start`; `package.json:13-15` executa o Biome diretamente, opção aceita pelo documento para Next.js 16.
-- O README instrui uma instalação reprodutível por `pnpm install --frozen-lockfile`, mais apropriada para um template já criado do que reinicializá-lo via `create-next-app`.
+- `package.json` pins Next.js `16.4.2` and declares React and React DOM explicitly, compatible with the document's manual installation guidance.
+- `engines.node` requires `^22.22.1 || ^24.5.0`, above the minimum Node.js 20.9 indicated by the documentation.
+- The App Router lives in `src/app`, and `src/app/layout.tsx:31` provides the root layout with the required `html` and `body` elements.
+- `tsconfig.json:16-21` configures the Next.js TypeScript plugin and the `@/*` alias; the configuration is used by the imports in `src/app/layout.tsx:5-9`.
+- `package.json:8-12` provides the commands `next dev`, `next build`, and `next start`; `package.json:13-15` runs Biome directly, an option the document accepts for Next.js 16.
+- The README instructs a reproducible installation through `pnpm install --frozen-lockfile`, more appropriate for an already created template than reinitializing it via `create-next-app`.
 
-### Problemas encontrados
+### Issues found
 
-- Nenhum finding de não conformidade aplicável foi comprovado por este documento. As instruções de `create-next-app` e de criação manual de diretórios descrevem a inicialização de projetos novos e não impõem uma migração ao template existente.
+- No applicable non-compliance finding was proven by this document. The `create-next-app` and manual directory creation instructions describe the initialization of new projects and do not impose a migration on the existing template.
 
-### Riscos
+### Risks
 
-- O documento recomenda manter o Next.js atualizado; a presença de uma versão fixa não demonstra, isoladamente, que há atualização pendente. Qualquer upgrade exige uma auditoria de compatibilidade distinta.
+- The document recommends keeping Next.js up to date; the presence of a pinned version does not, in isolation, demonstrate that an update is pending. Any upgrade requires a separate compatibility audit.
 
-### Recomendações
+### Recommendations
 
-- Manter a documentação local de bootstrap (`README.md`) sincronizada com `package.json`, em especial versões de Node, pnpm e comandos de validação.
+- Keep the local bootstrap documentation (`README.md`) in sync with `package.json`, especially Node versions, pnpm, and validation commands.
 
 ## Findings
 
-Nenhum finding. A evidência examinada é compatível com `01-installation.md` na versão instalada.
+No findings. The evidence examined is compatible with `01-installation.md` at the installed version.
 
-## Conclusão
+## Conclusion
 
-**Conforme.** As regras deste documento que se aplicam a um projeto existente — versão mínima de Node, declaração das dependências centrais, root layout do App Router, TypeScript, alias e execução direta do linter — estão atendidas. Receitas de criação inicial e upgrade não são requisitos obrigatórios para esta base já provisionada.
+**Compliant.** The rules in this document that apply to an existing project — minimum Node version, declaration of the core dependencies, the App Router root layout, TypeScript, alias, and direct execution of the linter — are met. Initial-creation and upgrade recipes are not mandatory requirements for this already provisioned base.

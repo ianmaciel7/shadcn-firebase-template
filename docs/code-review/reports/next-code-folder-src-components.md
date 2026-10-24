@@ -1,46 +1,46 @@
-# Revisão arquitetural de `src/components/`
+# Architectural review of `src/components/`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-code-folder-src-components`
-- Tipo: `CODE_FOLDER`
-- Caminho principal: `src/components/`
-- Documentação associada: `ARCHITECTURE.md`, `.agents/rules/components-contracts.md`, `.agents/rules/shadcn-ui-maintenance.md`, `docs/adr/0008-install-firebase-ui-registry.md`, Next.js 16.4.2 Server/Client Components reference
-- Versão do Next.js: `16.4.2`
-- Status: concluído
+- Full subagent name: `next-code-folder-src-components`
+- Type: `CODE_FOLDER`
+- Primary path: `src/components/`
+- Associated documentation: `ARCHITECTURE.md`, `.agents/rules/components-contracts.md`, `.agents/rules/shadcn-ui-maintenance.md`, `docs/adr/0008-install-firebase-ui-registry.md`, Next.js 16.4.2 Server/Client Components reference
+- Next.js version: `16.4.2`
+- Status: completed
 
-## Escopo
+## Scope
 
-- Responsabilidade: organização de alto nível e limites entre os módulos imediatos de componentes; os diretórios e arquivos filhos têm relatórios individuais próprios.
-- Arquivos consultados: listagem de `src/components/`; `ARCHITECTURE.md`; `.agents/rules/components-contracts.md`; `.agents/rules/shadcn-ui-maintenance.md`; `docs/adr/0008-install-firebase-ui-registry.md`; `components.json`.
-- Dependências analisadas: `src/components/ui/`, `src/components/firebase/` e `src/components/ai-elements/` como áreas separadas; cada árvore tem seu próprio escopo de revisão no manifesto.
+- Responsibility: high-level organization and boundaries between the immediate component modules; the child directories and files have their own individual reports.
+- Files consulted: listing of `src/components/`; `ARCHITECTURE.md`; `.agents/rules/components-contracts.md`; `.agents/rules/shadcn-ui-maintenance.md`; `docs/adr/0008-install-firebase-ui-registry.md`; `components.json`.
+- Dependencies analyzed: `src/components/ui/`, `src/components/firebase/`, and `src/components/ai-elements/` as separate areas; each tree has its own review scope in the manifest.
 
-## Revisão arquitetural
+## Architectural review
 
-`src/components/` não contém arquivos diretos: a raiz separa os três domínios principais em `ui/`, `firebase/` e `ai-elements/`. A colocalização mantém os componentes compartilhados fora das rotas, enquanto `ARCHITECTURE.md` direciona extensões próprias de interface para `ui/extensions/`. A distinção entre fonte adaptável da integração Firebase e componentes de UI evita misturar a responsabilidade de autenticação com os wrappers e primitives visuais.
+`src/components/` contains no direct files: the root separates the three main domains into `ui/`, `firebase/`, and `ai-elements/`. The colocation keeps shared components outside the routes, while `ARCHITECTURE.md` directs owned interface extensions to `ui/extensions/`. The distinction between the adaptable source of the Firebase integration and the UI components avoids mixing the authentication responsibility with the visual wrappers and primitives.
 
-Inventário estrutural observado:
+Observed structural inventory:
 
-- `ai-elements/`: 51 arquivos, sem subpastas.
-- `firebase/`: 30 arquivos, sem subpastas.
-- `ui/`: 72 arquivos e a subpasta `extensions/`.
-- A ausência de arquivos diretamente em `src/components/` deixa a divisão visível e não cria uma camada extra de barrel ou lógica compartilhada na raiz.
+- `ai-elements/`: 51 files, no subfolders.
+- `firebase/`: 30 files, no subfolders.
+- `ui/`: 72 files and the `extensions/` subfolder.
+- The absence of files directly in `src/components/` keeps the division visible and does not create an extra barrel layer or shared logic at the root.
 
 ## Findings
 
 ### COMPONENTS-OWNERSHIP-001
 
-- Identificador: `COMPONENTS-OWNERSHIP-001`
-- Severidade: Baixa
-- Categoria: Documentação de arquitetura / propriedade de código
-- Caminho e linha: `.agents/rules/components-contracts.md:14-18`; compare `docs/adr/0008-install-firebase-ui-registry.md:454-480` e `ARCHITECTURE.md:132-137`.
-- Evidência concreta: a regra de contratos classifica `ui/`, `firebase/` e `ai-elements/` conjuntamente como “vendor-owned” e os exclui das verificações de nomenclatura da aplicação. A alteração vigente do ADR 0008, porém, define os componentes Firebase copiados como fonte do projeto que pode ser adaptada; `ARCHITECTURE.md` também os descreve como fonte shadcn de propriedade local. Assim, a regra aplica ao Firebase uma classificação mais ampla do que a decisão vigente.
-- Referência à documentação: ADR 0008, seção “Amendment: Adoption of locally owned source model”; `ARCHITECTURE.md`, seção de limites de runtime/componentes.
-- Impacto: mantenedores podem interpretar a exceção de nomes como imutabilidade do código, apesar de a decisão atual permitir alterações locais, ou aplicar incorretamente a política de fonte gerada às demais áreas.
-- Correção recomendada: explicitar na regra que o tratamento varia por árvore: primitives de shadcn, Firebase adaptável como fonte do projeto e AI Elements conforme seu contrato/documentação próprios. Preservar o histórico do ADR e atualizar apenas a orientação operacional vigente.
-- Teste sugerido: teste documental ou revisão de consistência garantindo que a regra de contratos, arquitetura e ADR vigente descrevem a mesma propriedade e os limites das verificações.
+- Identifier: `COMPONENTS-OWNERSHIP-001`
+- Severity: Low
+- Category: Architecture documentation / code ownership
+- Path and line: `.agents/rules/components-contracts.md:14-18`; compare `docs/adr/0008-install-firebase-ui-registry.md:454-480` and `ARCHITECTURE.md:132-137`.
+- Concrete evidence: the contracts rule classifies `ui/`, `firebase/`, and `ai-elements/` together as "vendor-owned" and excludes them from the application naming checks. The current amendment to ADR 0008, however, defines the copied Firebase components as project source that can be adapted; `ARCHITECTURE.md` also describes them as locally owned shadcn source. So the rule applies a broader classification to Firebase than the current decision.
+- Documentation reference: ADR 0008, section "Amendment: Adoption of locally owned source model"; `ARCHITECTURE.md`, runtime/component boundaries section.
+- Impact: maintainers may interpret the naming exception as code immutability, even though the current decision allows local changes, or incorrectly apply the generated-source policy to the other areas.
+- Recommended fix: state in the rule that the treatment varies by tree: shadcn primitives, adaptable Firebase as project source, and AI Elements according to their own contract/documentation. Preserve the ADR's history and update only the current operational guidance.
+- Suggested test: a documentation test or consistency review ensuring that the contracts rule, the architecture, and the current ADR describe the same ownership and the limits of the checks.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Parcialmente conforme.
-- Explicação: a divisão da pasta em três áreas e a ausência de módulos na raiz são coerentes com a arquitetura. Há uma contradição de documentação sobre propriedade e tratamento da árvore Firebase, que deve ser resolvida no guia operacional. Esta revisão não substitui os relatórios de cada subpasta ou arquivo, nem estabelece que todos os componentes individuais estão corretos.
+- Classification: Partially compliant.
+- Explanation: the folder's division into three areas and the absence of modules at the root are consistent with the architecture. There is a documentation contradiction about the ownership and treatment of the Firebase tree, which should be resolved in the operational guide. This review does not replace the reports for each subfolder or file, nor does it establish that every individual component is correct.

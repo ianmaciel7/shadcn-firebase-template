@@ -1,45 +1,45 @@
-# Relatório individual — next-doc-folder-01-app
+# Individual report — next-doc-folder-01-app
 
-## Identificação
+## Identification
 
-- **Nome completo do subagente:** `next-doc-folder-01-app`
-- **Tipo:** `DOC_FOLDER`
-- **Caminho principal:** `node_modules/next/dist/docs/01-app/`
-- **Documentação associada:** App Router
-- **Versão do Next.js:** `16.4.2`
-- **Status:** concluído
+- **Full subagent name:** `next-doc-folder-01-app`
+- **Type:** `DOC_FOLDER`
+- **Primary path:** `node_modules/next/dist/docs/01-app/`
+- **Associated documentation:** App Router
+- **Next.js version:** `16.4.2`
+- **Status:** completed
 
-## Escopo
+## Scope
 
-- **Responsabilidade:** auditar exclusivamente a organização, cobertura e referências entre os itens imediatos da pasta `01-app/`; revisões semânticas de cada arquivo e subpasta pertencem aos respectivos subagentes.
-- **Arquivos consultados:** `01-app/index.md`, `docs/index.md`, contagens recursivas dos três diretórios imediatos, `package.json` e `next.config.ts` do projeto para verificar aplicabilidade.
-- **Dependências analisadas:** a navegação da raiz da documentação para `app/getting-started`; a configuração local `cacheComponents`, `partialPrefetching` e `reactCompiler` que torna o App Router aplicável.
+- **Responsibility:** audit exclusively the organization, coverage, and references among the immediate items of the `01-app/` folder; semantic reviews of each file and subfolder belong to the respective subagents.
+- **Files consulted:** `01-app/index.md`, `docs/index.md`, recursive counts of the three immediate directories, and the project's `package.json` and `next.config.ts` to verify applicability.
+- **Dependencies analyzed:** the navigation from the documentation root to `app/getting-started`; the local `cacheComponents`, `partialPrefetching`, and `reactCompiler` configuration that makes the App Router applicable.
 
 ## Code Review
 
-### Implementações corretas
+### Correct implementations
 
-- A pasta contém uma taxonomia clara e completa para o App Router: `01-getting-started/`, `02-guides/` e `03-api-reference/`, além de `index.md` e `04-glossary.md` no nível correto.
-- O `index.md` define o App Router e fornece cinco próximos passos que apontam à sequência de fundamentos em `01-getting-started/`; a raiz `docs/index.md` direciona explicitamente o leitor ao grupo App Router.
-- A divisão é proporcional: Getting Started tem 19 arquivos, Guides 81 e API Reference 196; a especialização por guias e referência técnica não é confundida com o material de introdução.
-- A versão instalada corresponde ao uso do projeto: `next@16.4.2`, App Router sob `src/app`, Cache Components e Partial Prefetching habilitados.
+- The folder contains a clear and complete taxonomy for the App Router: `01-getting-started/`, `02-guides/`, and `03-api-reference/`, plus `index.md` and `04-glossary.md` at the right level.
+- `index.md` defines the App Router and provides five next steps that point to the sequence of fundamentals in `01-getting-started/`; the root `docs/index.md` explicitly directs the reader to the App Router group.
+- The division is proportional: Getting Started has 19 files, Guides 81, and API Reference 196; the specialization into guides and technical reference is not confused with the introductory material.
+- The installed version matches the project's usage: `next@16.4.2`, App Router under `src/app`, Cache Components and Partial Prefetching enabled.
 
-### Problemas encontrados
+### Issues found
 
-- Nenhum finding comprovado no escopo de pasta.
+- No proven finding within the folder scope.
 
-### Riscos
+### Risks
 
-- Os 81 documentos de Guides e 196 de API Reference requerem interpretação por arquivo; a coerência estrutural desta pasta não substitui essa auditoria individual.
+- The 81 Guides documents and 196 API Reference documents require per-file interpretation; the structural coherence of this folder does not replace that individual audit.
 
-### Recomendações
+### Recommendations
 
-- Manter a separação atual entre introdução, guias e referência; consolidar somente após os relatórios dos subagentes filhos verificarem links e compatibilidade de cada documento.
+- Keep the current separation between introduction, guides, and reference; consolidate only after the child subagents' reports verify the links and compatibility of each document.
 
 ## Findings
 
-Nenhum finding aplicável: não há divergência estrutural comprovada entre a organização de `01-app/`, sua entrada na raiz instalada e a configuração App Router do projeto.
+No applicable finding: there is no proven structural divergence between the organization of `01-app/`, its entry in the installed root, and the project's App Router configuration.
 
-## Conclusão
+## Conclusion
 
-**Conforme.** A estrutura imediata é coerente, a entrada de navegação é válida e os tópicos de App Router são aplicáveis ao projeto. A conclusão é limitada à responsabilidade de pasta e não declara os arquivos ou subpastas individuais como revisados.
+**Compliant.** The immediate structure is coherent, the navigation entry is valid, and the App Router topics are applicable to the project. The conclusion is limited to the folder responsibility and does not declare the individual files or subfolders as reviewed.

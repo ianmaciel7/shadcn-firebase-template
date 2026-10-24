@@ -1,41 +1,41 @@
-# Relatório individual — `next-doc-file-01-app-01-getting-started-12-images-md`
+# Individual report — `next-doc-file-01-app-01-getting-started-12-images-md`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-doc-file-01-app-01-getting-started-12-images-md`
-- Tipo: `DOC_FILE`
-- Caminho principal: `node_modules/next/dist/docs/01-app/01-getting-started/12-images.md`
-- Documentação associada: uso de `next/image`, imagens locais, dimensões intrínsecas e configuração de origens remotas.
-- Versão do Next.js: `16.4.2`
-- Status: concluído.
+- Full subagent name: `next-doc-file-01-app-01-getting-started-12-images-md`
+- Type: `DOC_FILE`
+- Primary path: `node_modules/next/dist/docs/01-app/01-getting-started/12-images.md`
+- Associated documentation: use of `next/image`, local images, intrinsic dimensions, and configuration of remote sources.
+- Next.js version: `16.4.2`
+- Status: completed.
 
-## Escopo
+## Scope
 
-- Responsabilidade: ler integralmente o guia de imagens instalado e avaliar sua aplicabilidade ao projeto.
-- Arquivos consultados: o guia principal; `src/app/_components/home-section-client.tsx`; `next.config.ts`; `public/next.svg`; ocorrências de `<img>` em `src/components/`.
-- Dependências analisadas: `next/image`, App Router e configuração `images.remotePatterns`.
+- Responsibility: read the installed images guide in full and assess its applicability to the project.
+- Files consulted: the primary guide; `src/app/_components/home-section-client.tsx`; `next.config.ts`; `public/next.svg`; occurrences of `<img>` in `src/components/`.
+- Dependencies analyzed: `next/image`, the App Router, and the `images.remotePatterns` configuration.
 
 ## Code Review
 
-Implementações corretas observadas:
+Correct implementations observed:
 
-- O único uso identificado de `next/image` no código do App Router é o logotipo estático em `src/app/_components/home-section-client.tsx:48-55`. Ele referencia `/next.svg`, um arquivo existente em `public/next.svg`, e define `width={100}` e `height={20}`. Isso mantém a proporção conhecida e evita mudança de layout durante o carregamento, conforme o guia.
-- A imagem é decorativa: `alt=""` e `role="presentation"` evitam anunciar o logotipo sem conteúdo informativo.
-- O logotipo está no topo da página e recebe `priority`, coerente com o uso visível na primeira tela. Nenhuma evidência encontrada indica uso indevido em imagens abaixo da dobra.
-- `next.config.ts` não define `images.remotePatterns`, mas o uso observado de `next/image` aponta para um recurso local. Portanto, a configuração remota não é necessária para esse uso.
+- The only identified use of `next/image` in the App Router code is the static logo in `src/app/_components/home-section-client.tsx:48-55`. It references `/next.svg`, an existing file at `public/next.svg`, and sets `width={100}` and `height={20}`. This preserves the known proportion and avoids layout shift during loading, per the guide.
+- The image is decorative: `alt=""` and `role="presentation"` avoid announcing the logo with no informational content.
+- The logo is at the top of the page and receives `priority`, consistent with its visible use on the first screen. No evidence found indicates misuse on below-the-fold images.
+- `next.config.ts` does not define `images.remotePatterns`, but the observed use of `next/image` points to a local resource. Therefore the remote configuration is not needed for that use.
 
-Aplicabilidade de outros exemplos do guia:
+Applicability of other examples in the guide:
 
-- A recomendação de `remotePatterns` aplica-se quando uma URL remota é usada com o otimizador `next/image`; não há esse uso remoto identificado no projeto.
-- Existem `<img>` em previews de anexos/imagens base64, QR code gerado como data URL e logotipos pequenos de provedores. O guia explica os recursos de `next/image`, mas não estabelece que todo elemento `<img>` do projeto precisa ser convertido. Os contextos observados não demonstram, por si sós, violação deste documento; os elementos de dados/preview têm fluxo e fontes diferentes do logotipo estático.
+- The `remotePatterns` recommendation applies when a remote URL is used with the `next/image` optimizer; no such remote use was identified in the project.
+- There are `<img>` elements in attachment/base64 image previews, a QR code generated as a data URL, and small provider logos. The guide explains the features of `next/image`, but does not establish that every `<img>` element in the project must be converted. The observed contexts do not, by themselves, demonstrate a violation of this document; the data/preview elements have a different flow and sources than the static logo.
 
-Problemas encontrados: nenhum desvio comprovado em relação a este documento.
+Issues found: no proven deviation from this document.
 
 ## Findings
 
-Nenhum finding. Não foi identificada evidência que exija configuração adicional ou alteração do uso atual de imagens.
+No findings. No evidence was identified that requires additional configuration or a change to the current use of images.
 
-## Conclusão
+## Conclusion
 
-- Classificação: conforme.
-- Explicação: o caso diretamente coberto pelo guia usa `next/image` para um asset local com dimensões explícitas, texto alternativo decorativo apropriado e prioridade compatível com a posição visível. A ausência de allowlist remota é não aplicável ao uso examinado. Os demais `<img>` encontrados não são convertidos em findings sem evidência de que o requisito do guia se aplique aos seus fluxos de preview ou dados.
+- Classification: compliant.
+- Explanation: the case directly covered by the guide uses `next/image` for a local asset with explicit dimensions, appropriate decorative alternative text, and a priority compatible with the visible position. The absence of a remote allowlist is not applicable to the use examined. The other `<img>` elements found are not converted into findings without evidence that the guide's requirement applies to their preview or data flows.

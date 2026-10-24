@@ -1,47 +1,47 @@
-# Identificação
+# Identification
 
-- Nome completo do subagente: `next-doc-file-01-app-01-getting-started-02-project-structure-md`
-- Tipo: `DOC_FILE`
-- Caminho principal: `node_modules/next/dist/docs/01-app/01-getting-started/02-project-structure.md`
-- Documentação associada: Project structure and organization (documentação instalada)
-- Versão do Next.js: `16.4.2`
-- Status: concluído
+- Full subagent name: `next-doc-file-01-app-01-getting-started-02-project-structure-md`
+- Type: `DOC_FILE`
+- Primary path: `node_modules/next/dist/docs/01-app/01-getting-started/02-project-structure.md`
+- Associated documentation: Project structure and organization (installed documentation)
+- Next.js version: `16.4.2`
+- Status: completed
 
-## Escopo
+## Scope
 
-Responsabilidade: interpretar exclusivamente a convenção de organização de projeto e compará-la com a estrutura do repositório. Foram consultados, apenas como evidência de aplicabilidade, `src/app/layout.tsx`, `src/app/page.tsx`, os layouts e páginas dos grupos `(protected)` e `(public)`, `next.config.ts`, `.gitignore` e a árvore de `src/app`.
+Responsibility: interpret exclusively the project organization convention and compare it with the repository's structure. Consulted only as evidence of applicability: `src/app/layout.tsx`, `src/app/page.tsx`, the layouts and pages of the `(protected)` and `(public)` groups, `next.config.ts`, `.gitignore`, and the `src/app` tree.
 
-Dependências analisadas: App Router do Next.js, grupos de rota, pastas privadas, os arquivos especiais de rota e a configuração de `src` descritos no documento principal.
+Dependencies analyzed: the Next.js App Router, route groups, private folders, the special route files, and the `src` configuration described in the primary document.
 
 ## Code Review
 
-### Implementações corretas
+### Correct implementations
 
-- O projeto usa o diretório opcional `src` e mantém `src/app` como raiz do App Router, enquanto configuração permanece no repositório raiz (`next.config.ts:1-52`), compatível com a seção **src folder**.
-- `src/app/layout.tsx:40-73` fornece o layout raiz e `src/app/page.tsx:1-5` expõe a rota `/`, obedecendo às convenções de `layout` e `page`.
-- Os diretórios `(protected)` e `(public)` são grupos de rota; seus layouts (`src/app/(protected)/layout.tsx:1-5`, `src/app/(public)/layout.tsx:1-11`) organizam a aplicação sem entrar na URL, exatamente como a seção **Route groups** prevê.
-- Componentes, hooks e utilitários privados são colocados em `_components`, `_hooks` e `_lib` abaixo de segmentos de rota, por exemplo `src/app/(protected)/profile/_components/`, o que é compatível com a seção **Private folders** e evita a exposição acidental de módulos de implementação.
-- Arquivos especiais de erro, carregamento e não encontrado estão na raiz de `app`: `error.tsx`, `loading.tsx` e `not-found.tsx`. O `error.tsx` declara a fronteira de cliente em `src/app/error.tsx:1`, coerente com a função do arquivo.
-- `.gitignore:41-43` exclui `.env*` e permite somente `.env.example`, atendendo a recomendação documental de não versionar arquivos de ambiente reais.
+- The project uses the optional `src` directory and keeps `src/app` as the App Router root, while configuration stays in the repository root (`next.config.ts:1-52`), compatible with the **src folder** section.
+- `src/app/layout.tsx:40-73` provides the root layout and `src/app/page.tsx:1-5` exposes the `/` route, following the `layout` and `page` conventions.
+- The `(protected)` and `(public)` directories are route groups; their layouts (`src/app/(protected)/layout.tsx:1-5`, `src/app/(public)/layout.tsx:1-11`) organize the application without entering the URL, exactly as the **Route groups** section provides.
+- Private components, hooks, and utilities are placed in `_components`, `_hooks`, and `_lib` below route segments, for example `src/app/(protected)/profile/_components/`, which is compatible with the **Private folders** section and avoids accidental exposure of implementation modules.
+- The special error, loading, and not-found files are at the root of `app`: `error.tsx`, `loading.tsx`, and `not-found.tsx`. `error.tsx` declares the client boundary at `src/app/error.tsx:1`, consistent with the file's function.
+- `.gitignore:41-43` excludes `.env*` and allows only `.env.example`, meeting the documentation's recommendation not to version real environment files.
 
-### Problemas encontrados
+### Issues found
 
-Nenhum problema comprovado no escopo deste documento.
+No proven issue within the scope of this document.
 
-### Riscos
+### Risks
 
-- A documentação descreve alternativas como Pages Router, rotas paralelas, interceptadas, `proxy.ts`, `instrumentation.ts` e múltiplos layouts raiz. Elas não são exigidas pelo App Router atual; adicioná-las sem necessidade seria expansão de escopo, não uma correção.
-- Os grupos `(protected)` e `(public)` não constituem autorização por si próprios. A proteção observada no layout é um detalhe de implementação que deve continuar a ser auditado nos relatórios individuais correspondentes.
+- The documentation describes alternatives such as the Pages Router, parallel routes, intercepting routes, `proxy.ts`, `instrumentation.ts`, and multiple root layouts. They are not required by the current App Router; adding them unnecessarily would be scope expansion, not a fix.
+- The `(protected)` and `(public)` groups do not constitute authorization by themselves. The protection observed in the layout is an implementation detail that must continue to be audited in the corresponding individual reports.
 
-### Recomendações
+### Recommendations
 
-- Preservar a separação atual: arquivos especiais de rota em `src/app`, detalhes da rota em pastas iniciadas por `_`, e recursos compartilhados fora dos segmentos quando houver reutilização real.
-- Ao introduzir novas rotas, confirmar se o arquivo é um dos nomes especiais do Next.js e manter a rota pública limitada a um `page` ou `route` intencional.
+- Preserve the current separation: special route files in `src/app`, route details in folders starting with `_`, and shared resources outside the segments when there is real reuse.
+- When introducing new routes, confirm whether the file is one of the special Next.js names and keep the public route limited to an intentional `page` or `route`.
 
 ## Findings
 
-Não há findings comprovados para este item.
+There are no proven findings for this item.
 
-## Conclusão
+## Conclusion
 
-**Conforme.** A estrutura real emprega o App Router sob `src/app`, layout raiz, arquivos especiais e a combinação documentada de route groups e private folders. Não foi encontrada divergência concreta entre este documento instalado do Next.js 16.4.2 e os caminhos consultados.
+**Compliant.** The real structure uses the App Router under `src/app`, a root layout, special files, and the documented combination of route groups and private folders. No concrete divergence was found between this installed Next.js 16.4.2 document and the paths consulted.

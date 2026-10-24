@@ -1,23 +1,23 @@
 # Review: `src/app/not-found.tsx`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-code-file-src-app-not-found-tsx`
-- Tipo: `CODE_FILE`
-- Caminho principal: `src/app/not-found.tsx`
-- Documentação associada: installed Next.js 16.4.2 `01-app/03-api-reference/03-file-conventions/not-found.md` and `01-app/01-getting-started/10-error-handling.md`; project localization and routing conventions.
-- Versão do Next.js: `16.4.2`
-- Status: Concluído
+- Full subagent name: `next-code-file-src-app-not-found-tsx`
+- Type: `CODE_FILE`
+- Primary path: `src/app/not-found.tsx`
+- Associated documentation: installed Next.js 16.4.2 `01-app/03-api-reference/03-file-conventions/not-found.md` and `01-app/01-getting-started/10-error-handling.md`; project localization and routing conventions.
+- Next.js version: `16.4.2`
+- Status: Completed
 
-## Escopo
+## Scope
 
-- Responsabilidade: revisar individualmente a UI 404 da raiz do App Router, seu contrato de arquivo especial, composição React, acessibilidade e localização.
-- Arquivos consultados: `src/app/not-found.tsx`, `src/app/layout.tsx`, `src/components/ui/extensions/intl-provider-server.tsx`, `src/i18n/request.ts`, `src/messages/en.json`, `src/messages/pt-BR.json`, `src/messages/es.json`, installed `not-found.md`, installed `10-error-handling.md`, `CODING_STANDARDS.md`, `.agents/rules/nextjs-route-files.md`, and `ARCHITECTURE.md`.
-- Dependências analisadas: Next.js `Link`, `buttonVariants`, `next-intl` `useTranslations` server export, root `IntlProviderServer`, locale message catalogs.
+- Responsibility: individually review the App Router root 404 UI, its special-file contract, React composition, accessibility, and localization.
+- Files consulted: `src/app/not-found.tsx`, `src/app/layout.tsx`, `src/components/ui/extensions/intl-provider-server.tsx`, `src/i18n/request.ts`, `src/messages/en.json`, `src/messages/pt-BR.json`, `src/messages/es.json`, installed `not-found.md`, installed `10-error-handling.md`, `CODING_STANDARDS.md`, `.agents/rules/nextjs-route-files.md`, and `ARCHITECTURE.md`.
+- Dependencies analyzed: Next.js `Link`, `buttonVariants`, `next-intl` `useTranslations` server export, root `IntlProviderServer`, locale message catalogs.
 
 ## Code Review
 
-Implementações corretas:
+Correct implementations:
 
 - The component is a default export with no props at lines 5-6, matching the installed `not-found.tsx` convention. It returns UI for the root not-found boundary and lets Next.js own status/noindex handling.
 - It has no `use client` directive and introduces no browser APIs or event handlers (lines 1-19). `useTranslations` resolves through the installed `next-intl` React Server entry (`node_modules/next-intl/dist/esm/development/react-server/useTranslations.js`); the root layout places the locale provider under `Suspense` (`src/app/layout.tsx:31-40`).
@@ -33,9 +33,9 @@ Risks and scope notes:
 
 ## Findings
 
-Nenhum finding comprovado neste arquivo.
+No proven finding in this file.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Conforme.
-- Explicação: the file follows the installed App Router not-found contract, composes a localized server-rendered 404 with the existing root provider, and uses accessible semantic navigation. The inherited static document language is tracked against the root layout separately; no independent issue in this file was established.
+- Classification: Compliant.
+- Explanation: the file follows the installed App Router not-found contract, composes a localized server-rendered 404 with the existing root provider, and uses accessible semantic navigation. The inherited static document language is tracked against the root layout separately; no independent issue in this file was established.

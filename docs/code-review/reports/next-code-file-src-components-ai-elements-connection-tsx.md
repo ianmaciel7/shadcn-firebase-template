@@ -1,46 +1,46 @@
-# Relatório individual — `next-code-file-src-components-ai-elements-connection-tsx`
+# Individual report — `next-code-file-src-components-ai-elements-connection-tsx`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-code-file-src-components-ai-elements-connection-tsx`.
-- Tipo: `CODE_FILE`.
-- Caminho principal: `src/components/ai-elements/connection.tsx`.
-- Documentação associada: Next.js instalado, `01-app/01-getting-started/05-server-and-client-components.md`, em especial a distinção entre fronteira declarada e participação no grafo cliente; tipos e implementação instalados de React Flow.
-- Versão do Next.js: `16.4.2`, confirmada em `node_modules/next/package.json`.
-- Status: Concluído.
+- Full subagent name: `next-code-file-src-components-ai-elements-connection-tsx`.
+- Type: `CODE_FILE`.
+- Primary path: `src/components/ai-elements/connection.tsx`.
+- Associated documentation: installed Next.js, `01-app/01-getting-started/05-server-and-client-components.md`, especially the distinction between a declared boundary and participation in the client graph; installed React Flow types and implementation.
+- Next.js version: `16.4.2`, confirmed in `node_modules/next/package.json`.
+- Status: Completed.
 
-## Escopo
+## Scope
 
-- Responsabilidade: revisão integral das 25 linhas do renderizador de conexão, incluindo geometria SVG, contrato de props, dependências, composição, acessibilidade e limites Server/Client.
-- Arquivos consultados: arquivo principal; `AGENTS.md`; `docs/code-review/README.md`; `docs/code-review/agents-manifest.md`; relatório individual de `canvas.tsx`; `CODING_STANDARDS.md`; `DESIGN.md`; `.agents/rules/components-contracts.md`; `.agents/rules/shadcn-ui-maintenance.md`; instruções de `.agents/skills/shadcn/SKILL.md`; guia Next.js acima; `node_modules/@xyflow/react/package.json`, `dist/esm/types/edges.d.ts`, `dist/esm/index.mjs` e `dist/style.css`.
-- Dependências analisadas: contrato `ConnectionLineComponent` de `@xyflow/react@12.12.0`. O import da linha 1 é somente de tipo; o módulo não importa primitivas interativas em runtime.
-- Consumidores: busca por `Connection` e `ai-elements/connection` em `src/`, excluindo o arquivo principal, não encontrou consumidores. Isso limita a avaliação do contexto final.
+- Responsibility: full review of the 25 lines of the connection renderer, including SVG geometry, props contract, dependencies, composition, accessibility, and Server/Client limits.
+- Files consulted: primary file; `AGENTS.md`; `docs/code-review/README.md`; `docs/code-review/agents-manifest.md`; individual report for `canvas.tsx`; `CODING_STANDARDS.md`; `DESIGN.md`; `.agents/rules/components-contracts.md`; `.agents/rules/shadcn-ui-maintenance.md`; instructions in `.agents/skills/shadcn/SKILL.md`; Next.js guide above; `node_modules/@xyflow/react/package.json`, `dist/esm/types/edges.d.ts`, `dist/esm/index.mjs`, and `dist/style.css`.
+- Dependencies analyzed: the `ConnectionLineComponent` contract of `@xyflow/react@12.12.0`. The import on line 1 is type-only; the module imports no interactive primitives at runtime.
+- Consumers: a search for `Connection` and `ai-elements/connection` in `src/`, excluding the primary file, found no consumers. This limits the assessment of the final context.
 
 ## Code Review
 
-Implementações corretas:
+Correct implementations:
 
-- O componente tem uma responsabilidade pequena: desenhar a linha temporária entre dois pontos e um indicador no destino. Não gerencia estado de aplicação, persistência, navegação ou autorização.
-- A tipagem `ConnectionLineComponent` corresponde ao contrato instalado em `dist/esm/types/edges.d.ts:193-215`. As quatro coordenadas consumidas são números definidos nesse contrato.
-- O path na linha 9 começa em `(fromX, fromY)` e termina em `(toX, toY)`; os pontos de controle usam a coordenada horizontal intermediária e as respectivas coordenadas verticais. Isso produz uma curva cúbica horizontal consistente, inclusive quando a ordem horizontal dos pontos se inverte. Não há parsing de dados, HTML injetado ou concatenação em markup executável.
-- `ConnectionLineWrapper` da dependência instalada cria o elemento `svg` e um grupo antes de renderizar o componente customizado (`index.mjs:3184-3201`). Portanto, o retorno `g` do arquivo está correto para esse contrato; não é necessário criar outro `svg` dentro dele.
-- A classe `animated` é atendida pelo stylesheet instalado: `.react-flow__connection .animated` aplica tracejado e animação. A ausência de uma regra local em `globals.css` não demonstra animação quebrada; o contexto React Flow deve carregar seu stylesheet.
-- A ausência de `"use client"` é adequada para um módulo puro, com import somente de tipo e sem hooks, eventos ou APIs de navegador. Quando importado por uma composição cliente do editor, participa desse grafo sem precisar repetir a diretiva, conforme a documentação instalada. Não há import server-only.
-- A exceção de naming dos componentes de registro inclui AI Elements; arrow function e exportação nomeada não constituem violação de uma regra de Next.js.
+- The component has a small responsibility: drawing the temporary line between two points and an indicator at the destination. It manages no application state, persistence, navigation, or authorization.
+- The `ConnectionLineComponent` typing matches the installed contract in `dist/esm/types/edges.d.ts:193-215`. The four coordinates consumed are numbers defined in that contract.
+- The path on line 9 starts at `(fromX, fromY)` and ends at `(toX, toY)`; the control points use the intermediate horizontal coordinate and the respective vertical coordinates. This produces a consistent horizontal cubic curve, even when the horizontal order of the points is reversed. There is no data parsing, injected HTML, or concatenation into executable markup.
+- The installed dependency's `ConnectionLineWrapper` creates the `svg` element and a group before rendering the custom component (`index.mjs:3184-3201`). Therefore the file's `g` return is correct for that contract; there is no need to create another `svg` inside it.
+- The `animated` class is served by the installed stylesheet: `.react-flow__connection .animated` applies dashing and animation. The absence of a local rule in `globals.css` does not demonstrate broken animation; the React Flow context must load its stylesheet.
+- The absence of `"use client"` is appropriate for a pure module, with a type-only import and no hooks, events, or browser APIs. When imported by a client composition of the editor, it participates in that graph without needing to repeat the directive, per the installed documentation. There is no server-only import.
+- The naming exception for registry components includes AI Elements; an arrow function and a named export do not constitute a violation of a Next.js rule.
 
-Riscos e recomendações:
+Risks and recommendations:
 
-- O círculo usa `fill="#fff"` na linha 17. Isso diverge da orientação de tokens semânticos em `DESIGN.md`, mas não foi demonstrado defeito de contraste ou legibilidade num consumidor atual. Avaliar a intenção visual e o token apropriado antes da adoção em temas claro/escuro; não há evidência para uma severidade funcional.
-- O renderizador escolhe uma curva horizontal fixa e não usa `fromPosition`, `toPosition`, `connectionLineType`, `connectionStatus` ou `connectionLineStyle`. O contrato permite uma renderização customizada; esses campos não são obrigações de uso por si só. Se um consumidor precisar de tangentes por orientação, diferenciação de validade ou estilos configuráveis, deverá adaptar o renderizador ou escolher outro. Nenhum consumidor foi encontrado que prometa esses comportamentos e os perca aqui.
-- Não há controle focável ou handler neste SVG. Operação por teclado, anúncio de conexão válida/inválida e alternativas ao arraste pertencem à integração do editor e não podem ser inferidos como aprovados ou reprovados pela presença isolada de `path` e `circle`.
-- A animação vem da dependência; verificar preferência de movimento reduzido na experiência final. Não foi medido impacto, contraste, visibilidade do indicador, comportamento de zoom ou leitor de tela.
-- Recursos de rotas, cache, dados, metadados e Server Actions não se aplicam ao módulo de desenho. Não foram executados build, navegador, testes de interação ou consulta externa/CLI; nenhuma API shadcn/Base UI é usada aqui.
+- The circle uses `fill="#fff"` on line 17. This diverges from the semantic-token guidance in `DESIGN.md`, but no contrast or legibility defect was demonstrated in a current consumer. Evaluate the visual intent and the appropriate token before adopting it in light/dark themes; there is no evidence for a functional severity.
+- The renderer chooses a fixed horizontal curve and does not use `fromPosition`, `toPosition`, `connectionLineType`, `connectionStatus`, or `connectionLineStyle`. The contract allows custom rendering; those fields are not usage obligations in themselves. If a consumer needs tangents by orientation, validity differentiation, or configurable styles, it must adapt the renderer or choose another. No consumer was found that promises those behaviors and loses them here.
+- There is no focusable control or handler in this SVG. Keyboard operation, announcement of a valid/invalid connection, and alternatives to dragging belong to the editor integration and cannot be inferred as passed or failed from the isolated presence of `path` and `circle`.
+- The animation comes from the dependency; verify the reduced-motion preference in the final experience. Impact, contrast, indicator visibility, zoom behavior, or screen reader were not measured.
+- Routes, cache, data, metadata, and Server Actions features do not apply to the drawing module. No build, browser, interaction tests, or external/CLI query were run; no shadcn/Base UI API is used here.
 
 ## Findings
 
-Nenhum finding acionável demonstrado. As observações sobre estilo, geometria alternativa e acessibilidade integrada são limites e decisões a verificar no consumidor, não falhas funcionais comprovadas deste arquivo.
+No actionable finding demonstrated. The observations about style, alternative geometry, and integrated accessibility are limits and decisions to verify in the consumer, not proven functional failures of this file.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Conforme no escopo de revisão estática.
-- Explicação: o renderizador é compatível com o contrato instalado e mantém a responsabilidade restrita ao SVG de conexão. O uso integrado do editor, incluindo acessibilidade e temas, permanece não verificado. Esta conclusão não cobre a pasta, seus outros arquivos ou um editor em execução.
+- Classification: Compliant within the static review scope.
+- Explanation: the renderer is compatible with the installed contract and keeps its responsibility restricted to the connection SVG. Integrated use of the editor, including accessibility and themes, remains unverified. This conclusion does not cover the folder, its other files, or a running editor.

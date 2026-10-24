@@ -1,38 +1,38 @@
-# Relatório individual — `next-doc-file-01-app-01-getting-started-16-proxy-md`
+# Individual report — `next-doc-file-01-app-01-getting-started-16-proxy-md`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-doc-file-01-app-01-getting-started-16-proxy-md`
-- Tipo: `DOC_FILE`
-- Caminho principal: `node_modules/next/dist/docs/01-app/01-getting-started/16-proxy.md`
-- Documentação associada: convenção de arquivo Proxy, `next.config.ts` redirects/rewrites, limites de autorização.
-- Versão do Next.js: `16.4.2`
-- Status: concluído.
+- Full subagent name: `next-doc-file-01-app-01-getting-started-16-proxy-md`
+- Type: `DOC_FILE`
+- Primary path: `node_modules/next/dist/docs/01-app/01-getting-started/16-proxy.md`
+- Associated documentation: Proxy file convention, `next.config.ts` redirects/rewrites, authorization boundaries.
+- Next.js version: `16.4.2`
+- Status: completed.
 
-## Escopo
+## Scope
 
-- Responsabilidade: leitura integral do guia Proxy instalado e verificação de aplicabilidade ao projeto.
-- Arquivos consultados: documento principal; `package.json`; `next.config.ts`; `.agents/rules/nextjs-maintenance.md`; busca por `proxy.*`, `middleware.*`, `NextRequest`, `NextResponse`, `middleware` e `proxy` em `src/` e `next.config.ts`.
-- Dependências analisadas: `next@16.4.2`, App Router em `src/app/` e rewrites condicionais do emulador Firebase.
+- Responsibility: full reading of the installed Proxy guide and verification of applicability to the project.
+- Files consulted: primary document; `package.json`; `next.config.ts`; `.agents/rules/nextjs-maintenance.md`; search for `proxy.*`, `middleware.*`, `NextRequest`, `NextResponse`, `middleware`, and `proxy` in `src/` and `next.config.ts`.
+- Dependencies analyzed: `next@16.4.2`, the App Router in `src/app/`, and the conditional Firebase emulator rewrites.
 
 ## Code Review
 
-O guia informa que desde Next.js 16 Middleware passou a se chamar Proxy, mantendo a funcionalidade. O arquivo `proxy.ts` ou `proxy.js` deve ficar na raiz do projeto ou em `src/`, no mesmo nível de `app`/`pages`, e o projeto aceita apenas um arquivo Proxy; a lógica pode ser delegada a módulos importados. Ele descreve `NextRequest`, `NextResponse` e `config.matcher` como APIs de implementação.
+The guide states that since Next.js 16 Middleware was renamed Proxy, keeping the functionality. The `proxy.ts` or `proxy.js` file must live at the project root or in `src/`, at the same level as `app`/`pages`, and the project accepts only one Proxy file; the logic can be delegated to imported modules. It describes `NextRequest`, `NextResponse`, and `config.matcher` as implementation APIs.
 
-O guia também limita o uso: Proxy pode ajustar headers, reescrever ou redirecionar requisições, mas não é indicado para busca de dados lenta nem para gerenciamento completo de sessão ou autorização. Para redirecionamentos simples, o documento orienta avaliar `redirects` no `next.config.ts` primeiro; fetch cache options não têm efeito no Proxy.
+The guide also limits its use: Proxy can adjust headers, rewrite or redirect requests, but it is not suitable for slow data fetching or for full session or authorization management. For simple redirects, the document directs evaluating `redirects` in `next.config.ts` first; fetch cache options have no effect in Proxy.
 
-Implementações corretas / aplicabilidade:
+Correct implementations / applicability:
 
-- O projeto não contém `proxy.ts`, `proxy.js`, `middleware.ts` nem `middleware.js` versionados. Busca nos fontes também não encontrou uso de `NextRequest`/`NextResponse` ou implementação Proxy.
-- As regras locais em `.agents/rules/nextjs-maintenance.md` preservam a fronteira de autorização do Firebase e alertam que Proxy/client guards não substituem autorização da camada de dados. Isso é coerente com o limite explícito do guia instalado.
-- `next.config.ts` declara rewrites para endpoints do Firebase Emulator apenas em desenvolvimento e retorna uma lista vazia nos demais casos. São rewrites de configuração para destinos conhecidos e não há evidência de que o projeto precise de um Proxy para implementá-las.
-- Como não existe uma superfície Proxy atual, matcher, runtime e comportamento de resposta não são aplicáveis à implementação presente.
+- The project contains no versioned `proxy.ts`, `proxy.js`, `middleware.ts`, or `middleware.js`. A search of the sources also found no use of `NextRequest`/`NextResponse` or a Proxy implementation.
+- The local rules in `.agents/rules/nextjs-maintenance.md` preserve the Firebase authorization boundary and warn that Proxy/client guards do not replace data-layer authorization. This is consistent with the explicit limit of the installed guide.
+- `next.config.ts` declares rewrites to Firebase Emulator endpoints only in development and returns an empty list otherwise. They are configuration rewrites to known destinations and there is no evidence that the project needs a Proxy to implement them.
+- Since no Proxy surface currently exists, the matcher, runtime, and response behavior are not applicable to the present implementation.
 
 ## Findings
 
-Nenhum finding. O guia é uma referência aplicável a uma implementação futura, mas não define uma obrigação de criar `proxy.ts`; criar Proxy neste projeto sem uma necessidade concreta ampliaria a superfície de requisições sem requisito observado.
+No findings. The guide is an applicable reference for a future implementation, but it does not define an obligation to create `proxy.ts`; creating a Proxy in this project without a concrete need would widen the request surface with no observed requirement.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Não aplicável.
-- Explicação: o projeto usa o App Router e a documentação 16.4.2 foi lida integralmente, mas não possui Proxy/Middleware. As rewrites de desenvolvimento existentes são configuradas em `next.config.ts`; não foi identificada divergência que exija Proxy. Se essa funcionalidade for introduzida no futuro, deve seguir o nome `proxy.ts`, a convenção de arquivo único, a semântica instalada de matcher e a separação explícita entre redirecionamento otimista e autorização real.
+- Classification: Not applicable.
+- Explanation: the project uses the App Router and the 16.4.2 documentation was read in full, but it has no Proxy/Middleware. The existing development rewrites are configured in `next.config.ts`; no divergence requiring a Proxy was identified. If this functionality is introduced in the future, it must follow the `proxy.ts` name, the single-file convention, the installed matcher semantics, and the explicit separation between optimistic redirect and real authorization.

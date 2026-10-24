@@ -1,33 +1,33 @@
 # Review: `next-doc-folder-01-app-01-getting-started`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-doc-folder-01-app-01-getting-started`
-- Tipo: `DOC_FOLDER`
-- Caminho principal: `node_modules/next/dist/docs/01-app/01-getting-started/`
-- Documentação associada: seção Getting Started do App Router em Next.js 16.4.2
-- Versão do Next.js: 16.4.2 (`node_modules/next/package.json`)
-- Status: Concluído
+- Full subagent name: `next-doc-folder-01-app-01-getting-started`
+- Type: `DOC_FOLDER`
+- Primary path: `node_modules/next/dist/docs/01-app/01-getting-started/`
+- Associated documentation: App Router Getting Started section in Next.js 16.4.2
+- Next.js version: 16.4.2 (`node_modules/next/package.json`)
+- Status: Completed
 
-## Escopo
+## Scope
 
-- Responsabilidade: estrutura, cobertura dos tópicos, relações e coerência desta pasta; os documentos individuais pertencem aos respectivos agentes `DOC_FILE`.
-- Arquivos consultados: os nomes e metadados dos 19 arquivos imediatos desta pasta, `index.md`, `01-app/index.md` e as referências cruzadas dentro da seção.
-- Dependências analisadas: destinos internos referenciados por `app/getting-started/*`, incluindo as referências recíprocas entre layouts/páginas, navegação e Server/Client Components.
-- Não houve alteração de código ou da documentação instalada.
+- Responsibility: structure, topic coverage, relationships, and coherence of this folder; the individual documents belong to the respective `DOC_FILE` agents.
+- Files consulted: the names and metadata of the 19 immediate files in this folder, `index.md`, `01-app/index.md`, and the cross-references within the section.
+- Dependencies analyzed: internal destinations referenced by `app/getting-started/*`, including the reciprocal references between layouts/pages, navigation, and Server/Client Components.
+- There was no change to code or to the installed documentation.
 
 ## Code Review
 
-- A pasta contém 18 guias numerados e um `index.md`, sem subpastas. A sequência vai de instalação e estrutura do projeto a layouts, navegação, componentes, dados, mutações, cache, revalidação, erros, CSS, imagens, fontes, metadados, Route Handlers, Proxy, implantação e atualização.
-- `01-app/index.md` apresenta a seção App Router e enumera como próximos passos os cinco fundamentos iniciais; `index.md` nesta pasta apresenta Getting Started. Os guias usam metadados de título/descrição e links de rota no formato de documentação renderizada.
-- Os guias estabelecem ligações pertinentes entre si: layouts e páginas apontam para navegação; navegação e guias de dados apontam para Server/Client Components; fetching data referencia estrutura e hierarquia; erro referencia hierarquia; caching referencia revalidação. A maior parte da navegação global está expressa como links absolutos `/docs/app/...`, coerentes com o site de documentação, não como caminhos relativos a arquivos Markdown.
-- A seleção introdutória no índice do pai é intencionalmente menor que o conjunto completo da pasta; os demais tópicos continuam enumerados na própria navegação documental e são cobertos por seus arquivos individuais.
-- Não foi identificada lacuna, duplicação ou orientação conflitante atribuível à organização da pasta. Questões de conteúdo ou aplicabilidade de um guia específico permanecem sob responsabilidade dos relatórios individuais de arquivo.
+- The folder contains 18 numbered guides and an `index.md`, with no subfolders. The sequence goes from installation and project structure to layouts, navigation, components, data, mutations, caching, revalidation, errors, CSS, images, fonts, metadata, Route Handlers, Proxy, deployment, and upgrading.
+- `01-app/index.md` presents the App Router section and lists the five initial fundamentals as next steps; `index.md` in this folder presents Getting Started. The guides use title/description metadata and route links in the rendered-documentation format.
+- The guides establish pertinent links among themselves: layouts and pages point to navigation; navigation and data guides point to Server/Client Components; fetching data references structure and hierarchy; error handling references hierarchy; caching references revalidation. Most of the global navigation is expressed as absolute `/docs/app/...` links, consistent with the documentation site, not as paths relative to Markdown files.
+- The introductory selection in the parent index is intentionally smaller than the full set in the folder; the remaining topics are still listed in the documentation navigation itself and are covered by their individual files.
+- No gap, duplication, or conflicting guidance attributable to the folder's organization was identified. Questions of content or applicability of a specific guide remain the responsibility of the individual file reports.
 
 ## Findings
 
-Nenhum finding estrutural comprovado.
+No proven structural finding.
 
-## Conclusão
+## Conclusion
 
-**Conforme.** A seção tem uma progressão temática clara, metadados e referências cruzadas alinhados com o App Router. A análise confirma apenas a organização e cobertura da pasta; não substitui a avaliação individual dos 19 documentos.
+**Compliant.** The section has a clear thematic progression, with metadata and cross-references aligned with the App Router. The analysis confirms only the organization and coverage of the folder; it does not replace the individual assessment of the 19 documents.

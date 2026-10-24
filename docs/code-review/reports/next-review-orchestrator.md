@@ -1,17 +1,17 @@
-# Identificação
+# Identification
 
-- Nome completo do subagente: `next-review-orchestrator`
-- Tipo: `COORDINATOR`
-- Caminho principal: repositório e manifesto de auditoria
-- Documentação associada: `node_modules/next/dist/docs/` (Next.js 16.4.2)
-- Versão do Next.js: 16.4.2
-- Status: concluído — descoberta e validação; nenhuma revisão delegada é inferida como concluída.
+- Full subagent name: `next-review-orchestrator`
+- Type: `COORDINATOR`
+- Primary path: repository and audit manifest
+- Associated documentation: `node_modules/next/dist/docs/` (Next.js 16.4.2)
+- Next.js version: 16.4.2
+- Status: completed — discovery and validation; no delegated review is inferred to be completed.
 
-## Escopo
+## Scope
 
-Responsabilidade exclusiva: descoberta, validação do inventário, distribuição em filas conforme o limite real de agentes e posterior consolidação. Não revisa uma pasta ou arquivo como item principal.
+Exclusive responsibility: discovery, validation of the inventory, distribution into queues according to the real agent limit, and later consolidation. It does not review a folder or file as a primary item.
 
-Arquivos consultados:
+Files consulted:
 
 - `docs/code-review/agents-manifest.md`
 - `docs/code-review/README.md`
@@ -19,22 +19,22 @@ Arquivos consultados:
 
 ## Code Review
 
-### Implementações corretas
+### Correct implementations
 
-- O manifesto contém exatamente 1.142 entradas: um coordenador, 44 pastas documentais, 482 arquivos documentais, 96 pastas do projeto e 519 arquivos versionados do projeto.
-- Nomes são únicos e têm o prefixo exigido. A retomada identificou 12 caminhos históricos de `graphify-out/` ausentes nesta instalação; permanecem pendentes, sem cobertura presumida.
-- Dos 526 itens documentais históricos, 514 caminhos existem nesta instalação; 12 caminhos de artefatos gerados precisam de reconciliação de elegibilidade.
-- A versão registrada (16.4.2) coincide com `node_modules/next/package.json`.
+- The manifest contains exactly 1,142 entries: one coordinator, 44 documentation folders, 482 documentation files, 96 project folders, and 519 versioned project files.
+- Names are unique and have the required prefix. The resumption identified 12 historical `graphify-out/` paths missing from this installation; they remain pending, with no presumed coverage.
+- Of the 526 historical documentation items, 514 paths exist in this installation; 12 generated-artifact paths need eligibility reconciliation.
+- The recorded version (16.4.2) matches `node_modules/next/package.json`.
 
-### Riscos e recomendações
+### Risks and recommendations
 
-- Esta sessão disponibiliza sete slots simultâneos, incluindo o coordenador; até seis revisores individuais podem executar por lote. Os lotes históricos usavam outro limite.
-- Arquivos de relatório ainda inexistentes representam tarefas pendentes, não ausência do item no inventário.
+- This session provides seven simultaneous slots, including the coordinator; up to six individual reviewers can run per batch. The historical batches used a different limit.
+- Report files that do not exist yet represent pending tasks, not the absence of the item from the inventory.
 
 ## Findings
 
-Nenhum finding de código: este agente não possui arquivo ou pasta de código como escopo primário.
+No code finding: this agent has no code file or folder as its primary scope.
 
-## Conclusão
+## Conclusion
 
-Conforme para a etapa de descoberta. A auditoria global permanece pendente até cada relatório individual existir e a consolidação verificar a cobertura.
+Compliant for the discovery stage. The global audit remains pending until each individual report exists and the consolidation verifies coverage.

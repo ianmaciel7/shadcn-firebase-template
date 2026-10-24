@@ -1,57 +1,57 @@
-# Revisão da pasta src/components/ai-elements/
+# Review of the `src/components/ai-elements/` folder
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: next-code-folder-src-components-ai-elements
-- Tipo: CODE_FOLDER
-- Caminho principal: src/components/ai-elements/
-- Documentação associada: Next.js 16.4.2; ARCHITECTURE.md (UI distribution boundary e owned component placement); .agents/rules/components-contracts.md; docs/agents/shadcn.md.
-- Versão do Next.js: 16.4.2
-- Status: Concluído.
+- Full subagent name: next-code-folder-src-components-ai-elements
+- Type: CODE_FOLDER
+- Primary path: src/components/ai-elements/
+- Associated documentation: Next.js 16.4.2; ARCHITECTURE.md (UI distribution boundary and owned component placement); .agents/rules/components-contracts.md; docs/agents/shadcn.md.
+- Next.js version: 16.4.2
+- Status: Completed.
 
-## Escopo
+## Scope
 
-- Responsabilidade: organização, coesão, dependências, limites de execução, colocation e convenções da pasta como unidade arquitetural.
-- Arquivos consultados: entradas imediatas de src/components/ai-elements/ (51 arquivos), components.json, package.json, ARCHITECTURE.md, CODING_STANDARDS.md, .agents/rules/components-contracts.md, scripts/check-component-conventions.mjs e docs/agents/shadcn.md.
-- Dependências analisadas: componentes Base UI em src/components/ui/, @xyflow/react, React, AI SDK/Streamdown; verificadas as dependências declaradas em package.json.
-- Subpastas imediatas: nenhuma.
-- Limite: esta é uma revisão arquitetural da pasta. Nenhum arquivo filho foi assumido como escopo principal nem declarado individualmente revisado por este relatório. Ciclos não foram verificados por execução de grafo.
+- Responsibility: organization, cohesion, dependencies, execution boundaries, colocation, and conventions of the folder as an architectural unit.
+- Files consulted: immediate entries of src/components/ai-elements/ (51 files), components.json, package.json, ARCHITECTURE.md, CODING_STANDARDS.md, .agents/rules/components-contracts.md, scripts/check-component-conventions.mjs, and docs/agents/shadcn.md.
+- Dependencies analyzed: Base UI components in src/components/ui/, @xyflow/react, React, AI SDK/Streamdown; the dependencies declared in package.json were verified.
+- Immediate subfolders: none.
+- Limit: this is an architectural review of the folder. No child file was assumed to be primary scope or declared individually reviewed by this report. Cycles were not verified by running a graph.
 
 ## Code Review
 
-### Implementações corretas
+### Correct implementations
 
-- A pasta mantém os AI Elements sob uma raiz única, distinguindo-os das primitivas Base UI (src/components/ui/) e dos componentes Firebase (src/components/firebase/). A separação corresponde à organização documentada em ARCHITECTURE.md.
-- A coleção é coesa em torno de interfaces para conversas e recursos de IA: mensagens, entrada de prompt/voz, anexos, raciocínio, ferramentas, citações, código e elementos de visualização. A organização plana também deixa cada componente acessível por um caminho previsível, compatível com o estilo de distribuição/colocação usado pelo projeto.
-- A maioria dos módulos examinados declara "use client" no ponto de entrada, coerente com controles interativos e dependência de estado, eventos e APIs de navegador. A presença da diretiva não foi tratada como classificação de toda a pasta.
-- As dependências diretas para src/components/ui/ apontam no sentido esperado: os AI Elements compõem primitivas compartilhadas; não foi encontrada importação direta para src/app/ nesta inspeção textual.
-- As dependências especializadas de grafo/fluxo usam @xyflow/react, que está declarada no package.json. components.json fornece o alias @/components/ui usado pelos wrappers.
-- Os testes prompt-input.test.tsx e speech-input.test.tsx ficam colocalizados com os módulos correspondentes. A ausência de teste para outros componentes foi registrada como cobertura a avaliar, não como violação automática: as regras locais não exigem um teste individual para cada componente de registro.
+- The folder keeps the AI Elements under a single root, distinguishing them from the Base UI primitives (src/components/ui/) and the Firebase components (src/components/firebase/). The separation matches the organization documented in ARCHITECTURE.md.
+- The collection is cohesive around interfaces for conversations and AI features: messages, prompt/voice input, attachments, reasoning, tools, citations, code, and visualization elements. The flat organization also makes each component reachable through a predictable path, compatible with the distribution/colocation style used by the project.
+- Most of the modules examined declare "use client" at the entry point, consistent with interactive controls and dependence on state, events, and browser APIs. The presence of the directive was not treated as a classification of the whole folder.
+- Direct dependencies on src/components/ui/ point in the expected direction: the AI Elements compose shared primitives; no direct import into src/app/ was found in this textual inspection.
+- The specialized graph/flow dependencies use @xyflow/react, which is declared in package.json. components.json provides the @/components/ui alias used by the wrappers.
+- The tests prompt-input.test.tsx and speech-input.test.tsx are colocated with the corresponding modules. The absence of tests for other components was recorded as coverage to assess, not as an automatic violation: the local rules do not require an individual test for each registry component.
 
-### Risco e finding
+### Risk and finding
 
 #### AIELEMENTS-FOLDER-001
 
-- Identificador: AIELEMENTS-FOLDER-001
-- Severidade: Baixa
-- Categoria: Documentação de ownership / manutenção
-- Caminho e linha: .agents/rules/components-contracts.md:14-18; comparar ARCHITECTURE.md:133-138 e docs/agents/shadcn.md.
-- Evidência concreta: a regra de contratos chama src/components/ai-elements/ de árvore "vendor-owned" e a exclui das verificações de nomes. A arquitetura declara src/components/ai-elements como fonte localmente owned e orienta a revisar diffs ao atualizar componentes copiados. Assim, a palavra "vendor-owned" é ambígua quanto à propriedade e à obrigação de manutenção desta pasta.
-- Referência à documentação: os limites Next.js Server/Client e o contrato de use client são documentados no corpus instalado; a distinção de ownership é uma convenção do repositório em ARCHITECTURE.md e .agents/rules/components-contracts.md, não uma regra do Next.js.
-- Impacto: quem mantiver os AI Elements pode interpretar a exclusão das guardas como sinal de que o código é externo e não deve ser adaptado, apesar de o guia de arquitetura dizer que a fonte copiada é localmente owned.
-- Correção recomendada: esclarecer que se trata de código derivado/registrado, mas mantido localmente; especificar quais guardas o excluem e que atualizações ainda precisam de revisão de fonte. Coordenar a terminologia com os demais diretórios de registro.
-- Teste sugerido: revisão de consistência textual entre a regra, arquitetura e guia shadcn; não é necessário teste de runtime.
+- Identifier: AIELEMENTS-FOLDER-001
+- Severity: Low
+- Category: Ownership documentation / maintenance
+- Path and line: .agents/rules/components-contracts.md:14-18; compare ARCHITECTURE.md:133-138 and docs/agents/shadcn.md.
+- Concrete evidence: the contracts rule calls src/components/ai-elements/ a "vendor-owned" tree and excludes it from the name checks. The architecture declares src/components/ai-elements as locally owned source and directs reviewing diffs when updating copied components. So the term "vendor-owned" is ambiguous about the ownership and the maintenance obligation of this folder.
+- Documentation reference: the Next.js Server/Client boundaries and the use client contract are documented in the installed corpus; the ownership distinction is a repository convention in ARCHITECTURE.md and .agents/rules/components-contracts.md, not a Next.js rule.
+- Impact: whoever maintains the AI Elements may interpret the exclusion from the guards as a sign that the code is external and must not be adapted, even though the architecture guide says the copied source is locally owned.
+- Recommended fix: clarify that this is derived/registry code, but maintained locally; specify which guards exclude it and that updates still need a source review. Coordinate the terminology with the other registry directories.
+- Suggested test: a textual consistency review between the rule, the architecture, and the shadcn guide; no runtime test is needed.
 
-### Riscos adicionais
+### Additional risks
 
-- A pasta contém 49 módulos de componente e apenas dois testes colocalizados. Isso reduz a evidência de comportamento para a coleção, embora as regras vigentes não imponham um teste por arquivo. Priorizar testes nos componentes com APIs de mídia, entrada, teclado, ferramentas ou estado de conversa quando forem alterados.
-- scripts/check-component-conventions.mjs exclui explicitamente a pasta AI Elements dos contratos de nomenclatura/composição aplicados às extensões próprias. Isso é uma exceção de política do repositório, não uma prova de conformidade de cada módulo; os relatórios individuais ainda são necessários.
+- The folder contains 49 component modules and only two colocated tests. This reduces the evidence of behavior for the collection, although the current rules do not impose a test per file. Prioritize tests on components with media, input, keyboard, tool, or conversation-state APIs when they are changed.
+- scripts/check-component-conventions.mjs explicitly excludes the AI Elements folder from the naming/composition contracts applied to owned extensions. This is a repository policy exception, not proof of each module's compliance; the individual reports are still necessary.
 
 ## Findings
 
-AIELEMENTS-FOLDER-001 está detalhado acima. O finding é documental e arquitetural; não implica que a organização atual da pasta seja incorreta nem que o código deva ser movido.
+AIELEMENTS-FOLDER-001 is detailed above. The finding is documentary and architectural; it does not imply that the folder's current organization is incorrect or that the code should be moved.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Parcialmente conforme.
-- Explicação: a divisão e a coesão da pasta correspondem à fronteira de distribuição de UI documentada, e as relações examinadas com UI compartilhada e dependências estão alinhadas. Há uma inconsistência de terminologia sobre propriedade/manutenção entre a regra de contratos e a arquitetura, além de cobertura de testes limitada que permanece como risco contextual. Não foi realizada análise automatizada de ciclos nem revisão individual dos módulos filhos.
+- Classification: Partially compliant.
+- Explanation: the folder's division and cohesion match the documented UI distribution boundary, and the relationships examined with shared UI and dependencies are aligned. There is a terminology inconsistency about ownership/maintenance between the contracts rule and the architecture, as well as limited test coverage that remains a contextual risk. No automated cycle analysis or individual review of the child modules was performed.

@@ -1,33 +1,33 @@
 # Review: `src/app/`
 
-## Identificação
+## Identification
 
-- **Subagente:** `next-code-folder-src-app`
-- **Tipo:** `CODE_FOLDER`
-- **Caminho principal:** `src/app/`
-- **Documentação associada:** installed Next.js 16.4.2: `node_modules/next/dist/docs/01-app/01-getting-started/02-project-structure.md`, `03-layouts-and-pages.md`, and `05-server-and-client-components.md`; project owners `ARCHITECTURE.md`, `CODING_STANDARDS.md`, `.agents/rules/nextjs-route-files.md`, `.agents/rules/components-contracts.md`
-- **Versão Next.js:** 16.4.2
-- **Status:** Concluído
+- **Subagent:** `next-code-folder-src-app`
+- **Type:** `CODE_FOLDER`
+- **Primary path:** `src/app/`
+- **Associated documentation:** installed Next.js 16.4.2: `node_modules/next/dist/docs/01-app/01-getting-started/02-project-structure.md`, `03-layouts-and-pages.md`, and `05-server-and-client-components.md`; project owners `ARCHITECTURE.md`, `CODING_STANDARDS.md`, `.agents/rules/nextjs-route-files.md`, `.agents/rules/components-contracts.md`
+- **Next.js version:** 16.4.2
+- **Status:** Completed
 
-## Escopo
+## Scope
 
-Responsabilidade principal: organização, responsabilidades e dependências da árvore `src/app/`, incluindo agrupamento de rotas, colocação de código privado, composição dos layouts e limites de client/server. A árvore contém 71 arquivos em 20 subpastas, além da raiz. Os arquivos foram consultados somente para compreender a estrutura e as relações; cada arquivo continua sendo responsabilidade exclusiva do agente listado para ele no manifesto.
+Primary responsibility: organization, responsibilities, and dependencies of the `src/app/` tree, including route grouping, placement of private code, layout composition, and client/server boundaries. The tree contains 71 files in 20 subfolders, in addition to the root. The files were consulted only to understand the structure and relationships; each file remains the exclusive responsibility of the agent listed for it in the manifest.
 
-Fontes consultadas: listagem recursiva de `src/app/`; documentação instalada citada acima; `ARCHITECTURE.md`; `CODING_STANDARDS.md`; `.agents/rules/nextjs-maintenance.md`; `.agents/rules/nextjs-route-files.md`; `.agents/rules/components-contracts.md`; `.dependency-cruiser.cjs`; consulta ao grafo existente com `graphify query`.
+Sources consulted: recursive listing of `src/app/`; the installed documentation cited above; `ARCHITECTURE.md`; `CODING_STANDARDS.md`; `.agents/rules/nextjs-maintenance.md`; `.agents/rules/nextjs-route-files.md`; `.agents/rules/components-contracts.md`; `.dependency-cruiser.cjs`; a query of the existing graph with `graphify query`.
 
 ## Code Review
 
-- A árvore usa o App Router em `src/app/`, mantém `page`, `layout`, `loading`, `error` e outros arquivos especiais junto às rotas, e coloca implementações internas em diretórios `_components`, `_hooks` e `_lib`. Grupos `(public)` e `(protected)` expressam áreas de navegação sem adicionar segmentos à URL, em linha com a documentação instalada de estrutura de projeto e route groups.
-- As dependências observadas seguem composição de fora para dentro: páginas importam componentes privados da rota; layouts importam seus providers/gates; módulos privados consomem `src/components`, `src/lib`, `src/i18n` e hooks necessários. `src/components` e `src/lib` não precisam importar a árvore de rotas para atender esse fluxo.
-- A composição dos segmentos público e protegido é localizada: cada grupo mantém seu `layout.tsx` e `loading.tsx`; os fluxos específicos têm seus próprios diretórios de rota. Isso evita concentrar autenticação de telas distintas em um único módulo de rotas.
-- Os limites de runtime são distribuídos entre layouts Server Components e implementações de interação em componentes/hooks de cliente. A convenção local documenta que nome/pasta não provam o runtime; o Next.js valida o grafo completo de imports.
-- Há regras executáveis que proíbem ciclos (`no-circular`) e imports de `src/components` para `src/app`, além de uma regra de limites para `src/lib`, em `.dependency-cruiser.cjs:4-25`. A inspeção de configuração confirma que esses riscos são cobertos por ferramenta, mas esta revisão não executou a análise do grafo, portanto não declara ausência efetiva de ciclos.
-- A consulta Graphify encontrou nós associados às rotas, módulos privados, componentes compartilhados e configuração de dependências; a busca transversal retornou resultados truncados. Ela foi usada como mapa auxiliar, não como prova de ausência de ciclos ou dependências.
+- The tree uses the App Router in `src/app/`, keeps `page`, `layout`, `loading`, `error`, and other special files alongside the routes, and places internal implementations in `_components`, `_hooks`, and `_lib` directories. The `(public)` and `(protected)` groups express navigation areas without adding URL segments, in line with the installed documentation on project structure and route groups.
+- The observed dependencies follow outside-in composition: pages import private components of the route; layouts import their providers/gates; private modules consume `src/components`, `src/lib`, `src/i18n`, and necessary hooks. `src/components` and `src/lib` do not need to import the route tree to serve this flow.
+- The composition of the public and protected segments is localized: each group keeps its own `layout.tsx` and `loading.tsx`; specific flows have their own route directories. This avoids concentrating the authentication of distinct screens in a single route module.
+- Runtime boundaries are distributed between Server Component layouts and interaction implementations in client components/hooks. The local convention documents that name/folder do not prove the runtime; Next.js validates the complete import graph.
+- There are executable rules that forbid cycles (`no-circular`) and imports from `src/components` to `src/app`, plus a boundary rule for `src/lib`, in `.dependency-cruiser.cjs:4-25`. Inspecting the configuration confirms that these risks are covered by tooling, but this review did not run the graph analysis, so it does not declare the effective absence of cycles.
+- The Graphify query found nodes associated with routes, private modules, shared components, and dependency configuration; the cross-cutting search returned truncated results. It was used as an auxiliary map, not as proof of the absence of cycles or dependencies.
 
 ### Findings
 
-Nenhum problema arquitetural da pasta foi comprovado. Os achados de implementação pertencentes a arquivos individuais devem permanecer nos respectivos relatórios e ser deduplicados pelo coordenador.
+No architectural issue in the folder was proven. Implementation findings belonging to individual files must remain in their respective reports and be deduplicated by the coordinator.
 
-## Conclusão
+## Conclusion
 
-**Conforme.** A organização observada é coerente com o App Router instalado e com as convenções documentadas do repositório: grupos para áreas de rota, pastas privadas para implementação, layouts/loading locais e direção de dependências protegida por regras executáveis. A ausência de ciclos em execução permanece **não verificada** nesta tarefa; a existência da regra não foi tratada como resultado de uma execução.
+**Compliant.** The observed organization is consistent with the installed App Router and with the repository's documented conventions: groups for route areas, private folders for implementation, local layouts/loading, and dependency direction protected by executable rules. The absence of cycles at runtime remains **unverified** in this task; the existence of the rule was not treated as the result of a run.

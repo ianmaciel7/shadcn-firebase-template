@@ -1,46 +1,46 @@
 # Code review: `src/app/error.tsx`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-code-file-src-app-error-tsx`
-- Tipo: `CODE_FILE`
-- Caminho principal: `src/app/error.tsx`
-- Documentação associada: `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/error.md`; `01-app/01-getting-started/10-error-handling.md`; `.agents/rules/nextjs-route-files.md`
-- Versão do Next.js: `16.4.2`
-- Status: concluído
+- Full subagent name: `next-code-file-src-app-error-tsx`
+- Type: `CODE_FILE`
+- Primary path: `src/app/error.tsx`
+- Associated documentation: `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/error.md`; `01-app/01-getting-started/10-error-handling.md`; `.agents/rules/nextjs-route-files.md`
+- Next.js version: `16.4.2`
+- Status: Completed
 
-## Escopo
+## Scope
 
-- Responsabilidade: revisão individual do limite de erro do App Router, seus props, registro, texto e ação de recuperação.
-- Arquivos consultados: `src/app/error.tsx`, `src/components/ui/button.tsx`, documentação instalada `error.md` e `10-error-handling.md`, `src/app/not-found.tsx`, `.agents/rules/nextjs-route-files.md`.
-- Dependências analisadas: React `useEffect`, `next-intl` `useTranslations`, Button da aplicação e props gerenciados pelo Next.js.
+- Responsibility: individual review of the App Router error boundary, its props, logging, text, and recovery action.
+- Files consulted: `src/app/error.tsx`, `src/components/ui/button.tsx`, installed documentation `error.md` and `10-error-handling.md`, `src/app/not-found.tsx`, `.agents/rules/nextjs-route-files.md`.
+- Dependencies analyzed: React `useEffect`, `next-intl` `useTranslations`, the application Button, and props managed by Next.js.
 
 ## Code Review
 
-Implementações corretas:
+Correct implementations:
 
-- O arquivo declara `"use client"`, exigido para o componente especial `error.tsx`.
-- O efeito de registro depende de `error`; o texto apresentado ao usuário não expõe detalhes técnicos da exceção.
-- A mensagem e o controle de recuperação usam traduções e um botão semântico.
-- A interface de erro não deve substituir o root layout. A ausência de `global-error.tsx` não é por si só uma falha: esse arquivo cobre falhas no próprio root layout e tem outro contrato.
+- The file declares `"use client"`, which the special `error.tsx` component requires.
+- The logging effect depends on `error`; the text shown to the user does not expose technical details of the exception.
+- The message and the recovery control use translations and a semantic button.
+- The error UI must not replace the root layout. The absence of `global-error.tsx` is not a failure in itself: that file covers failures in the root layout itself and has a different contract.
 
 ## Findings
 
 ### NXERRFILE-001
 
-- Identificador: `NXERRFILE-001`
-- Severidade: Baixa
-- Categoria: Recuperação de erro / comportamento prometido pela interface
-- Caminho e linha: `src/app/error.tsx:9-12,26-27`
-- Evidência concreta: o botão apresenta `t("tryAgain")`, mas chama `reset()`. Na documentação instalada, `retry()` refaz a leitura e renderiza novamente os filhos do limite; `reset()` apenas limpa o estado de erro e renderiza novamente sem buscar novamente o conteúdo. A seção `reset` recomenda `retry()` na maioria dos casos. O projeto não fornece uma razão específica para preferir o rerender sem nova leitura.
-- Referência à documentação: `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/error.md:117-157` (seções `retry` e `reset`); versão instalada 16.4.2, com `retry` estável desde 16.3.0 na tabela de histórico.
-- Impacto: para erros transitórios que dependem de uma nova leitura, a ação rotulada “tentar novamente” pode manter o fallback sem refazer essa leitura.
-- Correção recomendada: receber e chamar a prop `retry` para essa ação; se o comportamento desejado for somente rerenderização, ajustar o rótulo e registrar por que isso é suficiente para este limite.
-- Teste sugerido: teste de integração/browser em que uma leitura falha uma vez e passa na seguinte; acionar o botão e verificar que a nova leitura substitui o fallback pelo conteúdo.
+- Identifier: `NXERRFILE-001`
+- Severity: Low
+- Category: Error recovery / behavior promised by the interface
+- Path and line: `src/app/error.tsx:9-12,26-27`
+- Concrete evidence: the button presents `t("tryAgain")` but calls `reset()`. In the installed documentation, `retry()` refetches and re-renders the boundary's children; `reset()` only clears the error state and re-renders without refetching the content. The `reset` section recommends `retry()` in most cases. The project gives no specific reason to prefer the re-render without a new fetch.
+- Documentation reference: `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/error.md:117-157` (`retry` and `reset` sections); installed version 16.4.2, with `retry` stable since 16.3.0 in the history table.
+- Impact: for transient errors that depend on a new fetch, the action labeled "try again" can keep the fallback without redoing that fetch.
+- Recommended fix: receive and call the `retry` prop for this action; if the desired behavior is re-rendering only, adjust the label and record why that is sufficient for this boundary.
+- Suggested test: an integration/browser test in which a fetch fails once and succeeds on the next attempt; trigger the button and verify that the new fetch replaces the fallback with the content.
 
-Não encontrei outro problema comprovado neste arquivo. O tipo de `error` é mais estreito que o `unknown` usado nos exemplos da referência, mas a implementação apenas o envia a `console.error` e não lê propriedades; não há impacto funcional comprovado aqui.
+I found no other proven issue in this file. The type of `error` is narrower than the `unknown` used in the reference examples, but the implementation only passes it to `console.error` and does not read properties; there is no proven functional impact here.
 
-## Conclusão
+## Conclusion
 
-- Classificação: parcialmente conforme.
-- Explicação: a fronteira Client Component, o registro e a apresentação localizada seguem os contratos aplicáveis. A semântica de `reset()` diverge do comportamento usual esperado pelo rótulo “tentar novamente”; a referência instalada disponibiliza `retry()` para refazer a leitura.
+- Classification: partially compliant.
+- Explanation: the Client Component boundary, the logging, and the localized presentation follow the applicable contracts. The semantics of `reset()` diverge from the behavior the "try again" label usually implies; the installed reference provides `retry()` to refetch.

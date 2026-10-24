@@ -1,43 +1,43 @@
-# Relatório individual — `next-code-file-src-components-ai-elements-canvas-tsx`
+# Individual report — `next-code-file-src-components-ai-elements-canvas-tsx`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-code-file-src-components-ai-elements-canvas-tsx`.
-- Tipo: `CODE_FILE`.
-- Caminho principal: `src/components/ai-elements/canvas.tsx`.
-- Documentação associada: `node_modules/next/dist/docs/01-app/01-getting-started/05-server-and-client-components.md` (fronteiras e componentes de terceiros) e `11-css.md` (External stylesheets / Import styles from node_modules).
-- Versão do Next.js: `16.4.2`, confirmada em `node_modules/next/package.json`.
-- Status: Concluído.
+- Full subagent name: `next-code-file-src-components-ai-elements-canvas-tsx`.
+- Type: `CODE_FILE`.
+- Primary path: `src/components/ai-elements/canvas.tsx`.
+- Associated documentation: `node_modules/next/dist/docs/01-app/01-getting-started/05-server-and-client-components.md` (boundaries and third-party components) and `11-css.md` (External stylesheets / Import styles from node_modules).
+- Next.js version: `16.4.2`, confirmed in `node_modules/next/package.json`.
+- Status: Completed.
 
-## Escopo
+## Scope
 
-- Responsabilidade: revisão completa e individual das 28 linhas do adaptador Canvas; composição, props, estilos, responsabilidades, acessibilidade e fronteira Server/Client.
-- Arquivos consultados: arquivo principal; `AGENTS.md`; `docs/code-review/README.md`; `docs/code-review/agents-manifest.md`; relatório existente de `agent.tsx` para o formato; `CODING_STANDARDS.md`; `.agents/rules/components-contracts.md`; `.agents/rules/shadcn-ui-maintenance.md`; `.agents/skills/shadcn/SKILL.md`; os dois guias instalados acima; `node_modules/@xyflow/react/package.json`, `dist/esm/index.js`, `dist/esm/index.mjs` e `dist/esm/types/component-props.d.ts`.
-- Dependências analisadas: `@xyflow/react@12.12.0` e seus contratos de `ReactFlow`, `Background` e `ReactFlowProps`; tipos React. Nenhuma API shadcn/Base UI é usada neste arquivo.
-- Pesquisa de consumidores: busca em `src/` por `Canvas` e `ai-elements/canvas` não encontrou uso deste adaptador fora de sua própria declaração/exportação.
+- Responsibility: full, individual review of the 28 lines of the Canvas adapter; composition, props, styles, responsibilities, accessibility, and Server/Client boundary.
+- Files consulted: primary file; `AGENTS.md`; `docs/code-review/README.md`; `docs/code-review/agents-manifest.md`; existing report for `agent.tsx` for the format; `CODING_STANDARDS.md`; `.agents/rules/components-contracts.md`; `.agents/rules/shadcn-ui-maintenance.md`; `.agents/skills/shadcn/SKILL.md`; the two installed guides above; `node_modules/@xyflow/react/package.json`, `dist/esm/index.js`, `dist/esm/index.mjs`, and `dist/esm/types/component-props.d.ts`.
+- Dependencies analyzed: `@xyflow/react@12.12.0` and its `ReactFlow`, `Background`, and `ReactFlowProps` contracts; React types. No shadcn/Base UI API is used in this file.
+- Consumer search: a search in `src/` for `Canvas` and `ai-elements/canvas` found no use of this adapter outside its own declaration/export.
 
 ## Code Review
 
-Implementações corretas:
+Correct implementations:
 
-- As linhas 13-25 compõem `ReactFlow` e `Background`, sem duplicar a implementação do editor, estado, efeitos, persistência ou navegação. Os filhos adicionais permanecem extensíveis.
-- `ReactFlowProps` preserva o contrato da dependência. As opções `deleteKeyCode`, `fitView`, `panOnDrag`, `panOnScroll`, `selectionOnDrag` e `zoomOnDoubleClick` existem nos tipos instalados. O spread final na linha 21 permite substituir os padrões de interação de maneira explícita.
-- A ausência de `"use client"` neste wrapper não é, isoladamente, erro: ele não chama hooks ou APIs de navegador. Ambos os entrypoints ESM instalados da dependência (`index.js` e `index.mjs`, selecionáveis pelo export map) começam com `"use client"`. Assim, `ReactFlow` e `Background` já estabelecem suas próprias fronteiras. A documentação Next.js distingue componentes de terceiros sem diretiva daqueles que já a fornecem.
-- A importação de CSS da dependência na linha 5 é admitida pelo guia instalado de CSS. `Background` usa `var(--sidebar)` na linha 23, preservando o token do tema em vez de fixar uma cor.
-- Não há HTML injetado, segredo, chamada remota ou mutação de estado global no módulo. Importações de tipos permanecem `import type`.
-- As convenções de funções nomeadas e organização de componentes próprios não devem ser aplicadas automaticamente como findings a este arquivo de AI Elements: o caminho pertence à exclusão de código de registro documentada em `.agents/rules/components-contracts.md`.
+- Lines 13-25 compose `ReactFlow` and `Background`, without duplicating the editor implementation, state, effects, persistence, or navigation. Additional children remain extensible.
+- `ReactFlowProps` preserves the dependency's contract. The options `deleteKeyCode`, `fitView`, `panOnDrag`, `panOnScroll`, `selectionOnDrag`, and `zoomOnDoubleClick` exist in the installed types. The final spread on line 21 allows the interaction defaults to be overridden explicitly.
+- The absence of `"use client"` in this wrapper is not, in isolation, an error: it calls no hooks or browser APIs. Both installed ESM entry points of the dependency (`index.js` and `index.mjs`, selectable through the export map) start with `"use client"`. So `ReactFlow` and `Background` already establish their own boundaries. The Next.js documentation distinguishes third-party components without the directive from those that already provide it.
+- The dependency's CSS import on line 5 is allowed by the installed CSS guide. `Background` uses `var(--sidebar)` on line 23, preserving the theme token instead of hardcoding a color.
+- There is no injected HTML, secret, remote call, or global state mutation in the module. Type imports remain `import type`.
+- The named-function and component-organization conventions for owned components should not be applied automatically as findings to this AI Elements file: the path belongs to the registry-code exclusion documented in `.agents/rules/components-contracts.md`.
 
-Riscos e recomendações:
+Risks and recommendations:
 
-- Um consumidor Server Component precisa respeitar a serialização das props ao alcançar a fronteira da dependência; handlers e tipos de nós definidos por funções devem ser preparados em uma composição cliente adequada. Nenhum consumidor atual foi encontrado para demonstrar violação.
-- Dimensões do contêiner, operação por teclado, rótulos localizados, foco, seleção, remoção e comportamento em tela de toque precisam de validação no contexto de uso. O wrapper encaminha as props de acessibilidade da biblioteca e não desativa explicitamente os recursos de teclado. Sua leitura isolada não comprova acessibilidade do editor final.
-- Não foram executados build, testes de componente, navegador, medição de bundle ou consultas externas/CLI. A validação deste relatório é estática, baseada no arquivo completo, nos tipos e entrypoints da dependência instalada e na documentação instalada; não representa um smoke test de renderização.
+- A Server Component consumer must respect props serialization when reaching the dependency boundary; handlers and node types defined by functions must be prepared in an appropriate client composition. No current consumer was found to demonstrate a violation.
+- Container dimensions, keyboard operation, localized labels, focus, selection, removal, and touch-screen behavior need validation in the usage context. The wrapper forwards the library's accessibility props and does not explicitly disable keyboard features. Reading it in isolation does not prove the accessibility of the final editor.
+- No build, component tests, browser, bundle measurement, or external/CLI queries were run. The validation of this report is static, based on the full file, the dependency's installed types and entry points, and the installed documentation; it is not a rendering smoke test.
 
 ## Findings
 
-Nenhum finding acionável demonstrado neste arquivo. Os requisitos de integração acima são limites de validação, não falhas confirmadas. Não há base para exigir uma diretiva adicional apenas porque o wrapper renderiza uma dependência interativa que já publica sua própria fronteira cliente.
+No actionable finding demonstrated in this file. The integration requirements above are validation limits, not confirmed failures. There is no basis for requiring an additional directive just because the wrapper renders an interactive dependency that already publishes its own client boundary.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Conforme.
-- Explicação: o adaptador mantém responsabilidade pequena, composição extensível e contratos compatíveis com as versões instaladas. A ausência de uso na aplicação impede avaliar o editor integrado, dimensões reais e experiência de acessibilidade; a conclusão limita-se à revisão estática individual deste módulo e não conclui a auditoria da pasta ou de seus demais arquivos.
+- Classification: Compliant.
+- Explanation: the adapter keeps a small responsibility, extensible composition, and contracts compatible with the installed versions. The absence of use in the application prevents evaluating the integrated editor, real dimensions, and the accessibility experience; the conclusion is limited to the individual static review of this module and does not conclude the audit of the folder or its other files.

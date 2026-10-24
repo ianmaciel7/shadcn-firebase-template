@@ -1,39 +1,39 @@
-# Relatório individual — `next-doc-file-01-app-01-getting-started-18-upgrading-md`
+# Individual report — `next-doc-file-01-app-01-getting-started-18-upgrading-md`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-doc-file-01-app-01-getting-started-18-upgrading-md`
-- Tipo: `DOC_FILE`
-- Caminho principal: `node_modules/next/dist/docs/01-app/01-getting-started/18-upgrading.md`
-- Documentação associada: instruções de atualização do Next.js e versão de canary.
-- Versão do Next.js: `16.4.2` instalada.
-- Status: Concluído.
+- Full subagent name: `next-doc-file-01-app-01-getting-started-18-upgrading-md`
+- Type: `DOC_FILE`
+- Primary path: `node_modules/next/dist/docs/01-app/01-getting-started/18-upgrading.md`
+- Associated documentation: Next.js upgrade instructions and the canary version.
+- Next.js version: `16.4.2` installed.
+- Status: Completed.
 
-## Escopo
+## Scope
 
-- Responsabilidade: ler integralmente o guia `Upgrading` instalado e avaliar cada orientação em relação ao estado demonstrável deste projeto.
-- Arquivos consultados: documento principal; `package.json`; `next.config.ts`; `.agents/rules/nextjs-maintenance.md`; `docs/agents/nextjs.md`.
-- Dependências analisadas: Next.js, React, React DOM e pnpm, somente para verificar versões e o fluxo de comandos documentado.
+- Responsibility: read the installed `Upgrading` guide in full and assess each piece of guidance against the demonstrable state of this project.
+- Files consulted: primary document; `package.json`; `next.config.ts`; `.agents/rules/nextjs-maintenance.md`; `docs/agents/nextjs.md`.
+- Dependencies analyzed: Next.js, React, React DOM, and pnpm, only to verify versions and the documented command flow.
 
 ## Code Review
 
-Implementações e decisões corretas:
+Correct implementations and decisions:
 
-- `package.json:95` fixa Next.js em `16.4.2`, enquanto `:98` e `:100` fixam React e React DOM em `19.3.1`; `:153` identifica pnpm como gerenciador do projeto.
-- O guia é aplicável como procedimento condicional para futuras atualizações: documenta `next upgrade` a partir de Next.js 16.1.0 (`18-upgrading.md:15-33`) e a sequência manual caso esse fluxo não seja usado.
-- Não há evidência neste documento nem nos arquivos de versão consultados de que este projeto esteja atrasado ou precise de um upgrade. Portanto, as instruções de atualização não constituem uma não conformidade da versão fixada.
-- A seção de canary (`18-upgrading.md:65-85`) é informativa e não aplicável ao estado atual: o projeto fixa a versão estável `16.4.2`, e `.agents/rules/nextjs-maintenance.md:6-7,23-24` determina que APIs de canary dependem de suporte instalado e que receitas upstream não autorizam migrações automáticas.
-- O guia oferece também o comando para agentes executarem upgrades (`18-upgrading.md:39-43`); esse é um fluxo opcional, não uma etapa que o repositório deva executar automaticamente.
+- `package.json:95` pins Next.js to `16.4.2`, while `:98` and `:100` pin React and React DOM to `19.3.1`; `:153` identifies pnpm as the project's manager.
+- The guide is applicable as a conditional procedure for future upgrades: it documents `next upgrade` from Next.js 16.1.0 (`18-upgrading.md:15-33`) and the manual sequence in case that flow is not used.
+- There is no evidence in this document or in the version files consulted that this project is behind or needs an upgrade. Therefore, the upgrade instructions are not a non-compliance of the pinned version.
+- The canary section (`18-upgrading.md:65-85`) is informational and not applicable to the current state: the project pins the stable version `16.4.2`, and `.agents/rules/nextjs-maintenance.md:6-7,23-24` states that canary APIs depend on installed support and that upstream recipes do not authorize automatic migrations.
+- The guide also offers the command for agents to run upgrades (`18-upgrading.md:39-43`); this is an optional flow, not a step the repository must run automatically.
 
-Problemas encontrados: nenhum desvio aplicável foi comprovado.
+Issues found: no applicable deviation was proven.
 
-Riscos: executar a atualização para “latest” ou “canary” altera dependências e pode mudar contratos de APIs; qualquer adoção requer revisão de compatibilidade para a versão de destino e a verificação prescrita pelo projeto. Esse risco é condicional e não é um finding do estado atual.
+Risks: running the upgrade to "latest" or "canary" changes dependencies and can change API contracts; any adoption requires a compatibility review for the target version and the verification prescribed by the project. This risk is conditional and is not a finding about the current state.
 
 ## Findings
 
-Nenhum finding. O documento descreve procedimentos opcionais de atualização; o projeto fixa Next.js `16.4.2` e não apresenta evidência de versão desatualizada ou incompatível.
+No findings. The document describes optional upgrade procedures; the project pins Next.js `16.4.2` and shows no evidence of an outdated or incompatible version.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Conforme.
-- Explicação: o guia foi lido integralmente e sua aplicabilidade foi separada entre o procedimento de upgrade (referência para uma decisão futura) e as instruções específicas de canary (não aplicáveis à versão estável fixada). Não há recomendação de upgrade comprovada para este projeto.
+- Classification: Compliant.
+- Explanation: the guide was read in full and its applicability was separated between the upgrade procedure (a reference for a future decision) and the canary-specific instructions (not applicable to the pinned stable version). There is no proven upgrade recommendation for this project.

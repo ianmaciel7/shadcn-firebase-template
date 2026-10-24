@@ -1,54 +1,54 @@
-# Relatório individual — `next-doc-folder-root`
+# Individual report — `next-doc-folder-root`
 
-## Identificação
+## Identification
 
-- **Nome completo:** `next-doc-folder-root`
-- **Tipo:** DOC_FOLDER
-- **Caminho principal:** `node_modules/next/dist/docs/`
-- **Documentação associada:** índice da documentação oficial do Next.js
-- **Versão do Next.js:** 16.4.2
-- **Status:** concluído
+- **Full name:** `next-doc-folder-root`
+- **Type:** DOC_FOLDER
+- **Primary path:** `node_modules/next/dist/docs/`
+- **Associated documentation:** index of the official Next.js documentation
+- **Next.js version:** 16.4.2
+- **Status:** completed
 
-## Escopo
+## Scope
 
-- **Responsabilidade:** auditar somente a organização, cobertura e referências cruzadas da raiz documental.
-- **Arquivos consultados:** `node_modules/next/dist/docs/index.md`, listagem imediata de `node_modules/next/dist/docs/`, `node_modules/next/package.json`.
-- **Dependências analisadas:** as quatro árvores documentais oficiais imediatamente abaixo da raiz: `01-app/`, `02-pages/`, `03-architecture/` e `04-community/`.
+- **Responsibility:** audit only the organization, coverage, and cross-references of the documentation root.
+- **Files consulted:** `node_modules/next/dist/docs/index.md`, immediate listing of `node_modules/next/dist/docs/`, `node_modules/next/package.json`.
+- **Dependencies analyzed:** the four official documentation trees immediately below the root: `01-app/`, `02-pages/`, `03-architecture/`, and `04-community/`.
 
 ## Code Review
 
-### Implementações corretas
+### Correct implementations
 
-- `index.md` fornece ponto de entrada, diferencia App Router e Pages Router e direciona para Getting Started, Guides e API Reference.
-- As quatro áreas oficiais de primeiro nível estão presentes e correspondem à estrutura esperada pela instalação 16.4.2.
-- A separação entre a documentação de App Router e Pages Router é explícita, evitando que a orientação do roteador legado seja apresentada como regra do App Router.
+- `index.md` provides an entry point, differentiates the App Router and Pages Router, and directs to Getting Started, Guides, and API Reference.
+- The four official top-level areas are present and match the structure expected by the 16.4.2 installation.
+- The separation between the App Router and Pages Router documentation is explicit, preventing legacy router guidance from being presented as an App Router rule.
 
-### Problemas encontrados
+### Issues found
 
-- A raiz também contém `graphify-out/`, que não pertence à taxonomia documental oficial (`01-app` a `04-community`). Sua presença altera a descoberta recursiva e pode fazer uma auditoria tratar artefatos de análise como orientação do framework.
+- The root also contains `graphify-out/`, which does not belong to the official documentation taxonomy (`01-app` to `04-community`). Its presence alters recursive discovery and can cause an audit to treat analysis artifacts as framework guidance.
 
-### Riscos
+### Risks
 
-- Sem uma exclusão explícita do artefato, agentes de pasta/arquivo podem produzir falsos findings contra conteúdo gerado e inflar métricas de cobertura da documentação oficial.
+- Without an explicit exclusion of the artifact, folder/file agents can produce false findings against generated content and inflate the coverage metrics of the official documentation.
 
-### Recomendações
+### Recommendations
 
-- Mantenha `graphify-out/` explicitamente classificado como artefato gerado, fora da interpretação normativa da documentação do Next.js, mas preserve-o no manifesto de descoberta enquanto ele existir, conforme o escopo solicitado.
-- Use `01-app/` como referência primária para este projeto App Router; trate `02-pages/` como fonte comparativa/migração, em linha com a própria distinção do índice.
+- Keep `graphify-out/` explicitly classified as a generated artifact, outside the normative interpretation of the Next.js documentation, but preserve it in the discovery manifest while it exists, per the requested scope.
+- Use `01-app/` as the primary reference for this App Router project; treat `02-pages/` as a comparative/migration source, in line with the index's own distinction.
 
 ## Findings
 
 ### NEXT-DOC-FOLDER-ROOT-001
 
-- **Severidade:** baixa
-- **Categoria:** organização / artefato gerado
-- **Caminho e linha:** `node_modules/next/dist/docs/graphify-out/` (entrada de diretório; não aplicável a linha)
-- **Evidência concreta:** a listagem imediata da raiz contém `01-app`, `02-pages`, `03-architecture`, `04-community` e `graphify-out`; o índice em `index.md` descreve a documentação por suas seções, não por esse diretório adicional.
-- **Referência à documentação:** `node_modules/next/dist/docs/index.md`, seções “How to use the docs” e “App Router and Pages Router”.
-- **Impacto:** mistura material de auditoria/gerado com a fonte normativa pode produzir cobertura e recomendações incorretas.
-- **Correção recomendada:** registrar a exclusão semântica de `graphify-out/` nos relatórios consolidados; não o usar como base para recomendações de Next.js.
-- **Teste sugerido:** validar que as métricas de “documentação oficial aplicável” contam somente os quatro ramos oficiais e seus documentos, mantendo o artefato apenas no inventário físico quando exigido.
+- **Severity:** low
+- **Category:** organization / generated artifact
+- **Path and line:** `node_modules/next/dist/docs/graphify-out/` (directory entry; line not applicable)
+- **Concrete evidence:** the immediate listing of the root contains `01-app`, `02-pages`, `03-architecture`, `04-community`, and `graphify-out`; the index in `index.md` describes the documentation by its sections, not by this additional directory.
+- **Documentation reference:** `node_modules/next/dist/docs/index.md`, sections "How to use the docs" and "App Router and Pages Router".
+- **Impact:** mixing audit/generated material with the normative source can produce incorrect coverage and recommendations.
+- **Recommended fix:** record the semantic exclusion of `graphify-out/` in the consolidated reports; do not use it as a basis for Next.js recommendations.
+- **Suggested test:** validate that the "applicable official documentation" metrics count only the four official branches and their documents, keeping the artifact only in the physical inventory when required.
 
-## Conclusão
+## Conclusion
 
-**Parcialmente conforme.** A raiz oficial está corretamente organizada, possui o índice esperado e apresenta os ramos App Router/Pages Router de modo claro. A presença de um diretório gerado adicional exige delimitação explícita na consolidação para que o escopo oficial não seja contaminado.
+**Partially compliant.** The official root is correctly organized, has the expected index, and presents the App Router/Pages Router branches clearly. The presence of an additional generated directory requires explicit delimitation in the consolidation so that the official scope is not contaminated.

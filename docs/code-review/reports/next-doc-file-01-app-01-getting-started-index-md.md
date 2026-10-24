@@ -1,45 +1,45 @@
-# Relatório individual — `next-doc-file-01-app-01-getting-started-index-md`
+# Individual report — `next-doc-file-01-app-01-getting-started-index-md`
 
-## Identificação
+## Identification
 
-- Nome completo do subagente: `next-doc-file-01-app-01-getting-started-index-md`
-- Tipo: `DOC_FILE`
-- Caminho principal: `node_modules/next/dist/docs/01-app/01-getting-started/index.md`
-- Documentação associada: hub da seção App Router Getting Started.
-- Versão do Next.js: `16.4.2`
-- Status: Concluído.
+- Full subagent name: `next-doc-file-01-app-01-getting-started-index-md`
+- Type: `DOC_FILE`
+- Primary path: `node_modules/next/dist/docs/01-app/01-getting-started/index.md`
+- Associated documentation: hub of the App Router Getting Started section.
+- Next.js version: `16.4.2`
+- Status: Completed.
 
-## Escopo
+## Scope
 
-- Responsabilidade: interpretar integralmente este arquivo de índice e verificar sua aplicabilidade ao projeto.
-- Arquivos consultados: o documento principal; `package.json`; `ARCHITECTURE.md`; `src/app/layout.tsx`; inventário e relatório estrutural da pasta Getting Started.
-- Dependências analisadas: apenas navegação e rotulagem da documentação; o arquivo não introduz APIs ou dependências de runtime.
+- Responsibility: fully interpret this index file and verify its applicability to the project.
+- Files consulted: the primary document; `package.json`; `ARCHITECTURE.md`; `src/app/layout.tsx`; inventory and structural report of the Getting Started folder.
+- Dependencies analyzed: only documentation navigation and labeling; the file introduces no runtime APIs or dependencies.
 
 ## Code Review
 
-O documento apresenta a seção Getting Started, descreve o conhecimento prévio esperado (HTML, CSS, JavaScript e React) e direciona iniciantes a dois cursos por caminhos locais do site de documentação (`/learn/react-foundations` e `/learn/dashboard-app`). A lista de conhecimento prévio é orientação pedagógica, não requisito técnico imposto a uma aplicação existente.
+The document presents the Getting Started section, describes the expected prior knowledge (HTML, CSS, JavaScript, and React), and directs beginners to two courses through local paths of the documentation site (`/learn/react-foundations` and `/learn/dashboard-app`). The prior-knowledge list is pedagogical guidance, not a technical requirement imposed on an existing application.
 
-O projeto é uma aplicação Next.js 16.4.2 existente, usa o App Router em `src/app/` e mantém a documentação de arquitetura e instalação no repositório. O índice não prescreve comportamento de rotas, configuração ou APIs para comparar com o código; por isso, recomendações de implementação não são aplicáveis a este item. Os links de curso são navegação do site oficial e não pretendem apontar para rotas do projeto.
+The project is an existing Next.js 16.4.2 application, uses the App Router in `src/app/`, and keeps the architecture and installation documentation in the repository. The index does not prescribe route, configuration, or API behavior to compare with the code; therefore, implementation recommendations are not applicable to this item. The course links are navigation on the official site and are not meant to point to project routes.
 
-### Problema encontrado
+### Issue found
 
-O arquivo termina imediatamente após o cabeçalho `## Next Steps` (linha 21), sem texto ou links sob o cabeçalho. A página depende, portanto, da navegação global gerada pelo site para direcionar o leitor às 18 páginas da pasta.
+The file ends immediately after the `## Next Steps` heading (line 21), with no text or links under the heading. The page therefore depends on the site's generated global navigation to direct the reader to the 18 pages of the folder.
 
 ## Findings
 
 ### DOCSTART-001
 
-- Identificador: `DOCSTART-001`
-- Severidade: Baixa
-- Categoria: Clareza e navegação documental
-- Caminho e linha: `node_modules/next/dist/docs/01-app/01-getting-started/index.md:21`
-- Evidência concreta: `## Next Steps` é o último conteúdo do arquivo; não há itens ou parágrafos em seguida. O diretório contém os guias numerados de instalação, estrutura, layouts, navegação, componentes, dados, cache, erros, CSS, imagens, fontes, metadata, Route Handlers, Proxy, deploy e atualização.
-- Referência à documentação: o próprio índice, linha 21, anuncia próximos passos; a estrutura da pasta `node_modules/next/dist/docs/01-app/01-getting-started/` contém os guias que poderiam ser vinculados. A página não identifica uma API ou requisito de código do Next.js.
-- Impacto: leitores que chegam diretamente ao índice não recebem uma progressão explícita para os guias; precisam usar a navegação lateral ou descobrir os caminhos por conta própria.
-- Correção recomendada: adicionar uma lista breve de links para os guias introdutórios seguintes ou remover o cabeçalho vazio. Isso é uma sugestão editorial para a documentação upstream, não uma alteração solicitada ao projeto.
-- Teste sugerido: validar que o índice renderizado mostra links navegáveis sob “Next Steps” caso o cabeçalho seja mantido.
+- Identifier: `DOCSTART-001`
+- Severity: Low
+- Category: Documentation clarity and navigation
+- Path and line: `node_modules/next/dist/docs/01-app/01-getting-started/index.md:21`
+- Concrete evidence: `## Next Steps` is the last content in the file; there are no items or paragraphs after it. The directory contains the numbered guides for installation, structure, layouts, navigation, components, data, cache, errors, CSS, images, fonts, metadata, Route Handlers, Proxy, deploy, and upgrading.
+- Documentation reference: the index itself, line 21, announces next steps; the structure of the folder `node_modules/next/dist/docs/01-app/01-getting-started/` contains the guides that could be linked. The page does not identify a Next.js API or code requirement.
+- Impact: readers who arrive directly at the index do not receive an explicit progression to the guides; they need to use the side navigation or discover the paths on their own.
+- Recommended fix: add a short list of links to the following introductory guides or remove the empty heading. This is an editorial suggestion for the upstream documentation, not a change requested of the project.
+- Suggested test: validate that the rendered index shows navigable links under "Next Steps" if the heading is kept.
 
-## Conclusão
+## Conclusion
 
-- Classificação: Parcialmente conforme.
-- Explicação: o índice descreve corretamente o público e o propósito da seção, e seus requisitos pedagógicos não se aplicam ao código do projeto. Há uma omissão editorial localizada: o cabeçalho final de próximos passos não oferece conteúdo na página. Não foi identificado risco de compatibilidade de runtime.
+- Classification: Partially compliant.
+- Explanation: the index correctly describes the audience and purpose of the section, and its pedagogical requirements do not apply to the project's code. There is a localized editorial omission: the final next-steps heading offers no content on the page. No runtime compatibility risk was identified.
