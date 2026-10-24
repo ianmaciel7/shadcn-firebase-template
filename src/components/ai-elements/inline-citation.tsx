@@ -55,6 +55,15 @@ const InlineCitationCard = ({
   ...props
 }: InlineCitationCardProps) => <HoverCard {...props} />;
 
+function getSourceHostname(source: string | undefined): string {
+  if (!source) return "unknown";
+  try {
+    return new URL(source).hostname || "unknown";
+  } catch {
+    return "unknown";
+  }
+}
+
 type InlineCitationCardTriggerProps = ComponentProps<typeof Badge> & {
   sources: string[];
 };
@@ -75,7 +84,7 @@ const InlineCitationCardTrigger = ({
   >
     {sources[0] ? (
       <>
-        {new URL(sources[0]).hostname}{" "}
+        {getSourceHostname(sources[0])}{" "}
         {sources.length > 1 && `+${sources.length - 1}`}
       </>
     ) : (
