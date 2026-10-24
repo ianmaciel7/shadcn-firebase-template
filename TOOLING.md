@@ -555,6 +555,12 @@ Markdown generated from upstream MDX; its filenames and bytes can differ from
 the repository sources. Do not compare generated `.md` bodies with source
 `.mdx` hashes as if they were identical files.
 
+For exploratory navigation of the installed documentation, Graphify may index
+`node_modules/next/dist/docs/`. Keep generated graph artifacts inside that
+directory's ignored `graphify-out/` folder; they are local, version-specific
+research aids and must not be committed. Rebuild the graph after a Next.js
+upgrade rather than treating a previous graph as authoritative.
+
 Use the project's pnpm runner and inspect supported options before changing a
 workflow:
 
