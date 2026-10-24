@@ -37,4 +37,4 @@ jobs:
       - name: Audit spelling
         run: pnpm exec cspell lint "docs/code-review/**/*.md" --no-progress
       - name: Audit Markdown
-        run: pnpm exec markdownlint-cli2 "docs/code-review/**/*.md"
+        run: pnpm exec markdownlint-cli2 --no-globs "docs/code-review/**/*.md"
