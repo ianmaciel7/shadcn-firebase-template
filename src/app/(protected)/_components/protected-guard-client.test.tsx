@@ -1,6 +1,6 @@
 import { act, cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ProtectedGateClient } from "./protected-gate-client";
+import { ProtectedGuardClient } from "./protected-guard-client";
 
 const mocks = vi.hoisted(() => ({
   router: { replace: vi.fn() },
@@ -29,7 +29,7 @@ vi.mock("@/lib/firebase/client", () => ({
 
 vi.mock("@/lib/usage/guard", () => ({ recordUsage: mocks.recordUsage }));
 
-describe("ProtectedGateClient", () => {
+describe("ProtectedGuardClient", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.recordUsage.mockResolvedValue(undefined);
@@ -56,9 +56,9 @@ describe("ProtectedGateClient", () => {
   it("renders loading indicator before auth resolves", () => {
     mocks.subscribe.mockReturnValue(() => {});
     render(
-      <ProtectedGateClient>
+      <ProtectedGuardClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGateClient>,
+      </ProtectedGuardClient>,
     );
     expect(screen.getByRole("status").textContent).toBe("loading");
     expect(screen.queryByText("Protected Content")).toBeNull();
@@ -68,9 +68,9 @@ describe("ProtectedGateClient", () => {
     mocks.currentUser = null;
     window.history.replaceState(null, "", "/profile?tab=security");
     render(
-      <ProtectedGateClient>
+      <ProtectedGuardClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGateClient>,
+      </ProtectedGuardClient>,
     );
     expect(mocks.router.replace).toHaveBeenCalledWith(
       `/sign-in?next=${encodeURIComponent("/profile?tab=security")}`,
@@ -81,9 +81,9 @@ describe("ProtectedGateClient", () => {
   it("renders children only after access is recorded", async () => {
     mocks.currentUser = { uid: "user-123" };
     render(
-      <ProtectedGateClient>
+      <ProtectedGuardClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGateClient>,
+      </ProtectedGuardClient>,
     );
     await waitFor(() =>
       expect(screen.getByText("Protected Content")).toBeTruthy(),
@@ -98,9 +98,9 @@ describe("ProtectedGateClient", () => {
     mocks.currentUser = { uid: "user-123" };
     mocks.recordUsage.mockRejectedValue(new Error("offline"));
     render(
-      <ProtectedGateClient>
+      <ProtectedGuardClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGateClient>,
+      </ProtectedGuardClient>,
     );
     await waitFor(() => expect(screen.getByRole("alert")).toBeTruthy());
     expect(screen.queryByText("Protected Content")).toBeNull();
@@ -115,9 +115,9 @@ describe("ProtectedGateClient", () => {
     );
     mocks.currentUser = { uid: "user-123" };
     render(
-      <ProtectedGateClient>
+      <ProtectedGuardClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGateClient>,
+      </ProtectedGuardClient>,
     );
     const onAuthChange = mocks.subscribe.mock.calls[0][1];
     await act(async () => {
@@ -138,7 +138,7 @@ describe("ProtectedGateClient", () => {
           acknowledge = resolve;
         }),
       );
-    render(<ProtectedGateClient>{"Protected Content"}</ProtectedGateClient>);
+    render(<ProtectedGuardClient>{"Protected Content"}</ProtectedGuardClient>);
     await screen.findByRole("alert");
 
     await act(async () => {
@@ -161,9 +161,9 @@ describe("ProtectedGateClient", () => {
     );
     mocks.currentUser = { uid: "user-123" };
     render(
-      <ProtectedGateClient>
+      <ProtectedGuardClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGateClient>,
+      </ProtectedGuardClient>,
     );
     const onAuthChange = mocks.subscribe.mock.calls[0][1];
     await act(async () => {
@@ -185,9 +185,9 @@ describe("ProtectedGateClient", () => {
     });
     const log = vi.spyOn(console, "error").mockImplementation(() => {});
     render(
-      <ProtectedGateClient>
+      <ProtectedGuardClient>
         <div>{"Protected Content"}</div>
-      </ProtectedGateClient>,
+      </ProtectedGuardClient>,
     );
     expect(screen.getByRole("alert").textContent).toBe("configurationError");
     log.mockRestore();

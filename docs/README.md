@@ -15,7 +15,7 @@ language, as defined in `.agents/rules/language-conventions.md`.
 | [Tooling](../TOOLING.md) | Tools, commands, configuration ownership | `package.json`, configuration, workflows |
 | [Testing](../TESTING.md) | Test layers, required Firebase Emulator E2E, CI limitations | Vitest, Playwright, Firebase, Stryker, workflows |
 | [Quality rule ownership](quality-rule-ownership.md) | Which tool owns each rule, coverage limits, regressions | Biome, ast-grep, TypeScript AST, Playwright, CI |
-| [Biome plugin pilot](biome-javascript-plugin-pilot.md) | Isolated 2.6 preview and migration gate | `biome.preview.json`, pilot fixtures, CI |
+| [Biome plugin pilot](biome-javascript-plugin-pilot.md) | Isolated 2.6 preview and migration guard | `biome.preview.json`, pilot fixtures, CI |
 | [Contributing](../CONTRIBUTING.md) | Branch, commit, and PR conventions | Commitlint, hooks, CI |
 | [Security](../SECURITY.md) | Reporting policy and accepted dependency risk | Audit configuration and security workflow |
 | [Glossary](../GLOSSARY.md) | Agreed product vocabulary; currently pending | Adopted product terminology |

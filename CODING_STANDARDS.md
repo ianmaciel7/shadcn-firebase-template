@@ -420,7 +420,7 @@ Components throughout the application—regardless of whether they are Server Co
 - When metadata varies by locale, use the `next-intl` metadata pattern from
   ADR 0004.
 
-## Quality gate
+## Quality guard
 
 - Format only the files you changed, then run the relevant checks from
   [TESTING.md](TESTING.md).

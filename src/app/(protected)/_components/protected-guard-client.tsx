@@ -2,12 +2,12 @@
 
 import type { PropsWithChildren } from "react";
 import { LabeledSpinner } from "@/components/ui/extensions/labeled-spinner";
-import { useProtectedGateClient } from "../_hooks/use-protected-gate-client";
+import { useProtectedGuardClient } from "../_hooks/use-protected-guard-client";
 
-type ProtectedGateClientProps = PropsWithChildren;
+type ProtectedGuardClientProps = PropsWithChildren;
 
-function ProtectedGateClient({ children }: ProtectedGateClientProps) {
-  const state = useProtectedGateClient();
+function ProtectedGuardClient({ children }: ProtectedGuardClientProps) {
+  const state = useProtectedGuardClient();
   const { t } = state;
 
   if (state.isError) {
@@ -35,4 +35,4 @@ function ProtectedGateClient({ children }: ProtectedGateClientProps) {
   );
 }
 
-export { ProtectedGateClient };
+export { ProtectedGuardClient };

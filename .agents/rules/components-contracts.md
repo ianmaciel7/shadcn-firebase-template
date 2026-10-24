@@ -8,7 +8,7 @@ This rule covers component contracts; see also [Component Composition, Hooks, an
 | Dimension | Convention | Examples |
 | --- | --- | --- |
 | Runtime | Import graphs determine membership; `"use client"` declares a boundary, while a shared module can compile in both graphs | `ProfileCard` may participate in a client subtree without its own directive |
-| Responsibility | Describe the composition or behavior, not its runtime | `ProfileCard`, `ProfileFormClient`, `ProfileAvatarFieldClient`, `AuthProviderClient`, `ProtectedGateClient`, `SignInAuthFlowClient` |
+| Responsibility | Describe the composition or behavior, not its runtime | `ProfileCard`, `ProfileFormClient`, `ProfileAvatarFieldClient`, `AuthProviderClient`, `ProtectedGuardClient`, `SignInAuthFlowClient` |
 | Placement | Colocate route components in private `_components/`, hooks in `_hooks/` and shared components in `src/components/ui/extensions/` | App Router private folders do not become routes |
 
 The shadcn primitives live under `src/components/ui/`; Firebase registry output
@@ -26,7 +26,7 @@ and does not transfer maintenance ownership to vendors. Application-owned extens
   component props according to the existing component-props rule.
 - Prefer semantic roles: `*-field`, `*-fields`, `*-form`, `*-card`,
   `*-dialog`, `*-header`, `*-button`, `*-table`, `*-list`, `*-provider`,
-  `*-gate`, `*-flow`, `*-hero`, `*-section`, or `*-content`. This is **not** a closed list.
+  `*-guard`, `*-flow`, `*-hero`, `*-section`, or `*-content`. This is **not** a closed list.
   `Flow` specifically denotes navigation or application flow wiring.
 - Do not name route-private components after screen or page terms (`-page`, `-screen`, `-view`);
   name by semantic role. Prohibit generic implementation terms (`View`, `Screen`, `Presentation`) in component identifiers.

@@ -47,38 +47,38 @@ function compoundCard(source) {
 }
 
 describe("owned hook filename/export parity", () => {
-  const gate = "src/app/(protected)/_hooks/use-protected-gate.ts";
-  const matching = "src/app/(protected)/_hooks/use-protected-gate-client.ts";
-  const messages = (code, file = gate) =>
+  const guard = "src/app/(protected)/_hooks/use-protected-guard.ts";
+  const matching = "src/app/(protected)/_hooks/use-protected-guard-client.ts";
+  const messages = (code, file = guard) =>
     inspectHookFilename(code, file)
       .map((item) => item.message)
       .join(" ");
 
-  it("reproduces the original false negative: useProtectedGateClient in use-protected-gate.ts", () => {
+  it("reproduces the original false negative: useProtectedGuardClient in use-protected-guard.ts", () => {
     assert.match(
-      messages("export function useProtectedGateClient() {}"),
-      /does not match filename "use-protected-gate.ts"/,
+      messages("export function useProtectedGuardClient() {}"),
+      /does not match filename "use-protected-guard.ts"/,
     );
     assert.match(
-      messages("export function useProtectedGateClient() {}"),
-      /must export "useProtectedGate"/,
+      messages("export function useProtectedGuardClient() {}"),
+      /must export "useProtectedGuard"/,
     );
   });
 
   it("accepts direct exports and local named exports with exact hook filenames", () => {
     assert.equal(
-      messages("export function useProtectedGateClient() {}", matching),
+      messages("export function useProtectedGuardClient() {}", matching),
       "",
     );
     assert.equal(
       messages(
-        "const useProtectedGateClient = () => {}; export { useProtectedGateClient };",
+        "const useProtectedGuardClient = () => {}; export { useProtectedGuardClient };",
         matching,
       ),
       "",
     );
     assert.equal(
-      messages("export const useProtectedGateClient = () => {};", matching),
+      messages("export const useProtectedGuardClient = () => {};", matching),
       "",
     );
     assert.equal(
@@ -92,29 +92,29 @@ describe("owned hook filename/export parity", () => {
 
   it("rejects wrong suffixes, missing hooks, multiple hooks, aliases, and re-exports", () => {
     for (const code of [
-      "export function useProtectedGateClient() {}",
-      "export function useProtectedGate() {} export function useOther() {}",
+      "export function useProtectedGuardClient() {}",
+      "export function useProtectedGuard() {} export function useOther() {}",
       "export const someValue = true;",
-      "export { useProtectedGateClient } from './other';",
-      "function useProtectedGateClient() {} export { useProtectedGateClient as useProtectedGate };",
+      "export { useProtectedGuardClient } from './other';",
+      "function useProtectedGuardClient() {} export { useProtectedGuardClient as useProtectedGuard };",
     ]) {
       const result = messages(code);
       assert.ok(result, code);
     }
     assert.match(
-      messages("export { useProtectedGate } from './other';"),
+      messages("export { useProtectedGuard } from './other';"),
       /re-exports are not allowed/,
     );
     assert.match(
       messages(
-        "export function useProtectedGate() {} export function useOther() {}",
+        "export function useProtectedGuard() {} export function useOther() {}",
       ),
       /does not match filename/,
     );
   });
 
   it("scopes the rule to owned private hooks, not vendor files or shadcn use-mobile", () => {
-    assert.equal(isOwnedHookModule(gate), true);
+    assert.equal(isOwnedHookModule(guard), true);
     for (const path of [
       "src/hooks/use-mobile.ts",
       "src/app/_hooks/use-account.test.ts",

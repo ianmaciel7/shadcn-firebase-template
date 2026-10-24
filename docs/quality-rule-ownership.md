@@ -18,7 +18,7 @@ and a regression test.
 | Static responsive class heuristics | `scripts/check-responsiveness.mjs` | Supplemental; cannot prove actual rendered accessibility. |
 | Rendered reflow and touch target behavior | Playwright | `tests/responsive.spec.ts` measures real element bounds. |
 | Accessibility semantics and violations | axe-core with Playwright | Complements, rather than replaces, interaction tests. |
-| Firebase authentication flows | Playwright + Firebase Emulator | Required `auth-emulator` job launches Auth, Firestore, and Functions for the `recordUsage` gate. All jobs passed in run 39973720187; retain these dependencies and watch for flaky browser interactions. |
+| Firebase authentication flows | Playwright + Firebase Emulator | Required `auth-emulator` job launches Auth, Firestore, and Functions for the `recordUsage` guard. All jobs passed in run 39973720187; retain these dependencies and watch for flaky browser interactions. |
 | Module dependency boundaries and cycles | dependency-cruiser | Owns dependency graph checks. |
 | Security patterns and tainted sinks | Semgrep | Avoid duplicating these in new lint scripts. |
 | Unused application code | Knip | Fallow supplies independent health and coverage signals. |

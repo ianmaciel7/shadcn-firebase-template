@@ -3,7 +3,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { subscribeToProtectedAccess } from "../_lib/protected-access-subscription";
 
-export function useProtectedGateClient() {
+export function useProtectedGuardClient() {
   const t = useTranslations("Auth");
   const router = useRouter();
   const pathname = usePathname();

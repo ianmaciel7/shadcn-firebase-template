@@ -1,5 +1,5 @@
-import { ProtectedGateClient } from "./_components/protected-gate-client";
+import { ProtectedGuardClient } from "./_components/protected-guard-client";
 
 export default function ProtectedLayout({ children }: LayoutProps<"/">) {
-  return <ProtectedGateClient>{children}</ProtectedGateClient>;
+  return <ProtectedGuardClient>{children}</ProtectedGuardClient>;
 }

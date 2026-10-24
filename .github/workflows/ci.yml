@@ -159,7 +159,7 @@ jobs:
           distribution: temurin
           java-version: "21"
       - run: pnpm install --frozen-lockfile
-      # ProtectedGateClient and profile saves await the recordUsage callable;
+      # ProtectedGuardClient and profile saves await the recordUsage callable;
       # starting only Auth and Firestore leaves the protected page blocked.
       - name: Install Cloud Functions dependencies
         run: npm ci --prefix functions --ignore-scripts

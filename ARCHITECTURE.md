@@ -295,7 +295,7 @@ and [the integration convention](CODING_STANDARDS.md#integration-filename-conven
 
 ## Usage records
 
-The protected gate calls `recordUsage` on pathname changes before releasing
+The protected guard calls `recordUsage` on pathname changes before releasing
 children. Profile saves call `withUsageGuard` before starting the operation.
 The Firebase callable validates authentication and an allowlist of screen and
 functionality names, then emits structured `INFO` entries using the native
