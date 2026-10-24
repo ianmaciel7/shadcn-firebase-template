@@ -151,6 +151,12 @@ It does not ban all third-party React dependencies in `src/lib`.
 
 Firebase Authentication provides browser authentication on public auth routes and
 client-guarded protected routes (`(protected)/profile`); see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md).
+`FirebaseAuthSessionBridgeClient` registers the root-scoped
+`firebase-auth-sw.js` worker. The worker refreshes an ID token and attaches it
+only to same-origin Next navigation requests; `src/lib/firebase/server.ts` verifies that
+bridged token through `FirebaseServerApp`. Until the worker controls a tab, the
+browser guard remains the first-load fallback. The development worker receives
+the existing public Auth Emulator host, so it shares the local emulator session.
 The authentication modules intentionally remain flat under `src/lib`:
 `auth.ts`, `session.ts`, and `return-url.ts`; consumers should import them as
 `@/lib/auth`, `@/lib/session`, and `@/lib/return-url`.

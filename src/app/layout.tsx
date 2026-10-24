@@ -7,6 +7,7 @@ import { ThemeProviderClient } from "@/components/ui/extensions/theme-provider-c
 import { Spinner } from "@/components/ui/spinner";
 import { Toaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { FirebaseAuthSessionBridgeClient } from "./_components/firebase-auth-session-bridge-client";
 import "./globals.css";
 
 const geist = Geist({
@@ -56,6 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           }
         >
           <IntlProviderServer>
+            <FirebaseAuthSessionBridgeClient />
             <ThemeProviderClient
               attribute="class"
               defaultTheme="system"

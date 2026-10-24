@@ -444,9 +444,21 @@ function componentIntegrations(source, filename, modules, visited = new Set()) {
       modules,
       visited,
     );
+    // A server-only helper may import the Firebase SDK (FirebaseServerApp)
+    // without making its Server Component a browser integration.
+    if (hasServerOnlyMarker(childSource(target, modules))) child.client = false;
     mergeIntegrations(result, child);
   }
   return result;
+}
+
+function childSource(target, modules) {
+  return ts.createSourceFile(
+    target,
+    modules.get(target),
+    ts.ScriptTarget.Latest,
+    true,
+  );
 }
 
 function hasServerOnlyMarker(source) {

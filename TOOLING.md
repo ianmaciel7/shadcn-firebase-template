@@ -133,7 +133,7 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm check:duplicates` | jscpd. |
 | `pnpm check:structure` | ast-grep rule tests, then a scan of application code. |
 | `pnpm check:routes` | Enforce thin `page.tsx`, `layout.tsx` and `template.tsx` entrypoints with AST tests. |
-| `pnpm check:components` | Test/enforce hook filename/export parity for owned private hooks, component names, compound parts, props forwarding, profile action/parent safety, client boundaries, explicit UI phase flags, and no inline type guards or ternary key expressions in JSX. Presentation-only hooks do not need wrapper hooks. Registry code excluded. |
+| `pnpm check:components` | Test/enforce hook filename/export parity for owned private hooks, component names, compound parts, props forwarding, profile action/parent safety, client boundaries, explicit UI phase flags, and no inline type guards or ternary key expressions in JSX. Presentation-only hooks do not need wrapper hooks. Firebase imports inside a `server-only` helper do not count as browser integration. Registry code excluded. |
 | `pnpm check:responsiveness` | Test and enforce responsive contracts: device-width viewports, no zoom restrictions, fluid widths <= 320px, and WCAG 2.2 touch targets (`node --test scripts/check-responsiveness.test.mjs && node scripts/check-responsiveness.mjs`). |
 | `pnpm check:spelling` / `pnpm check:markdown` | CSpell / markdownlint. |
 | `pnpm check:security` / `pnpm check:security:rules` | Semgrep scan of `src` (fails on findings) / tests of the Semgrep rules. Run inside a Git work tree. |

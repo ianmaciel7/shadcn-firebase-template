@@ -1019,6 +1019,23 @@ describe("component integration naming", () => {
     );
   });
 
+  it("does not treat Firebase SDK use inside a server-only helper as browser integration", () => {
+    const component =
+      'import "server-only"; import { requireAccess } from "@/components/_lib/require-access"; function AccountServer() { return <div />; } export { AccountServer };';
+    const modules = (helper) =>
+      new Map([["src/components/_lib/require-access.ts", helper]]);
+    assert.equal(
+      messages(
+        component.replace("../_lib", "../_lib"),
+        "account-server",
+        modules(
+          'import "server-only"; import { getAuth } from "firebase/auth";',
+        ),
+      ),
+      "",
+    );
+  });
+
   it("excludes registry source, framework files and tests", () => {
     for (const path of [
       "src/app/error.tsx",

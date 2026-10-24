@@ -53,6 +53,9 @@ and does not transfer maintenance ownership to vendors. Application-owned extens
   (`next/headers`, `next/cache`, `next/server`, `next-intl/server`,
   `server-only` or `firebase-admin`). These are provable errors;
   the guard does not attempt to infer the complete transitive import graph.
+  A helper module that imports `"server-only"` may use the Firebase SDK
+  (`FirebaseServerApp`) without making the Server Component that calls it a
+  browser integration.
 - Next.js `page.tsx`, `layout.tsx` and `template.tsx` use their mandatory
   framework exports and remain outside this naming guard. The separate
   `pnpm check:routes` enforces our thin-route architecture policy.

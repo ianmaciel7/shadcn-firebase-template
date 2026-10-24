@@ -34,6 +34,11 @@ coordinate disclosure and remediation with the reporter.
   Security Rules, not only in UI validation. Current profile rules scope
   `users/{uid}` documents and `users/{uid}/avatar` objects to the matching
   authenticated UID.
+- The Firebase session worker transmits a refreshed ID token only to same-origin
+  navigation/RSC requests. Its Firebase configuration is public Web SDK
+  configuration, never Admin credentials. `FirebaseServerApp` verification can
+  improve server rendering decisions but does not replace Firebase Security
+  Rules or establish a shared authorization cache.
 - Prefer server-side handling for sensitive operations and minimize data sent
   to Client Components.
 - Keep dependencies current and review security advisories before upgrades.
