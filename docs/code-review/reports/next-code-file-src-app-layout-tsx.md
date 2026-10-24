@@ -42,3 +42,9 @@ Correct implementations:
 
 - Classification: Partially compliant.
 - Explanation: the layout follows the Next.js 16.4.2 contracts and respects the documented Server/Client composition and streaming model. There is a known mismatch between the content locale and `html lang`; the architecture itself records the impact and states that a fix depends on a rendering strategy and accessibility tests. No other proven issue was identified in this file.
+
+## Post-checkpoint reconciliation
+
+- [ADR 0004](../../adr/0004-configure-internationalization.md) (`2d103cc`) restored direct cookie-only locale resolution after reversing the temporary `[locale]` route segment migration (`b568bb7`); `NXLAYOUT-001` therefore remains open by architectural decision.
+- Commit `4d134f0` added `FirebaseAuthSessionBridgeClient` inside the root layout provider tree to synchronize client Firebase Auth state with the server session bridge.
+- Commit `a3cd49a` ([ADR 0005](../../adr/0005-document-project-standards.md)) relocated `AuthProviderClient` and `RouteLoading` from `src/app/_components/` to `@/components/ui/extensions/`, updating root layout imports accordingly.

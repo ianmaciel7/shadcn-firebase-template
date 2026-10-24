@@ -117,7 +117,7 @@ and authenticate and authorize the operation at its data-access boundary.
 Page redirects, client guards, Proxy matchers, hidden buttons, encrypted action
 identifiers, and closed-over values do not replace those checks. Review response
 serialization, upload limits, error disclosure, and cookie options with the
-new endpoint. Role-based authorization follows [ADR 0021](docs/adr/0021-authorize-with-role-custom-claims.md):
+new endpoint. Role-based authorization follows [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md):
 verify tokens with Firebase Admin (`checkRevoked`) and gate protected data
 through `requireRole` in `src/lib/user/dal.ts`; Security Rules remain the
 enforcement point for browser access.

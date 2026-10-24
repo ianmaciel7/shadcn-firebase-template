@@ -10,8 +10,8 @@ Applications built from this template require multi-language support (English, P
 ## Decision
 We adopt `next-intl` with a decoupled routing, provider, and message structure:
 
-1. **Cookie-Driven Routing Without Middleware**:
-   The routing strategy is **100% cookie-driven (`NEXT_LOCALE`) without `middleware.ts` and without a `[locale]` folder prefix in the App Router**. The application serves routes like `src/app/page.tsx` directly at `/`, avoiding proxy scripts, path rewriting overhead, or localized route nesting.
+1. **Cookie-Driven Routing Without Middleware or Locale Route Segments**:
+   The routing strategy is **100% cookie-driven (`NEXT_LOCALE`) without `middleware.ts` / `src/proxy.ts` and without a `[locale]` folder prefix in the App Router**. The application serves routes like `src/app/page.tsx` directly at `/`, avoiding proxy scripts, internal or external path rewriting overhead, or localized route nesting. This cookie-only, unprefixed route tree under `src/app/` is an explicit maintainer requirement: an internally rewritten `src/app/[locale]/` route segment via `NextResponse.rewrite()` and `next/root-params` was evaluated and rejected because even internal locale route segments violate this constraint.
 
 2. **Routing Definition (`src/i18n/routing.ts`)**:
    Defines supported locales (`["en", "pt-BR", "es"]`), the fallback default locale (`"en"`), cookie name (`"NEXT_LOCALE"`), and the locale type guard (`isLocale`).
@@ -35,36 +35,42 @@ We adopt `next-intl` with a decoupled routing, provider, and message structure:
    ```
 
 3. **Server Request Configuration (`src/i18n/request.ts`)**:
-   Resolves the active locale from cookies or explicit params and dynamically imports the corresponding JSON message dictionary from `src/messages/${locale}.json`. If missing or unsupported, it cleanly falls back to `defaultLocale` (`"en"`).
+   Resolves the active locale from the `NEXT_LOCALE` request cookie (`cookies()`) or explicit server translation overrides and dynamically imports the corresponding JSON message dictionary from `src/messages/${locale}.json`. If missing or unsupported, it cleanly falls back to `defaultLocale` (`"en"`). Cookie-resolution regression tests cover every supported locale, invalid or missing cookies, and explicit overrides without mocking root parameters.
 
 4. **Static Root HTML Lang Attribute (`src/app/layout.tsx`)**:
-   The top-level `<html lang="en">` attribute in `src/app/layout.tsx` is currently static. While component content within `IntlProvider` renders dynamically according to the active cookie locale, the root HTML `lang` attribute is fixed to `"en"`. Derived applications requiring dynamic server-rendered `lang` attributes must read the cookie in `RootLayout`.
+   The top-level `<html lang="en">` attribute in `src/app/layout.tsx` is intentionally static while component content within the suspended `IntlProviderServer` boundary renders dynamically according to the active cookie locale. With Next.js 16 Cache Components enabled, awaiting `cookies()` above the root `Suspense` boundary blocks prerendering of the static document shell, and a client-only attribute update leaves initial server HTML and JavaScript-disabled clients with the wrong language. Do not introduce `[locale]` route segments, `src/proxy.ts` rewrites, a rendering-model change, or an unverified root cookie read to work around this; any future document-language solution must preserve the cookie-only architecture and be verified with Cache Components.
 
-5. **Localized Navigation (`src/i18n/navigation.ts`)**:
-   Provides localized primitives (`Link`, `redirect`, `usePathname`, `useRouter`, `getPathname`) via `createNavigation(routing)`.
+5. **Navigation**:
+   Navigation uses the standard Next.js `Link`, `useRouter`, and `usePathname` directly against unprefixed public URLs (localized navigation wrappers are also available via `src/i18n/navigation.ts` when needed, without internal pathname normalization helpers).
 
-6. **Context Provider Wrapper (`src/components/ui/extensions/intl-provider.tsx`)**:
-   An async Server Component adhering to pure React context provider standards. It extends `React.ComponentProps<typeof NextIntlClientProvider>`, removes unnecessary DOM wrapper markup (`<div className="contents">`) to eliminate DOM tree pollution, resolves messages and locale server-side cleanly (`getLocale()`, `getMessages()`), and adopts the standardized shadcn `function ... export { ... }` convention:
+6. **Context Provider Wrapper (`src/components/ui/extensions/intl-provider-server.tsx`)**:
+   An async Server Component (`server-only`) adhering to pure React context provider standards. It extends `Omit<React.ComponentProps<typeof NextIntlClientProvider>, "locale" | "messages">`, removes unnecessary DOM wrapper markup (`<div className="contents">`) to eliminate DOM tree pollution, resolves messages and locale server-side cleanly (`getLocale()`, `getMessages()`), assigns `locale` and `messages` after caller props, and adopts the standardized shadcn `function ... export { ... }` convention:
    ```tsx
+   import "server-only";
    import { NextIntlClientProvider } from "next-intl";
    import { getLocale, getMessages } from "next-intl/server";
    import type * as React from "react";
 
-   async function IntlProvider({
+   type IntlProviderServerProps = Omit<
+     React.ComponentProps<typeof NextIntlClientProvider>,
+     "locale" | "messages"
+   >;
+
+   async function IntlProviderServer({
      children,
      ...props
-   }: React.ComponentProps<typeof NextIntlClientProvider>) {
-     const locale = await getLocale();
-     const messages = await getMessages();
+   }: IntlProviderServerProps) {
+     const [locale, messages] = await Promise.all([getLocale(), getMessages()]);
 
      return (
-       <NextIntlClientProvider locale={locale} messages={messages} {...props}>
+       <NextIntlClientProvider {...props} locale={locale} messages={messages}>
          {children}
        </NextIntlClientProvider>
      );
    }
 
-   export { IntlProvider };
+   export { IntlProviderServer };
+   export type { IntlProviderServerProps };
    ```
 
 7. **Message Catalogs (`src/messages/*.json`)**:

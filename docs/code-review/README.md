@@ -8,20 +8,20 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 
 | Metric | Count |
 | --- | ---: |
-| Documentation folders | 44 |
-| Documentation files | 482 |
-| Project folders | 96 |
-| Project files | 519 |
+| Documentation folders | 40 |
+| Documentation files | 474 |
+| Project folders | 103 |
+| Project files | 564 |
 | Coordinator | 1 |
-| Expected agents / primary items | 1,142 |
+| Expected agents / primary items | 1,182 |
 | Individual reports present | 55 |
 | Active report tasks | 0 |
 | Completed tasks | 55 |
-| Pending tasks (excluding active) | 1,087 |
+| Pending tasks (excluding active) | 1,127 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 2 medium, 15 low, 0 high/critical |
-| Documentation coverage | 24 / 526 items (4.56%) |
-| Project coverage | 30 / 615 items (4.88%) |
+| Documentation coverage | 24 / 514 items (4.67%) |
+| Project coverage | 30 / 667 items (4.50%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -41,32 +41,35 @@ See [documentation coverage](documentation-coverage.md), [source coverage](sourc
 
 Resumed from branch `fix/react-review-findings` at `f7b7221`, containing audit checkpoint `a9244b6`. Installed Next.js remains 16.4.2. Existing individual reports were preserved. Two resumed batches completed 12 new reports, each by a distinct real subagent. No reviewer remains active; 12 new item reviewers were executed in this session. Historical execution counts are inherited from the existing reports rather than reasserted as new runs.
 
-The historical inventory contains 12 generated documentation paths absent from this installation. They remain pending, as explained in [documentation coverage](documentation-coverage.md). The project pending count was corrected from an inconsistent 600 to the count derived from the manifest and completed reports.
+The historical inventory contained 12 generated `graphify-out/` documentation paths that are not part of the official Next.js documentation corpus; they have been reconciled and excluded under [documentation coverage](documentation-coverage.md). The project inventory in [the manifest](agents-manifest.md) has also been reconciled against the current tracked repository tree after the cookie-only locale restoration, cross-route code placement outside `src/app/`, role custom-claim authorization, server session verification, centralized route navigation, the English language guard, and Serena research memory relocation.
 
-Validation: the installed Markdown CLI reports 48 pre-existing issues in the manifest and the historical `tsconfig.json` report, with no issues in the 12 new reports. The configured spelling scan reports 308 issues in 14 files; individual reports are excluded by the existing configuration and were reviewed manually. The pnpm wrappers failed during environment setup, so the installed tool executables were used directly. No build or browser suite was run for these documentation-only changes.
+Validation: the installed Markdown CLI (`markdownlint-cli2`), the English language guard (`check:english`), and the configured spelling check (`cspell`) pass with zero issues across `docs/code-review/`. No build or browser suite was run for these documentation-only changes.
 
 ## Remediation phase
 
-After checkpoint `d8e5df2`, the user authorized fixes and parallel implementation. See [resolutions](resolutions.md) for every consolidated finding, local mitigations for upstream documentation, validation boundaries. ADR 0019 reverses the locale-route migration and restores cookie-only selection; NXLAYOUT-001 is open. Coverage counts above remain historical; new files require inventory reconciliation before the audit resumes.
+After checkpoint `d8e5df2`, the user authorized fixes and parallel implementation. See [resolutions](resolutions.md) for every consolidated finding, local mitigations for upstream documentation, and validation boundaries. [ADR 0004](../adr/0004-configure-internationalization.md) preserves direct cookie-only locale selection after reversing the temporary locale-route migration; NXLAYOUT-001 is open. Subsequent repository refactors ([ADR 0005](../adr/0005-document-project-standards.md) cross-route placement outside `src/app/`, [ADR 0009](../adr/0009-integrate-firebase-authentication.md) role custom claims, server session bridge, centralized `ROUTES`, `ProtectedGuardClient`, and `check:english`) are reconciled in the manifest and affected reports.
 
-## Durable handoff after the cookie-only correction
+## Durable handoff after inventory reconciliation
 
 - The current maintainer requirement is owned by
-  [Architecture](../../ARCHITECTURE.md#internationalization) and ADR 0019.
-  ADR 0018 is superseded; do not reintroduce its route rewrite as a presumed fix.
+  [Architecture](../../ARCHITECTURE.md#internationalization) and [ADR 0004](../adr/0004-configure-internationalization.md).
+  Internal locale route rewrites are rejected; do not reintroduce a route rewrite as a presumed fix.
 - The original 43 reports were inherited, not rerun. Twelve distinct item agents
   produced the resumed reports from `artifact.tsx` through `controls.tsx`.
-  Historical inventory: 1,142 items, 55 reports, zero active and 1,087 pending;
-  documentary coverage is 24/526 and project coverage is 30/615. New tests and
-  implementation files are not automatically additional reviewed items.
+  Reconciled inventory: 1,182 items, 55 reports, zero active and 1,127 pending;
+  documentary coverage is 24/514 (4.67%) and project coverage is 30/667 (4.50%).
+  Newly added tests and implementation files are included as `Pending` rows in the
+  reconciled manifest rather than automatically counted as reviewed.
 - Of 17 deduplicated historical findings, 14 project corrections are implemented,
   the root document-language finding remains open, and two upstream indexes have
   local navigation mitigations. The `AUDIOPLAYER-001` and `COMMIT-001` reports
   share one consolidated cause; preserve both evidence references.
-- Before resuming the pending queue, recheck names, statuses, report existence,
-  current paths and eligibility. Twelve generated `graphify-out/` paths from the
-  historical inventory are absent; do not count them as reviewed, automatically
-  delete them, or mark them not applicable without reconciliation.
+- The 12 generated `node_modules/next/dist/docs/graphify-out/` paths and 11
+  relocated/renamed project paths (`src/app/_components/auth-provider-client*`,
+  `src/app/_components/route-loading*`, `src/app/_hooks/use-auth-provider-client.ts`,
+  `protected-gate-client*`, `.serena/memories/external-research/*`, and
+  `functions/package-lock.json`) were reconciled out of the active manifest, and
+  current tracked project folders/files were added.
 - The next pending AI Elements file is `conversation.tsx`, followed by the
   remaining entries in the manifest. Each folder and file needs its own primary
   reviewer and report. Folder architecture reviews do not cover child files.
@@ -75,8 +78,11 @@ After checkpoint `d8e5df2`, the user authorized fixes and parallel implementatio
 - Implementation checkpoints: `d8e5df2` saved the 12 resumed reports; `b568bb7`
   implemented fixes and the subsequently rejected route migration; `2d103cc`
   restored cookie-only routing and retained the other fixes; `40ca16a` clarified
-  the remaining language finding. Preserve this distinction when interpreting
-  old line numbers, applicability statements and test counts.
+  the remaining language finding; `78f4761` through `673ce18` introduced custom
+  claims, server session verification, cross-route code placement outside
+  `src/app/`, `ProtectedGuardClient`, `check:english`, and English report
+  translations. Preserve this distinction when interpreting old line numbers,
+  applicability statements, and test counts.
 
 Tool limitations belong in [Tooling](../../TOOLING.md#managed-environment-observations-2026-10-24),
 regression strategy in [Testing](../../TESTING.md#review-finding-regressions),

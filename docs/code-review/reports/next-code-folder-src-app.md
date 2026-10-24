@@ -31,3 +31,8 @@ No architectural issue in the folder was proven. Implementation findings belongi
 ## Conclusion
 
 **Compliant.** The observed organization is consistent with the installed App Router and with the repository's documented conventions: groups for route areas, private folders for implementation, local layouts/loading, and dependency direction protected by executable rules. The absence of cycles at runtime remains **unverified** in this task; the existence of the rule was not treated as the result of a run.
+
+## Post-checkpoint reconciliation
+
+- Per [ADR 0005](../../adr/0005-document-project-standards.md) (`a3cd49a`), cross-route providers and loading components (`auth-provider-client.tsx`, `route-loading.tsx`) and their hook (`use-auth-provider-client.ts`) were relocated from `src/app/_components/` and `src/app/_hooks/` to `src/components/ui/extensions/` and `src/hooks/`.
+- Protected route gating in `src/app/(protected)/` was updated from `ProtectedGateClient` / `ProfileFallback` to `ProtectedGuardClient`, `ProtectedSessionServer`, and `ProfileGuard`, with pure support modules extracted to `src/app/(protected)/_lib/` and `src/app/(protected)/profile/_lib/`.

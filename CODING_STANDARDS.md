@@ -39,7 +39,7 @@ When standards conflict, apply them in this order:
   for owned components: put behavior/context orchestration in a separate
   `use<ComponentName>` hook, which may compose focused hooks internally.
   Keep route-specific hooks in private `_hooks` folders and hooks shared by
-  several route trees in `src/hooks/` ([ADR 0020](docs/adr/0020-place-cross-route-code-outside-app.md)). Any combination
+  several route trees in `src/hooks/` ([ADR 0005](docs/adr/0005-document-project-standards.md)). Any combination
   of the supported presentation hooks may be called directly. React itself
   does not require one orchestration hook per component.
 - **Hook modules do not own module-level support declarations**: Put helper
@@ -794,8 +794,8 @@ retain their existing contracts. Integrations stay in their current route or
 shared extension placement; no new container directory is required.
 
 See [the naming rule](.agents/rules/components-contracts.md#ci-enforcement) for
-executable coverage and limits. [ADR 0016](docs/adr/0016-name-components-by-integration-responsibility.md)
-supersedes the broader runtime naming policy from ADR 0015.
+executable coverage and limits, and [ADR 0005](docs/adr/0005-document-project-standards.md)
+for the integration naming and exact export-stem parity decision.
 
 ## Source naming and export style
 

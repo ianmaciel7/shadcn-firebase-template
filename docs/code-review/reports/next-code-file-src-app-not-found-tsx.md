@@ -39,3 +39,7 @@ No proven finding in this file.
 
 - Classification: Compliant.
 - Explanation: the file follows the installed App Router not-found contract, composes a localized server-rendered 404 with the existing root provider, and uses accessible semantic navigation. The inherited static document language is tracked against the root layout separately; no independent issue in this file was established.
+
+## Post-checkpoint reconciliation
+
+Commit `72c6719` updated the home link target to use `ROUTES.home` from `@/lib/navigation`, preserving the Server Component contract and localized `Link` semantics.

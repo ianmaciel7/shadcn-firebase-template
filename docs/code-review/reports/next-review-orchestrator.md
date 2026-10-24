@@ -21,9 +21,9 @@ Files consulted:
 
 ### Correct implementations
 
-- The manifest contains exactly 1,142 entries: one coordinator, 44 documentation folders, 482 documentation files, 96 project folders, and 519 versioned project files.
-- Names are unique and have the required prefix. The resumption identified 12 historical `graphify-out/` paths missing from this installation; they remain pending, with no presumed coverage.
-- Of the 526 historical documentation items, 514 paths exist in this installation; 12 generated-artifact paths need eligibility reconciliation.
+- The reconciled manifest contains 1,182 entries: one coordinator, 40 documentation folders, 474 documentation files, 103 project folders, and 564 versioned project files.
+- Names are unique and have the required prefix. The 12 historical `node_modules/next/dist/docs/graphify-out/` generated sidecar paths and 11 relocated/renamed/excluded project paths have been reconciled out of the active manifest, and 8 new folders and 64 new tracked files have been added as `Pending` rows.
+- All 514 official documentation items and all 667 project items exist in this installation.
 - The recorded version (16.4.2) matches `node_modules/next/package.json`.
 
 ### Risks and recommendations

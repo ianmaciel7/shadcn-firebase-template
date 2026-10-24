@@ -74,9 +74,9 @@ stem and component identifiers:
   - Hook coordination: `useHomeSectionClient` in `src/app/_hooks/use-home-section-client.ts` (`useHomeSection` is rejected)
 - **Profile example:** `profile-form-client.tsx` exports
   `ProfileFormClient`, with compound parts sharing the same root. This
-  naming contract supersedes only the semantic export naming aspect of ADR
-  0016; integration versus presentation placement remains unchanged. See
-  [ADR 0017](../../docs/adr/0017-enforce-exact-component-export-names.md).
+  naming contract enforces exact filename-stem parity while preserving integration
+  versus presentation placement. See
+  [ADR 0005](../../docs/adr/0005-document-project-standards.md).
 
 Simple presentation hooks such as `useId`, `useTranslations`, and React Hook
 Form's `useFormContext` and `useWatch` may be called directly in a field.

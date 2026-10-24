@@ -44,3 +44,7 @@ No findings. The review did not identify a proven divergence between `package.js
 ## Conclusion
 
 **Compliant.** The manifest declares the runtime, framework, and native commands consistently with the installed version. The spot validation confirmed Next 16.4.2, TypeScript 5.9.3, and Biome 2.5.15 available in the workspace.
+
+## Post-checkpoint reconciliation
+
+Subsequent repository updates (`78f4761` and `e5e579d`) added `firebase-admin` for server-side custom-claim authorization ([ADR 0009](../../adr/0009-integrate-firebase-authentication.md)) and the `check:english` script (`node scripts/check-english.mjs`) wired into static verification. Pinned Next.js 16.4.2 and React 19.3.1 versions remain unchanged.

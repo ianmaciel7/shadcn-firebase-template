@@ -44,3 +44,7 @@ I found no other proven issue in this file. The type of `error` is narrower than
 
 - Classification: partially compliant.
 - Explanation: the Client Component boundary, the logging, and the localized presentation follow the applicable contracts. The semantics of `reset()` diverge from the behavior the "try again" label usually implies; the installed reference provides `retry()` to refetch.
+
+## Post-checkpoint reconciliation
+
+Remediated in `b568bb7` (and retained after `2d103cc`): `src/app/error.tsx` now invokes the installed Next.js `unstable_retry` / `retry` recovery API with unit regression coverage in `src/app/error.test.tsx`. See [remediation status](../resolutions.md).

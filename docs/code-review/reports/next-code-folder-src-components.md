@@ -44,3 +44,7 @@ Observed structural inventory:
 
 - Classification: Partially compliant.
 - Explanation: the folder's division into three areas and the absence of modules at the root are consistent with the architecture. There is a documentation contradiction about the ownership and treatment of the Firebase tree, which should be resolved in the operational guide. This review does not replace the reports for each subfolder or file, nor does it establish that every individual component is correct.
+
+## Post-checkpoint reconciliation
+
+`COMPONENTS-OWNERSHIP-001` was remediated by aligning `.agents/rules/components-contracts.md` with `ARCHITECTURE.md` and ADR 0008's locally maintained registry source model while preserving naming exclusions. Per [ADR 0005](../../adr/0005-document-project-standards.md), `src/components/ui/extensions/` also hosts cross-route application extensions (`auth-provider-client.tsx`, `firebase-auth-session-bridge-client.tsx`, and `route-loading.tsx`). See [remediation status](../resolutions.md).

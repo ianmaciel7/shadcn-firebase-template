@@ -5,7 +5,7 @@
 - Full subagent name: `next-code-folder-src-components-ui-extensions`
 - Type: `CODE_FOLDER`
 - Primary path: `src/components/ui/extensions/`
-- Associated documentation: Next.js 16.4.2, Server and Client Components; `CODING_STANDARDS.md`; `.agents/rules/components-contracts.md`; ADR 0016.
+- Associated documentation: Next.js 16.4.2, Server and Client Components; `CODING_STANDARDS.md`; `.agents/rules/components-contracts.md`; [ADR 0005](../../adr/0005-document-project-standards.md).
 - Next.js version: `16.4.2`
 - Status: Completed.
 
@@ -45,3 +45,8 @@
 
 - Classification: Partially compliant.
 - Explanation: the folder's structure, colocation, and Server/Client boundaries are aligned with the project's conventions and with Next.js 16.4.2. The global and permanent replacement of `console.error` is an observability risk located in the theme integration; for that reason the folder does not receive a fully compliant classification. The reports for each file remain separate assessments.
+
+## Post-checkpoint reconciliation
+
+- `EXTENSIONS-001` (`THEME-001`) was remediated in `b568bb7` by removing the global `console.error` override from `theme-provider-client.tsx` (covered by `theme-provider-client.test.tsx`).
+- Per [ADR 0005](../../adr/0005-document-project-standards.md) (`a3cd49a`) and commit `4d134f0`, `auth-provider-client.tsx`, `route-loading.tsx`, and `firebase-auth-session-bridge-client.tsx` (with unit tests) now reside in `src/components/ui/extensions/`. Those newly added or relocated files are tracked as `Pending` individual file items in [the reconciled manifest](../agents-manifest.md).

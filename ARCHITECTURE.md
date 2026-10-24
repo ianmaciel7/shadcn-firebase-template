@@ -96,8 +96,8 @@ The internationalization architecture is 100% cookie-driven (`NEXT_LOCALE`)
 without `middleware.ts` and without a `[locale]` folder segment in the App
 Router. The application serves `src/app/page.tsx` directly at `/`; there are no
 localized URL route prefixes or proxy scripts. This is an explicit maintainer
-requirement, reaffirmed in [ADR 0019](docs/adr/0019-restore-cookie-only-locale-resolution.md),
-which supersedes ADR 0018 in full. An internally rewritten locale segment also
+requirement recorded in [ADR 0004](docs/adr/0004-configure-internationalization.md).
+An internally rewritten locale segment also
 violates this requirement; keeping only the browser URL unprefixed is insufficient.
 
 `src/i18n/routing.ts` defines `en`, `pt-BR`, and `es`, defaulting to `en`, and
@@ -122,7 +122,7 @@ with Cache Components, awaiting a request cookie at the root above all
 there is not a complete fix. Preserve the current behavior until that design
 and its accessibility tests are implemented. See
 [ADR 0004](docs/adr/0004-configure-internationalization.md) for the original
-decision and ADR 0019 for the current constraint. Document-language debt does not
+decision and current cookie-only constraint. Document-language debt does not
 authorize adding locale route segments, Proxy, or changing the rendering model.
 
 ## Runtime and component boundaries
@@ -296,7 +296,7 @@ interactive and declare `"use client"`; names do not define React runtime.
 Integrations may delegate persistence, session or browser access to hooks.
 Presentation can compose an integration child without becoming an integration.
 Semantic exports, Next.js special files and registry source retain their names.
-See [ADR 0016](docs/adr/0016-name-components-by-integration-responsibility.md)
+See [ADR 0005](docs/adr/0005-document-project-standards.md)
 and [the integration convention](CODING_STANDARDS.md#integration-filename-convention).
 
 ## Usage records

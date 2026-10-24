@@ -1,5 +1,7 @@
 # Finding remediation
 
+<!-- cspell:ignore NXLAYOUT NEXTERR INTLPROVIDER AUDIOPLAYER DOCSTART DOCUPGRADE EPERM -->
+
 The user authorized implementation after the read-only audit checkpoint `d8e5df2`.
 Historical individual reports and their line references describe that checkpoint;
 they are not assertions that the defects remain in the current source.
@@ -8,7 +10,7 @@ they are not assertions that the defects remain in the current source.
 
 | Finding | Change | Validation |
 | --- | --- | --- |
-| NXLAYOUT-001 | Open. The maintainer rejected the locale-segment migration; ADR 0019 restores direct cookie resolution without Proxy. Static root document language remains English. | Cookie-resolution and unprefixed-navigation regressions cover the restored architecture; they do not establish a fix for document language. |
+| NXLAYOUT-001 | Open. The maintainer rejected the locale-segment migration; [ADR 0004](../adr/0004-configure-internationalization.md) preserves direct cookie resolution without Proxy. Static root document language remains English. | Cookie-resolution and unprefixed-navigation regressions cover the restored architecture; they do not establish a fix for document language. |
 | CODEBLOCK-001 | Cache and subscriptions identify the complete language/content pair. | Sequential and concurrent regressions with installed Shiki. |
 | NEXTERR-001 | Recovery control calls the installed Next.js `retry` API. | Recovery callback regression. |
 | THEME-001 | Removed the global console replacement. | Import preserves error logging, including the formerly suppressed text. |
@@ -41,11 +43,15 @@ in the delivery message.
 
 ## Audit scope
 
-Implementation does not complete the outstanding 1,087 historical review items.
-The manifest remains an inventory of the checkpoint. ADR 0019 restores its
-original route paths after reversing the ADR 0018 migration.
-No newly added or moved file is automatically counted as reviewed. The 12 absent
-generated documentation paths remain pending for eligibility reconciliation.
+Implementation does not complete the outstanding 1,127 pending review items in the
+reconciled manifest. The manifest has been reconciled against the current repository
+state after restoring cookie-only locale routes ([ADR 0004](../adr/0004-configure-internationalization.md)),
+moving cross-route code outside `src/app/` ([ADR 0005](../adr/0005-document-project-standards.md)),
+and introducing custom-claim authorization and server session verification
+([ADR 0009](../adr/0009-integrate-firebase-authentication.md)). Newly added or moved
+files are registered as `Pending` items and are not automatically counted as
+reviewed. The 12 generated `graphify-out/` documentation sidecar paths have been
+excluded from the documentary denominator.
 
 ## Implementation checkpoint results (`b568bb7`)
 
@@ -62,7 +68,7 @@ restored cookie-only architecture; the rejected migration is not counted as a fi
 
 ## Cookie-only correction
 
-ADR 0019 removes `[locale]`, Proxy and root-parameter lookup. Cookie resolution
+[ADR 0004](../adr/0004-configure-internationalization.md) rejects `[locale]`, Proxy, and root-parameter lookup. Cookie resolution
 and original route placement are restored; the other fixes and their regressions
 remain. The prior checkpoint results above describe the earlier revision.
 
@@ -142,3 +148,10 @@ The complexity regression locations now explicitly cover all eight current hook
 directories, in addition to support/shared modules. The agent rule requires full
 scope validation after each hook change, covering existing hooks and sub-hooks,
 while keeping semantic responsibility review distinct from metric enforcement.
+
+## Post-checkpoint architectural and tooling updates (`72c6719`..`673ce18`)
+
+- **Centralized navigation (`72c6719`)**: route path constants and sign-in redirect builders live in `src/lib/navigation.ts`; `src/app/not-found.tsx` and route hooks consume `ROUTES`.
+- **Session reading and server verification (`1f49147`, `4d134f0`, `78f4761`)**: profile session access lives in `src/app/(protected)/profile/_lib/session.ts` (replacing `profile-session-context.ts`); `FirebaseAuthSessionBridgeClient` and `public/firebase-auth-sw.js` synchronize server-verifiable session state; [ADR 0009](../adr/0009-integrate-firebase-authentication.md) adds `firebase-admin`, `src/lib/firebase/server.ts`, `src/lib/user/dal.ts`, and `functions/user-roles.cjs`.
+- **Cross-route code placement (`a3cd49a`, `7bd41ed`, `4643505`)**: per [ADR 0005](../adr/0005-document-project-standards.md), `auth-provider-client.tsx` and `route-loading.tsx` moved from `src/app/_components/` to `src/components/ui/extensions/`, and `use-auth-provider-client.ts` moved from `src/app/_hooks/` to `src/hooks/`. Protected route gating was renamed from `ProtectedGateClient` / `ProfileFallback` to `ProtectedGuardClient` / `ProfileGuard` alongside `ProtectedSessionServer`.
+- **English language guard and Serena research relocation (`e5e579d`, `d2cbb80`, `673ce18`)**: `scripts/check-english.mjs` (`pnpm check:english`) enforces English across repository files, all audit reports in `docs/code-review/` were translated to English, and `.serena/memories/external-research/policy.md` was relocated to `.serena/memories/research/policy.md`.

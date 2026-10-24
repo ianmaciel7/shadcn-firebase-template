@@ -18,7 +18,8 @@ are references until the installed version supports their APIs.
   [component contracts](components-contracts.md), cookie-driven unprefixed locale
   architecture, Firebase authorization boundary, and generated-source exclusions.
   Read [the current locale decision](../../ARCHITECTURE.md#internationalization)
-  before i18n changes: ADR 0019 supersedes ADR 0018. Internal locale rewrites
+  before i18n changes: [ADR 0004](../../docs/adr/0004-configure-internationalization.md)
+  requires direct cookie-only locale resolution. Internal locale rewrites
   do not satisfy the maintainer's cookie-only requirement.
 - Apply [security guidance](../../SECURITY.md#nextjs-server-and-environment-boundaries)
   when introducing server data, cache scopes, environment values, or endpoints.
