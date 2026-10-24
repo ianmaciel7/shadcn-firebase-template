@@ -7,7 +7,7 @@
 - Primary path: `src/components/firebase/totp-multi-factor-enrollment-form.tsx`
 - Associated documentation: Installed Next.js 16.4.2 Client Components guidance, React form semantics, Firebase UI library, and ADR 0008.
 - Next.js version: `16.4.2`
-- Status: Reviewed draft; repository tracking remains Pending until required validation.
+- Status: Completed following focused unit tests and checks in GitHub Actions run 40131416018.
 
 ## Scope
 
@@ -39,3 +39,7 @@ Create a TOTP factor with a distinct display name, verify stored enrollment disp
 
 - Classification: Partially compliant.
 - Explanation: The item's responsibility and boundary were inspected individually. Findings and remaining runtime checks are explicitly distinguished. A clean source inspection is not proof of full component or integration behavior.
+
+## Verified remediation
+
+The source fix was committed and its dedicated unit regression test passed. TypeScript, the inventory guard, English, spelling and scoped Markdown checks passed in [validation run 40131416018](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40131416018). This confirms the component-level regression, not a Firebase emulator end-to-end run or a full framework audit.

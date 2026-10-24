@@ -48,4 +48,31 @@ for (const row of rows) {
 for (const path of expected) {
   if (!found.has(path)) throw new Error("Project item missing from inventory: " + path);
 }
+const allRows = manifest.split("\n");
+const docRows = allRows.filter((line) =>
+  line.startsWith("| DOC_FILE |") || line.startsWith("| DOC_FOLDER |"),
+);
+const coordinator = allRows.find((line) => line.startsWith("| COORDINATOR |"));
+const completedDocumentation = docRows.filter((line) => line.includes("| Completed |")).length;
+const reviewedCount = completed + completedDocumentation + (coordinator?.includes("| Completed |") ? 1 : 0);
+const overallCount = rows.length + docRows.length + (coordinator ? 1 : 0);
+const summary = readFileSync(resolve(root, "docs/code-review/README.md"), "utf8");
+function tableCount(label) {
+  const line = summary.split("\n").find((value) => value.startsWith("| " + label + " | "));
+  if (!line) throw new Error("Missing summary metric: " + label);
+  const value = Number(line.split("|")[2].trim().replaceAll(",", ""));
+  if (!Number.isFinite(value)) throw new Error("Invalid summary metric: " + label);
+  return value;
+}
+for (const [label, expectedValue] of [
+  ["Project folders", rows.filter((line) => line.startsWith("| CODE_FOLDER |")).length],
+  ["Project files", rows.filter((line) => line.startsWith("| CODE_FILE |")).length],
+  ["Expected agents / primary items", overallCount],
+  ["Completed tasks", reviewedCount],
+  ["Pending tasks (excluding active)", overallCount - reviewedCount],
+]) {
+  if (tableCount(label) !== expectedValue) {
+    throw new Error("Stale audit summary metric: " + label + "; expected " + expectedValue);
+  }
+}
 console.log("Review inventory matches " + expected.size + " tracked project items; " + completed + " completed.");

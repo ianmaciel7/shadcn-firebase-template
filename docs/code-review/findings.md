@@ -172,3 +172,10 @@ These issues were discovered in three individual reviews, corrected in commit `9
 - **Low — UI-CODEBLOCK-SUBMIT-001:** The copy control lacked `type="button"` and could submit an ancestor form. It now has an explicit non-submitting type.
 
 See the three corresponding [individual UI reports](reports/next-code-file-src-components-ui-carousel-tsx.md), [sidebar report](reports/next-code-file-src-components-ui-sidebar-tsx.md), and [copy-button report](reports/next-code-file-src-components-ui-code-block-tsx.md).
+
+## Validated Firebase UI findings
+
+- **Low — FIREBASE-POLICIES-001:** Terms and privacy callback buttons previously used the browser's implicit submit type inside auth forms. The button now explicitly uses `type="button"`, verified by a form regression test.
+- **Low — FIREBASE-TOTP-NAME-001:** Enrollment previously wrote the verification code as the TOTP factor name. Enrollment now receives the separately entered `displayName`, verified through the mocked enrollment adapter.
+
+These corrections passed [run 40131416018](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40131416018); emulator coverage remains a separate boundary.

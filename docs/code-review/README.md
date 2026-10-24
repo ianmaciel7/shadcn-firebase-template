@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 567 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1197 |
-| Individual reports present | 159 |
+| Currently completed review reports | 161 |
 | Active report tasks | 0 |
-| Completed tasks | 159 |
-| Pending tasks (excluding active) | 1038 |
+| Completed tasks | 161 |
+| Pending tasks (excluding active) | 1036 |
 | Not applicable | 3 |
-| Consolidated findings from completed reports | 4 medium, 17 low, 0 high/critical |
+| Consolidated findings from completed reports | 4 medium, 19 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 134 / 682 items (19.65%) |
+| Project coverage | 136 / 682 items (19.94%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -94,3 +94,7 @@ and implementation contracts in [Coding standards](../../CODING_STANDARDS.md).
 ## Current validated UI checkpoint
 
 The source fixes and regression checks for `carousel.tsx`, `sidebar.tsx` and `code-block.tsx` passed TypeScript, unit tests, the English guard, spelling and scoped Markdown in [GitHub Actions run 40130032176](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40130032176). The live project inventory was regenerated from tracked paths; 63 old paths were excluded and 76 newly tracked items were added. Seven historically reviewed files modified since the original checkpoint were reset to Pending for re-review. Unapplied external review drafts do not count toward these metrics.
+
+## Validated Firebase checkpoint
+
+The navigation-policy button and TOTP factor display name were corrected and regression-tested in [run 40131416018](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40131416018). The reconciled manifest now has 161 completed primary items and 1,036 pending. The previously prepared source-only draft reports remain Pending until their individual review requirements are satisfied.
