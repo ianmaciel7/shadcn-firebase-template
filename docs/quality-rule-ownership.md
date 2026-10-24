@@ -7,6 +7,7 @@ and a regression test.
 | Responsibility | Primary tool | Notes |
 | --- | --- | --- |
 | Formatting, imports, React and Next.js lint | Biome 2.5.15 | Prefer native rules over Grit plugins; `prefer-is-error` was removed. ESLint is not installed. |
+| Owned function cognitive complexity, body size and callback depth | Biome native | Runtime budgets 8 / 40 lines excluding blanks / 2; real-config boundary and scope regressions. Fallow still owns cyclomatic/coverage health signals; neither proves a hook's semantic cohesion. |
 | Filename/export matching preview | Biome 2.6.2 plugin (CI-only) | Developer Preview, scoped to TSX; component AST guard remains authoritative until parity is demonstrated. |
 | Route-only Firebase SDK import boundaries | Biome `noRestrictedImports` | Specific to `page.tsx`, `layout.tsx`, and `template.tsx`. |
 | Route client directives, hook calls, JSX handlers | ast-grep | Structural rules with YAML regression tests. |

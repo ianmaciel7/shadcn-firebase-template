@@ -99,3 +99,33 @@ point still fails in package-manager setup, and direct TypeScript reports the
 three existing missing `LayoutProps` declarations due to unavailable Next.js type
 generation. These are not successful full static/type checks. Agent synchronization
 also remains unavailable because its host CLI is not installed.
+
+## Hook responsibility and complexity follow-up
+
+The maintainer requested main orchestration hooks composed from focused sub-hooks,
+including simplifying `useAuthProviderClient`. Native Biome policies now enforce
+cognitive complexity 8, function bodies of at most 40 lines excluding blanks, and
+callback depth 2 in owned runtime source. The existing copied registry and
+fixture exclusions remain; no additional linter was installed and no existing
+Fallow threshold was relaxed.
+
+The configured scan initially found eight violations in six files. Refactoring
+separates Firebase UI initialization, session navigation and locale synchronization;
+profile preference loading and successful save feedback have focused sub-hooks.
+Pure normalization and protected-access subscription lifecycle support live in
+route `_lib` modules. Home header/logo composition preserves the rendered contract.
+The same configured Biome source scan now has zero diagnostics.
+
+Verification: 44 unit files / 262 tests passed. Seventeen native-rule regression
+cases cover inclusive limits, the immediately failing value, an IIFE, blank lines,
+TS/TSX scope and registry/fixture exclusions. Auth regressions cover locale updates
+without resubscription and late callbacks after cleanup; profile defaults cover
+cancellation and switched users. Biome CI, all 18 ast-grep rule groups, structural
+scan, dependency boundaries, Markdown, scoped spelling and diff checks passed.
+
+The component checker still reports the same 14 pre-existing diagnostics; direct
+TypeScript still reports only the three pre-existing missing `LayoutProps`
+declarations. The pnpm static entry point fails before checks during package-manager
+setup. These results are not a passing full static check or a production build.
+Responsibility cohesion remains a review obligation; numeric budgets alone cannot
+prove that a hook has one purpose.

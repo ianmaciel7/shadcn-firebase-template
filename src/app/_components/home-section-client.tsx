@@ -19,7 +19,7 @@ import { HomeSignOutButtonClient } from "./home-sign-out-button-client";
 type HomeSectionClientProps = ComponentProps<"main">;
 
 function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
-  const { t, session } = useHomeSectionClient();
+  const { t, session, title, description } = useHomeSectionClient();
   const user = session.user;
 
   if (session.isLoading) {
@@ -45,28 +45,9 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
       )}
     >
       <div className="flex flex-1 w-full max-w-3xl flex-col items-center justify-center gap-12 p-6 sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt=""
-          role="presentation"
-          width={100}
-          height={20}
-          priority
-        />
+        <HomeSectionClientLogo />
         <HomeHero>
-          <HomeHeroHeader>
-            <HomeHeroTitle>
-              {user
-                ? t("welcome", {
-                    name: user.displayName?.trim() || t("friend"),
-                  })
-                : t("title")}
-            </HomeHeroTitle>
-            <HomeHeroDescription>
-              {user ? t("signedInDescription") : t("description")}
-            </HomeHeroDescription>
-          </HomeHeroHeader>
+          <HomeSectionClientHeading title={title} description={description} />
           <HomeHeroActions>
             {user ? (
               <>
@@ -111,4 +92,45 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
   );
 }
 
-export { HomeSectionClient };
+type HomeSectionClientLogoProps = Omit<
+  ComponentProps<typeof Image>,
+  "src" | "alt"
+>;
+
+function HomeSectionClientLogo({
+  className,
+  ...props
+}: HomeSectionClientLogoProps) {
+  return (
+    <Image
+      className={cn("dark:invert h-5 w-[100px]", className)}
+      src="/next.svg"
+      alt=""
+      role="presentation"
+      width={100}
+      height={20}
+      priority
+      {...props}
+    />
+  );
+}
+
+type HomeSectionClientHeadingProps = ComponentProps<typeof HomeHeroHeader> & {
+  title: string;
+  description: string;
+};
+
+function HomeSectionClientHeading({
+  title,
+  description,
+  ...props
+}: HomeSectionClientHeadingProps) {
+  return (
+    <HomeHeroHeader {...props}>
+      <HomeHeroTitle>{title}</HomeHeroTitle>
+      <HomeHeroDescription>{description}</HomeHeroDescription>
+    </HomeHeroHeader>
+  );
+}
+
+export { HomeSectionClient, HomeSectionClientHeading, HomeSectionClientLogo };

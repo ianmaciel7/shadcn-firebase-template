@@ -34,6 +34,35 @@ const defaultProfileDependencies: ProfileDependencies = {
   writeUserPreferences,
 };
 
+function getProfileChanges(
+  user: User,
+  previous: ProfileValues,
+  values: ProfileValues,
+) {
+  const displayName = values.displayName.trim();
+  const email = values.email.trim();
+  return {
+    displayName,
+    email,
+    emailChanged: email !== (user.email ?? ""),
+    nameChanged: displayName !== (user.displayName ?? ""),
+    preferencesChanged:
+      values.locale !== previous.locale || values.theme !== previous.theme,
+  };
+}
+
+function getProfileUpdate(
+  displayName: string,
+  nameChanged: boolean,
+  photoURL: string | null,
+  avatarChanged: boolean,
+) {
+  return {
+    ...(nameChanged ? { displayName: displayName || null } : {}),
+    ...(avatarChanged ? { photoURL } : {}),
+  };
+}
+
 export async function saveProfile(
   {
     user,
@@ -49,12 +78,8 @@ export async function saveProfile(
   dependencies: ProfileDependencies = defaultProfileDependencies,
 ): Promise<SavedProfile> {
   const authUser = dependencies.getActiveUser(user);
-  const displayName = values.displayName.trim();
-  const email = values.email.trim();
-  const emailChanged = email !== (authUser.email ?? "");
-  const nameChanged = displayName !== (authUser.displayName ?? "");
-  const preferencesChanged =
-    values.locale !== previous.locale || values.theme !== previous.theme;
+  const { displayName, email, emailChanged, nameChanged, preferencesChanged } =
+    getProfileChanges(authUser, previous, values);
 
   if (emailChanged) await dependencies.verifyBeforeUpdateEmail(authUser, email);
 
@@ -64,10 +89,10 @@ export async function saveProfile(
   const avatarChanged = Boolean(avatarFile);
   if (nameChanged || avatarChanged) {
     dependencies.getActiveUser(user);
-    await dependencies.updateProfile(authUser, {
-      ...(nameChanged ? { displayName: displayName || null } : {}),
-      ...(avatarChanged ? { photoURL } : {}),
-    });
+    await dependencies.updateProfile(
+      authUser,
+      getProfileUpdate(displayName, nameChanged, photoURL, avatarChanged),
+    );
   }
   if (preferencesChanged) {
     dependencies.getActiveUser(user);

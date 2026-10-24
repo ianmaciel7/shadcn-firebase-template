@@ -564,6 +564,32 @@ instrumentation, remote cache handlers, and hosting adapters are separate
 configuration decisions. Do not enable experimental flags, run codemods, or
 install upstream agent skills simply because a guide mentions them.
 
+### Owned function complexity and hook responsibility trees
+
+Main component hooks coordinate focused sub-hooks and expose rendering-ready
+state/callbacks. A sub-hook owns one cohesive lifecycle or workflow, not one line
+of code. For example, `useAuthProviderClient` composes `useAuthUiStore`,
+`useAuthReturnNavigation` and `useAuthUiLocale`; it does not initialize Firebase,
+subscribe to authentication and synchronize locale inside one monolithic Effect.
+`useProfileSession` delegates preference loading to `useProfilePreferences`, and
+`useProfileSubmit` delegates successful UI feedback to `useProfileSaveFeedback`.
+Pure transformations, constants and subscription support functions remain in the
+route's `_lib`, following the hook support placement contract.
+
+The native Biome budget for owned runtime source is cognitive complexity **8**,
+function body size **40 lines excluding blanks**, and callback nesting **2**. Values at
+the limit are allowed; the next value is an error. These checks include focused
+sub-hooks and `_lib`/shared functions, so moving a large body to a helper does not
+remove its budget. The existing copied registry and test/spec/story exclusions
+remain; non-source scripts keep the existing cognitive limit of 15.
+
+Decompose along responsibilities, preserve cancellation and authorization checks,
+and test public behavior after extraction. Do not suppress diagnostics, raise a
+threshold for a single offending function, compress code onto fewer lines or
+create trivial hook wrappers to disguise a monolith. The budgets detect size and
+control-flow growth; they do not prove semantic cohesion or replace architectural
+review. Fallow's cyclomatic/coverage metrics remain a separate health check.
+
 ## React rendering, hooks, and identity
 
 The project pins React and React DOM 19.3.1 and uses React Compiler 1.0.0 in

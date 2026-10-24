@@ -119,3 +119,19 @@ test/spec/story files and directories outside App Router private `_hooks`.
 Type declarations and imports are allowed. This is project architecture policy,
 not a React rule, a purity analysis, or proof that every `useX` function is a hook.
 Wrapped factory initializers are not accepted as direct hook declarations.
+
+## Main hooks and focused sub-hooks
+
+Keep a component's main hook as an orchestrator over focused sub-hooks. Separate
+independent initialization, subscriptions/navigation, locale synchronization,
+preference loading and successful save feedback into their actual responsibility
+owners. Keep derived render values in the main hook where appropriate; do not
+move a pure helper into a new hook solely to reduce a function's metric.
+
+The native budgets, exclusions and verified examples are owned by
+[Coding standards](../../CODING_STANDARDS.md#owned-function-complexity-and-hook-responsibility-trees).
+Biome enforces cognitive complexity, function size and callback nesting on both
+orchestrators and their support modules. Those syntactic budgets do not establish
+that a function has a single responsibility; review its dependencies and lifecycle
+as well. Preserve cancellation, stale-result checks and authorization checks at
+asynchronous boundaries during refactoring.

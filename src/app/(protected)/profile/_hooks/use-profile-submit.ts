@@ -1,7 +1,5 @@
 import type { User } from "firebase/auth";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
-import { localeCookie } from "@/i18n/routing";
 import { toast } from "@/lib/toast";
 import { withUsageGuard } from "@/lib/usage/guard";
 import { saveProfile } from "../_lib/data";
@@ -10,6 +8,7 @@ import type {
   ProfileValues,
   SavedProfile,
 } from "../_lib/definitions";
+import { useProfileSaveFeedback } from "./use-profile-save-feedback";
 
 type UseProfileSubmitOptions = {
   activeLocale: string;
@@ -29,7 +28,13 @@ export function useProfileSubmit({
   user,
 }: UseProfileSubmitOptions) {
   const t = useTranslations("Auth");
-  const router = useRouter();
+  const { onSaved } = useProfileSaveFeedback({
+    activeLocale,
+    savedValuesRef,
+    setAvatarVersion,
+    setPhotoURL,
+    setTheme,
+  });
 
   const onSubmit = async (
     values: ProfileFormValues,
@@ -48,23 +53,7 @@ export function useProfileSubmit({
             avatarFile: values.avatarFile,
           }),
       );
-      setPhotoURL(savedProfile.photoURL);
-      if (savedProfile.avatarChanged) setAvatarVersion(Date.now());
-      if (values.theme !== previous.theme) setTheme(values.theme);
-      savedValuesRef.current = savedProfile.values;
-
-      toast.add({
-        title: savedProfile.emailChanged
-          ? t("emailVerificationSent")
-          : t("profileSaved"),
-        type: "success",
-      });
-
-      if (values.locale !== activeLocale) {
-        // biome-ignore lint/suspicious/noDocumentCookie: Support browsers without the Cookie Store API; the server reads this non-secret locale cookie.
-        document.cookie = `${localeCookie}=${values.locale}; Path=/; Max-Age=31536000; SameSite=Lax`;
-        router.refresh();
-      }
+      onSaved(savedProfile, values, previous);
       return savedProfile.values;
     } catch (cause) {
       console.error(cause);

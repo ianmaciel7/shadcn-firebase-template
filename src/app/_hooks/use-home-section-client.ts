@@ -10,5 +10,9 @@ export function useHomeSectionClient() {
   return {
     t,
     session,
+    title: session.user
+      ? t("welcome", { name: session.user.displayName?.trim() || t("friend") })
+      : t("title"),
+    description: session.user ? t("signedInDescription") : t("description"),
   };
 }

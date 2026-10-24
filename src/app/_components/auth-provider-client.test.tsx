@@ -1,3 +1,4 @@
+import { enUs, esEs, ptBr } from "@firebase-oss/ui-translations";
 import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthProviderClient } from "./auth-provider-client";
@@ -7,12 +8,14 @@ const mocks = vi.hoisted(() => ({
   subscribe: vi.fn(),
   setLocale: vi.fn(),
   getUI: vi.fn(),
+  unsubscribe: vi.fn(),
+  locale: "pt-BR",
 }));
 vi.mock("next/navigation", () => ({
   useRouter: () => mocks.router,
 }));
 vi.mock("next-intl", () => ({
-  useLocale: () => "pt-BR",
+  useLocale: () => mocks.locale,
   useTranslations: () => (key: string) => key,
 }));
 vi.mock("firebase/auth", () => ({ onAuthStateChanged: mocks.subscribe }));
@@ -28,10 +31,11 @@ describe("AuthProviderClient", () => {
   });
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.locale = "pt-BR";
     mocks.getUI.mockReturnValue({
       get: () => ({ auth: {}, setLocale: mocks.setLocale }),
     });
-    mocks.subscribe.mockReturnValue(() => {});
+    mocks.subscribe.mockReturnValue(mocks.unsubscribe);
   });
 
   it("waits for the first auth state and renders the screen for a signed-out user", () => {
@@ -56,6 +60,27 @@ describe("AuthProviderClient", () => {
     act(() => mocks.subscribe.mock.calls[0][1]({ uid: "user" }));
     expect(mocks.router.replace).toHaveBeenCalledWith("/");
     expect(screen.queryByText("Screen")).toBeNull();
+  });
+
+  it("syncs locale changes without recreating the store or subscription", () => {
+    const view = render(<AuthProviderClient>{"Screen"}</AuthProviderClient>);
+    expect(mocks.setLocale).toHaveBeenLastCalledWith(ptBr);
+    mocks.locale = "es";
+    view.rerender(<AuthProviderClient>{"Screen"}</AuthProviderClient>);
+    expect(mocks.setLocale).toHaveBeenLastCalledWith(esEs);
+    mocks.locale = "unsupported";
+    view.rerender(<AuthProviderClient>{"Screen"}</AuthProviderClient>);
+    expect(mocks.setLocale).toHaveBeenLastCalledWith(enUs);
+    expect(mocks.subscribe).toHaveBeenCalledOnce();
+  });
+
+  it("unsubscribes and ignores session callbacks after unmount", () => {
+    const view = render(<AuthProviderClient>{"Screen"}</AuthProviderClient>);
+    const onSession = mocks.subscribe.mock.calls[0][1];
+    view.unmount();
+    expect(mocks.unsubscribe).toHaveBeenCalledOnce();
+    act(() => onSession({ uid: "late-user" }));
+    expect(mocks.router.replace).not.toHaveBeenCalled();
   });
 
   it("shows a configuration error", () => {

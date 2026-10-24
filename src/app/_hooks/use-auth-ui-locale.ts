@@ -1,0 +1,12 @@
+import { useEffect } from "react";
+import type { getFirebaseUI } from "@/lib/firebase/client";
+import { getAuthUILocale } from "../_lib/auth-ui-locale";
+
+export function useAuthUiLocale(
+  ui: ReturnType<typeof getFirebaseUI> | undefined,
+  locale: string,
+) {
+  useEffect(() => {
+    if (ui) ui.get().setLocale(getAuthUILocale(locale));
+  }, [ui, locale]);
+}

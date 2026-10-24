@@ -556,3 +556,27 @@ changing CI entry points. `profile/_lib/avatar.test.ts` preserves preview priori
 missing-photo behavior, versioned URL query parameters and upload limits after
 extracting the support declarations. Existing profile component tests exercise
 the same context singleton from its `_lib` owner.
+
+## Function complexity and orchestration regressions
+
+`.biome/rules/complexity/native-rules.test.ts` runs the installed Biome CLI against
+the actual project config. Tests verify inclusive cognitive 8, body length 40 and
+callback depth 2 limits, the immediately failing value for each, ignored blank
+lines, TS/TSX functions, owned hooks, route `_lib`, shared modules and UI extensions.
+Test/spec/story and copied registry exclusions are checked separately. Passing
+with `--only` is not equivalent: that flag enables selected rules even where
+normal configuration disables them, so these regressions use normal lint rules.
+
+Auth-provider tests cover initialization errors, first-session loading, safe
+post-auth redirects, locale updates without resubscribing, and cleanup ignoring
+late callbacks. Protected-gate regressions preserve logging acknowledgments and
+obsolete-session rejection after moving subscription ownership. Profile defaults
+tests cover stored/default preferences, lifecycle cancellation and a changed user;
+profile save tests keep session rechecks after every asynchronous write boundary.
+Home component tests preserve signed-in/out presentation after composing smaller
+header/logo parts. Budgets supplement these behavior tests rather than replacing
+them with assertions about implementation call counts.
+
+Do not run source-wide scans while configuration regression tests have temporary
+invalid fixtures inside `src/`. Finish the unit process and its cleanup before
+running Biome, ast-grep, dependency or component scans against the source tree.
