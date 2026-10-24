@@ -1,4 +1,6 @@
-# 134 / 680 items (19.71%) |nore NXLAYOUT AUDIOPLAYER -->
+# Next.js code review
+
+<!-- cspell:ignore NXLAYOUT AUDIOPLAYER -->
 
 This began as an in-progress, read-only audit against the installed Next.js **16.4.2** documentation in `node_modules/next/dist/docs/`. The full one-agent-per-item inventory was generated and validated before review began.
 
@@ -8,18 +10,18 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | --- | ---: |
 | Documentation folders | 40 |
 | Documentation files | 474 |
-| Project folders | 103 |
-| Project files | 564 |
+| Project folders | 115 |
+| Project files | 565 |
 | Coordinator | 1 |
-| Expected agents / primary items | 1,182 |
-| Individual reports present | 169 |
+| Expected agents / primary items | 1195 |
+| Individual reports present | 159 |
 | Active report tasks | 0 |
-| Completed tasks | 169 |
-| Pending tasks (excluding active) | 1,013 |
+| Completed tasks | 159 |
+| Pending tasks (excluding active) | 1036 |
 | Not applicable | 3 |
-| Consolidated findings from completed reports | 2 medium, 15 low, 0 high/critical |
+| Consolidated findings from completed reports | 4 medium, 17 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 144 / 667 items (21.59%) |
+| Project coverage | 134 / 680 items (19.71%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 

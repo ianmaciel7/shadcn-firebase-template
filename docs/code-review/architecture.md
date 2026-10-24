@@ -12,4 +12,4 @@ The 12 resumed file reports identified localized library-level composition, acce
 
 ## Current-branch synchronization
 
-The project inventory now comprises 680 tracked items (115 folders and 565 files); 134 have current completed individual reports. The seven stale source reports have been returned to Pending, and retired paths remain historical rather than active coverage. The three reviewed UI components are validated in workflow run 40130032176. These results do not imply that unreviewed folders or documentation were validated.
+The project inventory now comprises 680 tracked items (115 folders and 565 files); 134 have current completed individual reports. The seven stale source reports have been returned to Pending, and retired paths remain historical rather than active coverage. The three reviewed UI components are validated in workflow run 40130032176. These results do not imply that pending folders or documentation were validated.

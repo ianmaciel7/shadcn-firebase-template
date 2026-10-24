@@ -1,19 +1,19 @@
-# 490 |ntation coverage
+# Documentation coverage
 
 Source: installed `node_modules/next/dist/docs/`, Next.js **16.4.2**.
 
 | Measure | Count |
 | --- | ---: |
-| Documentation folders inventoried | 44 |
-| Documentation files inventoried | 482 |
-| Total documentary review items | 526 |
+| Documentation folders inventoried | 40 |
+| Documentation files inventoried | 474 |
+| Total documentary review items | 514 |
 | Folder reports completed | 3 |
 | File reports completed | 21 |
 | Items reviewed | 24 |
-| Coverage | 4.56% |
+| Coverage | 4.67% |
 | Active reports | 0 |
 | Completed as not applicable to current application | 3 |
-| Pending items | 502 |
+| Pending items | 490 |
 
 Completed folder reports: `next-doc-folder-root`, `next-doc-folder-01-app`, and `next-doc-folder-01-app-01-getting-started`.
 
