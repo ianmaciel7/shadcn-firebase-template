@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 330 |
+| Currently completed review reports | 340 |
 | Active report tasks | 0 |
-| Completed tasks | 330 |
-| Pending tasks (excluding active) | 880 |
+| Completed tasks | 340 |
+| Pending tasks (excluding active) | 870 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 305 / 695 items (43.88%) |
+| Project coverage | 315 / 695 items (45.32%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -114,3 +114,7 @@ The citation trigger now tolerates invalid source URLs. Four focused tests and t
 ## Source-review import validated at GitHub Actions
 
 The [import queue](import-queue.md) records 166 individually prepared source reviews. Their English language, spelling and Markdown checks passed in [workflow run 40134059605](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134059605), alongside TypeScript, Biome, an inventory consistency guard and the existing focused regression tests. These source reviews were marked Completed, with 3 folder items and 163 file items. **This does not mean their source findings have been fixed or that a browser/emulator test exists for each file.** The consolidated findings and remediation records keep that distinction. 880 items remain Pending.
+
+## Evaluation fixture and runner review completion
+
+Ten individual evaluations/runner reports passed branch validation at [run 40134977622](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134977622) and were marked Completed (four directories, six files). They describe read-only scenarios and two low-severity runner concerns; they do not assert that live external agent evaluations were executed.

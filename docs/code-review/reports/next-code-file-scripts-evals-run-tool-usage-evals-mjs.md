@@ -8,7 +8,7 @@
 - **Type:** `CODE_FILE`
 - **Primary path:** `scripts/evals/run-tool-usage-evals.mjs`
 - **Source baseline:** `433ea4585a9fcd5b85b9c3e94c466681d43db7c8`
-- **Status:** Reviewed draft; automated validation pending.
+- **Status:** Completed source review after GitHub Actions run 40134977622; runtime verification remains separate.
 
 ## Scope and evidence
 
@@ -28,4 +28,4 @@ Guard missing stdout and process launch errors; add negative tests for absent ex
 
 ## Conclusion
 
-The named source item was inspected individually. No runtime, emulator or external agent tool execution is asserted by this report; findings require separate remediation decisions, and the manifest row remains pending until GitHub Actions report checks have passed.
+The named source item was inspected individually. No runtime, emulator or external agent tool execution is asserted by this report; findings require separate remediation decisions. The project and report checks passed in [GitHub Actions run 40134977622](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134977622), and the inventory item is now Completed.
