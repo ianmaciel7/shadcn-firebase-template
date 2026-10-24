@@ -7,7 +7,7 @@
 - Primary path: `src/components/firebase/multi-factor-auth-assertion-form.tsx`
 - Associated documentation: Installed Next.js 16.4.2 Client Components guidance, React Hooks/key conventions, and Firebase MFA contracts.
 - Next.js version: `16.4.2`
-- Status: Reviewed draft; repository tracking remains Pending until required validation.
+- Status: Completed following tests and checks in GitHub Actions run 40132646413.
 
 ## Scope
 
@@ -39,3 +39,7 @@ Two enrolled phone factors, two TOTP factors, switching the selected hint, and r
 
 - Classification: Partially compliant.
 - Explanation: The item's responsibility and boundary were inspected individually. Findings and remaining runtime checks are explicitly distinguished. A clean source inspection is not proof of full component or integration behavior.
+
+## Verified remediation
+
+The React key now uses the enrollment-specific `hint.uid` instead of the factor-family identifier. The focused regression renders two phone factors with distinct IDs, checks that no duplicate-key warning occurs, and verifies that choosing the second item selects its unique enrollment. The targeted unit test, TypeScript, Biome, English, spelling, Markdown and inventory guard passed in [GitHub Actions run 40132646413](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40132646413). Browser and Firebase emulator integration coverage is still outside this item.

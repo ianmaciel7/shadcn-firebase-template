@@ -6,11 +6,11 @@
 | Project files inventoried | 569 |
 | Total project review items | 684 |
 | Folder reports completed | 33 |
-| File reports completed | 104 |
-| Items reviewed | 137 |
-| Coverage | 20.03% |
+| File reports completed | 105 |
+| Items reviewed | 138 |
+| Coverage | 20.18% |
 | Active reports | 0 |
-| Pending items | 547 |
+| Pending items | 546 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -42,3 +42,7 @@ Two additional Firebase UI source files have completed focused reviews with pass
 ## Validated preview component
 
 The preview component now has an individually verified report, with three focused tests passing in run 40131931671. Active project coverage is 137 of 683 primary items; 546 are still pending.
+
+## Validated multifactor chooser
+
+A dedicated duplicate-key regression for multiple phone factors passed in run 40132646413. Current project coverage is 138 of 684 items; 546 remain pending.
