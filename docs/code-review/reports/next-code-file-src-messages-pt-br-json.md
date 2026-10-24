@@ -13,7 +13,7 @@
 
 ## Scope
 
-- Responsibility: brazilian portuguese message catalog as a distinct inventory item.
+- Responsibility: Brazilian Portuguese message catalog as a distinct inventory item.
 - Files consulted: `src/messages/pt-BR.json`, `src/messages/en.json`, and `src/i18n/routing.ts`.
 - Boundaries: source and related test inspection; no local runtime, emulator, browser, or package-specific checks were executed for this draft.
 
