@@ -97,7 +97,7 @@ export function MultiFactorEnrollmentVerifyTotpForm(props: MultiFactorEnrollment
   const onSubmit = async (values: { verificationCode: string }) => {
     try {
       const assertion = TotpMultiFactorGenerator.assertionForEnrollment(props.secret, values.verificationCode);
-      await enrollWithMultiFactorAssertion(ui, assertion, values.verificationCode);
+      await enrollWithMultiFactorAssertion(ui, assertion, props.displayName);
       props.onSuccess();
     } catch (error) {
       const message = error instanceof FirebaseUIError ? error.message : String(error);
