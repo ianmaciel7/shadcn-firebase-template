@@ -21,3 +21,25 @@ export type SavedProfile = {
   avatarChanged: boolean;
   emailChanged: boolean;
 };
+
+export type SaveProfileInput = {
+  user: import("firebase/auth").User;
+  previous: ProfileValues;
+  values: ProfileValues;
+  avatarFile: File | null;
+};
+
+/** Ports for profile persistence. Tests may inject adapters without Firebase. */
+export type ProfileDependencies = {
+  getActiveUser: typeof import("@/lib/session").getActiveUser;
+  verifyBeforeUpdateEmail: typeof import("firebase/auth").verifyBeforeUpdateEmail;
+  updateProfile: typeof import("firebase/auth").updateProfile;
+  uploadAvatar: (
+    user: import("firebase/auth").User,
+    avatarFile: File | null,
+  ) => Promise<string | null>;
+  writeUserPreferences: (
+    uid: string,
+    preferences: Partial<UserPreferences>,
+  ) => Promise<void>;
+};

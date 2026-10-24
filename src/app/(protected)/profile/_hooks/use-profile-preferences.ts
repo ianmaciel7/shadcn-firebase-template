@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/lib/locale";
 import type { ThemePreference } from "@/lib/theme";
-import { readProfileDefaults } from "../_lib/data";
+import { readProfile } from "../_lib/data";
 import type { ProfileValues } from "../_lib/definitions";
 
 type PreferencesState = {
@@ -31,7 +31,7 @@ export function useProfilePreferences(
     savedValuesRef.current = null;
     setPreferences(null);
 
-    void readProfileDefaults(uid, activeLocale, () => active)
+    void readProfile(uid, activeLocale, () => active)
       .then((result) => {
         if (!active || !result) return;
         savedValuesRef.current = result.values;

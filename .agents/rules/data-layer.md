@@ -33,7 +33,17 @@ active Firebase session, and `return-url.ts` owns safe post-auth navigation.
 2. **Locality and Placement**:
    - Keep pure domain types, constants, and guards in dedicated flat modules under `src/lib/` (e.g., `src/lib/role.ts`, `src/lib/locale.ts`, `src/lib/theme.ts`).
    - Keep `src/lib/firebase/` scoped to Firebase SDK initialization and server token verification (`client.ts`, `server.ts`, `admin.ts`, `config.ts`). Do not place route-specific Firestore or Storage operations under `src/lib/firebase/`.
-   - For route-private or feature-colocated data access and server route guards, place modules in private `_lib/` folders (e.g., `src/app/(protected)/_lib/require-protected-access.ts`, `src/app/(protected)/profile/_lib/data.ts`). Colocate both reads (such as `readProfileDefaults` and `readUserPreferences`) and mutations (`saveProfile`, `writeUserPreferences`) in `_lib/data.ts` rather than splitting async reads into a separate `_lib/defaults.ts` file. Enforced by `pnpm check:components` (`inspectLibPlacement`).
+   - For route-private or feature-colocated data access and server route guards, place modules in private `_lib/` folders (e.g., `src/app/(protected)/_lib/require-protected-access.ts`, `src/app/(protected)/profile/_lib/data.ts`). Colocate both reads (such as `readProfile` and `readUserPreferences`) and mutations (`saveProfile`, `writeUserPreferences`) in `_lib/data.ts` rather than splitting async reads into a separate `_lib/defaults.ts` file. Enforced by `pnpm check:components` (`inspectLibPlacement`).
+
+3. **`data.ts` Method Naming, Size, and Complexity Budgets**:
+   - **Method naming convention**: Every exported function in a `data.ts` module must start with an explicit camelCase operation verb followed by a PascalCase domain noun:
+     - **Reads / Queries**: `read<Noun>`, `get<Noun>`, `list<Noun>`, `fetch<Noun>`, `verify<Noun>` (e.g., `readUserPreferences`, `readProfile`).
+     - **Writes / Mutations**: `write<Noun>`, `save<Noun>`, `create<Noun>`, `update<Noun>`, `set<Noun>`, `upload<Noun>`, `delete<Noun>`, `remove<Noun>` (e.g., `writeUserPreferences`, `saveProfile`).
+   - **Per-function budgets (Biome native)**: Every function in `data.ts` (exported or internal helper) must respect the repository's strict runtime complexity budgets enforced by Biome:
+     - **Cognitive complexity**: maximum **8** (`noExcessiveCognitiveComplexity`).
+     - **Function body size**: maximum **40 lines** excluding blank lines (`noExcessiveLinesPerFunction`).
+     - **Callback nesting depth**: maximum **2** (`noExcessiveNestedCallbacks`).
+   - **Per-file size budget**: A `data.ts` module must not exceed **150 non-empty lines** (`inspectDataModuleConventions` in `pnpm check:components`). Decompose pure transformations or unrelated domain operations into focused `_lib/` helpers when approaching this limit.
 
 ## Dependency injection and auth subscriptions
 

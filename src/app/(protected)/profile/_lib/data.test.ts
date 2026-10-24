@@ -32,7 +32,7 @@ vi.mock("@/lib/session", async (importOriginal) => {
 
 import {
   type ProfileDependencies,
-  readProfileDefaults,
+  readProfile,
   readUserPreferences,
   saveProfile,
   writeUserPreferences,
@@ -82,7 +82,7 @@ describe("user preferences", () => {
   });
 });
 
-describe("readProfileDefaults", () => {
+describe("readProfile", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     firestoreMocks.getFirestore.mockReturnValue(firestoreMocks.db);
@@ -96,7 +96,7 @@ describe("readProfileDefaults", () => {
   });
 
   it("normalizes missing preferences using the active locale and system theme", async () => {
-    expect(await readProfileDefaults("user", "pt-BR", () => true)).toEqual({
+    expect(await readProfile("user", "pt-BR", () => true)).toEqual({
       values: { displayName: "", email: "", locale: "pt-BR", theme: "system" },
       theme: undefined,
     });
@@ -106,7 +106,7 @@ describe("readProfileDefaults", () => {
     firestoreMocks.getDoc.mockResolvedValue({
       data: () => ({ locale: "es", theme: "dark" }),
     });
-    expect(await readProfileDefaults("user", "en", () => true)).toMatchObject({
+    expect(await readProfile("user", "en", () => true)).toMatchObject({
       values: { locale: "es", theme: "dark" },
       theme: "dark",
     });
@@ -116,16 +116,16 @@ describe("readProfileDefaults", () => {
     const read = Promise.withResolvers<{ data: () => object }>();
     firestoreMocks.getDoc.mockReturnValue(read.promise);
     let active = true;
-    const pending = readProfileDefaults("user", "en", () => active);
+    const pending = readProfile("user", "en", () => active);
     active = false;
     read.resolve({ data: () => ({}) });
     expect(await pending).toBeNull();
     expect(firestoreMocks.getSessionUser).not.toHaveBeenCalled();
   });
 
-  it("rejects defaults resolved after the active user changes", async () => {
+  it("rejects profile resolved after the active user changes", async () => {
     firestoreMocks.getSessionUser.mockReturnValue({ uid: "other" });
-    expect(await readProfileDefaults("user", "en", () => true)).toBeNull();
+    expect(await readProfile("user", "en", () => true)).toBeNull();
   });
 });
 

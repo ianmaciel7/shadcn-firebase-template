@@ -99,7 +99,7 @@ describe("route entrypoint guard", () => {
 
   it("allows a data-layer read in a thin route entrypoint", () => {
     expectValid(
-      'import { readProfileDefaults } from "./_lib/data"; export default async function Page() { const value = await readProfileDefaults(); return <Card value={value} />; }',
+      'import { readProfile } from "./_lib/data"; export default async function Page() { const value = await readProfile(); return <Card value={value} />; }',
     );
   });
 

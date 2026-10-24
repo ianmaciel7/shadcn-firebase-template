@@ -4,6 +4,7 @@ import {
   inspectComponent,
   inspectComponentPlacement,
   inspectComponentRuntime,
+  inspectDataModuleConventions,
   inspectHookFilename,
   inspectLibPlacement,
   inspectNaming,
@@ -1210,5 +1211,39 @@ describe("lib and route _lib module placement", () => {
         ?.message ?? "",
       /Colocate route data reads and mutations together in _lib\/data\.ts/,
     );
+  });
+});
+
+describe("data.ts method naming and file size conventions", () => {
+  const dataFile = "src/app/(protected)/profile/_lib/data.ts";
+
+  it("accepts exported functions prefixed with canonical data verbs and under 150 non-empty lines", () => {
+    assert.deepEqual(
+      inspectDataModuleConventions(
+        "export async function readUserPreferences() {} export async function writeUserPreferences() {} export async function readProfile() {} export async function saveProfile() {}",
+        dataFile,
+      ),
+      [],
+    );
+  });
+
+  it("rejects exported data.ts functions without an explicit operation verb prefix", () => {
+    const findings = inspectDataModuleConventions(
+      "export async function profileDefaults() {} export const userPreferences = async () => {};",
+      dataFile,
+    );
+    assert.equal(findings.length, 2);
+    assert.match(findings[0].message, /explicit data operation verb/);
+    assert.match(findings[1].message, /explicit data operation verb/);
+  });
+
+  it("rejects data.ts modules exceeding 150 non-empty lines", () => {
+    const oversized = Array.from(
+      { length: 151 },
+      (_, index) => `const line${index} = ${index};`,
+    ).join("\n");
+    const findings = inspectDataModuleConventions(oversized, dataFile);
+    assert.equal(findings.length, 1);
+    assert.match(findings[0].message, /must not exceed 150 non-empty lines/);
   });
 });

@@ -1158,6 +1158,74 @@ function checkHookResponsibilities(source, report) {
   }
 }
 
+const dataFunctionPrefix =
+  /^(read|write|save|create|update|delete|remove|upload|fetch|get|set|list|verify)[A-Z]/;
+
+export function inspectDataModuleConventions(content, filename) {
+  const path = filename.replaceAll("\\", "/");
+  if (!/(?:^|\/)data\.ts$/.test(path) || /\.test\.ts$/.test(path)) return [];
+  const source = ts.createSourceFile(
+    filename,
+    content,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
+  const findings = [];
+  function report(node, message) {
+    const pos = source.getLineAndCharacterOfPosition(node.getStart(source));
+    findings.push({
+      file: filename,
+      line: pos.line + 1,
+      column: pos.character + 1,
+      message,
+    });
+  }
+  const nonEmptyLines = content
+    .split(/\r?\n/)
+    .filter((line) => line.trim().length > 0).length;
+  if (nonEmptyLines > 150) {
+    report(
+      source,
+      `data.ts modules must not exceed 150 non-empty lines (received ${nonEmptyLines}); decompose unrelated concerns into focused _lib/ helpers.`,
+    );
+  }
+  for (const statement of source.statements) {
+    for (const fn of exportedDataFunctionNames(statement)) {
+      if (!dataFunctionPrefix.test(fn.name)) {
+        report(
+          fn.node,
+          `Exported data.ts function "${fn.name}" must start with an explicit data operation verb (read, write, save, create, update, delete, remove, upload, fetch, get, set, list, verify) followed by a PascalCase domain noun.`,
+        );
+      }
+    }
+  }
+  return findings;
+}
+
+function exportedDataFunctionNames(statement) {
+  if (
+    ts.isFunctionDeclaration(statement) &&
+    statement.name &&
+    exported(statement)
+  ) {
+    return [{ name: statement.name.text, node: statement.name }];
+  }
+  if (!ts.isVariableStatement(statement) || !exported(statement)) return [];
+  return statement.declarationList.declarations
+    .filter(
+      (declaration) =>
+        ts.isIdentifier(declaration.name) &&
+        declaration.initializer &&
+        (ts.isArrowFunction(declaration.initializer) ||
+          ts.isFunctionExpression(declaration.initializer)),
+    )
+    .map((declaration) => ({
+      name: declaration.name.text,
+      node: declaration.name,
+    }));
+}
+
 export function inspectComponentPlacement(filename) {
   const path = filename.replaceAll("\\", "/");
   if (
@@ -1540,6 +1608,7 @@ export function checkComponents(root) {
     return [
       ...inspectComponentPlacement(path),
       ...inspectLibPlacement(path),
+      ...inspectDataModuleConventions(content, path),
       ...inspectComponentRuntime(content, path, modules),
       ...inspectNaming(content, path),
       ...inspectHookFilename(content, path),

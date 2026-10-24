@@ -162,7 +162,7 @@ The authentication modules intentionally remain flat under `src/lib`:
 `@/lib/auth`, `@/lib/session`, and `@/lib/return-url`.
 Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`. The
 profile route's `useProfilePreferences` and `useProfileSubmit` hooks coordinate
-the load and save workflows; `readProfileDefaults`, `readUserPreferences`,
+the load and save workflows; `readProfile`, `readUserPreferences`,
 `writeUserPreferences`, and `saveProfile` in
 `src/app/(protected)/profile/_lib/data.ts` handle Firestore/Storage/Auth
 persistence and inject typed Firebase adapters for independent tests.

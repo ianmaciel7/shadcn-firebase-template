@@ -13,10 +13,14 @@ import { isLocale, type Locale } from "@/lib/locale";
 import { getActiveUser, getSessionUser } from "@/lib/session";
 import { isThemePreference } from "@/lib/theme";
 import type {
+  ProfileDependencies,
   ProfileValues,
   SavedProfile,
+  SaveProfileInput,
   UserPreferences,
 } from "./definitions";
+
+export type { ProfileDependencies } from "./definitions";
 
 export async function readUserPreferences(
   uid: string,
@@ -39,7 +43,7 @@ export async function writeUserPreferences(
   });
 }
 
-export async function readProfileDefaults(
+export async function readProfile(
   uid: string,
   activeLocale: Locale,
   isActive: () => boolean,
@@ -56,15 +60,6 @@ export async function readProfileDefaults(
   };
   return { values, theme: preferences.theme };
 }
-
-/** Ports for profile persistence. Tests may inject adapters without Firebase. */
-export type ProfileDependencies = {
-  getActiveUser: typeof getActiveUser;
-  verifyBeforeUpdateEmail: typeof verifyBeforeUpdateEmail;
-  updateProfile: typeof updateProfile;
-  uploadAvatar: (user: User, avatarFile: File | null) => Promise<string | null>;
-  writeUserPreferences: typeof writeUserPreferences;
-};
 
 async function uploadAvatar(user: User, avatarFile: File | null) {
   if (!avatarFile) return user.photoURL;
@@ -112,17 +107,7 @@ function getProfileUpdate(
 }
 
 export async function saveProfile(
-  {
-    user,
-    previous,
-    values,
-    avatarFile,
-  }: {
-    user: User;
-    previous: ProfileValues;
-    values: ProfileValues;
-    avatarFile: File | null;
-  },
+  { user, previous, values, avatarFile }: SaveProfileInput,
   dependencies: ProfileDependencies = defaultProfileDependencies,
 ): Promise<SavedProfile> {
   const authUser = dependencies.getActiveUser(user);
