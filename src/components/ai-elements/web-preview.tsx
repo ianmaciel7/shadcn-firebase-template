@@ -197,7 +197,7 @@ const WebPreviewUrl = ({
   );
 };
 
-type WebPreviewBodyProps = ComponentProps<"iframe"> & {
+type WebPreviewBodyProps = Omit<ComponentProps<"iframe">, "sandbox" | "srcDoc"> & {
   loading?: ReactNode;
 };
 
@@ -205,6 +205,7 @@ const WebPreviewBody = ({
   className,
   loading,
   src,
+  title = "Preview",
   ...props
 }: WebPreviewBodyProps) => {
   const { url } = useWebPreview();
@@ -215,11 +216,12 @@ const WebPreviewBody = ({
   return (
     <div className="flex-1">
       <iframe
+        {...props}
         className={cn("size-full", className)}
         sandbox="allow-scripts allow-forms allow-popups allow-presentation"
+        srcDoc={undefined}
         src={safeSrc}
-        title="Preview"
-        {...props}
+        title={title}
       />
       {loading}
     </div>
