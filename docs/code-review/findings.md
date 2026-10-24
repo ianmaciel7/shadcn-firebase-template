@@ -1,6 +1,6 @@
 # Findings
 
-<!-- cspell:ignore AUDIOPLAYER NXLAYOUT NEXTERR DOCSTART DOCUPGRADE INTLPROVIDER AIELEMENTS pending -->
+<!-- cspell:ignore AUDIOPLAYER NXLAYOUT NEXTERR DOCSTART DOCUPGRADE INTLPROVIDER AIELEMENTS pending TOTP -->
 
 This is the historical finding consolidation at audit checkpoint `d8e5df2`. The user subsequently authorized implementation. See [remediation status and validation limits](resolutions.md) for current dispositions; the evidence below is preserved as the original review record.
 

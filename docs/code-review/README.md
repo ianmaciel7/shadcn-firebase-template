@@ -1,6 +1,6 @@
 # Next.js code review
 
-<!-- cspell:ignore NXLAYOUT AUDIOPLAYER -->
+<!-- cspell:ignore NXLAYOUT AUDIOPLAYER TOTP -->
 
 This began as an in-progress, read-only audit against the installed Next.js **16.4.2** documentation in `node_modules/next/dist/docs/`. The full one-agent-per-item inventory was generated and validated before review began.
 
