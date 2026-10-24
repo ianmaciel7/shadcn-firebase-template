@@ -102,6 +102,14 @@ for this review; it must be refreshed when upstream changes are adopted.
 - [Card](https://ui.shadcn.com/docs/components/base/card) exposes composable
   parts, a small size, and shared `--card-spacing`. Keep application wrappers
   composable; upstream does not require our filename or export-count guards.
+- Composition is family-specific rather than a Card-only pattern. Local Base UI
+  source includes simple primitive wrappers (`Button`, `Input`, `Switch`),
+  structural families with named parts (`Card`, `Field`, `Table`), and
+  interaction families built around a root, trigger, and content (`Dialog`,
+  `Popover`, `Tooltip`, and menus). Preserve each primitive's existing public
+  API; do not manufacture compound parts for a simple control. Application-owned
+  adapters follow the stricter named-export and prop-forwarding contract in
+  `CODING_STANDARDS.md`.
 - [Field](https://ui.shadcn.com/docs/components/base/field) and
   [React Hook Form](https://ui.shadcn.com/docs/forms/react-hook-form) describe
   labels, grouped controls, validation state, and error display. The form guide
