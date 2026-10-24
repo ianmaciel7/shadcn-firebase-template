@@ -8,4 +8,4 @@
 
 The documentation corpus contains 482 files and 44 folders. Only 21 files and 3 folders have completed individual reports so far. Compatibility conclusions are therefore limited to those reports and are not a whole-framework certification.
 
-Subsequent implementation uses an internal locale root segment and Proxy rewrite (ADR 0018), and the installed error-boundary retry API. Historical applicability statements above describe the audit checkpoint. See [remediation verification limits](resolutions.md); production verification is not established by the individual audit reports.
+Subsequent implementation retains the installed error-boundary retry API. ADR 0019 reverses the ADR 0018 internal route migration: current locale selection uses request cookies without a locale segment or Proxy. Historical applicability statements above describe the audit checkpoint. See [remediation verification limits](resolutions.md); production verification is not established by the individual audit reports.

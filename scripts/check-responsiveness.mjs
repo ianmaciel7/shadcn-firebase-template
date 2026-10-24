@@ -39,9 +39,7 @@ export function isRootLayout(filename) {
   const normalized = filename.replaceAll("\\", "/");
   return (
     normalized === "src/app/layout.tsx" ||
-    normalized.endsWith("/src/app/layout.tsx") ||
-    normalized === "src/app/[locale]/layout.tsx" ||
-    normalized.endsWith("/src/app/[locale]/layout.tsx")
+    normalized.endsWith("/src/app/layout.tsx")
   );
 }
 

@@ -8,7 +8,7 @@ they are not assertions that the defects remain in the current source.
 
 | Finding | Change | Validation |
 | --- | --- | --- |
-| NXLAYOUT-001 | Internal locale root segment and cookie-selected rewrite; public URLs remain unprefixed; server document language and translations share the root locale. See ADR 0018. | Proxy/navigation/error unit regressions; raw-HTML and browser assertions added. Production execution remains subject to the native binding limitation below. |
+| NXLAYOUT-001 | Open. The maintainer rejected the locale-segment migration; ADR 0019 restores direct cookie resolution without Proxy. Static root document language remains English. | Cookie-resolution and unprefixed-navigation regressions cover the restored architecture; they do not establish a fix for document language. |
 | CODEBLOCK-001 | Cache and subscriptions identify the complete language/content pair. | Sequential and concurrent regressions with installed Shiki. |
 | NEXTERR-001 | Recovery control calls the installed Next.js `retry` API. | Recovery callback regression. |
 | THEME-001 | Removed the global console replacement. | Import preserves error logging, including the formerly suppressed text. |
@@ -31,8 +31,8 @@ The installed Next.js 16.4.2 native compiler fails before route type generation
 because its native addon cannot create a trusted cache in this managed workspace
 (`ERR_SWC_NATIVE_CACHE`). Installing the matching binary did not remove that
 runtime restriction. This is not a successful build, type generation, or production
-browser check. The locale migration must pass the committed raw-HTML/navigation
-checks in an environment with a functioning Next.js compiler before release.
+browser check. The restored cookie architecture keeps the existing static document shell.
+Production integration checks still require a functioning Next.js compiler.
 
 Unit and isolated component-browser checks exercise the actual installed React,
 Base UI, Shiki, SDK, pricing and media libraries. They do not replace the full
@@ -42,12 +42,12 @@ in the delivery message.
 ## Audit scope
 
 Implementation does not complete the outstanding 1,087 historical review items.
-The manifest remains an inventory of the checkpoint, including paths moved under
-`src/app/[locale]/` by ADR 0018; it must be reconciled before resuming coverage.
+The manifest remains an inventory of the checkpoint. ADR 0019 restores its
+original route paths after reversing the ADR 0018 migration.
 No newly added or moved file is automatically counted as reviewed. The 12 absent
 generated documentation paths remain pending for eligibility reconciliation.
 
-## Final local results
+## Implementation checkpoint results (`b568bb7`)
 
 - Unit suite: 40 files, 251 tests passed.
 - Component Chromium checks: four audio tests and three UI tests passed using the system Chromium executable; temporary launch configuration was not committed.
@@ -56,4 +56,17 @@ generated documentation paths remain pending for eligibility reconciliation.
 - Route/component/responsiveness regression tests and source scans passed.
 - Next.js production build and route type generation: blocked before compilation by the native SWC environment error above.
 
-The two upstream documentation defects are locally mitigated, not upstream fixes. Application fixes are implemented; production locale integration remains unverified until the native compiler is available.
+The two upstream documentation defects are locally mitigated, not upstream fixes.
+The other application fixes are retained. NXLAYOUT-001 remains open under the
+restored cookie-only architecture; the rejected migration is not counted as a fix.
+
+## Cookie-only correction
+
+ADR 0019 removes `[locale]`, Proxy and root-parameter lookup. Cookie resolution
+and original route placement are restored; the other fixes and their regressions
+remain. The prior checkpoint results above describe the earlier revision.
+
+Correction verification: 40 unit files / 232 tests passed, including seven
+cookie-resolution regressions. The lower total removes the rejected Proxy and
+internal-route tests. Biome CI, Markdown, route/component/responsiveness guards
+and diff checks passed. No production-build success is claimed.

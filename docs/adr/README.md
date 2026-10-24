@@ -143,3 +143,7 @@ component-source migration.
 
 - [ADR 0013: Capture Next.js server errors](0013-capture-nextjs-server-errors.md)
   adds native request error instrumentation with structured JSON stderr output.
+
+- [ADR 0019: Restore cookie-only locale resolution](0019-restore-cookie-only-locale-resolution.md)
+  supersedes ADR 0018 in full at the maintainer's request. Routes live directly
+  under `src/app/`; locale selection uses `NEXT_LOCALE` without Proxy.

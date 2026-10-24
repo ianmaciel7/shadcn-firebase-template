@@ -386,11 +386,8 @@ Components throughout the application—regardless of whether they are Server Co
 - Write source, comments, and project documentation in English by default,
   following `.agents/rules/language-conventions.md`. Localized catalogs use their own
   language.
-- Keep public navigation URLs unprefixed. Proxy selects the locale cookie and
-  rewrites to the internal `[locale]` root; server translation configuration
-  reads `next/root-params`, so root document language is prerenderable. Do not
-  restore a cookie read above the root Suspense boundary or leak internal
-  locale prefixes into hrefs. See ADR 0018.
+- Follow the implemented cookie-based request resolution. Localized navigation
+  helpers alone do not establish locale-prefixed routes.
 
 - Put user-facing application text in the `next-intl` message catalogs under
   `src/messages/`.

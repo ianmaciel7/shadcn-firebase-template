@@ -110,7 +110,7 @@ Vitest Browser Mode component tests, and Playwright end-to-end specifications.
 `scripts/check-responsiveness.mjs` runs in `pnpm verify:fast` and `pnpm verify:static`
 to catch responsive anti-patterns and accessibility regressions before runtime:
 
-- **Viewport scalability (WCAG 1.4.4 Resize Text)**: The root layout (`src/app/[locale]/layout.tsx`)
+- **Viewport scalability (WCAG 1.4.4 Resize Text)**: The root layout (`src/app/layout.tsx`)
   must export a `viewport` configuration (or `generateViewport`) declaring
   `width: 'device-width'` and `initialScale: 1`. Disabling zoom via `userScalable: false`,
   `maximumScale: 1`, or string `user-scalable=no` is strictly prohibited.
@@ -251,13 +251,9 @@ Reusable checks: the Vitest and Playwright configs, axe scan, and
 configured locale cookies and safe new-tab links. These tests no longer depend
 on the starter headline, document title or starter link labels. They are smoke
 tests, not proof that each locale's translated UI text is correct; add
-behavior-specific localization tests for the derived application. The locale
-smoke tests check server HTML and hydrated `html lang` for every supported
-cookie, fallback to English, navigation/back behavior, cookie changes at the
-same public URL, localized unknown routes and static assets. `src/proxy.test.ts`
-checks internal rewrites, canonical redirects, query/RSC preservation and
-infrastructure exclusions. These assertions still require a production build
-and browser run; passing unit tests does not establish deployment cache behavior.
+behavior-specific localization tests for the derived application, including
+translated text and the document language. The current root layout fixes
+`html lang` to `en`; the cookie smoke tests do not validate that attribute.
 
 Template-specific fixtures: `home-*` visual baselines capture the starter
 home page. Replace them after changing the UI, and regenerate reviewed
@@ -446,9 +442,8 @@ does not prove production prerendering or cache isolation.
 Async Server Components remain E2E subjects; do not add jsdom rendering
 workarounds for unsupported Vitest behavior. Server mutation/API introductions
 need authorization and invalid-input tests at the new boundary. Cookie-based
-selection and internal locale root parameters are separate boundaries. Document
-language changes must cover raw server HTML, client navigation, cache variation
-and Cache Components rendering behavior.
+translations and static `html lang` are separate contracts; a language-attribute
+change must cover accessibility and Cache Components rendering behavior.
 
 Local missing native bindings, blocked external lookups, and unavailable MCP
 runtime sessions are environment limitations, not successful checks. Keep CI

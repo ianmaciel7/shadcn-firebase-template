@@ -1,4 +1,4 @@
-import { RouteLoading } from "@/app/_components/route-loading";
+import { RouteLoading } from "./_components/route-loading";
 
 export default function Loading() {
   return (

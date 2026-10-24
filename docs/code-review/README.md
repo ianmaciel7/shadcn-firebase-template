@@ -45,4 +45,4 @@ Validation: the installed Markdown CLI reports 48 pre-existing issues in the man
 
 ## Remediation phase
 
-After checkpoint `d8e5df2`, the user authorized fixes and parallel implementation. See [resolutions](resolutions.md) for every consolidated finding, local mitigations for upstream documentation, validation boundaries and the internal locale-route migration. Coverage counts above remain historical; route moves and new files require inventory reconciliation before the audit resumes.
+After checkpoint `d8e5df2`, the user authorized fixes and parallel implementation. See [resolutions](resolutions.md) for every consolidated finding, local mitigations for upstream documentation, validation boundaries. ADR 0019 reverses the locale-route migration and restores cookie-only selection; NXLAYOUT-001 is open. Coverage counts above remain historical; new files require inventory reconciliation before the audit resumes.

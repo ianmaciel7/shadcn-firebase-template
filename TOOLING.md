@@ -187,7 +187,7 @@ theming decision is recorded in ADR 0003.
 | `components.json` | shadcn/ui configuration and import aliases. |
 | `scripts/check-route-files.mjs`, `scripts/check-route-files.test.mjs` | Thin App Router entrypoint AST guard and tests. |
 | `scripts/check-component-conventions.mjs`, `scripts/check-component-composition.mjs` | Owned component naming/family conventions and adapter forwarding; regression tests are colocated `*.test.mjs` files. |
-| `scripts/check-responsiveness.mjs`, `scripts/check-responsiveness.test.mjs` | Enforces viewport metadata (including the internal `src/app/[locale]/layout.tsx` root), rigid width prevention (>320px), and WCAG 2.2 touch target minimums; regression tests in colocated `*.test.mjs`. |
+| `scripts/check-responsiveness.mjs`, `scripts/check-responsiveness.test.mjs` | Enforces viewport metadata, rigid width prevention (>320px), and WCAG 2.2 touch target minimums; regression tests in colocated `*.test.mjs`. |
 | `vitest.config.mts` | `unit` and `browser` projects and coverage. |
 | `vitest.mutation.config.mts` | Unit-only Vitest config used by Stryker. |
 | `playwright.config.ts` | Playwright projects, web server, and screenshot tolerance. |
