@@ -1,7 +1,133 @@
 import type { User } from "firebase/auth";
-import { describe, expect, it, vi } from "vitest";
-import { type ProfileDependencies, saveProfile } from "./data";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const firestoreMocks = vi.hoisted(() => ({
+  db: { name: "firestore" },
+  ref: { path: "users/user-123" },
+  doc: vi.fn(),
+  getDoc: vi.fn(),
+  setDoc: vi.fn(),
+  getFirestore: vi.fn(),
+  getSessionUser: vi.fn(),
+}));
+
+vi.mock("firebase/firestore", () => ({
+  doc: firestoreMocks.doc,
+  getDoc: firestoreMocks.getDoc,
+  setDoc: firestoreMocks.setDoc,
+}));
+
+vi.mock("@/lib/firebase/client", () => ({
+  getFirebaseFirestore: firestoreMocks.getFirestore,
+  getFirebaseStorage: vi.fn(),
+}));
+
+vi.mock("@/lib/session", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/session")>();
+  return {
+    ...actual,
+    getSessionUser: firestoreMocks.getSessionUser,
+  };
+});
+
+import {
+  type ProfileDependencies,
+  readProfileDefaults,
+  readUserPreferences,
+  saveProfile,
+  writeUserPreferences,
+} from "./data";
 import type { ProfileValues } from "./definitions";
+
+describe("user preferences", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    firestoreMocks.getFirestore.mockReturnValue(firestoreMocks.db);
+    firestoreMocks.doc.mockReturnValue(firestoreMocks.ref);
+    firestoreMocks.setDoc.mockResolvedValue(undefined);
+  });
+
+  it("reads only supported locale and theme values", async () => {
+    firestoreMocks.getDoc.mockResolvedValue({
+      data: () => ({ locale: "pt-BR", theme: "dark", extra: "ignored" }),
+    });
+
+    await expect(readUserPreferences("user-123")).resolves.toEqual({
+      locale: "pt-BR",
+      theme: "dark",
+    });
+    expect(firestoreMocks.doc).toHaveBeenCalledWith(
+      firestoreMocks.db,
+      "users",
+      "user-123",
+    );
+  });
+
+  it("drops invalid stored values", async () => {
+    firestoreMocks.getDoc.mockResolvedValue({
+      data: () => ({ locale: "fr", theme: "solarized" }),
+    });
+
+    await expect(readUserPreferences("user-123")).resolves.toEqual({});
+  });
+
+  it("merges changes into the user's document", async () => {
+    await writeUserPreferences("user-123", { theme: "light" });
+
+    expect(firestoreMocks.setDoc).toHaveBeenCalledWith(
+      firestoreMocks.ref,
+      { theme: "light" },
+      { merge: true },
+    );
+  });
+});
+
+describe("readProfileDefaults", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    firestoreMocks.getFirestore.mockReturnValue(firestoreMocks.db);
+    firestoreMocks.doc.mockReturnValue(firestoreMocks.ref);
+    firestoreMocks.getDoc.mockResolvedValue({ data: () => ({}) });
+    firestoreMocks.getSessionUser.mockReturnValue({
+      uid: "user",
+      displayName: null,
+      email: null,
+    });
+  });
+
+  it("normalizes missing preferences using the active locale and system theme", async () => {
+    expect(await readProfileDefaults("user", "pt-BR", () => true)).toEqual({
+      values: { displayName: "", email: "", locale: "pt-BR", theme: "system" },
+      theme: undefined,
+    });
+  });
+
+  it("preserves stored locale and theme", async () => {
+    firestoreMocks.getDoc.mockResolvedValue({
+      data: () => ({ locale: "es", theme: "dark" }),
+    });
+    expect(await readProfileDefaults("user", "en", () => true)).toMatchObject({
+      values: { locale: "es", theme: "dark" },
+      theme: "dark",
+    });
+  });
+
+  it("does not read a client session after the owning lifecycle was cancelled", async () => {
+    const read = Promise.withResolvers<{ data: () => object }>();
+    firestoreMocks.getDoc.mockReturnValue(read.promise);
+    let active = true;
+    const pending = readProfileDefaults("user", "en", () => active);
+    active = false;
+    read.resolve({ data: () => ({}) });
+    expect(await pending).toBeNull();
+    expect(firestoreMocks.getSessionUser).not.toHaveBeenCalled();
+  });
+
+  it("rejects defaults resolved after the active user changes", async () => {
+    firestoreMocks.getSessionUser.mockReturnValue({ uid: "other" });
+    expect(await readProfileDefaults("user", "en", () => true)).toBeNull();
+  });
+});
 
 const initial: ProfileValues = {
   displayName: "Before",

@@ -1,6 +1,11 @@
 import type { Locale } from "@/lib/locale";
 import type { ThemePreference } from "@/lib/theme";
 
+export type UserPreferences = {
+  locale: Locale;
+  theme: ThemePreference;
+};
+
 export type ProfileValues = {
   displayName: string;
   email: string;

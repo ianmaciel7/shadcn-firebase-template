@@ -2,7 +2,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "@/lib/locale";
 import type { ThemePreference } from "@/lib/theme";
-import { readProfileDefaults } from "../_lib/defaults";
+import { readProfileDefaults } from "../_lib/data";
 import type { ProfileValues } from "../_lib/definitions";
 
 type PreferencesState = {

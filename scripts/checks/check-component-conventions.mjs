@@ -1177,6 +1177,37 @@ export function inspectComponentPlacement(filename) {
   ];
 }
 
+export function inspectLibPlacement(filename) {
+  const path = filename.replaceAll("\\", "/");
+  if (!/\.[cm]?[jt]sx?$/.test(path)) return [];
+  if (
+    path.startsWith("src/lib/") &&
+    !/^src\/lib\/(?:[^/]+|(?:firebase|usage)\/[^/]+)\.[cm]?[jt]sx?$/.test(path)
+  ) {
+    return [
+      {
+        file: filename,
+        line: 1,
+        column: 1,
+        message:
+          "Keep domain helpers flat in src/lib/*.ts (e.g. role.ts, locale.ts, theme.ts), SDK clients in src/lib/firebase/*.ts, and route-specific persistence/guards in route-private _lib/.",
+      },
+    ];
+  }
+  if (/^src\/app\/(?:.*\/)?_lib\/defaults(?:\.test)?\.tsx?$/.test(path)) {
+    return [
+      {
+        file: filename,
+        line: 1,
+        column: 1,
+        message:
+          "Colocate route data reads and mutations together in _lib/data.ts rather than creating a separate _lib/defaults.ts module.",
+      },
+    ];
+  }
+  return [];
+}
+
 export function inspectComponent(content, filename) {
   if (!isOwnedComponent(filename)) return [];
   const source = ts.createSourceFile(
@@ -1508,6 +1539,7 @@ export function checkComponents(root) {
     const content = modules.get(path);
     return [
       ...inspectComponentPlacement(path),
+      ...inspectLibPlacement(path),
       ...inspectComponentRuntime(content, path, modules),
       ...inspectNaming(content, path),
       ...inspectHookFilename(content, path),

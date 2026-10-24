@@ -160,11 +160,12 @@ the existing public Auth Emulator host, so it shares the local emulator session.
 The authentication modules intentionally remain flat under `src/lib`:
 `auth.ts`, `session.ts`, and `return-url.ts`; consumers should import them as
 `@/lib/auth`, `@/lib/session`, and `@/lib/return-url`.
-Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`; Firestore
-operations live in descriptive modules under `src/lib/firebase/firestore/`, such
-as `user-preferences.ts`. The profile route's `useProfileSubmit` hook coordinates the save
-workflow; `saveProfile` in `src/app/(protected)/profile/_lib/data.ts` injects typed Firebase
-persistence adapters for independent tests.
+Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`. The
+profile route's `useProfilePreferences` and `useProfileSubmit` hooks coordinate
+the load and save workflows; `readProfileDefaults`, `readUserPreferences`,
+`writeUserPreferences`, and `saveProfile` in
+`src/app/(protected)/profile/_lib/data.ts` handle Firestore/Storage/Auth
+persistence and inject typed Firebase adapters for independent tests.
 `useProfileFormClient` owns the React Hook Form lifecycle and uses the
 native submitting state. `useProfileSectionClient` composes session,
 status, and translation hooks; `ProfileSectionClient` renders a

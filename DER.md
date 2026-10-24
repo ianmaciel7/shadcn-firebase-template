@@ -17,7 +17,7 @@ reflect the adopted domain and persistence implementation.
 
 ## Existing technical persistence
 
-`src/lib/firebase/firestore/user-preferences.ts` reads and merges `locale` and
+`src/app/(protected)/profile/_lib/data.ts` reads and merges `locale` and
 `theme` at `users/{uid}`. `firestore.rules` permits access only to the matching
 authenticated UID and validates allowed fields and values. Avatar objects live
 at `users/{uid}/avatar`, governed by `storage.rules`; Auth profile attributes

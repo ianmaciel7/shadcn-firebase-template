@@ -5,6 +5,7 @@ import {
   inspectComponentPlacement,
   inspectComponentRuntime,
   inspectHookFilename,
+  inspectLibPlacement,
   inspectNaming,
   inspectUiPhaseStatus,
   isOwnedComponent,
@@ -1175,6 +1176,39 @@ describe("component filename term matching and parity", () => {
        export { HomeSectionClient };`,
       /Props type must be named one of: HomeSectionClientProps/i,
       "src/app/_components/home-section-client.tsx",
+    );
+  });
+});
+
+describe("lib and route _lib module placement", () => {
+  it("allows flat src/lib modules, flat src/lib/firebase SDK modules, and route _lib/data.ts", () => {
+    for (const validPath of [
+      "src/lib/role.ts",
+      "src/lib/role.test.ts",
+      "src/lib/firebase/client.ts",
+      "src/lib/firebase/server.ts",
+      "src/lib/usage/guard.ts",
+      "src/app/(protected)/_lib/require-protected-access.ts",
+      "src/app/(protected)/profile/_lib/data.ts",
+    ]) {
+      assert.deepEqual(inspectLibPlacement(validPath), []);
+    }
+  });
+
+  it("rejects nested domain directories in src/lib, nested firestore folders, and standalone _lib/defaults.ts", () => {
+    assert.match(
+      inspectLibPlacement("src/lib/user/dal.ts")[0]?.message ?? "",
+      /Keep domain helpers flat in src\/lib\/\*\.ts/,
+    );
+    assert.match(
+      inspectLibPlacement("src/lib/firebase/firestore/user-preferences.ts")[0]
+        ?.message ?? "",
+      /Keep domain helpers flat in src\/lib\/\*\.ts/,
+    );
+    assert.match(
+      inspectLibPlacement("src/app/(protected)/profile/_lib/defaults.ts")[0]
+        ?.message ?? "",
+      /Colocate route data reads and mutations together in _lib\/data\.ts/,
     );
   });
 });

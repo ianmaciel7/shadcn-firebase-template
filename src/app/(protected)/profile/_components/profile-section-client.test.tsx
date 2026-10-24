@@ -69,6 +69,19 @@ vi.mock("firebase/auth", () => ({
   verifyBeforeUpdateEmail: mocks.verifyBeforeUpdateEmail,
 }));
 
+vi.mock("firebase/firestore", () => ({
+  doc: vi.fn((_, collection: string, id: string) => `${collection}/${id}`),
+  getDoc: async (ref: string) => {
+    const uid = ref.split("/")[1];
+    const data = await mocks.readPreferences(uid);
+    return { data: () => data };
+  },
+  setDoc: async (ref: string, data: unknown) => {
+    const uid = ref.split("/")[1];
+    return mocks.writePreferences(uid, data);
+  },
+}));
+
 vi.mock("firebase/storage", () => ({
   getDownloadURL: mocks.getDownloadURL,
   ref: vi.fn(() => "avatar-ref"),
@@ -76,6 +89,7 @@ vi.mock("firebase/storage", () => ({
 }));
 
 vi.mock("@/lib/firebase/client", () => ({
+  getFirebaseFirestore: vi.fn(() => "firestore"),
   getFirebaseStorage: mocks.getStorage,
   getFirebaseUI: mocks.getUI,
 }));
@@ -90,14 +104,6 @@ vi.mock("@/components/ui/toast", () => ({
   toast: {
     add: mocks.toastAdd,
   },
-}));
-
-vi.mock("@/lib/firebase/firestore/user-preferences", () => ({
-  isThemePreference: (value: unknown) =>
-    value === "light" || value === "dark" || value === "system",
-  readUserPreferences: mocks.readPreferences,
-  themePreferences: ["light", "dark", "system"],
-  writeUserPreferences: mocks.writePreferences,
 }));
 
 describe("ProfileSectionClient", () => {

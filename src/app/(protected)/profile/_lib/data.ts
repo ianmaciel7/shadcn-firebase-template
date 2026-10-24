@@ -3,11 +3,59 @@ import {
   updateProfile,
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { getFirebaseStorage } from "@/lib/firebase/client";
-import { writeUserPreferences } from "@/lib/firebase/firestore/user-preferences";
-import { getActiveUser } from "@/lib/session";
-import type { ProfileValues, SavedProfile } from "./definitions";
+import {
+  getFirebaseFirestore,
+  getFirebaseStorage,
+} from "@/lib/firebase/client";
+import { isLocale, type Locale } from "@/lib/locale";
+import { getActiveUser, getSessionUser } from "@/lib/session";
+import { isThemePreference } from "@/lib/theme";
+import type {
+  ProfileValues,
+  SavedProfile,
+  UserPreferences,
+} from "./definitions";
+
+export async function readUserPreferences(
+  uid: string,
+): Promise<Partial<UserPreferences>> {
+  const snapshot = await getDoc(doc(getFirebaseFirestore(), "users", uid));
+  const data = snapshot.data();
+
+  return {
+    ...(isLocale(data?.locale) ? { locale: data.locale } : {}),
+    ...(isThemePreference(data?.theme) ? { theme: data.theme } : {}),
+  };
+}
+
+export async function writeUserPreferences(
+  uid: string,
+  preferences: Partial<UserPreferences>,
+): Promise<void> {
+  await setDoc(doc(getFirebaseFirestore(), "users", uid), preferences, {
+    merge: true,
+  });
+}
+
+export async function readProfileDefaults(
+  uid: string,
+  activeLocale: Locale,
+  isActive: () => boolean,
+) {
+  const preferences = await readUserPreferences(uid);
+  if (!isActive()) return null;
+  const currentUser = getSessionUser();
+  if (!currentUser || currentUser.uid !== uid) return null;
+  const values: ProfileValues = {
+    displayName: currentUser.displayName ?? "",
+    email: currentUser.email ?? "",
+    locale: preferences.locale ?? activeLocale,
+    theme: preferences.theme ?? "system",
+  };
+  return { values, theme: preferences.theme };
+}
 
 /** Ports for profile persistence. Tests may inject adapters without Firebase. */
 export type ProfileDependencies = {

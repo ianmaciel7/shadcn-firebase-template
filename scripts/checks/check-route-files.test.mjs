@@ -99,7 +99,7 @@ describe("route entrypoint guard", () => {
 
   it("allows a data-layer read in a thin route entrypoint", () => {
     expectValid(
-      'import { readProfile } from "@/lib/firebase/firestore/user-preferences"; export default async function Page() { const value = await readProfile(); return <Card value={value} />; }',
+      'import { readProfileDefaults } from "./_lib/data"; export default async function Page() { const value = await readProfileDefaults(); return <Card value={value} />; }',
     );
   });
 
