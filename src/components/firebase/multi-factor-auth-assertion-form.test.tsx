@@ -1,10 +1,10 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import type { MultiFactorInfo } from "firebase/auth";
+import { PhoneMultiFactorGenerator, type MultiFactorInfo } from "firebase/auth";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 const testHints = [
-  { uid: "phone-primary", factorId: "phone" },
-  { uid: "phone-backup", factorId: "phone" },
+  { uid: "phone-primary", factorId: PhoneMultiFactorGenerator.FACTOR_ID },
+  { uid: "phone-backup", factorId: PhoneMultiFactorGenerator.FACTOR_ID },
 ] as MultiFactorInfo[];
 
 vi.mock("@firebase-oss/ui-core", () => ({
