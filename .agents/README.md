@@ -29,7 +29,8 @@ Persistent rules cover [language](rules/language-conventions.md),
 [compound forms](rules/forms-architecture.md),
 [data modules](rules/data-layer.md),
 [route entrypoints](rules/nextjs-route-files.md), and
-[shadcn/ui maintenance](rules/shadcn-ui-maintenance.md). The
+[shadcn/ui maintenance](rules/shadcn-ui-maintenance.md), and
+[Serena external-research memory](rules/serena-external-research-memory.md). The
 [shadcn/ui reference](../docs/agents/shadcn.md) records upstream coverage.
 
 ## Source and local files

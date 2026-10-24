@@ -64,6 +64,8 @@ Deliver correct, maintainable changes with minimal risk.
   technical Firebase persistence boundary.
 - `.agents/rules/adr-conventions.md`: naming and immutability policy for future
   architecture decision records.
+- `.agents/rules/serena-external-research-memory.md`: cache-first policy for
+  external research and durable Serena-memory findings.
 
 Accepted ADRs are historical records; use `docs/adr/README.md` and current
 configuration to identify later operational changes. The seven installed skills
