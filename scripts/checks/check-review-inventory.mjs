@@ -30,7 +30,7 @@ for (const file of files) {
   expected.add(file);
   let folder = dirname(file).replaceAll("\\", "/");
   while (folder !== "." && folder !== "/") {
-    expected.add(folder + "/");
+    expected.add(`${folder}/`);
     folder = dirname(folder).replaceAll("\\", "/");
   }
 }
