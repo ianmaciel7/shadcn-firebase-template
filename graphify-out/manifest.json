@@ -2772,10 +2772,10 @@
     "semantic_hash": "a388cac1ec81b7e957497dee00a97bd4"
   },
   ".pre-commit-config.yaml": {
-    "mtime": 1792530580.4827044,
-    "seen": 1792859927.145189,
-    "ast_hash": "b8e40a7c522e085a495da8e608b42a6b",
-    "semantic_hash": "b8e40a7c522e085a495da8e608b42a6b"
+    "mtime": 1792860657.0245798,
+    "seen": 1792860714.9522028,
+    "ast_hash": "1e26383bf57fbac2897ef7ef443b5fa4",
+    "semantic_hash": ""
   },
   ".serena/memories/external-research/policy.md": {
     "mtime": 1792845333.4004197,
@@ -2856,10 +2856,10 @@
     "semantic_hash": "c8a5a8a919fa628ae818f6db4784861f"
   },
   "TOOLING.md": {
-    "mtime": 1792859667.2982185,
-    "seen": 1792859927.145189,
-    "ast_hash": "48471e57a6a6f02923ab968087a98e62",
-    "semantic_hash": "48471e57a6a6f02923ab968087a98e62"
+    "mtime": 1792860657.025091,
+    "seen": 1792860714.9522264,
+    "ast_hash": "1fd6e4d77538fd500fdcdfd7eab06953",
+    "semantic_hash": ""
   },
   "docs/README.md": {
     "mtime": 1792856209.8398006,
@@ -3502,5 +3502,29 @@
     "seen": 1792859927.145189,
     "ast_hash": "45cec82e24b614f6b8c6efe047f57ffe",
     "semantic_hash": "45cec82e24b614f6b8c6efe047f57ffe"
+  },
+  ".husky/post-checkout": {
+    "mtime": 1792860525.0891628,
+    "seen": 1792860714.950773,
+    "ast_hash": "a2a37541461befbaf931e13b494d8ead",
+    "semantic_hash": ""
+  },
+  ".husky/post-commit": {
+    "mtime": 1792860525.0871575,
+    "seen": 1792860714.9507766,
+    "ast_hash": "1acc027c0516abeb62120c3ea69e2cab",
+    "semantic_hash": ""
+  },
+  ".ast-grep/rule-tests/no-direct-auth-current-user-test.yml": {
+    "mtime": 1792859633.4601414,
+    "seen": 1792860714.9521308,
+    "ast_hash": "5f466f933a0281bbddfd8eea9ff4f9a1",
+    "semantic_hash": ""
+  },
+  ".ast-grep/rules/no-direct-auth-current-user.yml": {
+    "mtime": 1792859667.189283,
+    "seen": 1792860714.952164,
+    "ast_hash": "18e9e976fe9781c2befee7256885b8b7",
+    "semantic_hash": ""
   }
 }
