@@ -12,7 +12,7 @@
 
 ## Scope and evidence
 
-Agent evaluation policy documentation. This report addresses the one named inventory item only, not neighboring unreviewed files or the entire installed Next.js documentation corpus.
+Agent evaluation policy documentation. This report addresses the one named inventory item only, not neighboring files or the entire installed Next.js documentation corpus.
 
 ## Correct behavior observed in source
 
@@ -28,4 +28,4 @@ Verify the documented command names against package.json and keep the suite's co
 
 ## Conclusion
 
-The named source item was inspected individually. No runtime, emulator or external agent tool execution is asserted by this report; findings require separate remediation decisions, and the manifesto row remains pending until GitHub Actions report checks have passed.
+The named source item was inspected individually. No runtime, emulator or external agent tool execution is asserted by this report; findings require separate remediation decisions, and the manifest row remains pending until GitHub Actions report checks have passed.
