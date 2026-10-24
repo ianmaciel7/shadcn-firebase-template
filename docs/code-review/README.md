@@ -103,6 +103,6 @@ The navigation-policy button and TOTP factor display name were corrected and reg
 
 The sandbox security boundary and URL editor behavior passed dedicated tests in run 40131931671. Current active coverage is 162 of 1,198 items; 1,036 remain Pending. Additional draft reports stored in the repository are not automatically considered completed reviews.
 
-## Validated multifactor chooser checkpoint
+## Validated multi-factor chooser checkpoint
 
 Unique enrollment identities now distinguish multiple factors from the same provider family. [Review run 40132646413](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40132646413) passed all required checks. Current coverage is 163 of 1,199 primary items; 1,036 remain Pending.

@@ -43,6 +43,6 @@ Two additional Firebase UI source files have completed focused reviews with pass
 
 The preview component now has an individually verified report, with three focused tests passing in run 40131931671. Active project coverage is 137 of 683 primary items; 546 are still pending.
 
-## Validated multifactor chooser
+## Validated multi-factor chooser
 
 A dedicated duplicate-key regression for multiple phone factors passed in run 40132646413. Current project coverage is 138 of 684 items; 546 remain pending.

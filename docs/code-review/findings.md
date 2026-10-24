@@ -187,6 +187,6 @@ These corrections passed [run 40131416018](https://github.com/ianmaciel7/shadcn-
 
 Focused tests for both cases and blocked URL schemes passed in [run 40131931671](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40131931671).
 
-## Verified multifactor selection finding
+## Verified multi-factor selection finding
 
 - **Low — Repeated factor identity:** The enrollment chooser previously reused `hint.factorId` as the React key, even when two hints represented different enrolled devices of the same method. It now uses `hint.uid`. A regression test confirmed unique identity and correct selection of the second enrolled factor in [run 40132646413](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40132646413).
