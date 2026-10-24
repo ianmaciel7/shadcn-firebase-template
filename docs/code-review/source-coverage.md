@@ -6,11 +6,11 @@
 | Project files inventoried | 568 |
 | Total project review items | 683 |
 | Folder reports completed | 33 |
-| File reports completed | 103 |
-| Items reviewed | 136 |
-| Coverage | 19.91% |
+| File reports completed | 104 |
+| Items reviewed | 137 |
+| Coverage | 20.06% |
 | Active reports | 0 |
-| Pending items | 547 |
+| Pending items | 546 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -38,3 +38,7 @@ As of commit `44c7bfd`, current tracked paths supersede the older coverage narra
 ## Firebase regression checkpoint
 
 Two additional Firebase UI source files have completed focused reviews with passing unit tests in run 40131416018. Current project coverage is 136 of 682 items, with 546 pending. The underlying Firebase emulator integration suite was not run in this focused workflow.
+
+## Validated preview component
+
+The preview component now has an individually verified report, with three focused tests passing in run 40131931671. Active project coverage is 137 of 683 primary items; 546 are still pending.

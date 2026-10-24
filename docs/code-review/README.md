@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 568 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1198 |
-| Currently completed review reports | 161 |
+| Currently completed review reports | 162 |
 | Active report tasks | 0 |
-| Completed tasks | 161 |
-| Pending tasks (excluding active) | 1037 |
+| Completed tasks | 162 |
+| Pending tasks (excluding active) | 1036 |
 | Not applicable | 3 |
-| Consolidated findings from completed reports | 4 medium, 19 low, 0 high/critical |
+| Consolidated findings from completed reports | 5 medium, 20 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 136 / 683 items (19.91%) |
+| Project coverage | 137 / 683 items (20.06%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -98,3 +98,7 @@ The source fixes and regression checks for `carousel.tsx`, `sidebar.tsx` and `co
 ## Validated Firebase checkpoint
 
 The navigation-policy button and TOTP factor display name were corrected and regression-tested in [run 40131416018](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40131416018). The reconciled manifest now has 161 completed primary items and 1,036 pending. The previously prepared source-only draft reports remain Pending until their individual review requirements are satisfied.
+
+## Validated web-preview checkpoint
+
+The sandbox security boundary and URL editor behavior passed dedicated tests in run 40131931671. Current active coverage is 162 of 1,198 items; 1,036 remain Pending. Additional draft reports stored in the repository are not automatically considered completed reviews.

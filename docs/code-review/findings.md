@@ -179,3 +179,10 @@ See the three corresponding [individual UI reports](reports/next-code-file-src-c
 - **Low — FIREBASE-TOTP-NAME-001:** Enrollment previously wrote the verification code as the TOTP factor name. Enrollment now receives the separately entered `displayName`, verified through the mocked enrollment adapter.
 
 These corrections passed [run 40131416018](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40131416018); emulator coverage remains a separate boundary.
+
+## Verified preview component fixes
+
+- **Medium — AI-WEBPREVIEW-SANDBOX-001:** The preview iframe previously allowed callers to override the `sandbox` prop because the prop spread came last. The invariant sandbox now takes precedence and `srcDoc` injection is suppressed in the component.
+- **Low — AI-WEBPREVIEW-INPUT-001:** A custom `onChange` previously disabled the URL field's internal text state update. The field now synchronizes its internal value and forwards the consumer callback.
+
+Focused tests for both cases and blocked URL schemes passed in [run 40131931671](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40131931671).

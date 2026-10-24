@@ -7,7 +7,7 @@
 - Primary path: `src/components/ai-elements/web-preview.tsx`
 - Associated documentation: installed Next.js 16.4.2 Client Component guidance, applicable React and ARIA patterns, and repository component composition rules.
 - Next.js version: `16.4.2`
-- Status: Reviewed draft; repository tracking remains Pending until required validation.
+- Status: Completed after focused regression validation in GitHub Actions run 40131931671.
 
 ## Scope
 
@@ -39,3 +39,7 @@ Explicit scheme filtering rejects non-HTTP(S) sources in `WebPreviewBody`. The i
 - Classification: Partially compliant.
 - Boundaries: The sandbox issue is a source-level opt-out of defense-in-depth, not evidence of external attacker control of iframe props on an active route.
 - No remediation or completed production validation is claimed. Use the exact item report and regression for follow-up.
+
+## Verified remediation
+
+The preview now locks its `sandbox` and ignores `srcDoc` overrides even when runtime callers provide them, and rejects non-HTTP(S) navigation. The URL input continues to update internal text when `onChange` is supplied. Dedicated unit regressions, TypeScript, the inventory check, English, spelling and Markdown passed in [run 40131931671](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40131931671). Cross-route and deployment validation remain outside this item.

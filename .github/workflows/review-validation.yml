@@ -30,6 +30,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Review manifest integrity
         run: node scripts/checks/check-review-inventory.mjs
+      - name: Biome lint
+        run: pnpm lint:ci
       - name: TypeScript
         run: pnpm typecheck
       - name: Regression tests
