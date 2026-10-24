@@ -1,32 +1,33 @@
-# Individual report - `next-code-file-src-app-protected-profile-lib-definitions-ts`
+# Individual re-review — `src/app/(protected)/profile/_lib/definitions.ts`
 
 ## Identification
 
 - Full subagent name: `next-code-file-src-app-protected-profile-lib-definitions-ts`
 - Type: `CODE_FILE`
 - Primary path: `src/app/(protected)/profile/_lib/definitions.ts`
-- Associated documentation: installed Next.js 16.4.2 `ARCHITECTURE.md; CODING_STANDARDS.md`
-- Next.js version: `16.4.2`
-- Status: Completed
+- Next.js documentation baseline: installed version `16.4.2`
+- Inspected source: branch `fix/react-review-findings` at commit `2a1d988ce5322be0ddeb743eaeb56e86edb128c4`
+- Status: Re-review draft. Do not count as completed until validation and synchronization of the current manifest.
 
 ## Scope
 
-- Responsibility: individual review of `src/app/(protected)/profile/_lib/definitions.ts` against installed Next.js 16.4.2 documentation and repository architecture, React, hook, and security conventions.
-- Files consulted: `src/app/(protected)/profile/_lib/definitions.ts`, related route/component/hook callers and unit tests, `ARCHITECTURE.md`, `CODING_STANDARDS.md`, and installed Next.js 16.4.2 references.
-- Dependencies analyzed: module imports, runtime boundary directives (`"use client"` / `"server-only"` / `"use server"`), and Next.js navigation/header APIs where applicable.
+Review of profile data contracts and port-style dependency typing after module consolidation. This replaces stale observations from earlier code review reports; it does not claim runtime or build validation.
 
-## Code Review
+## Source evidence
 
-Correct implementations:
+- Defines profile preference, form, saved result and save input types without runtime side effects.
+- The `ProfileDependencies` type expresses the required Firebase Auth and persistence adapters; `data.ts` uses the same type.
+- `SaveProfileInput` carries the signed-in user, previous values, new values and selected avatar file.
+- No framework-specific configuration or server-only API is imported by this type-only module.
 
-- Defines the Zod validation schema (`createProfileFormSchema`) and TypeScript contracts (`ProfileFormValues`, `ProfileSessionState`) for `/profile`.
-- Complies with the repository's Biome complexity, line-count, callback-depth, and hook-module-scope rules (`pnpm lint:ci`, `pnpm check:structure`, `pnpm check:routes`, and `pnpm check:components`).
+## Findings and limitations
 
-## Findings
+The historical report described Zod validation and `ProfileSessionState` in this file; those are no longer present. That was stale report evidence rather than a new implementation defect. No runtime issue is demonstrable from this type-only module.
 
-No proven finding in this file.
+## Validation follow-up
+
+Run TypeScript type checking and the form integration tests to verify the types match actual form validation and saved profile results.
 
 ## Conclusion
 
-- Classification: Compliant.
-- Explanation: `src/app/(protected)/profile/_lib/definitions.ts` satisfies the installed Next.js 16.4.2 contracts and the repository's architectural, runtime-boundary, and hook-composition policies.
+Compliant at type-source level; the old report requires replacement, not incremental line-number edits. No code change or production validation is claimed in this draft.

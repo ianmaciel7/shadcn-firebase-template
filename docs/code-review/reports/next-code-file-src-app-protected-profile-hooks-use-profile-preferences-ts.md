@@ -1,32 +1,34 @@
-# Individual report - `next-code-file-src-app-protected-profile-hooks-use-profile-preferences-ts`
+# Individual re-review — `src/app/(protected)/profile/_hooks/use-profile-preferences.ts`
 
 ## Identification
 
 - Full subagent name: `next-code-file-src-app-protected-profile-hooks-use-profile-preferences-ts`
 - Type: `CODE_FILE`
 - Primary path: `src/app/(protected)/profile/_hooks/use-profile-preferences.ts`
-- Associated documentation: installed Next.js 16.4.2 `.agents/rules/react-hooks-core.md; CODING_STANDARDS.md; docs/adr/0004-configure-internationalization.md`
-- Next.js version: `16.4.2`
-- Status: Completed
+- Next.js documentation baseline: installed version `16.4.2`
+- Inspected source: branch `fix/react-review-findings` at commit `2a1d988ce5322be0ddeb743eaeb56e86edb128c4`
+- Status: Re-review draft. Do not count as completed until validation and synchronization of the current manifest.
 
 ## Scope
 
-- Responsibility: individual review of `src/app/(protected)/profile/_hooks/use-profile-preferences.ts` against installed Next.js 16.4.2 documentation and repository architecture, React, hook, and security conventions.
-- Files consulted: `src/app/(protected)/profile/_hooks/use-profile-preferences.ts`, related route/component/hook callers and unit tests, `ARCHITECTURE.md`, `CODING_STANDARDS.md`, and installed Next.js 16.4.2 references.
-- Dependencies analyzed: module imports, runtime boundary directives (`"use client"` / `"server-only"` / `"use server"`), and Next.js navigation/header APIs where applicable.
+Review of asynchronous loading, user switching, cancellation, and theme resolution after data-layer relocation. This replaces stale observations from earlier code review reports; it does not claim runtime or build validation.
 
-## Code Review
+## Source evidence
 
-Correct implementations:
+- Loads the selected user profile via `readProfile(uid, activeLocale, () => active)`, maintaining a lifecycle cancellation flag.
+- Uses `preferences?.uid === uid` to avoid exposing a prior account's state as the current account's defaults.
+- Keeps the last saved values in a ref and reports load errors using a localized translation.
+- Applies stored theme only when present and returns readiness, current result, defaults and the saved-values ref.
+- `data.test.ts` covers stale reads, session switches and localized defaults.
 
-- Applies theme and locale preference updates across `next-themes`, server cookies (`setThemeCookie`, `setLocaleCookie`), and `router.refresh()`.
-- Complies with the repository's Biome complexity, line-count, callback-depth, and hook-module-scope rules (`pnpm lint:ci`, `pnpm check:structure`, `pnpm check:routes`, and `pnpm check:components`).
+## Findings and limitations
 
-## Findings
+No independently proven defect. A load effect can restart when `uid`, locale, theme setter or translated error function changes; that is expected from its current dependency array. Verify user-switch and locale-switch behavior in a mounted component.
 
-No proven finding in this file.
+## Validation follow-up
+
+Run unit tests, then reproduce switching accounts/locales while a Firestore read is unresolved. Assert no stale values or theme update and no duplicate unexpected reads.
 
 ## Conclusion
 
-- Classification: Compliant.
-- Explanation: `src/app/(protected)/profile/_hooks/use-profile-preferences.ts` satisfies the installed Next.js 16.4.2 contracts and the repository's architectural, runtime-boundary, and hook-composition policies.
+Conditionally compliant for source control flow; mounted-component behavior remains unverified. No code change or production validation is claimed in this draft.

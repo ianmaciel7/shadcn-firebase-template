@@ -1,32 +1,33 @@
-# Individual report - `next-code-file-src-app-protected-lib-require-protected-access-ts`
+# Individual re-review — `src/app/(protected)/_lib/require-protected-access.ts`
 
 ## Identification
 
 - Full subagent name: `next-code-file-src-app-protected-lib-require-protected-access-ts`
 - Type: `CODE_FILE`
 - Primary path: `src/app/(protected)/_lib/require-protected-access.ts`
-- Associated documentation: installed Next.js 16.4.2 `01-app/03-api-reference/04-functions/redirect.md; ARCHITECTURE.md; ADR 0009`
-- Next.js version: `16.4.2`
-- Status: Completed
+- Next.js documentation baseline: installed version `16.4.2`
+- Inspected source: branch `fix/react-review-findings` at commit `2a1d988ce5322be0ddeb743eaeb56e86edb128c4`
+- Status: Re-review draft. Do not count as completed until validation and synchronization of the current manifest.
 
 ## Scope
 
-- Responsibility: individual review of `src/app/(protected)/_lib/require-protected-access.ts` against installed Next.js 16.4.2 documentation and repository architecture, React, hook, and security conventions.
-- Files consulted: `src/app/(protected)/_lib/require-protected-access.ts`, related route/component/hook callers and unit tests, `ARCHITECTURE.md`, `CODING_STANDARDS.md`, and installed Next.js 16.4.2 references.
-- Dependencies analyzed: module imports, runtime boundary directives (`"use client"` / `"server-only"`), and Next.js navigation/header APIs where applicable.
+Review of the server-only initial-load guard and the new role-based authorization boundary. This replaces stale observations from earlier code review reports; it does not claim runtime or build validation.
 
-## Code Review
+## Source evidence
 
-Correct implementations:
+- `import "server-only"` keeps request authorization on the server.
+- `requireProtectedAccess` intentionally defers the no-bridge first load to the client guard; an active bridge with a failed token redirects.
+- `requireRole` fails closed without a verified user ID, checks `hasRole`, invokes `notFound()` for insufficient privileges, and returns the verified principal.
+- `require-protected-access.test.ts` covers the no-bridge fallback, invalid token, allowed verified session, unauthenticated role call, insufficient role, and authorized role.
 
-- Enforces `import "server-only"`, inspects `await getFirebaseServerSession()`, and calls `redirectToSignIn()` when `session.isBridgeActive && !session.userId`, allowing first-load requests without an active Service Worker to fall back to `ProtectedGuardClient`.
-- Complies with the repository's Biome complexity, line-count, callback-depth, and hook-module-scope rules (`pnpm lint:ci`, `pnpm check:structure`, `pnpm check:routes`, and `pnpm check:components`).
+## Findings and limitations
 
-## Findings
+No proven new defect. This file alone is not a substitute for route/data-level use of `requireRole` in every privileged resource.
 
-No proven finding in this file.
+## Validation follow-up
+
+Run the co-located Vitest tests. Inspect all admin-only pages, handlers and data actions for a server authorization call before returning private data.
 
 ## Conclusion
 
-- Classification: Compliant.
-- Explanation: `src/app/(protected)/_lib/require-protected-access.ts` satisfies the installed Next.js 16.4.2 contracts and the repository's architectural, runtime-boundary, and hook-composition policies.
+Compliant within the reviewed boundary; full privileged-route integration remains unverified. No code change or production validation is claimed in this draft.

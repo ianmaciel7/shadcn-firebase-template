@@ -1,32 +1,34 @@
-# Individual report - `next-code-file-src-app-protected-profile-lib-data-ts`
+# Individual re-review — `src/app/(protected)/profile/_lib/data.ts`
 
 ## Identification
 
 - Full subagent name: `next-code-file-src-app-protected-profile-lib-data-ts`
 - Type: `CODE_FILE`
 - Primary path: `src/app/(protected)/profile/_lib/data.ts`
-- Associated documentation: installed Next.js 16.4.2 `ARCHITECTURE.md; CODING_STANDARDS.md; DER.md`
-- Next.js version: `16.4.2`
-- Status: Completed
+- Next.js documentation baseline: installed version `16.4.2`
+- Inspected source: branch `fix/react-review-findings` at commit `2a1d988ce5322be0ddeb743eaeb56e86edb128c4`
+- Status: Re-review draft. Do not count as completed until validation and synchronization of the current manifest.
 
 ## Scope
 
-- Responsibility: individual review of `src/app/(protected)/profile/_lib/data.ts` against installed Next.js 16.4.2 documentation and repository architecture, React, hook, and security conventions.
-- Files consulted: `src/app/(protected)/profile/_lib/data.ts`, related route/component/hook callers and unit tests, `ARCHITECTURE.md`, `CODING_STANDARDS.md`, and installed Next.js 16.4.2 references.
-- Dependencies analyzed: module imports, runtime boundary directives (`"use client"` / `"server-only"` / `"use server"`), and Next.js navigation/header APIs where applicable.
+Review of client-side Firebase persistence, adapter injection, session checks, and multi-store save ordering. This replaces stale observations from earlier code review reports; it does not claim runtime or build validation.
 
-## Code Review
+## Source evidence
 
-Correct implementations:
+- Validates persisted locale/theme values when reading Firestore preferences and merges valid preference writes.
+- `readProfile` checks lifecycle validity and client session identity after its asynchronous preference read.
+- `saveProfile` uses `ProfileDependencies` adapters for isolated tests and checks the active session between asynchronous writes.
+- `getProfileUpdate` only includes fields that changed, preventing unrelated Firebase profile property overwrites.
+- `data.test.ts` checks cancelled reads, adapter ordering, changed-session guards, and email verification failures.
 
-- Persists display name and avatar updates to Firebase Auth (`updateProfile`) and user theme/locale preferences to Firestore (`saveUserPreferences`).
-- Complies with the repository's Biome complexity, line-count, callback-depth, and hook-module-scope rules (`pnpm lint:ci`, `pnpm check:structure`, `pnpm check:routes`, and `pnpm check:components`).
+## Findings and limitations
 
-## Findings
+Partial-write consistency is an operational risk, not a proven code defect: avatar upload, Firebase Auth profile updates and Firestore preference writes are separate operations. A late failure can leave earlier writes applied. No rollback or compensating workflow is implemented in this module. Distinguish this from an atomicity guarantee: neither Firebase SDK nor Next.js automatically provides a cross-service transaction.
 
-No proven finding in this file.
+## Validation follow-up
+
+Add failing-second/third-operation tests to capture partial success, document user-facing retry semantics, and run the existing dependency-injection test suite. Test Firestore and Storage rules independently.
 
 ## Conclusion
 
-- Classification: Compliant.
-- Explanation: `src/app/(protected)/profile/_lib/data.ts` satisfies the installed Next.js 16.4.2 contracts and the repository's architectural, runtime-boundary, and hook-composition policies.
+Partially verified; service-specific writes are testable, while recovery from partial success needs an explicit product decision. No code change or production validation is claimed in this draft.

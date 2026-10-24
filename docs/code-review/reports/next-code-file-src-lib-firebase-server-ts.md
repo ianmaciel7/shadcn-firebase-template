@@ -1,34 +1,34 @@
-# Individual report — `next-code-file-src-lib-firebase-server-ts`
+# Individual re-review — `src/lib/firebase/server.ts`
 
 ## Identification
 
 - Full subagent name: `next-code-file-src-lib-firebase-server-ts`
 - Type: `CODE_FILE`
 - Primary path: `src/lib/firebase/server.ts`
-- Associated documentation: installed Next.js 16.4.2 `01-app/03-api-reference/04-functions/headers.md` and `01-app/01-getting-started/05-server-and-client-components.md`; `ARCHITECTURE.md`; [ADR 0009](../../adr/0009-integrate-firebase-authentication.md)
-- Next.js version: `16.4.2`
-- Status: Completed
+- Next.js documentation baseline: installed version `16.4.2`
+- Inspected source: branch `fix/react-review-findings` at commit `2a1d988ce5322be0ddeb743eaeb56e86edb128c4`
+- Status: Re-review draft. Do not count as completed until validation and synchronization of the current manifest.
 
 ## Scope
 
-- Responsibility: individual review of server-side Firebase ID token extraction and verification (`getFirebaseServerSession`).
-- Files consulted: `src/lib/firebase/server.ts`, `src/lib/firebase/server.test.ts`, `src/lib/firebase/admin.ts`, `src/lib/user/definitions.ts`, `src/lib/user/dal.ts`, `src/app/(protected)/_lib/require-protected-access.ts`, `public/firebase-auth-sw.js`, and installed Next.js `headers()` documentation.
-- Dependencies analyzed: `server-only`, `next/headers` (`headers`), `firebase-admin/auth` via `getAdminAuth`, and `@/lib/user/definitions` (`readUserRole`, `UserRole`).
+Review of request-scoped bearer token extraction, server-only Firebase Admin verification, and role normalization. This replaces stale observations from earlier code review reports; it does not claim runtime or build validation.
 
-## Code Review
+## Source evidence
 
-Correct implementations:
+- Uses the documented asynchronous `await headers()` interface and isolates the module with `import "server-only"`.
+- Requires the worker bridge marker and a bearer token before attempting Firebase Admin verification.
+- Uses `verifyIdToken(authIdToken, true)` for token signature and revocation/disabled-account checks.
+- Failure returns a least-privilege session (`userId: null`, user role), while successful verification maps claims via `readUserRole`.
+- `server.test.ts` checks missing bridge/token, successful role verification, and rejected revoked or malformed tokens.
 
-- Guards the module with `import "server-only"` on line 1 so `firebase-admin` and request-header inspection can never be bundled into a Client Component.
-- Calls `await headers()` asynchronously in accordance with the Next.js 15/16 async Dynamic APIs contract (`01-app/03-api-reference/04-functions/headers.md`).
-- Verifies the bearer token with `getAdminAuth().verifyIdToken(authIdToken, true)` (`checkRevoked: true`), ensuring disabled users and revoked refresh tokens lose access immediately.
-- Treats missing, malformed, or revoked tokens as an unauthenticated session (`userId: null`, least-privilege `role: "user"`) rather than throwing an unhandled server exception, and documents the distinction between the Service Worker bridge indicator (`isBridgeActive`) and the fail-closed DAL boundary (`@/lib/user/dal`).
+## Findings and limitations
 
-## Findings
+No proven defect in this function. The bridge marker is a routing signal rather than cryptographic proof; security depends on verified tokens and fail-closed callers such as `requireRole`. The historical report cited removed `src/lib/user/` paths and must be corrected.
 
-No proven finding in this file.
+## Validation follow-up
+
+Run `server.test.ts` and verify integration through actual request headers. Audit all privileged data paths for direct verification/authorization rather than reliance on `requireProtectedAccess`.
 
 ## Conclusion
 
-- Classification: Compliant.
-- Explanation: `src/lib/firebase/server.ts` correctly uses the async Next.js 16.4.2 `headers()` API, enforces `server-only` isolation, checks token revocation via `firebase-admin`, and normalizes roles safely.
+Compliant in reviewed server verification boundary; complete caller coverage remains unverified. No code change or production validation is claimed in this draft.
