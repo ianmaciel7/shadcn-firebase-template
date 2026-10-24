@@ -3,6 +3,8 @@
 - Source: user-supplied Next.js documentation, `https://nextjs.org/docs/app/getting-started/project-structure`
 - Page metadata date: 2026-07-21
 - Freshness boundary: validate against the installed Next.js version before using it to change application code.
+- Installed-version review: verified against Next.js 16.4.2 on 2026-10-24 using `node_modules/next/dist/docs/01-app/01-getting-started/02-project-structure.md`.
+- Scope: concise durable guidance, not a complete file-convention inventory. Consult the version-matched guide for `global-error`, metadata conventions, and other specialized files.
 
 ## Durable findings
 
