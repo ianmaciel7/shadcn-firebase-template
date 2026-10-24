@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { ProfileSessionContext } from "../_lib/profile-session-context";
+import { ProfileSessionContext } from "../_lib/session-context";
 
 export function useProfileSessionContext() {
   const session = useContext(ProfileSessionContext);

@@ -6,7 +6,7 @@ vi.mock("@/lib/firebase/firestore/user-preferences", () => ({
   readUserPreferences: mocks.read,
 }));
 
-import { readProfileDefaults } from "./profile-defaults";
+import { readProfileDefaults } from "./defaults";
 
 beforeEach(() => {
   vi.resetAllMocks();
