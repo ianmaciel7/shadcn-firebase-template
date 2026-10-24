@@ -26,7 +26,7 @@ vi.mock("@hookform/resolvers/standard-schema", () => ({
   standardSchemaResolver: () => async (values: unknown) => ({ values, errors: {} }),
 }));
 vi.mock("@/components/ui/input-otp", () => ({
-  InputOTP: (props: ComponentProps<"input">) => <input {...props} />,
+  InputOTP: ({ children: _children, ...props }: ComponentProps<"input">) => <input {...props} />,
   InputOTPGroup: ({ children }: PropsWithChildren) => <div>{children}</div>,
   InputOTPSlot: () => null,
 }));
