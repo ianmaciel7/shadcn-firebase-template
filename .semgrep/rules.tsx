@@ -6,9 +6,9 @@ import { cookies } from "next/headers";
 // ruleid: no-server-only-in-client-components
 import "server-only";
 
-export function Client() {
+export async function Client() {
   // ruleid: no-process-env-in-client-components
-  const a = process.env.DATABASE_URL;
+  const a = process.env.DATABASE_URL ?? "";
   // ok: no-process-env-in-client-components
   const b = process.env.NEXT_PUBLIC_SITE_NAME;
   // ok: no-process-env-in-client-components
@@ -47,7 +47,7 @@ export function Client() {
   const bad = <div dangerouslySetInnerHTML={{ __html: a }} />;
   // ok: no-dangerously-set-inner-html
   const good = <div>{b}{c}{f}{g}{k}{s}</div>;
-  const store = cookies();
+  const store = await cookies();
   // ruleid: session-cookie-must-be-http-only
   store.set("session", a, { path: "/" });
   // ruleid: session-cookie-must-be-http-only
@@ -60,5 +60,5 @@ export function Client() {
   const config = { typescript: { ignoreBuildErrors: true } };
   // ok: no-ignored-build-errors
   const strict = { typescript: { ignoreBuildErrors: false } };
-  return [bad, good, firebaseKey, config, strict];
+  return [bad, good, firebaseKey, bracket, SECRET, config, strict];
 }
