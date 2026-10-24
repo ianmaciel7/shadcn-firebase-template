@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getFirebaseUI } from "@/lib/firebase/client";
 
-export function useAuthUiStore() {
+export function useFirebaseUi() {
   const [ui, setUI] = useState<ReturnType<typeof getFirebaseUI>>();
   const [isError, setIsError] = useState(false);
 
