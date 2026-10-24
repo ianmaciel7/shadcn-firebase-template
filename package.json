@@ -26,8 +26,8 @@
     "check:workflows": "actionlint && zizmor .github/workflows",
     "audit": "pnpm audit",
     "audit:functions": "npm --prefix functions audit --package-lock-only --ignore-scripts",
-    "verify:fast": "pnpm lint:ci && pnpm typecheck && pnpm test && pnpm test:logging && pnpm test:emulator && pnpm check:structure && pnpm check:routes && pnpm check:components && pnpm check:responsiveness",
-    "verify:static": "pnpm lint:ci && pnpm typecheck && pnpm test:coverage && pnpm test:logging && pnpm test:emulator && pnpm check:architecture && pnpm check:unused && pnpm check:duplicates && pnpm check:structure && pnpm check:routes && pnpm check:components && pnpm check:responsiveness && pnpm check:spelling && pnpm check:markdown && pnpm analyze:fallow && pnpm analyze:react",
+    "verify:fast": "pnpm lint:ci && pnpm typecheck && pnpm test && pnpm test:logging && pnpm test:emulator && pnpm check:structure && pnpm check:routes && pnpm check:components && pnpm check:responsiveness && pnpm check:english",
+    "verify:static": "pnpm lint:ci && pnpm typecheck && pnpm test:coverage && pnpm test:logging && pnpm test:emulator && pnpm check:architecture && pnpm check:unused && pnpm check:duplicates && pnpm check:structure && pnpm check:routes && pnpm check:components && pnpm check:responsiveness && pnpm check:english && pnpm check:spelling && pnpm check:markdown && pnpm analyze:fallow && pnpm analyze:react",
     "verify:build": "pnpm test:browser && pnpm analyze:size && pnpm ladle:build",
     "verify:full": "pnpm verify:static && pnpm verify:build",
     "verify:security": "pnpm check:security:rules && pnpm check:security && pnpm check:secrets && pnpm check:workflows && pnpm audit && pnpm audit:functions",
@@ -59,11 +59,13 @@
     "analyze:health": "pnpm test:coverage && pnpm analyze:fallow",
     "check:routes": "node --test scripts/check-route-files.test.mjs && node scripts/check-route-files.mjs",
     "check:components": "node --test scripts/check-component-conventions.test.mjs scripts/check-component-composition.test.mjs && node scripts/check-component-conventions.mjs",
+    "check:english": "node --test scripts/check-english.test.mjs && node scripts/check-english.mjs",
     "check:responsiveness": "node --test scripts/check-responsiveness.test.mjs && node scripts/check-responsiveness.mjs",
     "doctor": "react-doctor --no-score --no-telemetry --no-supply-chain"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,json,jsonc,css}": "biome check --write --no-errors-on-unmatched"
+    "*.{js,jsx,ts,tsx,json,jsonc,css}": "biome check --write --no-errors-on-unmatched",
+    "*.{md,mdx,mjs,cjs,yml,yaml}": "node scripts/check-english.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

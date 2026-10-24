@@ -122,7 +122,7 @@ test("navigation and translated screens", async ({ page, context }) => {
     { name: "NEXT_LOCALE", value: "pt-BR", url: authTestOrigin },
   ]);
   await page.reload();
-  await expect(page.getByLabel("Endereço de e-mail")).toBeVisible();
+  await expect(page.getByLabel("Endereço de e-mail")).toBeVisible(); // check-english-ignore: pt-BR UI label
 });
 
 test("Google popup signs in with the emulator", async ({ page }) => {
