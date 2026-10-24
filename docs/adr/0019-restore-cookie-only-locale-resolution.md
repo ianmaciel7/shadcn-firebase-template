@@ -30,7 +30,7 @@ Cookie-resolution regression tests cover every supported locale, invalid or
 missing cookies and explicit overrides without mocking root parameters.
 
 The static root `html lang="en"` mismatch for translated pages remains an open
-finding (NXLAYOUT-001). This change does not claim to solve it. Do not introduce
+document-language finding. This change does not claim to solve it. Do not introduce
 locale route segments, Proxy, a rendering-model change or an unverified root
 cookie read to close that finding. Any future document-language solution must
 preserve this cookie-only architecture and be verified with Cache Components.
