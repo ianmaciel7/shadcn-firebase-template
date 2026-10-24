@@ -18,7 +18,7 @@
 
 Message branches store current selection in component state and expose previous/next actions. Navigation controls carry labels and `type="button"`, while response content delegates Markdown rendering to Streamdown plugins.
 
-## Findings
+# Findings
 
 ## AI-MESSAGE-BRANCH-KEY-001
 

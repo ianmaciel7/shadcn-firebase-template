@@ -18,7 +18,7 @@
 
 Uses the installed controllable-state helper for disclosure and duration, cancels delayed auto-close when effect dependencies change, and supplies an overridable display label. Markdown content is rendered through Streamdown with explicit plugins.
 
-## Findings
+# Findings
 
 No proven file-specific finding in this source-only review.
 

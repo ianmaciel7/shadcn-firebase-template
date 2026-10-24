@@ -18,7 +18,7 @@
 
 `Plan` provides streaming state through one context, wraps the Collapsible root with the local Card component, and uses Base UI render composition for trigger and content. The trigger has accessible screen-reader text.
 
-## Findings
+# Findings
 
 No proven file-specific finding in this source-only review.
 

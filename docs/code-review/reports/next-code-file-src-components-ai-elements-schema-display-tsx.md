@@ -18,7 +18,7 @@
 
 Properties and typed HTTP methods are represented as structured data; nested properties recursively compose with Collapsible, and dynamic route parameter names are styled as text rather than injected HTML. The source has no external fetch or storage side effects.
 
-## Findings
+# Findings
 
 No proven file-specific finding in this source-only review.
 

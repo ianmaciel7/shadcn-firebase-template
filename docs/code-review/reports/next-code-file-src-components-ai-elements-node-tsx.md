@@ -18,7 +18,7 @@
 
 `Node` delegates styling and content to the existing Card and exposes handle presence through a constrained pair of booleans. Card header, title, description, action, content and footer delegate props to their established shadcn counterparts.
 
-## Findings
+# Findings
 
 No proven file-specific finding in this source-only review.
 

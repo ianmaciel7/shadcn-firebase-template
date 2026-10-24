@@ -18,7 +18,7 @@
 
 Option selection constructs fresh arrays, preventing mutation of controlled values. The submit handler prevents default browser submission, ignores empty answers, and calls the supplied callback with trimmed text. Form state remains local to the question root.
 
-## Findings
+# Findings
 
 ## AI-QUESTION-RADIO-001
 

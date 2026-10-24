@@ -18,7 +18,7 @@
 
 The module composes locally wrapped Dialog and Command primitives instead of reimplementing their state machines. Model logo components constrain image size and provide props to native images. No additional global listener or network request was identified in the inspected module.
 
-## Findings
+# Findings
 
 No proven file-specific finding in this source-only review.
 

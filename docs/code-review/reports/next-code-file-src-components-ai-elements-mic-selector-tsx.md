@@ -18,7 +18,7 @@
 
 Temporary tracks from successful permission requests are explicitly stopped. A `devicechange` listener is removed in effect cleanup, and permission-dependent enumeration is separated into callbacks.
 
-## Findings
+# Findings
 
 ## AI-MIC-MEDIA-001
 

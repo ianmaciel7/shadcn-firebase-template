@@ -18,7 +18,7 @@
 
 Passes all supplied component props through to `PanelPrimitive` and merges caller classes with project panel styling. It has no local state, side effects, or authorization boundary.
 
-## Findings
+# Findings
 
 No proven file-specific finding in this source-only review.
 

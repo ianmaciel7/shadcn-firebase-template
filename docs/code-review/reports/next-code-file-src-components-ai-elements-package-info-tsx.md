@@ -18,7 +18,7 @@
 
 A typed `ChangeType` union controls badge styles and icons; the component uses `useMemo` for a shared context value and does not introduce an asynchronous side effect. The display is intended for structured data presentation.
 
-## Findings
+# Findings
 
 No proven file-specific finding in this source-only review.
 

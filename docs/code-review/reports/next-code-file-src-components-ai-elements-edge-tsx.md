@@ -18,7 +18,7 @@
 
 The animated edge obtains nodes through `useInternalNode`, handles missing nodes by returning `null`, and draws a `BaseEdge` with a derived Bezier path. Temporary connections use a simpler path and do not embed external fetches or browser APIs.
 
-## Findings
+# Findings
 
 No proven file-specific finding in this source-only review.
 
