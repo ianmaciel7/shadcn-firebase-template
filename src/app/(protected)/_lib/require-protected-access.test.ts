@@ -18,7 +18,43 @@ vi.mock("@/lib/navigation", () => ({
   redirectToSignIn: mocks.redirectToSignIn,
 }));
 
-import { requireRole } from "./dal";
+import {
+  requireProtectedAccess,
+  requireRole,
+} from "./require-protected-access";
+
+describe("requireProtectedAccess", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("allows first-load fallback when the worker bridge is inactive", async () => {
+    mocks.getFirebaseServerSession.mockResolvedValue({
+      isBridgeActive: false,
+      role: "user",
+      userId: null,
+    });
+    await expect(requireProtectedAccess()).resolves.toBeUndefined();
+    expect(mocks.redirectToSignIn).not.toHaveBeenCalled();
+  });
+
+  it("redirects when the worker bridge is active but the token did not verify", async () => {
+    mocks.getFirebaseServerSession.mockResolvedValue({
+      isBridgeActive: true,
+      role: "user",
+      userId: null,
+    });
+    await expect(requireProtectedAccess()).rejects.toThrow("SIGN_IN");
+  });
+
+  it("allows verified sessions when the worker bridge is active", async () => {
+    mocks.getFirebaseServerSession.mockResolvedValue({
+      isBridgeActive: true,
+      role: "user",
+      userId: "u1",
+    });
+    await expect(requireProtectedAccess()).resolves.toBeUndefined();
+    expect(mocks.redirectToSignIn).not.toHaveBeenCalled();
+  });
+});
 
 describe("requireRole", () => {
   beforeEach(() => vi.clearAllMocks());

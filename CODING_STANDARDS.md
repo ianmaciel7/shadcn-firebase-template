@@ -137,7 +137,7 @@ When standards conflict, apply them in this order:
   and form components extend `ComponentProps<"form">`) so they inherit standard attributes,
   support `className` pass-through, and remain composable.
 - Maintain single-responsibility module separation: keep domain types, constants,
-  and type guards (such as `theme.ts` and `locale.ts`) in dedicated modules under
+  and type guards (such as `role.ts`, `theme.ts`, and `locale.ts`) in dedicated modules under
   `src/lib/`, decoupled from persistence and database clients (e.g. `src/lib/firebase/firestore/`).
 - **Enforced thin route entrypoints**: `page.tsx`, `layout.tsx`, and `template.tsx` are Server Component composition seams in this repository. They can orchestrate server data reads, access route props, declare metadata, and compose UI, but must not embed client hooks, direct Firebase SDK calls, browser APIs, event handlers, state mutation, branching, loops, or helper callbacks. Extract UI into `_components/`, hooks into `_hooks/`, and business logic into dedicated `src/lib/` services. Run `pnpm check:routes` locally; it is mandatory in `verify:fast` and `verify:static` CI. This is a repository policy, not a general Next.js restriction. See [.agents/rules/nextjs-route-files.md](.agents/rules/nextjs-route-files.md).
 - Use the configured `@/*` path aliases instead of deep relative imports when

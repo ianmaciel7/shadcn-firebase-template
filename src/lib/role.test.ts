@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { hasRole, readUserRole } from "./definitions";
+import { hasRole, readUserRole } from "./role";
 
 describe("readUserRole", () => {
   it("accepts known roles and defaults everything else to user", () => {

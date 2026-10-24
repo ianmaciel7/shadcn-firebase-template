@@ -31,8 +31,9 @@ active Firebase session, and `return-url.ts` owns safe post-auth navigation.
    - `session.ts` governs session state, expiration, tokens, and cookie persistence, decoupled from specific credential checks or presentation forms.
 
 2. **Locality and Placement**:
-   - For domain-wide or shared features, place modules under `src/lib/<domain>/` (e.g., `src/lib/user/dal.ts`, `src/lib/user/dto.ts`).
-   - For route-private or feature-colocated data access, place modules in private folders (e.g., `_lib/`).
+   - Keep pure domain types, constants, and guards in dedicated flat modules under `src/lib/` (e.g., `src/lib/role.ts`, `src/lib/locale.ts`, `src/lib/theme.ts`).
+   - For domain-wide or shared multi-file data modules, place them under `src/lib/<domain>/` (e.g., `dal.ts`, `dto.ts`).
+   - For route-private or feature-colocated data access and server route guards, place modules in private folders (e.g., `src/app/(protected)/_lib/require-protected-access.ts`, `src/app/(protected)/profile/_lib/`).
 
 ## Dependency injection and auth subscriptions
 

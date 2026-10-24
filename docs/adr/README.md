@@ -116,9 +116,10 @@ original date. Read current operational details in the
   - Authenticated screen and profile-save guards invoke the `recordUsage` callable Cloud Function,
     emitting structured entries via `firebase-functions/logger` to Cloud Logging (`usageLogs`
     Firestore storage is retired and denied to browser clients).
-  - Role-based authorization uses a `role` custom claim (`user` or `admin`), verified on the
-    server via `firebase-admin` (`verifyIdToken(token, true)`) with the fail-closed `requireRole`
-    DAL boundary (`src/lib/user/dal.ts`) and managed via the `setUserRole` callable Cloud Function.
+  - Role-based authorization uses a `role` custom claim (`user` or `admin` in `src/lib/role.ts`),
+    verified on the server via `firebase-admin` (`verifyIdToken(token, true)`) with the fail-closed
+    `requireRole` boundary (`src/app/(protected)/_lib/require-protected-access.ts`) and managed via
+    the `setUserRole` callable Cloud Function.
   - Client-side route groups provide UI navigation guarding and UX routing, not zero-trust
     server authorization.
   - Vitest unit/component coverage must satisfy the strict `>= 70%` threshold, and end-to-end
