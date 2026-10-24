@@ -39,14 +39,14 @@ describe("useProfileStatus", () => {
     session({ preferencesReady: false }),
   ])("waits for authentication and user preferences", (pending) => {
     const { result } = renderHook(() => useProfileStatus(pending));
-    expect(result.current).toEqual({ status: "loading" });
+    expect(result.current).toMatchObject({ isLoading: true, isReady: false });
   });
 
   it("hides the profile after unauthenticated redirect without an error", () => {
     const { result } = renderHook(() =>
       useProfileStatus(session({ user: null, defaultValues: null })),
     );
-    expect(result.current).toEqual({ status: "hidden" });
+    expect(result.current).toMatchObject({ isHidden: true, isReady: false });
   });
 
   it.each([
@@ -58,8 +58,8 @@ describe("useProfileStatus", () => {
       const { result } = renderHook(() =>
         useProfileStatus(session({ defaultValues: null, error })),
       );
-      expect(result.current).toEqual({
-        status: "error",
+      expect(result.current).toMatchObject({
+        isError: true,
         errorMessage: expected,
       });
     },
@@ -69,16 +69,16 @@ describe("useProfileStatus", () => {
     const { result } = renderHook(() =>
       useProfileStatus(session({ user: null, error: "Authentication failed" })),
     );
-    expect(result.current).toEqual({
-      status: "error",
+    expect(result.current).toMatchObject({
+      isError: true,
       errorMessage: "Authentication failed",
     });
   });
 
   it("provides the authenticated user's identity only when ready", () => {
     const { result } = renderHook(() => useProfileStatus(session()));
-    expect(result.current).toEqual({
-      status: "ready",
+    expect(result.current).toMatchObject({
+      isReady: true,
       userId: "user-123",
     });
   });

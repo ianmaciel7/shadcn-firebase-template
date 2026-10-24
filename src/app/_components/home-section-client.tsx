@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { LabeledSpinner } from "@/components/ui/extensions/labeled-spinner";
+import { routes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { useHomeSectionClient } from "../_hooks/use-home-section-client";
 import {
@@ -52,7 +53,7 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
             {user ? (
               <>
                 <Link
-                  href="/profile"
+                  href={routes.profile}
                   className={buttonVariants({
                     className:
                       "flex h-12 items-center justify-center rounded-full px-5 text-base font-medium sm:w-[158px]",
@@ -65,7 +66,7 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
             ) : (
               <>
                 <Link
-                  href="/sign-in"
+                  href={routes.signIn}
                   className={buttonVariants({
                     className:
                       "flex h-12 items-center justify-center rounded-full px-5 text-base font-medium sm:w-[158px]",
@@ -74,7 +75,7 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
                   {t("signIn")}
                 </Link>
                 <Link
-                  href="/register"
+                  href={routes.register}
                   className={buttonVariants({
                     variant: "outline",
                     className:

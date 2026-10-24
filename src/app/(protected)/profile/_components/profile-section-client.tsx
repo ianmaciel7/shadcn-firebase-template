@@ -1,6 +1,7 @@
 "use client";
 
 import type { ComponentProps } from "react";
+import { FieldGroup } from "@/components/ui/field";
 import { useProfileSectionClient } from "../_hooks/use-profile-section-client";
 import { ProfileSessionContext } from "../_lib/session";
 import { ProfileAvatarFieldClient } from "./profile-avatar-field-client";
@@ -38,11 +39,13 @@ function ProfileSectionClient(props: ProfileSectionClientProps) {
               </ProfileCardDescription>
             </ProfileCardHeader>
             <ProfileCardContent>
-              <ProfileAvatarFieldClient />
-              <ProfileDisplayNameField />
-              <ProfileEmailField />
-              <ProfileLocaleField />
-              <ProfileThemeField />
+              <FieldGroup className="gap-4">
+                <ProfileAvatarFieldClient />
+                <ProfileDisplayNameField />
+                <ProfileEmailField />
+                <ProfileLocaleField />
+                <ProfileThemeField />
+              </FieldGroup>
             </ProfileCardContent>
             <ProfileCardFooter>
               <ProfileSaveButton />

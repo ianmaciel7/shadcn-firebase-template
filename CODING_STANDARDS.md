@@ -520,6 +520,16 @@ imports and re-exports are checked; this is not a complete transitive graph
 analysis. Keep the current unprefixed locale URLs and use the existing safe
 return-URL validator for user-controlled redirect destinations.
 
+Centralize application route paths and sign-in redirects in
+`src/lib/navigation.ts`. Owned modules reference `routes` (`home`, `signIn`,
+`register`, `forgotPassword`, `profile`) instead of string literals such as
+`"/sign-in"`, build `?next=` URLs with `getSignInUrl(destination)`, and call
+`redirectToSignIn(destination)` (defaults to the profile route) for server-side
+sign-in redirects. `authRoutes` also drives the auth-route exclusion in
+`src/lib/return-url.ts`, so a new auth route is added in one place. The
+presentation-screen rule below still applies: screens receive callbacks and do
+not import `routes`; route-private composition roots and hooks do.
+
 With installed Next.js 16.4.2, use the error boundary's `retry()` for an action
 that promises to retry a failed read. `reset()` only clears and rerenders the
 boundary state; it is not equivalent to refetching.

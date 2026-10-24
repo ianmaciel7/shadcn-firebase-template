@@ -2,6 +2,7 @@ import type { User } from "firebase/auth";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { routes } from "@/lib/navigation";
 import { subscribeToSession } from "@/lib/session";
 
 type AuthState = {
@@ -34,7 +35,7 @@ export function useProfileAuth() {
       return subscribeToSession((user) => {
         setAuth({ error: null, isLoading: false, user });
         setPhotoURL(user?.photoURL ?? null);
-        if (!user) router.replace("/sign-in");
+        if (!user) router.replace(routes.signIn);
       }, onError);
     } catch (cause) {
       onError(cause instanceof Error ? cause : new Error(String(cause)));

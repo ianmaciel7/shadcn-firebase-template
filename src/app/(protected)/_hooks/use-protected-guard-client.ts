@@ -1,6 +1,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { getSignInUrl } from "@/lib/navigation";
 import { subscribeToProtectedAccess } from "../_lib/protected-access-subscription";
 
 export function useProtectedGuardClient() {
@@ -23,7 +24,7 @@ export function useProtectedGuardClient() {
         },
         onUnauthenticated: () => {
           const destination = window.location.pathname + window.location.search;
-          router.replace(`/sign-in?next=${encodeURIComponent(destination)}`);
+          router.replace(getSignInUrl(destination));
         },
         onReady: () => setReadyPath(pathname),
         onError: () => setError("usageLogError"),

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
+import { routes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
 type ProfileBackToHomeButtonProps = Omit<
@@ -18,7 +19,7 @@ function ProfileBackToHomeButton({
   return (
     <Link
       {...props}
-      href="/"
+      href={routes.home}
       className={buttonVariants({
         variant: "link",
         size: "sm",

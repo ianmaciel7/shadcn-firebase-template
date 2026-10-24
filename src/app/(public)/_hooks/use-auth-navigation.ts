@@ -1,14 +1,15 @@
 import { useRouter } from "next/navigation";
+import { type AuthRoute, routes } from "@/lib/navigation";
 import { getAuthNavigationUrl } from "@/lib/return-url";
 
 export function useAuthNavigation() {
   const router = useRouter();
-  function navigate(path: "/sign-in" | "/register" | "/forgot-password") {
+  function navigate(path: AuthRoute) {
     router.push(getAuthNavigationUrl(path, window.location.search));
   }
   return {
-    goToSignIn: () => navigate("/sign-in"),
-    goToRegister: () => navigate("/register"),
-    goToForgotPassword: () => navigate("/forgot-password"),
+    goToSignIn: () => navigate(routes.signIn),
+    goToRegister: () => navigate(routes.register),
+    goToForgotPassword: () => navigate(routes.forgotPassword),
   };
 }

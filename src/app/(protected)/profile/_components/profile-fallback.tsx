@@ -12,9 +12,9 @@ type ProfileFallbackProps = ComponentProps<"div"> & {
 function ProfileFallback({ status, children, ...props }: ProfileFallbackProps) {
   const t = useTranslations("Auth");
 
-  if (status.status === "hidden") return null;
+  if (status.isHidden) return null;
 
-  if (status.status === "loading") {
+  if (status.isLoading) {
     return (
       <div {...props}>
         <LabeledSpinner className="w-full text-sm text-muted-foreground">
@@ -24,7 +24,7 @@ function ProfileFallback({ status, children, ...props }: ProfileFallbackProps) {
     );
   }
 
-  if (status.status === "error") {
+  if (status.isError) {
     return (
       <ProfileCard {...props}>
         <ProfileCardContent>
@@ -37,5 +37,4 @@ function ProfileFallback({ status, children, ...props }: ProfileFallbackProps) {
   return children;
 }
 
-export type { ProfileFallbackProps };
 export { ProfileFallback };

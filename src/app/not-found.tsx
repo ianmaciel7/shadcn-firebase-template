@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { buttonVariants } from "@/components/ui/button";
+import { routes } from "@/lib/navigation";
 
 export default function NotFound() {
   const t = useTranslations("App");
@@ -11,7 +12,10 @@ export default function NotFound() {
         {t("notFoundTitle")}
       </h1>
       <p className="mt-2 text-muted-foreground">{t("notFoundMessage")}</p>
-      <Link href="/" className={buttonVariants({ className: "mt-6" })}>
+      <Link
+        href={routes.home}
+        className={buttonVariants({ className: "mt-6" })}
+      >
         {t("backHome")}
       </Link>
     </main>

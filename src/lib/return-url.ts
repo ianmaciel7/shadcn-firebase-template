@@ -1,3 +1,7 @@
+import { type AuthRoute, authRoutes, routes } from "@/lib/navigation";
+
+const authPathPattern = new RegExp(`^(?:${authRoutes.join("|")})(?:/|$)`, "i");
+
 /** Accept only application-relative destinations after authentication. */
 export function getSafeReturnUrl(value: string | null | undefined): string {
   if (
@@ -9,30 +13,30 @@ export function getSafeReturnUrl(value: string | null | undefined): string {
         character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127,
     )
   ) {
-    return "/";
+    return routes.home;
   }
 
   try {
     const url = new URL(value, "https://app.local");
     if (
       url.origin !== "https://app.local" ||
-      /^\/(?:sign-in|register|forgot-password)(?:\/|$)/i.test(url.pathname)
+      authPathPattern.test(url.pathname)
     ) {
-      return "/";
+      return routes.home;
     }
     return url.pathname + url.search + url.hash;
   } catch {
-    return "/";
+    return routes.home;
   }
 }
 
 /** Preserve a validated destination when moving between authentication screens. */
 export function getAuthNavigationUrl(
-  pathname: "/sign-in" | "/register" | "/forgot-password",
+  pathname: AuthRoute,
   search: string,
 ): string {
   const destination = getSafeReturnUrl(new URLSearchParams(search).get("next"));
-  return destination === "/"
+  return destination === routes.home
     ? pathname
     : `${pathname}?next=${encodeURIComponent(destination)}`;
 }
