@@ -36,6 +36,11 @@ language, as defined in `.agents/rules/language-conventions.md`.
   reproductions, validation results, and environment limitations for the reviewed
   revision. This is a dated assessment, not a replacement for the current guides.
 
+- [Installed Next.js audit](code-review/README.md): the per-item manifest,
+  historical coverage and resumable queue. [Remediation status](code-review/resolutions.md)
+  records implemented corrections, remaining findings and revision-specific checks.
+  These records do not replace current architecture or coding standards.
+
 ## Decisions and agent references
 
 - [ADR index](adr/README.md): accepted template architecture decisions.

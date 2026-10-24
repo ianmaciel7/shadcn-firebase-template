@@ -363,6 +363,21 @@ accessible name. Preserve `ref`, applicable element props, keyboard behavior,
 and focus management when adapting primitives. Use `ComponentProps` of the
 actual primitive, not a prop contract copied from a different base.
 
+Keep each trigger and its panel inside the same primitive root so generated
+IDs, focus and lifecycle belong to one instance; synchronizing only an `open`
+boolean across separate roots does not share `aria-controls`. Compose a Tooltip
+trigger with its existing button through `render` instead of nesting buttons.
+For a non-native element that needs Base UI button behavior, configure
+`nativeButton={false}`. If a third-party custom element already owns keyboard
+activation, style it with `buttonVariants` rather than adding a second event
+owner. Preserve the actual element property/ref contract, not only attributes.
+
+Icon-only default actions and progress indicators need accessible names that
+consumers can localize. Actions revealed on hover must also be visible on
+keyboard focus and usable on devices without hover. Forward adapter options to
+the primitive part that owns them: the installed Preview Card delays belong to
+its Trigger, not its Root; explicit Trigger values may override wrapper defaults.
+
 Use semantic colors and existing variants. Application classes should primarily
 control layout; shared visual changes belong in the primitive or theme. Use
 the `cn` package directly or the existing `@/lib/utils` re-export rather than
@@ -387,7 +402,10 @@ Components throughout the application—regardless of whether they are Server Co
   following `.agents/rules/language-conventions.md`. Localized catalogs use their own
   language.
 - Follow the implemented cookie-based request resolution. Localized navigation
-  helpers alone do not establish locale-prefixed routes.
+  helpers alone do not establish locale-prefixed routes. The current architecture
+  and maintainer constraint are recorded in
+  [Architecture](ARCHITECTURE.md#internationalization); do not infer permission
+  for a route or rendering migration from a request to fix an accessibility finding.
 
 - Put user-facing application text in the `next-intl` message catalogs under
   `src/messages/`.
@@ -456,6 +474,9 @@ For new shared cached work, prefer `"use cache"` with an explicit `cacheLife`
 and, when invalidation is needed, `cacheTag`. Choose a lifetime from freshness
 requirements; never increase it only to silence a prerender diagnostic.
 React `cache()` deduplicates work within a request; it is not a persistent cache.
+For local presentation caches, identify the complete input and every relevant
+option. Length plus a text prefix/suffix is not a safe content identity. Use
+the same complete identity for cached values and asynchronous subscribers.
 Plain `fetch` results are not persistently cached by default.
 
 With `cacheComponents` enabled, do not introduce old `dynamic`, `dynamicParams`,
@@ -492,6 +513,10 @@ extensions, while untouched registry components keep their exclusions. Static
 imports and re-exports are checked; this is not a complete transitive graph
 analysis. Keep the current unprefixed locale URLs and use the existing safe
 return-URL validator for user-controlled redirect destinations.
+
+With installed Next.js 16.4.2, use the error boundary's `retry()` for an action
+that promises to retry a failed read. `reset()` only clears and rerenders the
+boundary state; it is not equivalent to refetching.
 
 Use `error.tsx` / `global-error.tsx` according to their Client Component contracts;
 a global error boundary replaces the root layout and needs its own document
@@ -728,3 +753,21 @@ shared extension placement; no new container directory is required.
 See [the naming rule](.agents/rules/components-contracts.md#ci-enforcement) for
 executable coverage and limits. [ADR 0016](docs/adr/0016-name-components-by-integration-responsibility.md)
 supersedes the broader runtime naming policy from ADR 0015.
+
+## SDK and provider adapter contracts
+
+Request-owned locale and messages stay owned by the server translation provider:
+omit them from caller props and assign resolved values after caller spreads.
+Never replace `console.error` globally to hide a dependency warning; preserve
+unrelated diagnostics and address the warning at its source.
+
+AI SDK tool input schemas may be lazy or asynchronously converted. Resolve them
+through installed `asSchema(...).jsonSchema`, keep loading/failure presentation
+as valid strings, and prevent obsolete conversions from replacing current data.
+`JSON.stringify` of a schema factory is not JSON Schema conversion.
+
+AI SDK input totals include cached input. Adapt uncached input, cache reads and
+cache writes to the installed pricing helper once, then derive totals and rows
+from the same result. Output totals already include reasoning tokens; do not
+charge reasoning a second time. Treat catalog estimates as estimates, not proof
+of provider billing. Verified regression examples live in `context.test.tsx`.

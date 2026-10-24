@@ -432,6 +432,37 @@ these regressions specifically guard the observed failures.
   Locally the visual specs are skipped. Keep the image tag and digest in step with
   the `@playwright/test` version in `package.json` when you upgrade Playwright.
 
+### Managed-environment observations (2026-10-24)
+
+These observations describe this session, not universal package requirements:
+
+- The pnpm launcher failed before project commands while attempting to prepare
+  its selected package-manager environment. Running already installed tool
+  binaries directly allowed local checks without changing dependency pins or
+  pretending the pnpm entry point passed.
+- For Markdown validation, use the installed `markdownlint-cli2` executable or
+  `node node_modules/markdownlint-cli2/markdownlint-cli2-bin.mjs`. Its sibling
+  `markdownlint-cli2.mjs` is the library module; executing it alone and receiving
+  exit code zero does not run a lint check.
+- Next.js build and type generation stopped in native SWC setup with
+  `ERR_SWC_NATIVE_CACHE`. A matching native-package download and a custom cache
+  directory did not remove the trusted-parent restriction. Do not treat binary
+  presence, a passing unit suite or direct TypeScript diagnostics as a successful
+  production build. Keep generated route-type failures distinct from app errors.
+- The configured shadcn lookup failed through the environment proxy. Installed
+  Base UI types/source supplied version-specific evidence; no successful remote
+  lookup was claimed. Serena and the Agents CLI were not callable in this session;
+  configured MCP entries alone do not establish an active tool connection.
+- AI Elements are excluded from parts of Biome formatting. An ordinary command
+  can skip those files and still exit successfully. Inspect processed files;
+  use the formatter's stdin mode when formatting a reviewed excluded source.
+  Keep its existing exclusions intact and validate actual imports with tests.
+- Scratch TypeScript under the repository can enter the configured compiler and
+  lint globs. Use a separate `work/` directory outside the application repository
+  or a non-source extension; do not mistake scratch diagnostics for app failures.
+
+Hook recovery and reporting belong in [Contributing](CONTRIBUTING.md#commit-hook-environment-failures).
+
 ## Agent tooling
 
 Reusable agent skills and MCP configuration live in `.agents/`. Run

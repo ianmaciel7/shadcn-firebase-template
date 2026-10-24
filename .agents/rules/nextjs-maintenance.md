@@ -17,6 +17,9 @@ are references until the installed version supports their APIs.
 - Preserve the stricter [thin-route policy](nextjs-route-files.md),
   [component contracts](components-contracts.md), cookie-driven unprefixed locale
   architecture, Firebase authorization boundary, and generated-source exclusions.
+  Read [the current locale decision](../../ARCHITECTURE.md#internationalization)
+  before i18n changes: ADR 0019 supersedes ADR 0018. Internal locale rewrites
+  do not satisfy the maintainer's cookie-only requirement.
 - Apply [security guidance](../../SECURITY.md#nextjs-server-and-environment-boundaries)
   when introducing server data, cache scopes, environment values, or endpoints.
   Syntax guards are not authorization or complete import-graph proofs.

@@ -50,6 +50,8 @@ Deliver correct, maintainable changes with minimal risk.
 ## Project documentation
 
 - `docs/README.md`: documentation ownership and maintenance guide.
+- `docs/code-review/README.md`: historical per-item audit coverage and resumption queue;
+  `docs/code-review/resolutions.md`: current finding dispositions and verification limits.
 - `DESIGN.md`: implemented tokens, typography, and component design reference.
 - `ARCHITECTURE.md`: repository layout and application boundaries.
 - `CODING_STANDARDS.md`: conventions for TypeScript, React, Next.js, UI, and i18n.

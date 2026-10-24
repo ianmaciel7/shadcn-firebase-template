@@ -1,5 +1,7 @@
 # Next.js code review
 
+<!-- cspell:ignore NXLAYOUT AUDIOPLAYER -->
+
 This began as an in-progress, read-only audit against the installed Next.js **16.4.2** documentation in `node_modules/next/dist/docs/`. The full one-agent-per-item inventory was generated and validated before review began.
 
 ## Current metrics
@@ -31,7 +33,7 @@ The audit itself changed no project code. Subsequent user-authorized corrections
 
 ## Scope and exclusions
 
-The project inventory covers relevant versioned repository files, including code, tests, scripts, configuration, workflows, and architecture documentation. `node_modules/next/dist/docs/` is included only as the official installed documentation corpus. `.git/`, `.next/`, caches, generated artifacts, dependency binaries, and `docs/code-review/` outputs are excluded. Lockfiles are excluded from line-by-line review and remain an input to a separate dependency audit.
+The project inventory covers relevant versioned repository files, including code, tests, scripts, configuration, workflows, and architecture documentation. `node_modules/next/dist/docs/` is included only as the official installed documentation corpus. `.git/`, `.next/`, caches, generated artifacts, dependency binaries, and `docs/code-review/` outputs are excluded. Lock files are excluded from line-by-line review and remain an input to a separate dependency audit.
 
 See [documentation coverage](documentation-coverage.md), [source coverage](source-coverage.md), [findings](findings.md), [architecture](architecture.md), [recommendations](recommendations.md), and [compatibility](compatibility.md) for the current partial consolidation.
 
@@ -46,3 +48,36 @@ Validation: the installed Markdown CLI reports 48 pre-existing issues in the man
 ## Remediation phase
 
 After checkpoint `d8e5df2`, the user authorized fixes and parallel implementation. See [resolutions](resolutions.md) for every consolidated finding, local mitigations for upstream documentation, validation boundaries. ADR 0019 reverses the locale-route migration and restores cookie-only selection; NXLAYOUT-001 is open. Coverage counts above remain historical; new files require inventory reconciliation before the audit resumes.
+
+## Durable handoff after the cookie-only correction
+
+- The current maintainer requirement is owned by
+  [Architecture](../../ARCHITECTURE.md#internationalization) and ADR 0019.
+  ADR 0018 is superseded; do not reintroduce its route rewrite as a presumed fix.
+- The original 43 reports were inherited, not rerun. Twelve distinct item agents
+  produced the resumed reports from `artifact.tsx` through `controls.tsx`.
+  Historical inventory: 1,142 items, 55 reports, zero active and 1,087 pending;
+  documentary coverage is 24/526 and project coverage is 30/615. New tests and
+  implementation files are not automatically additional reviewed items.
+- Of 17 deduplicated historical findings, 14 project corrections are implemented,
+  the root document-language finding remains open, and two upstream indexes have
+  local navigation mitigations. The `AUDIOPLAYER-001` and `COMMIT-001` reports
+  share one consolidated cause; preserve both evidence references.
+- Before resuming the pending queue, recheck names, statuses, report existence,
+  current paths and eligibility. Twelve generated `graphify-out/` paths from the
+  historical inventory are absent; do not count them as reviewed, automatically
+  delete them, or mark them not applicable without reconciliation.
+- The next pending AI Elements file is `conversation.tsx`, followed by the
+  remaining entries in the manifest. Each folder and file needs its own primary
+  reviewer and report. Folder architecture reviews do not cover child files.
+  Discover the actual concurrency limit each session rather than reusing the
+  historical four-agent limit or this session's seven total slots.
+- Implementation checkpoints: `d8e5df2` saved the 12 resumed reports; `b568bb7`
+  implemented fixes and the subsequently rejected route migration; `2d103cc`
+  restored cookie-only routing and retained the other fixes; `40ca16a` clarified
+  the remaining language finding. Preserve this distinction when interpreting
+  old line numbers, applicability statements and test counts.
+
+Tool limitations belong in [Tooling](../../TOOLING.md#managed-environment-observations-2026-10-24),
+regression strategy in [Testing](../../TESTING.md#review-finding-regressions),
+and implementation contracts in [Coding standards](../../CODING_STANDARDS.md).

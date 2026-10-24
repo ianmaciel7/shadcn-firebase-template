@@ -95,7 +95,10 @@ commands and implementation conventions.
 The internationalization architecture is 100% cookie-driven (`NEXT_LOCALE`)
 without `middleware.ts` and without a `[locale]` folder segment in the App
 Router. The application serves `src/app/page.tsx` directly at `/`; there are no
-localized URL route prefixes or proxy scripts.
+localized URL route prefixes or proxy scripts. This is an explicit maintainer
+requirement, reaffirmed in [ADR 0019](docs/adr/0019-restore-cookie-only-locale-resolution.md),
+which supersedes ADR 0018 in full. An internally rewritten locale segment also
+violates this requirement; keeping only the browser URL unprefixed is insufficient.
 
 `src/i18n/routing.ts` defines `en`, `pt-BR`, and `es`, defaulting to `en`, and
 exports `localeCookie = "NEXT_LOCALE"` along with the `isLocale` type guard.
@@ -118,8 +121,9 @@ with Cache Components, awaiting a request cookie at the root above all
 `Suspense` boundaries can block prerendering. Moving the existing cookie read
 there is not a complete fix. Preserve the current behavior until that design
 and its accessibility tests are implemented. See
-[ADR 0004](docs/adr/0004-configure-internationalization.md) for the complete
-decision.
+[ADR 0004](docs/adr/0004-configure-internationalization.md) for the original
+decision and ADR 0019 for the current constraint. Document-language debt does not
+authorize adding locale route segments, Proxy, or changing the rendering model.
 
 ## Runtime and component boundaries
 

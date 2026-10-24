@@ -511,3 +511,30 @@ report the environment failure rather than treating those checks as passed.
 The unit project resolves the `server-only` marker to Next.js's bundled empty server implementation for direct provider-contract tests. This alias applies only to unit tests; it does not relax production or browser import boundaries. The provider tests verify request-owned props and preservation of the global console.
 
 AI Elements regressions exercise full-content token cache identity, asynchronous SDK schema conversion, pricing distribution, accessible names, shared primitive IDs and keyboard operation. Browser cases cover attachment focus visibility and Media Chrome activation without a second keyboard-event owner. Run these in the existing unit and browser projects; isolated Chromium checks do not replace Next.js production tests.
+
+Cookie resolution is covered by `src/i18n/request.test.ts`: all supported
+cookies load their catalogs, missing/invalid values fall back to English, and
+explicit server translation overrides remain supported. Navigation tests keep
+public paths unchanged without root-parameter or Proxy mocks. These tests do
+not resolve the static root document-language finding.
+
+The cache regressions use installed Shiki with equal-length text whose beginning
+and ending match but whose middle differs, including concurrent requests. Schema
+regressions use real SDK conversion with a narrowly mocked code renderer; they
+cover lazy, pending, rejected and obsolete results. Pricing tests use the real
+installed catalog with fixed model cases, including cache writes and missing
+uncached-token detail. This tests integration contracts without claiming every
+library behavior is covered.
+
+Browser tests count actual media request events for click, Enter and Space,
+including seek offsets and disabled controls, and inspect attachment focus
+visibility. A system Chromium executable was used through an uncommitted local
+launch configuration; no machine-specific browser path is required by the
+committed project config. Browser launch/server binding failures are environment
+failures, not passed tests or reasons to remove cases.
+
+Historical counts, commands and limits are recorded in
+[the remediation checkpoint](docs/code-review/resolutions.md). Keep results tied
+to a revision: the final cookie-only correction passed 232 unit tests, while the
+rejected locale-route checkpoint had a different test set. Neither result means
+the full audit or production verification is complete.
