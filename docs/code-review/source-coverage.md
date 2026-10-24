@@ -6,11 +6,11 @@
 | Project files inventoried | 519 |
 | Total project review items | 615 |
 | Folder reports completed | 7 |
-| File reports completed | 11 |
-| Items reviewed | 18 |
-| Coverage | 2.93% |
+| File reports completed | 23 |
+| Items reviewed | 30 |
+| Coverage | 4.88% |
 | Active reports | 0 |
-| Pending items | 600 |
+| Pending items | 585 |
 
 Completed folder reviews: repository root (`./`), `src/app/`, `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, and `src/components/ai-elements/`.
 
@@ -18,4 +18,8 @@ Completed file reviews: `package.json`, `tsconfig.json`, `next.config.ts`, `src/
 
 The layout review found a known accessibility and localization mismatch: `html lang` remains `en` when the rendered locale is Portuguese or Spanish. The error-boundary review independently confirmed the mismatch between “try again” and `reset()` semantics. See the [individual layout report](reports/next-code-file-src-app-layout-tsx.md), [error report](reports/next-code-file-src-app-error-tsx.md), and [consolidated findings](findings.md).
 
-597 project items have no individual report yet and remain pending. The inventory excludes generated output, caches, dependency binaries, and lockfiles from line-by-line code review. Lockfiles remain subject to dependency auditing.
+585 project items have no individual report yet and remain pending. The inventory excludes generated output, caches, dependency binaries, and lockfiles from line-by-line code review. Lockfiles remain subject to dependency auditing.
+
+The resumed batch added individual reports for `artifact.tsx`, `attachments.tsx`, `audio-player.tsx`, `canvas.tsx`, `chain-of-thought.tsx`, and `checkpoint.tsx` in `src/components/ai-elements/`. Six distinct real subagents reviewed these six primary files. No application source changed.
+
+The second resumed batch completed `code-block.tsx`, `commit.tsx`, `confirmation.tsx`, `connection.tsx`, `context.tsx`, and `controls.tsx`, again using six distinct item reviewers. The code cache collision is a new medium finding. The commit header and audio controls share one consolidated native-button configuration finding.

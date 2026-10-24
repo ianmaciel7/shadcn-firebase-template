@@ -1,5 +1,7 @@
 # Findings
 
+<!-- cspell:ignore AUDIOPLAYER -->
+
 This is a provisional consolidation of the completed individual reports. No code changes have been made.
 
 ## Medium
@@ -12,6 +14,15 @@ This is a provisional consolidation of the completed individual reports. No code
 - Impact: screen readers may apply English pronunciation rules to localized content; document language metadata is inaccurate.
 - Recommendation: when the locale rendering strategy is designed, set the document language to the effective locale without moving a request-time cookie read above the current streaming boundary. Add browser checks for `en`, `pt-BR`, and `es`.
 - Status: known architectural debt; the individual review marks the file partially conformant. Do not interpret this finding as authorization for an unreviewed rendering redesign.
+
+### CODEBLOCK-001 — Partial cache identity returns another code snippet
+
+- Location: `src/components/ai-elements/code-block.tsx:144-147`, lookup at `:190-195`, storage at `:228`.
+- Evidence: cache keys contain language, length, first 100 characters and last 100 characters. Equal-length middle edits collide. An isolated reproduction using unchanged extracted functions and installed Shiki confirmed the second request returned the first input's tokens instead of the requested text.
+- Impact: valid code updates can display stale or unrelated code. Existing callers include `agent.tsx` and `tool.tsx`; active application-route exposure was not established. No cross-user leakage or security exploit is claimed.
+- Recommendation: key tokens and subscriptions by language and complete content, or verify full content when using hashes.
+- Test: sequential and concurrent requests with equal lengths/endpoints and different middle text must reconstruct each requested input exactly.
+- Reference and full evidence: [code-block report](reports/next-code-file-src-components-ai-elements-code-block-tsx.md), including reproduction output and the repository cache-identity guidance. This is separate from caller schema serialization in `AGENT-001`.
 
 No high or critical findings have been reported among the completed items. This does not imply that unreviewed areas are clean.
 
@@ -75,3 +86,78 @@ No high or critical findings have been reported among the completed items. This 
 - Recommendation: reconcile the current rule wording with the accepted ADR amendment and architecture guide; preserve the ADR's historical sections and change only current guidance.
 - Test: documentation consistency check or a targeted review confirming the three current sources use the same ownership term.
 - Deduplication: consolidates `COMPONENTS-OWNERSHIP-001`, `FIREBASE-FOLDER-001`, and `AIELEMENTS-FOLDER-001` from the parent and child folder reports into one policy finding.
+
+### ARTIFACT-001 — Tooltip action nests native buttons
+
+- Location: `src/components/ai-elements/artifact.tsx:123`.
+- Evidence: `TooltipTrigger` wraps a local `Button` as its child. Both installed Base UI primitives default to a native button; the trigger does not receive `render`.
+- Impact: invalid interactive nesting can produce ambiguous focus and activation and parser differences during hydration. No application consumer or runtime hydration failure was demonstrated.
+- Recommendation: compose one element with the Base UI `render` API, preserving handlers, labels and disabled state.
+- Test: one tab stop and one activation for click, Enter and Space, with and without tooltip; inspect hydration warnings.
+- Reference and independent evidence: [artifact report](reports/next-code-file-src-components-ai-elements-artifact-tsx.md), including installed primitive source and Next.js Client Component prerendering guidance.
+
+### ATTACHMENTS-001 — Remove action stays visually hidden on keyboard focus
+
+- Location: `src/components/ai-elements/attachments.tsx:338-350`.
+- Evidence: grid and inline removal buttons use `opacity-0` and reveal on `group-hover` only. Keyboard focus alone does not reveal the control or its focus ring.
+- Impact: keyboard users can reach an invisible removal action. No current application consumer was found.
+- Recommendation: reveal on focus/focus-within as well as hover and assess touch interaction.
+- Test: Tab to each variant without pointer hover and verify visible control, focus indicator and single removal activation.
+- Reference and full evidence: [attachments report](reports/next-code-file-src-components-ai-elements-attachments-tsx.md).
+
+### ATTACHMENTS-002 — Hover preview delay props are discarded
+
+- Location: `src/components/ai-elements/attachments.tsx:375-379`.
+- Evidence: `openDelay` and `closeDelay` are destructured but never forwarded. The installed Base UI primitive owns `delay` and `closeDelay` on its Trigger, with defaults of 600 and 300 milliseconds.
+- Impact: the advertised wrapper delay settings have no effect when the component is used.
+- Recommendation: map delay settings to the supported Trigger contract or expose that contract directly.
+- Test: use non-default delays and verify preview open/close timing.
+- Reference and full evidence: [attachments report](reports/next-code-file-src-components-ai-elements-attachments-tsx.md).
+
+### AUDIOPLAYER-001 / COMMIT-001 — Native Button mode renders non-native elements
+
+- Location: `src/components/ai-elements/audio-player.tsx:99-109`, `:120-130`, `:141-151`.
+- Evidence: play and seek controls pass Media Chrome custom elements to `Button.render` while Base UI keeps `nativeButton=true`. Installed Base UI explicitly diagnoses this combination.
+- Impact: development diagnostics and an incorrect native-element contract. Media Chrome provides its own keyboard behavior; playback failure was not established and no application consumer was found.
+- Recommendation: align the non-native element contract and verify Base UI and Media Chrome do not both activate the same keyboard event.
+- Test: mount with real media controls, check diagnostics, focus, labels and exactly one operation per click, Enter or Space.
+- Reference and full evidence: [audio-player report](reports/next-code-file-src-components-ai-elements-audio-player-tsx.md).
+- Independent location: `src/components/ai-elements/commit.tsx:35-48`. The Collapsible trigger renders a div while retaining native-button mode. An isolated SSR experiment confirms no button role; installed event handlers rely on native behavior the div cannot provide.
+- Additional impact and test: unlike Media Chrome, the commit header div has no independent keyboard activation. Verify its button role, Enter/Space expansion, panel association and separation from nested copy actions.
+- Deduplication: `COMMIT-001` shares the native-element configuration cause with `AUDIOPLAYER-001`; count these as one low finding, preserving the [commit report](reports/next-code-file-src-components-ai-elements-commit-tsx.md) and its independent evidence. This is distinct from nested native buttons in `ARTIFACT-001`.
+
+### CHAIN-001 — Expansion trigger references a different Collapsible root
+
+- Location: `src/components/ai-elements/chain-of-thought.tsx:78-97`, `:181-192`.
+- Evidence: Header and Content each create a separate Collapsible root. Their shared application state does not share primitive IDs. An isolated SSR experiment with the installed primitives confirmed `aria-controls` has no matching panel ID.
+- Impact: broken accessible trigger/panel association despite synchronized visual expansion. No current application consumer was found.
+- Recommendation: share one primitive root or explicitly maintain a stable trigger/panel association, checking focus behavior.
+- Test: open the public composition by keyboard and resolve `aria-controls` to its visible panel, including multiple instances and controlled/uncontrolled state.
+- Reference and full evidence: [chain-of-thought report](reports/next-code-file-src-components-ai-elements-chain-of-thought-tsx.md). The SSR experiment is not a browser test of the complete component.
+
+### CODEBLOCK-002 — Default copy control has no accessible name
+
+- Location: `src/components/ai-elements/code-block.tsx:501-510`.
+- Evidence: default children are only decorative Lucide icons. The wrapper supplies no label or hidden text, and Base UI adds none.
+- Impact: the optional default control has no programmatic name; no current consumer of this copy control was found.
+- Recommendation: supply a replaceable, localizable default name or require explicit naming in the props contract.
+- Test: query the default control by button role and copy name before and after success, preserving consumer overrides.
+- Reference and full evidence: [code-block report](reports/next-code-file-src-components-ai-elements-code-block-tsx.md).
+
+### CONTEXT-001 — Cached input is priced as regular input
+
+- Location: `src/components/ai-elements/context.tsx:197-204`, `:255-270`, `:375-390`.
+- Evidence: total/input estimates pass all input tokens at the regular rate and omit the SDK's cache read/write distribution. With the installed pricing catalog, one million fully cached `gpt-4o` input tokens produce a displayed total of $2.50 while the supported cache-only estimate is $1.25.
+- Impact: inconsistent cost estimates and breakdown; no application consumer or effect on real billing was demonstrated.
+- Recommendation: adapt the complete token distribution once and derive totals and rows from that result, avoiding double counting.
+- Test: uncached, cached, mixed and cache-write inputs with a fixed catalog must yield consistent totals and details.
+- Reference and reproduction: [context report](reports/next-code-file-src-components-ai-elements-context-tsx.md), using the installed SDK contracts and pricing helper.
+
+### CONTEXT-002 — Default context progress has no accessible name
+
+- Location: `src/components/ai-elements/context.tsx:162-169`.
+- Evidence: the default Progress supplies neither an accessible label nor an associated Label part. An isolated SSR experiment with installed Base UI confirmed a percentage value without a name.
+- Impact: assistive technology receives a progress percentage without its purpose. No current application consumer was found.
+- Recommendation: provide a localizable default label or explicit association and preserve naming in custom compositions.
+- Test: query the default progress bar by role and context-usage name, including multiple instances and ID associations.
+- Reference and full evidence: [context report](reports/next-code-file-src-components-ai-elements-context-tsx.md).

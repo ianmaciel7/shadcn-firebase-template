@@ -9,12 +9,12 @@
 
 ## Escopo
 
-Responsabilidade exclusiva: descoberta, validação do inventário, distribuição em filas de até quatro agentes ativos e posterior consolidação. Não revisa uma pasta ou arquivo como item principal.
+Responsabilidade exclusiva: descoberta, validação do inventário, distribuição em filas conforme o limite real de agentes e posterior consolidação. Não revisa uma pasta ou arquivo como item principal.
 
 Arquivos consultados:
 
 - `docs/code-review/agents-manifest.md`
-- `docs/code-review/agents-manifest.json`
+- `docs/code-review/README.md`
 - `node_modules/next/package.json`
 
 ## Code Review
@@ -22,13 +22,13 @@ Arquivos consultados:
 ### Implementações corretas
 
 - O manifesto contém exatamente 1.142 entradas: um coordenador, 44 pastas documentais, 482 arquivos documentais, 96 pastas do projeto e 519 arquivos versionados do projeto.
-- Nomes são únicos, têm o prefixo exigido e os caminhos de origem existem.
-- Os 526 links de itens documentais resolvem localmente a partir do manifesto.
+- Nomes são únicos e têm o prefixo exigido. A retomada identificou 12 caminhos históricos de `graphify-out/` ausentes nesta instalação; permanecem pendentes, sem cobertura presumida.
+- Dos 526 itens documentais históricos, 514 caminhos existem nesta instalação; 12 caminhos de artefatos gerados precisam de reconciliação de elegibilidade.
 - A versão registrada (16.4.2) coincide com `node_modules/next/package.json`.
 
 ### Riscos e recomendações
 
-- Há apenas quatro slots simultâneos. A execução será uma fila de agentes individuais, sem substituir itens por revisões agregadas.
+- Esta sessão disponibiliza sete slots simultâneos, incluindo o coordenador; até seis revisores individuais podem executar por lote. Os lotes históricos usavam outro limite.
 - Arquivos de relatório ainda inexistentes representam tarefas pendentes, não ausência do item no inventário.
 
 ## Findings

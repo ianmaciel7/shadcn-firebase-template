@@ -44,3 +44,7 @@ The index report identified an empty “Next Steps” section; see [findings](fi
 `01-app/02-guides/upgrading/index.md` also has an incomplete introductory sentence that omits links to its version-specific guides; this is recorded as a separate low-severity documentation finding.
 
 The revalidating, route-handlers, and proxy document reviews classify their features as not applicable to the current application. The remaining 502 documentation items are pending. Coverage measures inventory items with a completed report, not merely items read as context by another subagent.
+
+## Inventory reconciliation on resumption
+
+The historical manifest includes 12 generated `graphify-out/` paths (four folders and eight files) absent from the current installed package. They remain pending and are not counted as reviewed or not applicable. The 526-item denominator is preserved until their eligibility and any newly discovered paths are reconciled explicitly. The coordinator rechecked every manifest path; all remaining paths exist locally.
