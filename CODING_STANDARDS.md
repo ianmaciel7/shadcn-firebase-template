@@ -580,7 +580,7 @@ install upstream agent skills simply because a guide mentions them.
 Main component hooks coordinate focused sub-hooks and expose rendering-ready
 state/callbacks. A sub-hook owns one cohesive lifecycle or workflow, not one line
 of code. For example, `useAuthProviderClient` composes `useAuthUiStore`,
-`useAuthReturnNavigation` and `useAuthUiLocale`; it does not initialize Firebase,
+`useFirebaseUiReturnNavigation` and `useAuthUiLocale`; it does not initialize Firebase,
 subscribe to authentication and synchronize locale inside one monolithic Effect.
 `useProfileSession` delegates preference loading to `useProfilePreferences`, and
 `useProfileSubmit` delegates successful UI feedback to `useProfileSaveFeedback`.

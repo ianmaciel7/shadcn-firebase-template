@@ -4,7 +4,7 @@ import type { getFirebaseUI } from "@/lib/firebase/client";
 import { getSafeReturnUrl } from "@/lib/return-url";
 import { subscribeToSession } from "@/lib/session";
 
-export function useAuthReturnNavigation(
+export function useFirebaseUiReturnNavigation(
   ui: ReturnType<typeof getFirebaseUI> | undefined,
 ) {
   const router = useRouter();
