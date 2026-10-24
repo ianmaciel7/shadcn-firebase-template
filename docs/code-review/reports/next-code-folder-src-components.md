@@ -21,9 +21,9 @@
 
 Observed structural inventory:
 
-- `ai-elements/`: 51 files, no subfolders.
-- `firebase/`: 30 files, no subfolders.
-- `ui/`: 72 files and the `extensions/` subfolder.
+- `ai-elements/`: 51 files, no subdirectories.
+- `firebase/`: 30 files, no subdirectories.
+- `ui/`: 72 files and the `extensions/` subdirectory.
 - The absence of files directly in `src/components/` keeps the division visible and does not create an extra barrel layer or shared logic at the root.
 
 ## Findings
@@ -43,7 +43,7 @@ Observed structural inventory:
 ## Conclusion
 
 - Classification: Partially compliant.
-- Explanation: the folder's division into three areas and the absence of modules at the root are consistent with the architecture. There is a documentation contradiction about the ownership and treatment of the Firebase tree, which should be resolved in the operational guide. This review does not replace the reports for each subfolder or file, nor does it establish that every individual component is correct.
+- Explanation: the folder's division into three areas and the absence of modules at the root are consistent with the architecture. There is a documentation contradiction about the ownership and treatment of the Firebase tree, which should be resolved in the operational guide. This review does not replace the reports for each subdirectory or file, nor does it establish that every individual component is correct.
 
 ## Post-checkpoint reconciliation
 

@@ -43,15 +43,18 @@ in the delivery message.
 
 ## Audit scope
 
-Implementation does not complete the outstanding 1,127 pending review items in the
+Implementation does not complete the outstanding 1,013 pending review items in the
 reconciled manifest. The manifest has been reconciled against the current repository
 state after restoring cookie-only locale routes ([ADR 0004](../adr/0004-configure-internationalization.md)),
 moving cross-route code outside `src/app/` ([ADR 0005](../adr/0005-document-project-standards.md)),
 and introducing custom-claim authorization and server session verification
-([ADR 0009](../adr/0009-integrate-firebase-authentication.md)). Newly added or moved
-files are registered as `Pending` items and are not automatically counted as
-reviewed. The 12 generated `graphify-out/` documentation sidecar paths have been
-excluded from the documentary denominator.
+([ADR 0009](../adr/0009-integrate-firebase-authentication.md)). All active application
+runtime files and folders in `src/app/`, `src/components/ui/extensions/`,
+`src/hooks/`, `src/i18n/`, and `src/lib/` now have completed individual reports
+(144 / 667 project items reviewed, 21.59%). Remaining unit/browser test files,
+copied UI/AI-Elements primitives, and tooling/docs files remain registered as
+`Pending` items. The 12 generated `graphify-out/` documentation sidecar paths have
+been excluded from the documentary denominator.
 
 ## Implementation checkpoint results (`b568bb7`)
 

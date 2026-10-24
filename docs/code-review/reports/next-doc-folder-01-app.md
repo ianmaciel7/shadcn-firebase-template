@@ -11,7 +11,7 @@
 
 ## Scope
 
-- **Responsibility:** audit exclusively the organization, coverage, and references among the immediate items of the `01-app/` folder; semantic reviews of each file and subfolder belong to the respective subagents.
+- **Responsibility:** audit exclusively the organization, coverage, and references among the immediate items of the `01-app/` folder; semantic reviews of each file and subdirectory belong to the respective subagents.
 - **Files consulted:** `01-app/index.md`, `docs/index.md`, recursive counts of the three immediate directories, and the project's `package.json` and `next.config.ts` to verify applicability.
 - **Dependencies analyzed:** the navigation from the documentation root to `app/getting-started`; the local `cacheComponents`, `partialPrefetching`, and `reactCompiler` configuration that makes the App Router applicable.
 
@@ -42,4 +42,4 @@ No applicable finding: there is no proven structural divergence between the orga
 
 ## Conclusion
 
-**Compliant.** The immediate structure is coherent, the navigation entry is valid, and the App Router topics are applicable to the project. The conclusion is limited to the folder responsibility and does not declare the individual files or subfolders as reviewed.
+**Compliant.** The immediate structure is coherent, the navigation entry is valid, and the App Router topics are applicable to the project. The conclusion is limited to the folder responsibility and does not declare the individual files or subdirectories as reviewed.

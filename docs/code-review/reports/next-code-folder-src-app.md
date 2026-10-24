@@ -11,7 +11,7 @@
 
 ## Scope
 
-Primary responsibility: organization, responsibilities, and dependencies of the `src/app/` tree, including route grouping, placement of private code, layout composition, and client/server boundaries. The tree contains 71 files in 20 subfolders, in addition to the root. The files were consulted only to understand the structure and relationships; each file remains the exclusive responsibility of the agent listed for it in the manifest.
+Primary responsibility: organization, responsibilities, and dependencies of the `src/app/` tree, including route grouping, placement of private code, layout composition, and client/server boundaries. The tree contains 71 files in 20 subdirectories, in addition to the root. The files were consulted only to understand the structure and relationships; each file remains the exclusive responsibility of the agent listed for it in the manifest.
 
 Sources consulted: recursive listing of `src/app/`; the installed documentation cited above; `ARCHITECTURE.md`; `CODING_STANDARDS.md`; `.agents/rules/nextjs-maintenance.md`; `.agents/rules/nextjs-route-files.md`; `.agents/rules/components-contracts.md`; `.dependency-cruiser.cjs`; a query of the existing graph with `graphify query`.
 

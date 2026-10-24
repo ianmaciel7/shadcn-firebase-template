@@ -14,7 +14,7 @@
 - Responsibility: review only the organization and architectural relationships of the `src/components/ui/` folder.
 - Files consulted: `components.json`, the convention guides above, imports that consume `src/components/ui/`, and the three modules in `src/components/ui/extensions/` only to understand their separation and their consumers.
 - Dependencies analyzed: shadcn/ui `base-nova` with Base UI, `@/components/ui` aliases, React/Next.js Server and Client boundaries, Lucide, and the `src/components/ai-elements/` components that consume the primitives.
-- Structural inventory: 69 direct files, one subfolder (`extensions/`) with three files, two browser test suites, and four stories at the direct level.
+- Structural inventory: 69 direct files, one subdirectory (`extensions/`) with three files, two browser test suites, and four stories at the direct level.
 
 ## Code Review
 

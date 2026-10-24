@@ -5,20 +5,20 @@
 | Project folders inventoried | 103 |
 | Project files inventoried | 564 |
 | Total project review items | 667 |
-| Folder reports completed | 7 |
-| File reports completed | 23 |
-| Items reviewed | 30 |
-| Coverage | 4.50% |
+| Folder reports completed | 35 |
+| File reports completed | 109 |
+| Items reviewed | 144 |
+| Coverage | 21.59% |
 | Active reports | 0 |
-| Pending items | 637 |
+| Pending items | 523 |
 
-Completed folder reviews: repository root (`./`), `src/app/`, `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, and `src/components/ai-elements/`.
+Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
-Completed file reviews: `package.json`, `tsconfig.json`, `next.config.ts`, `src/app/layout.tsx`, `src/app/error.tsx`, `src/app/not-found.tsx`, `src/app/page.tsx`, `src/components/ui/button.tsx`, `src/components/ui/extensions/theme-provider-client.tsx`, `src/components/ui/extensions/intl-provider-server.tsx`, and `src/components/ai-elements/agent.tsx`.
+Completed file reviews: `package.json`, `tsconfig.json`, `next.config.ts`, all 52 non-test runtime files in `src/app/**` (`layout.tsx`, `error.tsx`, `not-found.tsx`, `loading.tsx`, `page.tsx`, `favicon.ico`, `globals.css`, `typeset.css`, and all route/group layouts, pages, loading boundaries, components, hooks, and `_lib` modules under `(protected)/`, `(public)/`, `_components/`, and `_hooks/`), `src/components/ui/button.tsx`, all 5 modules in `src/components/ui/extensions/` (`auth-provider-client.tsx`, `firebase-auth-session-bridge-client.tsx`, `intl-provider-server.tsx`, `route-loading.tsx`, and `theme-provider-client.tsx`), all 6 hooks in `src/hooks/`, all 3 modules in `src/i18n/`, all 16 non-test modules in `src/lib/**`, and 13 `src/components/ai-elements/` modules (`agent.tsx` through `controls.tsx`).
 
 The layout review found a known accessibility and localization mismatch: `html lang` remains `en` when the rendered locale is Portuguese or Spanish. The error-boundary review independently confirmed the mismatch between “try again” and `reset()` semantics (subsequently remediated with `retry()`). See the [individual layout report](reports/next-code-file-src-app-layout-tsx.md), [error report](reports/next-code-file-src-app-error-tsx.md), [consolidated findings](findings.md), and [remediation dispositions](resolutions.md).
 
-637 project items have no individual report yet and remain pending in the reconciled inventory. The inventory excludes generated output (`graphify-out/`, `.next/`), caches, dependency binaries, and lock files (`pnpm-lock.yaml`, `functions/package-lock.json`) from line-by-line code review. Lock files remain subject to dependency auditing.
+523 project items have no individual report yet and remain pending in the reconciled inventory. The inventory excludes generated output (`graphify-out/`, `.next/`), caches, dependency binaries, and lock files (`pnpm-lock.yaml`, `functions/package-lock.json`) from line-by-line code review. Lock files remain subject to dependency auditing.
 
 The resumed batch added individual reports for `artifact.tsx`, `attachments.tsx`, `audio-player.tsx`, `canvas.tsx`, `chain-of-thought.tsx`, and `checkpoint.tsx` in `src/components/ai-elements/`. Six distinct real subagents reviewed these six primary files. No application source changed during the audit phase.
 

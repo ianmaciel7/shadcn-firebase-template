@@ -11,7 +11,7 @@
 
 ## Scope
 
-- Responsibility: individual review of the Agent presentation module and its exported subcomponents.
+- Responsibility: individual review of the Agent presentation module and its exported child components.
 - Files consulted: `agent.tsx`, `code-block.tsx`, `accordion.tsx`, `badge.tsx`, `package.json`, `CODING_STANDARDS.md`, `.agents/rules/components-composition.md`, `.agents/rules/components-contracts.md`, `.agents/skills/shadcn/rules/styling.md`, and the installed Server/Client Components guide.
 - Dependencies analyzed: `ai@7.0.143`, `@ai-sdk/provider-utils@5.0.62`, React, Lucide, Base UI Accordion, Badge, and CodeBlock.
 

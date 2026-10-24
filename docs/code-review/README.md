@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 564 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1,182 |
-| Individual reports present | 55 |
+| Individual reports present | 169 |
 | Active report tasks | 0 |
-| Completed tasks | 55 |
-| Pending tasks (excluding active) | 1,127 |
+| Completed tasks | 169 |
+| Pending tasks (excluding active) | 1,013 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 2 medium, 15 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 30 / 667 items (4.50%) |
+| Project coverage | 144 / 667 items (21.59%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -55,11 +55,14 @@ After checkpoint `d8e5df2`, the user authorized fixes and parallel implementatio
   [Architecture](../../ARCHITECTURE.md#internationalization) and [ADR 0004](../adr/0004-configure-internationalization.md).
   Internal locale route rewrites are rejected; do not reintroduce a route rewrite as a presumed fix.
 - The original 43 reports were inherited, not rerun. Twelve distinct item agents
-  produced the resumed reports from `artifact.tsx` through `controls.tsx`.
-  Reconciled inventory: 1,182 items, 55 reports, zero active and 1,127 pending;
-  documentary coverage is 24/514 (4.67%) and project coverage is 30/667 (4.50%).
-  Newly added tests and implementation files are included as `Pending` rows in the
-  reconciled manifest rather than automatically counted as reviewed.
+  produced the resumed reports from `artifact.tsx` through `controls.tsx`, and
+  post-checkpoint reviews completed 114 additional folder and runtime file reports
+  across `src/app/`, `src/components/ui/extensions/`, `src/hooks/`, `src/i18n/`,
+  and `src/lib/`. Reconciled inventory: 1,182 items, 169 reports, zero active and
+  1,013 pending; documentary coverage is 24/514 (4.67%) and project coverage is
+  144/667 (21.59%). Remaining unit/browser test files and pending items are
+  included as `Pending` rows in the reconciled manifest rather than automatically
+  counted as reviewed.
 - Of 17 deduplicated historical findings, 14 project corrections are implemented,
   the root document-language finding remains open, and two upstream indexes have
   local navigation mitigations. The `AUDIOPLAYER-001` and `COMMIT-001` reports

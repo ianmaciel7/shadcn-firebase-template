@@ -1,6 +1,6 @@
 # Findings
 
-<!-- cspell:ignore AUDIOPLAYER NXLAYOUT NEXTERR DOCSTART DOCUPGRADE INTLPROVIDER AIELEMENTS unreviewed -->
+<!-- cspell:ignore AUDIOPLAYER NXLAYOUT NEXTERR DOCSTART DOCUPGRADE INTLPROVIDER AIELEMENTS pending -->
 
 This is the historical finding consolidation at audit checkpoint `d8e5df2`. The user subsequently authorized implementation. See [remediation status and validation limits](resolutions.md) for current dispositions; the evidence below is preserved as the original review record.
 
@@ -13,7 +13,7 @@ This is the historical finding consolidation at audit checkpoint `d8e5df2`. The 
 - Reference: installed layout convention in `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/layout.md` (Root Layout); architecture decision and streaming constraint in `ARCHITECTURE.md:115-123`.
 - Impact: screen readers may apply English pronunciation rules to localized content; document language metadata is inaccurate.
 - Recommendation: when the locale rendering strategy is designed, set the document language to the effective locale without moving a request-time cookie read above the current streaming boundary. Add browser checks for `en`, `pt-BR`, and `es`.
-- Status: known architectural debt; the individual review marks the file partially conformant. Do not interpret this finding as authorization for an unreviewed rendering redesign.
+- Status: known architectural debt; the individual review marks the file partially conformant. Do not interpret this finding as authorization for an pending rendering redesign.
 
 ### CODEBLOCK-001 — Partial cache identity returns another code snippet
 
@@ -24,7 +24,7 @@ This is the historical finding consolidation at audit checkpoint `d8e5df2`. The 
 - Test: sequential and concurrent requests with equal lengths/endpoints and different middle text must reconstruct each requested input exactly.
 - Reference and full evidence: [code-block report](reports/next-code-file-src-components-ai-elements-code-block-tsx.md), including reproduction output and the repository cache-identity guidance. This is separate from caller schema serialization in `AGENT-001`.
 
-No high or critical findings have been reported among the completed items. This does not imply that unreviewed areas are clean.
+No high or critical findings have been reported among the completed items. This does not imply that pending areas are clean.
 
 ## Low
 

@@ -14,7 +14,7 @@
 - Responsibility: organization, cohesion, dependencies, execution boundaries, colocation, and conventions of the folder as an architectural unit.
 - Files consulted: immediate entries of src/components/ai-elements/ (51 files), components.json, package.json, ARCHITECTURE.md, CODING_STANDARDS.md, .agents/rules/components-contracts.md, scripts/check-component-conventions.mjs, and docs/agents/shadcn.md.
 - Dependencies analyzed: Base UI components in src/components/ui/, @xyflow/react, React, AI SDK/Streamdown; the dependencies declared in package.json were verified.
-- Immediate subfolders: none.
+- Immediate subdirectories: none.
 - Limit: this is an architectural review of the folder. No child file was assumed to be primary scope or declared individually reviewed by this report. Cycles were not verified by running a graph.
 
 ## Code Review
