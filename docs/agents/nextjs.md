@@ -84,6 +84,108 @@ AI-agent material. These remain indexed reference sources when no corresponding
 application feature exists. The `docs/` contribution guide describes upstream
 MDX authoring, not this repository's Markdown conventions.
 
+### Server and Client Components reference refresh
+
+The supplied Serena capture of the official **Server and Client Components**
+page (last updated 2026-10-05) matches the installed 16.4.2 guide. It confirms
+the following project-relevant details:
+
+- Route layouts and pages are Server Components by default. Use Client
+  Components only for browser APIs, state, Effects, event handlers, or custom
+  hooks, and place the `'use client'` boundary at the smallest interactive
+  seam.
+- A client boundary pulls its runtime imports into the client module graph; it
+  does not pull in Server Components supplied as rendered props or `children`.
+  Values that cross from server to client must be React-serializable.
+- Initial rendering combines server-generated HTML, the RSC Payload, and
+  client-side hydration. Later client transitions use prefetched/cached RSC
+  Payloads while Client Components render in the browser.
+- Context providers require a Client Component boundary and should wrap only
+  the deepest subtree they need. A Server Component can render such a provider
+  and pass server-rendered UI into its slots.
+- Server-only integrations that access secrets must import `server-only` so
+  accidental Client Component imports fail at build time. `client-only` is the
+  corresponding marker for browser-only modules; both markers are optional
+  dependencies that Next.js recognizes internally.
+
+These findings reinforce existing rules in
+[Coding standards](../../CODING_STANDARDS.md#nextjs-app-router),
+[component boundaries](../../CODING_STANDARDS.md#compound-components-and-serverclient-boundaries),
+and [Security](../../SECURITY.md#nextjs-server-and-environment-boundaries).
+They do not introduce a dependency, runtime, or architecture change.
+
+### Cache Components reference refresh
+
+The supplied Serena capture of the official **Caching** page (last updated
+2026-10-06) matches the installed 16.4.2 guide and the active
+`next.config.ts` configuration. It confirms these project-relevant details:
+
+- Cache Components and Partial Prefetching must be explicitly enabled together;
+  the existing configuration does this. This model supersedes previous-model
+  caching recipes for new work.
+- Use `'use cache'` for data or UI that can be safely reused, pair it with an
+  explicit `cacheLife`, and use cache tags only when a mutation needs deliberate
+  invalidation. Arguments and values captured from parent scopes form the cache
+  key.
+- Request-time or uncached asynchronous work belongs below an accessible
+  `Suspense` boundary. The fallback joins the static shell while the work
+  streams at request time; a boundary cannot cover work already awaited by its
+  parent.
+- Request APIs (`cookies`, `headers`, `params`, and `searchParams`) are runtime
+  data. Extract the minimum authorized value before invoking a shared cache
+  scope, or use the applicable private-cache mechanism only after reviewing its
+  session and browser-cache implications.
+- `connection()` marks truly per-request reads, including random values and
+  timestamps, which must also sit behind `Suspense`. Predictable values can
+  remain at module scope or be cached according to their intended lifetime.
+- Cache entries may live in the prerendered shell, a per-instance in-memory
+  store, a configured shared remote store, or the browser. They are scoped to a
+  deployment, so a deployment replaces existing cache entries; durable remote
+  caching is an infrastructure decision, not an automatic optimization.
+
+These findings reinforce the existing
+[request and cache standards](../../CODING_STANDARDS.md#nextjs-request-data-and-caching),
+[rendering model](../../ARCHITECTURE.md#nextjs-rendering-and-cache-model), and
+[production verification requirements](../../TESTING.md#nextjs-documentation-and-framework-verification).
+They do not select a remote cache, change a route, or authorize a caching
+rewrite.
+
+### Mutating Data reference refresh
+
+The supplied Serena capture of the official **Mutating Data** page (last
+updated 2026-10-15) matches the installed 16.4.2 guide and the current official
+reference lookup. It establishes the following project-relevant details:
+
+- A Server Function is asynchronous and runs on the server. A Server Action is
+  a Server Function used for a mutation, conventionally through a transition;
+  form `action` and button `formAction` establish that transition
+  automatically. Invocations use `POST` and can return updated UI and data in
+  one roundtrip.
+- Define Server Functions with `'use server'` either in an asynchronous
+  function or at the top of a module. A Client Component cannot define one,
+  but may import it from a module-level `'use server'` file or receive it as a
+  prop. Forms receive `FormData`; Server Component forms progressively enhance,
+  while Client Component submissions queue until hydration.
+- Every Server Function is directly reachable through a `POST` request. It
+  must validate its input, authenticate the caller, and authorize the specific
+  operation and resource before mutating data. Client-side guards and Proxy do
+  not replace this boundary.
+- After a mutation, use `refresh()` only to refresh the client router;
+  revalidate cache data with `revalidatePath`, `revalidateTag`, or `updateTag`
+  as appropriate. When redirecting, perform any required revalidation first:
+  `redirect()` throws a framework-managed control-flow exception, so later code
+  does not run.
+- `cookies()` is asynchronous. Setting or deleting a cookie in a Server Action
+  triggers a server re-render of the current page and layouts while preserving
+  eligible client state. Pending feedback can use `useActionState`; client
+  event-handler or Effect invocations should run in a transition.
+
+The template currently has no Server Action persistence workflow or server-side
+profile data-access layer. This is retained as a verified implementation
+reference only; introducing one requires a separate design that preserves the
+existing Firebase Security Rules authorization boundary and adds relevant
+validation coverage.
+
 ## Stable versus current documentation
 
 At the recorded revisions, three document paths were added and 19 existing
