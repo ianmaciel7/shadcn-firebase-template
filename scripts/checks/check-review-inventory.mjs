@@ -3,16 +3,19 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const manifest = readFileSync(resolve(root, "docs/code-review/agents-manifest.md"), "utf8");
-const rows = manifest.split("\n").filter((line) => /^\\| (CODE_FILE|CODE_FOLDER) \\|/.test(line));
+const rows = manifest.split("\n").filter((line) =>
+  line.startsWith("| CODE_FILE |") || line.startsWith("| CODE_FOLDER |"),
+);
 const excluded = (path) =>
   path.startsWith("docs/code-review/") ||
   path.startsWith("graphify-out/") ||
   path === "pnpm-lock.yaml" ||
   path === "functions/package-lock.json";
 const files = execFileSync("git", ["ls-files", "-z"], { cwd: root, encoding: "utf8" })
-  .split("\0").filter((path) => path && !excluded(path));
+  .split("\0")
+  .filter((path) => path && !excluded(path));
 const expected = new Set(["./"]);
 for (const file of files) {
   expected.add(file);
@@ -26,9 +29,11 @@ const found = new Set();
 const agents = new Set();
 let completed = 0;
 for (const row of rows) {
-  const match = row.match(/^\\| (CODE_FILE|CODE_FOLDER) \\| \`([^\`]+)\` \\| \\[.*?\]\(<\\.\\.\\/\\.\\.\\/([^>]+)>\)/);
-  if (!match) throw new Error("Malformed review row: " + row);
-  const [, kind, agent, path] = match;
+  const kind = row.startsWith("| CODE_FOLDER |") ? "CODE_FOLDER" : "CODE_FILE";
+  const cells = row.split("|");
+  const agent = cells[2]?.trim().replaceAll(String.fromCharCode(96), "");
+  const path = row.split("](<../../")[1]?.split(">)")[0];
+  if (!agent || !path) throw new Error("Malformed review row: " + row);
   if (found.has(path) || agents.has(agent)) throw new Error("Duplicate inventory path or agent: " + path);
   found.add(path);
   agents.add(agent);
