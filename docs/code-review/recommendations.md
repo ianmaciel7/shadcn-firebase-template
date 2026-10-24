@@ -13,3 +13,8 @@ Provisional recommendations based only on completed reports:
 8. Adapt cache token pricing once and derive context totals and detail rows consistently.
 
 These are recommendations for future implementation. This audit changed no application source. No broad migration, dependency upgrade, or architecture change is recommended by the reviewed subset.
+
+## Current follow-up priorities
+
+- Keep the focused UI regression tests and the independent review-validation workflow running on this branch; avoid disabling quality gates when generated documentation outside `docs/code-review/` has lint violations.
+- Review the seven modified historical source files again and complete the remaining per-item reports. Treat existing external drafts as unverified until they are applied to the current inventory and validated.

@@ -1,6 +1,4 @@
-# Project source coverage
-
-| Measure | Count |
+# 546 |nt |
 | --- | ---: |
 | Project folders inventoried | 103 |
 | Project files inventoried | 564 |
@@ -30,3 +28,7 @@ Following the remediation phase and architectural updates (`ADR 0004`, `ADR 0005
 
 - Removed 1 folder (`.serena/memories/external-research/`) and 11 relocated, renamed, or excluded file paths (`src/app/_components/auth-provider-client*`, `src/app/_components/route-loading*`, `src/app/_hooks/use-auth-provider-client.ts`, `src/app/(protected)/_components/protected-gate-client*`, `src/app/(protected)/_hooks/use-protected-gate-client.ts`, `.serena/memories/external-research/*`, and `functions/package-lock.json`).
 - Added 8 new tracked folders (`.agents/scripts/`, `.agents/skills/new-component/`, `.agents/skills/verify/`, `.biome/rules/complexity/`, `.serena/memories/research/`, `src/app/(protected)/_lib/`, `src/lib/user/`, and `tests/unit/`) and 64 new tracked files as `Pending` review items.
+
+## Reconciled current-branch coverage
+
+As of commit `44c7bfd`, current tracked paths supersede the older coverage narrative above: 33 folders and 101 files are reviewed out of 680 project items. Retired paths are not active coverage, and seven modified files are pending re-review. Three UI files have current individual reports and have passed the focused validation workflow. See [inventory history](inventory-history.md) for excluded paths and the changed-source list.

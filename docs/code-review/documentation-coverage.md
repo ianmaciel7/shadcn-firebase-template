@@ -1,4 +1,4 @@
-# Documentation coverage
+# 490 |ntation coverage
 
 Source: installed `node_modules/next/dist/docs/`, Next.js **16.4.2**.
 
@@ -48,3 +48,7 @@ The revalidating, route-handlers, and proxy document reviews classify their feat
 ## Inventory reconciliation on resumption
 
 The historical manifest includes 12 generated `graphify-out/` paths (four folders and eight files) absent from the current installed package. They remain pending and are not counted as reviewed or not applicable. The 526-item denominator is preserved until their eligibility and any newly discovered paths are reconciled explicitly. The coordinator rechecked every manifest path; all remaining paths exist locally.
+
+## Current official corpus reconciliation
+
+The authoritative Next.js 16.4.2 corpus excludes twelve generated `graphify-out/` paths counted in historical pre-reconciliation notes. The current denominator is 514 items (40 folders and 474 files), with 24 completed and 490 pending.

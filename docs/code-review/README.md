@@ -1,6 +1,4 @@
-# Next.js code review
-
-<!-- cspell:ignore NXLAYOUT AUDIOPLAYER -->
+# 134 / 680 items (19.71%) |nore NXLAYOUT AUDIOPLAYER -->
 
 This began as an in-progress, read-only audit against the installed Next.js **16.4.2** documentation in `node_modules/next/dist/docs/`. The full one-agent-per-item inventory was generated and validated before review began.
 
@@ -90,3 +88,7 @@ After checkpoint `d8e5df2`, the user authorized fixes and parallel implementatio
 Tool limitations belong in [Tooling](../../TOOLING.md#managed-environment-observations-2026-10-24),
 regression strategy in [Testing](../../TESTING.md#review-finding-regressions),
 and implementation contracts in [Coding standards](../../CODING_STANDARDS.md).
+
+## Current validated UI checkpoint
+
+The source fixes and regression checks for `carousel.tsx`, `sidebar.tsx` and `code-block.tsx` passed TypeScript, unit tests, the English guard, spelling and scoped Markdown in [GitHub Actions run 40130032176](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40130032176). The live project inventory was regenerated from tracked paths; 63 old paths were excluded and 76 newly tracked items were added. Seven historically reviewed files modified since the original checkpoint were reset to Pending for re-review. Unapplied external review drafts do not count toward these metrics.

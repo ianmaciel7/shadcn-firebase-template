@@ -9,3 +9,7 @@
 The reconciled official documentation corpus contains 474 files and 40 folders (after excluding 12 generated `graphify-out/` artifacts). Only 21 files and 3 folders have completed individual reports so far. Compatibility conclusions are therefore limited to those reports and are not a whole-framework certification.
 
 Subsequent implementation retains the installed error-boundary retry API. [ADR 0004](../adr/0004-configure-internationalization.md) preserves direct cookie-only locale selection after reversing the temporary internal route migration: current locale selection uses request cookies without a locale segment or Proxy. [ADR 0005](../adr/0005-document-project-standards.md) and [ADR 0009](../adr/0009-integrate-firebase-authentication.md) place cross-route components/hooks outside `src/app/` and add server-side Firebase session verification with custom claims. Historical applicability statements above describe the audit checkpoint. See [remediation verification limits](resolutions.md); production verification is not established by the individual audit reports.
+
+## Current reviewed source status
+
+As of the validated UI checkpoint, the active inventory has 680 project items and 514 official installed-documentation items. The three new UI corrections are not Next.js-specific API upgrades; their focused unit tests and TypeScript checks passed in the branch review workflow. No complete compatibility certification is claimed for the remaining 1036 pending items.

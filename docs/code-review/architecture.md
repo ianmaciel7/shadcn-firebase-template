@@ -9,3 +9,7 @@ Two localized issues were confirmed during the audit: `src/app/layout.tsx` decla
 There are 523 pending project folder/file items in the reconciled inventory.
 
 The 12 resumed file reports identified localized library-level composition, accessibility, and data-presentation issues, including the `CodeBlock` cache identity collision; those component defects were remediated in `b568bb7`. Subsequent architectural updates moved cross-route providers and loading UI out of `src/app/` into `src/components/ui/extensions/` and `src/hooks/` ([ADR 0005](../adr/0005-document-project-standards.md)), introduced server-side session verification and role custom claims ([ADR 0009](../adr/0009-integrate-firebase-authentication.md)), and centralized route constants in `src/lib/navigation.ts`. These file reviews do not increase folder-review coverage or establish application-route reachability; several reviewed components have no current consumer in `src/`.
+
+## Current-branch synchronization
+
+The project inventory now comprises 680 tracked items (115 folders and 565 files); 134 have current completed individual reports. The seven stale source reports have been returned to Pending, and retired paths remain historical rather than active coverage. The three reviewed UI components are validated in workflow run 40130032176. These results do not imply that unreviewed folders or documentation were validated.

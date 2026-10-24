@@ -161,3 +161,14 @@ No high or critical findings have been reported among the completed items. This 
 - Recommendation: provide a localizable default label or explicit association and preserve naming in custom compositions.
 - Test: query the default progress bar by role and context-usage name, including multiple instances and ID associations.
 - Reference and full evidence: [context report](reports/next-code-file-src-components-ai-elements-context-tsx.md).
+
+## Validated UI findings after the original checkpoint
+
+These issues were discovered in three individual reviews, corrected in commit `95853e2`, and verified by [review validation run 40130032176](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40130032176). The preceding findings remain the historical checkpoint record.
+
+- **Medium — UI-CAROUSEL-EVENT-001:** The `reInit` listener was not removed during effect cleanup. Both event listeners are now removed.
+- **Low — UI-CAROUSEL-AXIS-001:** Vertical carousels handled horizontal arrows. Key navigation now follows orientation.
+- **Medium — UI-SIDEBAR-HYDRATION-001:** Random skeleton width could diverge between server and client initial renders. Width is now deterministic.
+- **Low — UI-CODEBLOCK-SUBMIT-001:** The copy control lacked `type="button"` and could submit an ancestor form. It now has an explicit non-submitting type.
+
+See the three corresponding [individual UI reports](reports/next-code-file-src-components-ui-carousel-tsx.md), [sidebar report](reports/next-code-file-src-components-ui-sidebar-tsx.md), and [copy-button report](reports/next-code-file-src-components-ui-code-block-tsx.md).
