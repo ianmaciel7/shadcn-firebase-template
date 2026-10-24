@@ -39,6 +39,6 @@ jobs:
       - name: Repository English guard
         run: node scripts/checks/check-english.mjs
       - name: Audit spelling
-        run: pnpm exec cspell lint --config cspell.review.json "docs/code-review/**/*.md" --no-progress
+        run: pnpm exec cspell lint --config docs/code-review/cspell.review.json "docs/code-review/**/*.md" --no-progress
       - name: Audit Markdown
         run: pnpm exec markdownlint-cli2 --config docs/code-review/markdownlint.review.jsonc --no-globs "docs/code-review/**/*.md"
