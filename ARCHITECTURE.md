@@ -174,7 +174,7 @@ discriminated `status` and composes Card and Form parts with one
 `src/app/(protected)/profile/_lib/definitions.ts`, alongside the route-private profile
 workflow. The canonical profile
 responsibilities live in
-[the form rule](.agents/rules/forms-architecture.md). Profile preferences use
+[the form rule](.agents/rules/forms.md). Profile preferences use
 Firestore at `users/{uid}` with owner and field/value validation rules. Avatar
 Storage rules restrict `users/{uid}/avatar` to its owner and enforce accepted
 image types and the 2 MiB upload limit. These browser SDK modules are not a
@@ -184,7 +184,7 @@ server code, rather than using those names for Firebase client modules
 ([Fetching Data](https://nextjs.org/docs/app/getting-started/fetching-data),
 [Mutating Data](https://nextjs.org/docs/app/getting-started/mutating-data),
 [Data Security](https://nextjs.org/docs/app/guides/data-security)). See
-[.agents/rules/data-layer.md](.agents/rules/data-layer.md) for the
+[.agents/rules/data.md](.agents/rules/data.md) for the
 file taxonomy defining `definitions.ts`, `dto.ts`, `dal.ts`, and `data.ts`. The client
 SDK relies on Firebase Security Rules and does not provide server authorization
 for protected routes. No deployment integration is configured.

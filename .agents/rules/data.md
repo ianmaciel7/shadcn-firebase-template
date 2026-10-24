@@ -60,4 +60,4 @@ and upload limits, and `profile-session-context.ts` for the shared context objec
 Do not place these helpers in hook modules or force them into `data.ts` merely
 because they are under `_lib`. Keep actual hooks in `_hooks`; a type-only reference
 to a hook return type does not execute that hook or create a runtime dependency.
-Enforcement scope is documented in [component composition](components-composition.md#private-hook-module-support-declarations).
+Enforcement scope is documented in [component composition](composition.md#private-hook-module-support-declarations).

@@ -1,7 +1,7 @@
 # Component Architecture and Naming: Composition, Hooks, and Enforcement
 
 These are **repository conventions**, not filename rules prescribed by Next.js or shadcn/ui.
-This rule covers component composition and hooks; see also [Component Dimensions and File Contracts](components-contracts.md).
+This rule covers component composition and hooks; see also [Component Dimensions and File Contracts](components.md).
 
 ## Composition matching local shadcn/ui primitives
 

@@ -4,8 +4,8 @@
 
 Apply this rule to React rendering boundaries, DOM integration, form workflows, and Server Component contracts.
 Contextual organization across the 3 React rule files:
-- [**Hooks, Primitives, and Core APIs**](react-hooks-core.md): Sections 1â€“4, 12
-- **DOM, Forms, and Server Architecture** (`react-dom-server.md`): Sections 5â€“8, 14, 15
+- [**Hooks, Primitives, and Core APIs**](react.md): Sections 1â€“4, 12
+- **DOM, Forms, and Server Architecture** (`react-dom.md`): Sections 5â€“8, 14, 15
 - [**Quality, Compiler, and Review**](react-quality.md): Sections 9â€“11, 13, 16â€“20
 
 Read the [detailed reference and examples](../../docs/agents/react.md#user-supplied-react-1931-reference)

@@ -2,7 +2,7 @@
 
 This guide maps the repository's Markdown documentation to its source of truth.
 Project documentation is written in English; locale catalogs use their own
-language, as defined in `.agents/rules/language-conventions.md`.
+language, as defined in `.agents/rules/language.md`.
 
 ## Current guides
 

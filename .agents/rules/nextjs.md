@@ -14,8 +14,8 @@ are references until the installed version supports their APIs.
 - Use native Next.js, TypeScript, and Biome diagnostics first. Check the
   existing rule registry before adding custom guards; document scope and test
   invalid and valid cases for a new project policy.
-- Preserve the stricter [thin-route policy](nextjs-route-files.md),
-  [component contracts](components-contracts.md), cookie-driven unprefixed locale
+- Preserve the stricter [thin-route policy](routes.md),
+  [component contracts](components.md), cookie-driven unprefixed locale
   architecture, Firebase authorization boundary, and generated-source exclusions.
   Read [the current locale decision](../../ARCHITECTURE.md#internationalization)
   before i18n changes: [ADR 0004](../../docs/adr/0004-configure-internationalization.md)

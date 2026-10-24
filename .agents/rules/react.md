@@ -4,16 +4,16 @@
 
 Apply this rule to React implementation, review, and reference maintenance.
 The 20 topics from the React 19.3.1 reference are organized contextually across 3 rules:
-- **Hooks, Primitives, and Core APIs** (`react-hooks-core.md`): Sections 1â€“4, 12
-- [**DOM, Forms, and Server Architecture**](react-dom-server.md): Sections 5â€“8, 14, 15
+- **Hooks, Primitives, and Core APIs** (`react.md`): Sections 1â€“4, 12
+- [**DOM, Forms, and Server Architecture**](react-dom.md): Sections 5â€“8, 14, 15
 - [**Quality, Compiler, and Review**](react-quality.md): Sections 9â€“11, 13, 16â€“20
 
 Read the [detailed reference and examples](../../docs/agents/react.md#user-supplied-react-1931-reference)
 for full explanations, 15 examples, API tables, and evidence boundaries.
 
 Keep the broader [coding standards](../../CODING_STANDARDS.md#react-rendering-hooks-and-identity),
-[component policy](components-contracts.md), [route policy](nextjs-route-files.md),
-and [form contract](forms-architecture.md) in force. Those local conventions can
+[component policy](components.md), [route policy](routes.md),
+and [form contract](forms.md) in force. Those local conventions can
 be stricter than React itself.
 
 Model UI phases with explicit flags such as `isLoading`, `isHidden`, and

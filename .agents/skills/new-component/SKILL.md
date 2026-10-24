@@ -8,9 +8,9 @@ disable-model-invocation: true
 
 Read the rules first; they own the contract and this skill only sequences it:
 
-- [components-contracts](../../rules/components-contracts.md): file/identifier term parity, suffixes, boundaries
-- [components-composition](../../rules/components-composition.md): compound components and hooks
-- [shadcn-ui-maintenance](../../rules/shadcn-ui-maintenance.md) and the `shadcn` skill when composing primitives
+- [components](../../rules/components.md): file/identifier term parity, suffixes, boundaries
+- [composition](../../rules/composition.md): compound components and hooks
+- [shadcn](../../rules/shadcn.md) and the `shadcn` skill when composing primitives
 
 ## Steps
 

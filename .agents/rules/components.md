@@ -1,7 +1,7 @@
 # Component Architecture and Naming: Dimensions and File Contracts
 
 These are **repository conventions**, not filename rules prescribed by Next.js or shadcn/ui.
-This rule covers component contracts; see also [Component Composition, Hooks, and Enforcement](components-composition.md).
+This rule covers component contracts; see also [Component Composition, Hooks, and Enforcement](composition.md).
 
 ## Three independent dimensions
 
