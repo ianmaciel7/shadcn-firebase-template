@@ -35,7 +35,7 @@ jobs:
       - name: TypeScript
         run: pnpm typecheck
       - name: Regression tests
-        run: pnpm exec vitest run --project unit src/components/ui/carousel.test.tsx src/components/ui/sidebar.test.tsx src/components/ui/code-block.test.tsx src/components/firebase/policies.test.tsx src/components/firebase/totp-multi-factor-enrollment-form.test.tsx src/components/ai-elements/web-preview.test.tsx
+        run: pnpm exec vitest run --project unit src/components/ui/carousel.test.tsx src/components/ui/sidebar.test.tsx src/components/ui/code-block.test.tsx src/components/firebase/policies.test.tsx src/components/firebase/totp-multi-factor-enrollment-form.test.tsx src/components/ai-elements/web-preview.test.tsx src/components/firebase/multi-factor-auth-assertion-form.test.tsx
       - name: Repository English guard
         run: node scripts/checks/check-english.mjs
       - name: Audit spelling

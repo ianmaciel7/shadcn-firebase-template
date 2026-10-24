@@ -3,14 +3,14 @@
 | Measure | Count |
 | --- | ---: |
 | Project folders inventoried | 115 |
-| Project files inventoried | 568 |
-| Total project review items | 683 |
+| Project files inventoried | 569 |
+| Total project review items | 684 |
 | Folder reports completed | 33 |
 | File reports completed | 104 |
 | Items reviewed | 137 |
-| Coverage | 20.06% |
+| Coverage | 20.03% |
 | Active reports | 0 |
-| Pending items | 546 |
+| Pending items | 547 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -33,7 +33,7 @@ Following the remediation phase and architectural updates (`ADR 0004`, `ADR 0005
 
 ## Reconciled current-branch coverage
 
-As of commit `44c7bfd`, current tracked paths supersede the older coverage narrative above: 33 folders and 101 files are reviewed out of 683 project items. Retired paths are not active coverage, and seven modified files are pending re-review. Three UI files have current individual reports and have passed the focused validation workflow. See [inventory history](inventory-history.md) for excluded paths and the changed-source list.
+As of commit `44c7bfd`, current tracked paths supersede the older coverage narrative above: 33 folders and 101 files are reviewed out of 684 project items. Retired paths are not active coverage, and seven modified files are pending re-review. Three UI files have current individual reports and have passed the focused validation workflow. See [inventory history](inventory-history.md) for excluded paths and the changed-source list.
 
 ## Firebase regression checkpoint
 

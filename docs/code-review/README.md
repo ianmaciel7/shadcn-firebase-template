@@ -11,17 +11,17 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Documentation folders | 40 |
 | Documentation files | 474 |
 | Project folders | 115 |
-| Project files | 568 |
+| Project files | 569 |
 | Coordinator | 1 |
-| Expected agents / primary items | 1198 |
+| Expected agents / primary items | 1199 |
 | Currently completed review reports | 162 |
 | Active report tasks | 0 |
 | Completed tasks | 162 |
-| Pending tasks (excluding active) | 1036 |
+| Pending tasks (excluding active) | 1037 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 20 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 137 / 683 items (20.06%) |
+| Project coverage | 137 / 684 items (20.03%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
