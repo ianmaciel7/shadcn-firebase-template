@@ -46,9 +46,9 @@ language, as defined in `.agents/rules/language-conventions.md`.
 - [ADR index](adr/README.md): accepted template architecture decisions.
   Accepted records preserve their original context; current versions and
   commands belong in the guides above.
-- [Agent configuration](../.agents/README.md): two configured MCP servers,
+- [Agent configuration](../.agents/README.md): three configured MCP servers,
   persistent rules, and enabled integrations.
-- [Skill inventory](../.agents/skills/README.md): seven installed skills and
+- [Skill inventory](../.agents/skills/README.md): nine installed skills and
   their provenance. Supporting skill documents remain reusable references
   rather than application configuration.
 - [Domain workflow](agents/domain.md) and

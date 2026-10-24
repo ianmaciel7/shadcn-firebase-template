@@ -2,12 +2,12 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
+import { FirebaseAuthSessionBridgeClient } from "@/components/ui/extensions/firebase-auth-session-bridge-client";
 import { IntlProviderServer } from "@/components/ui/extensions/intl-provider-server";
 import { ThemeProviderClient } from "@/components/ui/extensions/theme-provider-client";
 import { Spinner } from "@/components/ui/spinner";
 import { Toaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { FirebaseAuthSessionBridgeClient } from "./_components/firebase-auth-session-bridge-client";
 import "./globals.css";
 
 const geist = Geist({

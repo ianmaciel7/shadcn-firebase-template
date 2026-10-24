@@ -3,7 +3,7 @@
 import { FirebaseUIProvider } from "@firebase-oss/ui-react";
 import type { PropsWithChildren } from "react";
 import { LabeledSpinner } from "@/components/ui/extensions/labeled-spinner";
-import { useAuthProviderClient } from "../_hooks/use-auth-provider-client";
+import { useAuthProviderClient } from "@/hooks/use-auth-provider-client";
 
 type AuthProviderClientProps = PropsWithChildren;
 

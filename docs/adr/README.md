@@ -148,6 +148,10 @@ component-source migration.
   supersedes ADR 0018 in full at the maintainer's request. Routes live directly
   under `src/app/`; locale selection uses `NEXT_LOCALE` without Proxy.
 
+- [ADR 0020: Place cross-route code outside `src/app`](0020-place-cross-route-code-outside-app.md)
+  moves modules shared by several route trees to `src/components/ui/extensions`,
+  `src/hooks` and `src/lib`; route-specific code stays in `_*` folders.
+
 - [ADR 0021: Authorize with role custom claims](0021-authorize-with-role-custom-claims.md)
   adds a `role` custom claim, Admin SDK token verification with revocation
   checks, the `requireRole` DAL boundary and the `setUserRole` Cloud Function.

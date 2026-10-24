@@ -38,7 +38,8 @@ When standards conflict, apply them in this order:
   stricter [component-named orchestration policy](.agents/rules/components-composition.md#component-named-orchestration-hooks)
   for owned components: put behavior/context orchestration in a separate
   `use<ComponentName>` hook, which may compose focused hooks internally.
-  Keep route-specific hooks in private `_hooks` folders. Any combination
+  Keep route-specific hooks in private `_hooks` folders and hooks shared by
+  several route trees in `src/hooks/` ([ADR 0020](docs/adr/0020-place-cross-route-code-outside-app.md)). Any combination
   of the supported presentation hooks may be called directly. React itself
   does not require one orchestration hook per component.
 - **Hook modules do not own module-level support declarations**: Put helper

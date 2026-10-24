@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
 
@@ -13,12 +13,17 @@ const locations = [
   "src/app/(public)/forgot-password/_hooks",
   "src/app/(public)/register/_hooks",
   "src/app/(public)/sign-in/_hooks",
-  "src/app/_lib",
   "src/lib",
   "src/hooks",
   "src/i18n",
   "src/components/ui/extensions",
 ];
+// Interrupted runs skip afterAll, so sweep fixtures they left behind.
+for (const directory of locations)
+  for (const entry of readdirSync(join(root, directory)))
+    if (entry.startsWith("complexity-native-"))
+      rmSync(join(root, directory, entry), { recursive: true, force: true });
+
 const directories = locations.map((directory) =>
   mkdtempSync(join(root, directory, "complexity-native-")),
 );

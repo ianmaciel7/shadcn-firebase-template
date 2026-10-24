@@ -1297,8 +1297,9 @@ export function inspectNaming(content, filename) {
 export function isOwnedHookModule(filename) {
   const path = filename.replaceAll("\\", "/");
   return (
-    /^src\/app\/(?:.*\/)?_hooks\/[^/]+\.tsx?$/.test(path) &&
-    !/\.(test|spec|stories)\.tsx?$/.test(path)
+    /^(?:src\/app\/(?:.*\/)?_hooks\/|src\/hooks\/(?!use-mobile\.))[^/]+\.tsx?$/.test(
+      path,
+    ) && !/\.(test|spec|stories)\.tsx?$/.test(path)
   );
 }
 

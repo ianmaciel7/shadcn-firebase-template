@@ -22,10 +22,11 @@ it.each(["ts", "tsx"])(
       `src/app/_hooks/use-avatar.${extension}`,
       `src/app/(protected)/profile/_hooks/use-avatar.${extension}`,
       `src/app/_hooks/nested/use-avatar.${extension}`,
+      `src/hooks/use-avatar.${extension}`,
     ];
     const excluded = [
       `src/app/(protected)/profile/_lib/avatar.${extension}`,
-      `src/hooks/use-avatar.${extension}`,
+      `src/hooks/use-mobile.${extension}`,
       `src/components/firebase/use-avatar.${extension}`,
       `src/app/_hooks/use-avatar.test.${extension}`,
       `src/app/_hooks/use-avatar.spec.${extension}`,

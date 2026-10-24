@@ -44,6 +44,16 @@
           "exec",
           "next-devtools-mcp"
         ]
+      },
+      "playwright": {
+        "transport": "stdio",
+        "enabled": true,
+        "description": "Browser automation for verifying UI changes",
+        "command": "pnpm",
+        "args": [
+          "dlx",
+          "@playwright/mcp@0.0.83"
+        ]
       }
     }
   },

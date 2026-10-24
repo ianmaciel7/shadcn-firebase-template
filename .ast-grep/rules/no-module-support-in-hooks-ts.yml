@@ -2,7 +2,9 @@ id: no-module-support-in-hooks-ts
 language: typescript
 files:
   - src/app/**/_hooks/**/*.ts
+  - src/hooks/**/*.ts
 ignores:
+  - src/hooks/use-mobile.ts
   - "**/*.test.ts"
   - "**/*.spec.ts"
   - "**/*.stories.ts"

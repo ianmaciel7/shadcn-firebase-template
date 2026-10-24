@@ -11,6 +11,7 @@ and Antigravity, with `syncMode` set to `source-only`.
 | --- | --- | --- |
 | Serena | `node .agents/scripts/serena-stdio-guard.mjs serena start-mcp-server --project-from-cwd --context=codex` | Project-local semantic symbol analysis; closes Serena's process tree when the stdio client disconnects |
 | Next.js DevTools | `pnpm exec next-devtools-mcp` | Runtime diagnostics and route inspection |
+| Playwright | `pnpm dlx @playwright/mcp@0.0.83` | Browser automation for verifying UI changes |
 
 These are configured servers, not a statement that the executables are
 installed or that runtime connectivity has been verified. Serena and the
@@ -18,9 +19,9 @@ Agents CLI are host tools; `next-devtools-mcp` is a project dependency.
 
 ## Installed skills
 
-The repository contains seven skills: `ask-matt`, `context7-cli`,
-`firebase-basics`, `firebase-auth-basics`, `save`, `setup-matt-pocock-skills`,
-and `shadcn`. See the
+The repository contains nine skills: `ask-matt`, `context7-cli`,
+`firebase-basics`, `firebase-auth-basics`, `new-component`, `save`,
+`setup-matt-pocock-skills`, `shadcn`, and `verify`. See the
 [skill inventory](skills/README.md) for entrypoints and provenance.
 
 Persistent rules cover [language](rules/language-conventions.md),

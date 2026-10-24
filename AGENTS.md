@@ -70,8 +70,8 @@ Deliver correct, maintainable changes with minimal risk.
   external research and durable Serena-memory findings.
 
 Accepted ADRs are historical records; use `docs/adr/README.md` and current
-configuration to identify later operational changes. The seven installed skills
-and two configured MCP servers are indexed in `.agents/README.md`.
+configuration to identify later operational changes. The nine installed skills
+and three configured MCP servers are indexed in `.agents/README.md`.
 
 Read the documentation relevant to the change before editing it. For changes
 to tooling, checks, or conventions, update the executable config, positive

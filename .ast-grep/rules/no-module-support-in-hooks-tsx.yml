@@ -2,7 +2,9 @@ id: no-module-support-in-hooks-tsx
 language: tsx
 files:
   - src/app/**/_hooks/**/*.tsx
+  - src/hooks/**/*.tsx
 ignores:
+  - src/hooks/use-mobile.tsx
   - "**/*.test.tsx"
   - "**/*.spec.tsx"
   - "**/*.stories.tsx"
