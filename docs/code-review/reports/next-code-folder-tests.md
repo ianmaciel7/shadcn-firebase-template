@@ -16,7 +16,7 @@ Holds browser E2E, automated accessibility, responsive and visual screenshot tes
 
 The folder review confirms organization, not success of every test. Screenshot baseline pixels and browser outcomes have independent review and execution requirements.
 
-A folder review is not a substitute for its descendant file reviews, and no uninspected binary asset or production run is claimed as complete.
+A folder review is not a substitute for its descendant file reviews, and no binary asset not inspected or production run is claimed as complete.
 
 ## Verification
 
