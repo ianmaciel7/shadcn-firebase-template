@@ -15,7 +15,7 @@ Verifies that a TOTP enrollment uses the display name provided by the user rathe
 
 ## Coverage and findings
 
-The SDK enrollment and QR secret helpers are mocked; real multifactor enrollment remains an emulator or integration concern.
+The SDK enrollment and QR secret helpers are mocked; real multi-factor enrollment remains an emulator or integration concern.
 
 No additional independently confirmed defect was established in the inspected test file. A mocked dependency does not prove external service behavior.
 
