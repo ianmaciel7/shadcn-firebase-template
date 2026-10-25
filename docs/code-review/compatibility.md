@@ -21,3 +21,7 @@ The updated manifest records 330 completed items (including coordinator and docu
 ## Evaluation scope
 
 The separate agent-evaluation fixture and runner files are not Next.js route conventions. Their source-level reviews contribute to project inventory coverage only; they do not increase the count of reviewed installed Next.js documentation files or certify runtime behavior.
+
+## Validated library source checkpoint
+
+The latest review set recorded in run 40192558815 covers fourteen additional project files under the Next.js 16.4.2 baseline. Future framework upgrades remain outside its verified scope.

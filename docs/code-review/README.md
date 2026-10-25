@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 340 |
+| Currently completed review reports | 354 |
 | Active report tasks | 0 |
-| Completed tasks | 340 |
-| Pending tasks (excluding active) | 870 |
+| Completed tasks | 354 |
+| Pending tasks (excluding active) | 856 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 315 / 695 items (45.32%) |
+| Project coverage | 329 / 695 items (47.34%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -118,3 +118,7 @@ The [import queue](import-queue.md) records 166 individually prepared source rev
 ## Evaluation fixture and runner review completion
 
 Ten individual evaluations/runner reports passed branch validation at [run 40134977622](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134977622) and were marked Completed (four directories, six files). They describe read-only scenarios and two low-severity runner concerns; they do not assert that live external agent evaluations were executed.
+
+## Auth and profile review checkpoint
+
+Fourteen additional individual source reviews were checked under Next.js 16.4.2 and validated in [GitHub Actions run 40192558815](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40192558815). Source inspection included session and role logic, profile tests, Firebase client/server mocks, safe return-path regressions and shared type definitions. Inventory integrity, Biome, TypeScript, regression tests, the English guard, spelling and Markdown passed. Mocked source tests do not establish emulator or production behavior.

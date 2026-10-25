@@ -25,3 +25,7 @@ Current completed project-item reviews: 305/695, including 3 additional director
 ## Evaluation boundary review
 
 The `evals/`, `evals/general/`, `evals/tool-usage/` and `scripts/evals/` directories each have an independently validated folder report. Fixture inputs are kept separate from the runner and from the Next.js application runtime. The runner's two low-severity robustness concerns remain open; the audit did not execute live agent scenarios.
+
+## Profile review boundary
+
+Fourteen additional shared-library and profile test files were inspected individually. Their completion is supported by GitHub Actions run 40192558815, but the tests that mock Firebase and Next.js sessions do not themselves certify browser sign-in, cloud rules or emulator networking.
