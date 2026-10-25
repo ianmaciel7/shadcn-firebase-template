@@ -1,0 +1,26 @@
+# Individual source check review — `next-code-file-scripts-checks-check-review-inventory-mjs`
+
+## Identification
+
+- **Review identity:** `next-code-file-scripts-checks-check-review-inventory-mjs`
+- **Primary file:** `scripts/checks/check-review-inventory.mjs`
+- **Type:** CODE_FILE
+- **Source revision:** `99b9b1c0959ac9a949970265d64e91307dc54339`
+- **Next.js baseline:** 16.4.2
+- **Status:** Source inspected; validation pending.
+
+## Evidence
+
+Compares the declared source file and folder inventory with Git-tracked files, checks unique path and agent IDs, verifies completed report existence and cross-checks README totals.
+
+## Findings and limitations
+
+No independently confirmed new defect was established from the inspected source in this review. This guard checks the inventory and reported counts, not the factual correctness of conclusions inside Markdown reports.
+
+## Test and quality boundary
+
+The file was inspected in the GitHub source tree. Existing test fixtures and the repository validation workflow are separate evidence; they must pass before this review is marked complete. This review does not claim that static checks replace runtime integration or official framework behavior.
+
+## Conclusion
+
+The source has a documented individual review, with its project-specific contracts and blind spots recorded.
