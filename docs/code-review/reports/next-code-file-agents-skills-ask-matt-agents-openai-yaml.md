@@ -1,3 +1,5 @@
+<!-- cspell:ignore openai -->
+
 # Individual agent skill review — `next-code-file-agents-skills-ask-matt-agents-openai-yaml`
 
 ## Identification

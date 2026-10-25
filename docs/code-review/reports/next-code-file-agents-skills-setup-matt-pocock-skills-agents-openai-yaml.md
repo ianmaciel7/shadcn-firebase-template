@@ -1,3 +1,5 @@
+<!-- cspell:ignore openai -->
+
 # Individual agent skill review — `next-code-file-agents-skills-setup-matt-pocock-skills-agents-openai-yaml`
 
 ## Identification
