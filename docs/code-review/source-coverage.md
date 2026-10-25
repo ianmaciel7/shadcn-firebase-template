@@ -6,11 +6,11 @@
 | Project files inventoried | 576 |
 | Total project review items | 695 |
 | Folder reports completed | 40 |
-| File reports completed | 329 |
-| Items reviewed | 369 |
-| Coverage | 53.09% |
+| File reports completed | 336 |
+| Items reviewed | 376 |
+| Coverage | 54.10% |
 | Active reports | 0 |
-| Pending items | 326 |
+| Pending items | 319 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -70,3 +70,7 @@ Twenty unit and browser test files received individual reviewed reports in the c
 ## Configuration review coverage
 
 Twenty additional configuration files were reviewed and validated through run 40193275075. The project inventory has 369 reviewed items of 695, with 326 project items still pending. Static examination of Firebase rules does not replace emulator authorization tests.
+
+## Source quality guard reviews
+
+Seven completed reviews of local checkers and their test fixtures were reconciled after the successful branch validation workflow run 40193670924. The current project item coverage is 376 of 695 items, with 319 pending source and folder reviews.
