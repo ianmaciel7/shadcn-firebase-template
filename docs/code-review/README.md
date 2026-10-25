@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 565 |
+| Currently completed review reports | 575 |
 | Active report tasks | 0 |
-| Completed tasks | 565 |
-| Pending tasks (excluding active) | 645 |
+| Completed tasks | 575 |
+| Pending tasks (excluding active) | 635 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 540 / 695 items (77.70%) |
+| Project coverage | 550 / 695 items (79.14%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -154,3 +154,7 @@ Eleven file-specific reviews of pinned Biome configuration plugins, generated Ne
 ## Completed browser and test infrastructure checkpoint
 
 Ten Playwright and naming-fixture sources, eight focused regression tests and seven test infrastructure folders were inspected separately. [Review validation run 40210742964](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40210742964) passed the branch report checks, structural rule fixtures, TypeScript and focused regressions. The full Playwright, Firebase emulator and visual screenshot matrix is not claimed as executed by this review workflow. Project review coverage is now 540/695 (77.70%), with 155 project items pending.
+
+## Historical architecture record review
+
+Ten architecture decision records and the decision index were inspected as separate source items. Accepted records were preserved as historical evidence. Current implementation differences concerning framework versions, theme error handling and emulator CI are documented in individual reports instead of overwriting accepted decisions. Their report checks passed in [review validation run 40211467467](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40211467467). Project coverage is now 550/695 (79.14%).
