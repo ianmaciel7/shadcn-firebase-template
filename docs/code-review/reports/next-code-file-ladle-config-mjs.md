@@ -7,7 +7,7 @@
 - **Item type:** CODE_FILE
 - **Source checkpoint:** `087772f6896e08989a04a340c060a32daf4a5a58`
 - **Next.js baseline:** 16.4.2
-- **State:** Source reviewed; CI validation pending.
+- **State:** Completed following GitHub Actions run 40198107544.
 
 ## Observed implementation
 
@@ -21,4 +21,4 @@ This is a scope-specific source review. No additional confirmed exploitable vuln
 
 ## Disposition
 
-Static evidence is recorded for this individual primary file. Move the manifest entry to Completed only after the branch review workflow passes the new report's language, spelling, Markdown and inventory checks.
+Static evidence is recorded for this individual primary file. The review workflow passed language, spelling, Markdown and inventory checks in [run 40198107544](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40198107544).
