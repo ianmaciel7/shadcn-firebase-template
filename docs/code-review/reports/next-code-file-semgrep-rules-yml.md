@@ -1,22 +1,28 @@
-# Individual file review — `next-code-file-semgrep-rules-yml`
+# Individual configuration and provenance review — `next-code-file-semgrep-rules-yml`
 
 ## Identification
 
-- **Agent identity:** `next-code-file-semgrep-rules-yml`
-- **Primary item:** `.semgrep/rules.yml`
-- **Type:** CODE_FILE
-- **Source revision:** `0be7ee0f4c06a32bae63de7c4d0b8562b9350fb2`
-- **Next.js baseline:** 16.4.2
-- **Review state:** Source inspected; quality checks pending.
+- **Review identity:** `next-code-file-semgrep-rules-yml`
+- **Primary file:** `.semgrep/rules.yml`
+- **Item type:** CODE_FILE
+- **Inspected source revision:** `d2ac7d0390150b41509046ab2ead5e70c9ae9c66`
+- **Framework reference:** Next.js 16.4.2 and React 19.3.1
+- **Status:** Source inspected; report validation pending.
 
-## Evidence
+## Source evidence
 
-Contains security checks for client/server separation, dynamic evaluation, HTML sinks, cookie options, exposed secrets and suppressed type errors.
+The security rules prohibit secret server environment access in client files, dynamic code execution, raw HTML sinks, unsafe public environment names, server-only imports in client modules, weak authentication cookies and ignored build errors.
 
-## Verification boundaries
+## Finding and limitations
 
-The file was inspected directly, but a static source review alone does not prove live security or tooling behavior. The branch review workflow provides TypeScript, native Biome and structural rule test evidence, plus spelling and Markdown verification. Production security checks and live Serena tooling remain separate responsibilities.
+These patterns inspect syntax; escaping of aliases and indirect references is possible. Semgrep rule fixtures and production security controls remain separate evidence.
 
-## Conclusion
+No additional confirmed defect is claimed solely from this inspection. External service behavior, supply chain alerts and unrelated runtime components are outside this individual file's scope.
 
-This source item has an individual file or folder review and awaits successful branch quality validation.
+## Validation
+
+The current file was inspected from the branch source and compared with its declared responsibility. The branch CI must check inventory integrity, report spelling, English and Markdown before changing this entry to Completed. Existence of a source index is not evidence of a new upstream verification.
+
+## Disposition
+
+Individual source review recorded. Preserve the limitations above when updating aggregate coverage.
