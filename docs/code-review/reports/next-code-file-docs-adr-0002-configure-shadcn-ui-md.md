@@ -2,27 +2,27 @@
 
 ## Identification
 
-- **Agent:** `next-code-file-docs-adr-0002-configure-shadcn-ui-md`
-- **Primary source:** `docs/adr/0002-configure-shadcn-ui.md`
+- **Assigned agent:** `next-code-file-docs-adr-0002-configure-shadcn-ui-md`
+- **Primary decision record:** `docs/adr/0002-configure-shadcn-ui.md`
 - **Type:** CODE_FILE
-- **Source checkpoint:** `65372ec436b27a8c409c79339b3a180746347791`
-- **Framework reference:** Next.js 16.4.2
-- **Review status:** Historical document inspected; quality checks pending.
+- **Source checkpoint:** `03ecdad8670bd192d181a3e53f3f856921918775`
+- **Framework baseline:** Next.js 16.4.2
+- **Review status:** Source inspected; CI pending.
 
-## Historical design evidence
+## Recorded decision
 
-The accepted decision chooses locally maintained Base UI and shadcn components, conditional class utilities, tooltip provider composition and a responsive mobile breakpoint hook.
+Records the Base UI shadcn preset, locally owned component source, accessible button behavior, source placement, AI Elements dependencies and shared UI extension policy.
 
-## Reconciliation and limitations
+## Current applicability and observations
 
-The ADR preserves initial registry and package versions. The installed component source and current tooling configuration are authoritative for implementation.
+Vendored UI and AI registry code carries independent maintenance and security work. Existing accepted decisions should not be rewritten to follow later versions.
 
-This accepted decision or its index remains unchanged. Current implementation details should be taken from version-matched source and active documentation, not inferred from earlier decision text.
+Accepted architecture records are historical evidence. Their decisions and amendments are not silently rewritten to match current packages, tooling or code paths. The current operational documentation and checked-in implementation should be consulted when these differ.
 
 ## Verification
 
-The document's scope, status, design choices and cross-references were reviewed. The branch audit workflow must pass spelling, Markdown and manifest integrity before this item can be marked Completed.
+The record and its decision or amendment sections were inspected. The branch review workflow checks report quality and source inventory; this inspection does not claim to execute a historical setup command or hosted service.
 
-## Conclusion
+## Disposition
 
-The record has a distinct historical design review. No unverified framework or deployment claim was added.
+Preserve the original record. Count its review Completed only after validation accepts this individual report.

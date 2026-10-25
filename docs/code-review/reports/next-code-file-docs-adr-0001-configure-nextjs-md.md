@@ -2,27 +2,27 @@
 
 ## Identification
 
-- **Agent:** `next-code-file-docs-adr-0001-configure-nextjs-md`
-- **Primary source:** `docs/adr/0001-configure-nextjs.md`
+- **Assigned agent:** `next-code-file-docs-adr-0001-configure-nextjs-md`
+- **Primary decision record:** `docs/adr/0001-configure-nextjs.md`
 - **Type:** CODE_FILE
-- **Source checkpoint:** `65372ec436b27a8c409c79339b3a180746347791`
-- **Framework reference:** Next.js 16.4.2
-- **Review status:** Historical document inspected; quality checks pending.
+- **Source checkpoint:** `03ecdad8670bd192d181a3e53f3f856921918775`
+- **Framework baseline:** Next.js 16.4.2
+- **Review status:** Source inspected; CI pending.
 
-## Historical design evidence
+## Recorded decision
 
-The accepted decision records the original Next.js App Router, React Compiler, TypeScript, pnpm, Turbopack, Cache Components and server error instrumentation baseline.
+Records the initial Next.js App Router, strict TypeScript, pnpm, React Compiler, cache and structured request-error instrumentation decisions.
 
-## Reconciliation and limitations
+## Current applicability and observations
 
-The historical record pins older framework and package-manager versions than today's package.json. This does not make the immutable ADR a live dependency manifest.
+Its historical package versions mention Next.js 16.4.1 and React 19.3.0, while the current package manifest uses 16.4.2 and 19.3.1. Preserve the accepted record and use the current package manifest for implementation.
 
-This accepted decision or its index remains unchanged. Current implementation details should be taken from version-matched source and active documentation, not inferred from earlier decision text.
+Accepted architecture records are historical evidence. Their decisions and amendments are not silently rewritten to match current packages, tooling or code paths. The current operational documentation and checked-in implementation should be consulted when these differ.
 
 ## Verification
 
-The document's scope, status, design choices and cross-references were reviewed. The branch audit workflow must pass spelling, Markdown and manifest integrity before this item can be marked Completed.
+The record and its decision or amendment sections were inspected. The branch review workflow checks report quality and source inventory; this inspection does not claim to execute a historical setup command or hosted service.
 
-## Conclusion
+## Disposition
 
-The record has a distinct historical design review. No unverified framework or deployment claim was added.
+Preserve the original record. Count its review Completed only after validation accepts this individual report.

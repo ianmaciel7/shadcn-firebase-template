@@ -2,27 +2,27 @@
 
 ## Identification
 
-- **Agent:** `next-code-file-docs-adr-readme-md`
-- **Primary source:** `docs/adr/README.md`
+- **Assigned agent:** `next-code-file-docs-adr-readme-md`
+- **Primary decision record:** `docs/adr/README.md`
 - **Type:** CODE_FILE
-- **Source checkpoint:** `65372ec436b27a8c409c79339b3a180746347791`
-- **Framework reference:** Next.js 16.4.2
-- **Review status:** Historical document inspected; quality checks pending.
+- **Source checkpoint:** `03ecdad8670bd192d181a3e53f3f856921918775`
+- **Framework baseline:** Next.js 16.4.2
+- **Review status:** Source inspected; CI pending.
 
-## Historical design evidence
+## Recorded decision
 
-The index correctly distinguishes accepted historical decisions from the current operational documentation and summarizes the amendments and later test and architecture refinements.
+Indexes the nine accepted decisions and documents current operational clarifications on routing, component ownership, usage logs, role claims, testing and superseded decisions.
 
-## Reconciliation and limitations
+## Current applicability and observations
 
-An ADR index is an entrypoint, not a substitute for reading each decision and the up-to-date implementation.
+The index correctly directs readers to current guides and insists on immutable accepted records; summaries must be refreshed as operational ownership changes.
 
-This accepted decision or its index remains unchanged. Current implementation details should be taken from version-matched source and active documentation, not inferred from earlier decision text.
+Accepted architecture records are historical evidence. Their decisions and amendments are not silently rewritten to match current packages, tooling or code paths. The current operational documentation and checked-in implementation should be consulted when these differ.
 
 ## Verification
 
-The document's scope, status, design choices and cross-references were reviewed. The branch audit workflow must pass spelling, Markdown and manifest integrity before this item can be marked Completed.
+The record and its decision or amendment sections were inspected. The branch review workflow checks report quality and source inventory; this inspection does not claim to execute a historical setup command or hosted service.
 
-## Conclusion
+## Disposition
 
-The record has a distinct historical design review. No unverified framework or deployment claim was added.
+Preserve the original record. Count its review Completed only after validation accepts this individual report.

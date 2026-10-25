@@ -2,27 +2,27 @@
 
 ## Identification
 
-- **Agent:** `next-code-file-docs-adr-0006-configure-testing-md`
-- **Primary source:** `docs/adr/0006-configure-testing.md`
+- **Assigned agent:** `next-code-file-docs-adr-0006-configure-testing-md`
+- **Primary decision record:** `docs/adr/0006-configure-testing.md`
 - **Type:** CODE_FILE
-- **Source checkpoint:** `65372ec436b27a8c409c79339b3a180746347791`
-- **Framework reference:** Next.js 16.4.2
-- **Review status:** Historical document inspected; quality checks pending.
+- **Source checkpoint:** `03ecdad8670bd192d181a3e53f3f856921918775`
+- **Framework baseline:** Next.js 16.4.2
+- **Review status:** Source inspected; CI pending.
 
-## Historical design evidence
+## Recorded decision
 
-The accepted testing architecture defines colocated unit tests, browser tests, Playwright journey tests, accessibility scans, visual baselines and code coverage thresholds.
+Records separate unit DOM, real browser, Playwright, accessibility, screenshots, property testing and mutation testing, including source colocation rules.
 
-## Reconciliation and limitations
+## Current applicability and observations
 
-The actual Vitest project configuration and CI test commands must be verified directly for current runner behavior.
+The current project test configuration and CI commands determine which suites actually run on each event. A recorded testing strategy is not evidence that every suite has passed.
 
-This accepted decision or its index remains unchanged. Current implementation details should be taken from version-matched source and active documentation, not inferred from earlier decision text.
+Accepted architecture records are historical evidence. Their decisions and amendments are not silently rewritten to match current packages, tooling or code paths. The current operational documentation and checked-in implementation should be consulted when these differ.
 
 ## Verification
 
-The document's scope, status, design choices and cross-references were reviewed. The branch audit workflow must pass spelling, Markdown and manifest integrity before this item can be marked Completed.
+The record and its decision or amendment sections were inspected. The branch review workflow checks report quality and source inventory; this inspection does not claim to execute a historical setup command or hosted service.
 
-## Conclusion
+## Disposition
 
-The record has a distinct historical design review. No unverified framework or deployment claim was added.
+Preserve the original record. Count its review Completed only after validation accepts this individual report.
