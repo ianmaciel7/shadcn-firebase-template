@@ -6,11 +6,11 @@
 | Project files inventoried | 576 |
 | Total project review items | 695 |
 | Folder reports completed | 40 |
-| File reports completed | 289 |
-| Items reviewed | 329 |
-| Coverage | 47.34% |
+| File reports completed | 309 |
+| Items reviewed | 349 |
+| Coverage | 50.22% |
 | Active reports | 0 |
-| Pending items | 366 |
+| Pending items | 346 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -62,3 +62,7 @@ The ten evaluation items reviewed in [run 40134977622](https://github.com/ianmac
 ## Current validated authentication and profile tests
 
 Fourteen file-specific reviews completed at revision `db0f8dd`. The project now has 329 completed primary items of 695; 366 remain pending. Reviews were reconciled only after the dedicated branch workflow passed in run 40192558815.
+
+## Test review checkpoint
+
+Twenty unit and browser test files received individual reviewed reports in the current branch. The [successful validation run 40192955670](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40192955670) supports their current completion status; app, browser and Firebase integration gaps listed in each report remain outside this review scope.

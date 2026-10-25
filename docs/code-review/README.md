@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 354 |
+| Currently completed review reports | 374 |
 | Active report tasks | 0 |
-| Completed tasks | 354 |
-| Pending tasks (excluding active) | 856 |
+| Completed tasks | 374 |
+| Pending tasks (excluding active) | 836 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 329 / 695 items (47.34%) |
+| Project coverage | 349 / 695 items (50.22%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -122,3 +122,7 @@ Ten individual evaluations/runner reports passed branch validation at [run 40134
 ## Auth and profile review checkpoint
 
 Fourteen additional individual source reviews were checked under Next.js 16.4.2 and validated in [GitHub Actions run 40192558815](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40192558815). Source inspection included session and role logic, profile tests, Firebase client/server mocks, safe return-path regressions and shared type definitions. Inventory integrity, Biome, TypeScript, regression tests, the English guard, spelling and Markdown passed. Mocked source tests do not establish emulator or production behavior.
+
+## Validated route and quality test checkpoint
+
+Twenty more file-specific reviews were completed for home and profile composition, access guards, App Router errors and loading, locale routing, responsive viewport behavior, and source quality guard tests. Branch run [40192955670](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40192955670) passed all configured checks before these entries were marked Completed. Project coverage is now 349/695 (50.22%); the documentation corpus remains 24/514.
