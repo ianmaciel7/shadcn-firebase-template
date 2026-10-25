@@ -6,11 +6,11 @@
 | Project files inventoried | 576 |
 | Total project review items | 695 |
 | Folder reports completed | 78 |
-| File reports completed | 472 |
-| Items reviewed | 550 |
-| Coverage | 79.14% |
+| File reports completed | 489 |
+| Items reviewed | 567 |
+| Coverage | 81.58% |
 | Active reports | 0 |
-| Pending items | 145 |
+| Pending items | 128 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -98,3 +98,7 @@ Eighteen new test and fixture reports and seven folder ownership reviews were co
 ## Architecture decision record coverage
 
 Nine accepted numbered decisions and the ADR index were individually inspected, respecting their historical context, amendments and immutability. This adds ten validated file reports after run 40211467467. The active project inventory now has 550 of 695 items reviewed, leaving 145 project items pending.
+
+## Configuration and provenance checkpoint
+
+Seventeen further source file reports were validated under review workflow run 40234107521, including separate boundaries for dependency audit exceptions, static security patterns and version-specific upstream source indexes. Project review coverage is now 567/695 items; 128 project primary items remain pending. Recorded upstream document hashes were not independently re-retrieved in this batch.

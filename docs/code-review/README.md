@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 575 |
+| Currently completed review reports | 592 |
 | Active report tasks | 0 |
-| Completed tasks | 575 |
-| Pending tasks (excluding active) | 635 |
+| Completed tasks | 592 |
+| Pending tasks (excluding active) | 618 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 550 / 695 items (79.14%) |
+| Project coverage | 567 / 695 items (81.58%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -158,3 +158,7 @@ Ten Playwright and naming-fixture sources, eight focused regression tests and se
 ## Historical architecture record review
 
 Ten architecture decision records and the decision index were inspected as separate source items. Accepted records were preserved as historical evidence. Current implementation differences concerning framework versions, theme error handling and emulator CI are documented in individual reports instead of overwriting accepted decisions. Their report checks passed in [review validation run 40211467467](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40211467467). Project coverage is now 550/695 (79.14%).
+
+## Configuration and upstream source manifest review
+
+Seventeen additional primary source files were individually inspected for dependency policy, security rules, mutation testing, repository metadata, Serena configuration and recorded documentation provenance. [Review CI run 40234107521](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40234107521) passed before completion status changed. Documentation source manifests only record prior upstream retrieval checkpoints; their review does not replace the 490 outstanding installed Next.js documentation reviews.
