@@ -16,7 +16,7 @@ Collects eleven tracked project validators and their fixtures, including composi
 
 Individual child reviews remain separate. Static checks cannot replace browser accessibility, Firebase security-rule enforcement or complete dependency analysis.
 
-A folder review is not a substitute for its descendant file reviews, and no uninspected binary asset or production run is claimed as complete.
+A folder review is not a substitute for its descendant file reviews, and no binary asset not inspected or production run is claimed as complete.
 
 ## Verification
 
