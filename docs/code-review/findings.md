@@ -231,3 +231,11 @@ The 166 validated individual reviews include provisional concerns referenced bel
 - **`EVAL-RUNNER-TRACE-001` (Low, open):** A matched tool name within a general command event is not sufficient evidence that a particular external connector completed successfully. Tighten event-type and outcome checks and add negative test cases.
 
 These are static inspection findings from [the individual runner report](reports/next-code-file-scripts-evals-run-tool-usage-evals-mjs.md). The test runner itself was not invoked against a live external agent. The user must not interpret source-review CI as proof of external evaluation success.
+
+## Operational follow-up observations, not confirmed security defects
+
+- The agent integration configuration enables `cursorAutoApprove`. Review its effective permissions before allowing untrusted tools or prompts to use that client. This is a configuration review follow-up, not a proven privilege escalation.
+- Both Graphify Git hooks include a workstation-specific Python interpreter path with cross-platform fallback discovery. Test their behavior on supported hosts before changing the large generated hook scripts.
+- Dependabot mirror files are manually synchronized to the corresponding CI workflows. Confirm that updates propagate to consumers.
+
+These notes do not change the confirmed finding totals above.

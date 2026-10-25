@@ -5,12 +5,12 @@
 | Project folders inventoried | 119 |
 | Project files inventoried | 576 |
 | Total project review items | 695 |
-| Folder reports completed | 40 |
-| File reports completed | 336 |
-| Items reviewed | 376 |
-| Coverage | 54.10% |
+| Folder reports completed | 53 |
+| File reports completed | 375 |
+| Items reviewed | 428 |
+| Coverage | 61.58% |
 | Active reports | 0 |
-| Pending items | 319 |
+| Pending items | 267 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -74,3 +74,7 @@ Twenty additional configuration files were reviewed and validated through run 40
 ## Source quality guard reviews
 
 Seven completed reviews of local checkers and their test fixtures were reconciled after the successful branch validation workflow run 40193670924. The current project item coverage is 376 of 695 items, with 319 pending source and folder reviews.
+
+## Infrastructure and repository instruction coverage
+
+The latest checkpoint validated thirty-nine unique source files and thirteen distinct folders from the current Git tree. GitHub workflow, development tooling and agent instruction boundaries have dedicated reports. Nested skill and other source files remain Pending until reviewed separately. Review workflow run 40198107544 passed for the related reports.

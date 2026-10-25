@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 401 |
+| Currently completed review reports | 453 |
 | Active report tasks | 0 |
-| Completed tasks | 401 |
-| Pending tasks (excluding active) | 809 |
+| Completed tasks | 453 |
+| Pending tasks (excluding active) | 757 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 376 / 695 items (54.10%) |
+| Project coverage | 428 / 695 items (61.58%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -134,3 +134,7 @@ Twenty primary configuration files covering Firebase rules and emulators, TypeSc
 ## Validated source quality guards
 
 Seven additional file-specific reviews covered component composition, naming and runtime boundaries, route purity, responsive checks, language policy and the review inventory guard. [Validation run 40193670924](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40193670924) passed inventory integrity, lint, TypeScript, regression tests, English, spelling and Markdown. These static guards remain repository-specific policies and do not replace the official Next.js contract or browser integration tests.
+
+## Validated infrastructure and agent rules checkpoint
+
+Thirty-nine source files and thirteen folder ownership boundaries were individually inspected, including GitHub Actions, branch policy, development hooks, Ladle, Firebase emulator scripts, project agent instructions and framework rules. All fifty-two reports passed [review validation run 40198107544](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40198107544) after spelling fixes. A folder report records its directory design; it does not imply that all its descendant files are complete. The project inventory now has 428 completed and 267 pending items. The 514-item installed Next.js documentation corpus still has 24 completed reviews.
