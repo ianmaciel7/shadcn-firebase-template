@@ -7,7 +7,7 @@
 - **Type:** CODE_FILE
 - **Source checkpoint:** `b7e574cba1350f7bd28fb61324ab4f10b7573dc3`
 - **Framework baseline:** Next.js 16.4.2
-- **Status:** Inspected; CI verification pending.
+- **Status:** Completed following review validation run 40210742964.
 
 ## Direct source evidence
 
@@ -21,7 +21,7 @@ No additional independently confirmed defect was established in the inspected te
 
 ## Verification
 
-This file belongs to the eight targeted regression tests in the branch review workflow. The review workflow must pass for the current commit before the manifest item may be counted as Completed. This report does not claim that browser integration, Firebase rules or production builds were tested.
+This file belongs to the eight targeted regression tests in the branch review workflow. The review workflow passed all report and focused regression checks in [run 40210742964](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40210742964). This report does not claim that browser integration, Firebase rules or production builds were tested.
 
 ## Disposition
 
