@@ -17,7 +17,7 @@ Schedules weekly Lighthouse checks, starts the server after a build and uploads 
 
 The scheduled Lighthouse job collects measurements but has no required score threshold. Mutation scores are not checked on its weekly schedule.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 

@@ -17,7 +17,7 @@ Rebuilds a Graphify knowledge graph on branch changes, checking opt-out, active 
 
 The hook embeds a developer-specific absolute Python path as a preferred interpreter; portability is achieved through fallbacks, but this literal remains workstation-specific. Hook execution was not reproduced in Windows/MSYS.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 

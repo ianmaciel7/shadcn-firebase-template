@@ -17,7 +17,7 @@ Configures weekly npm, GitHub Actions, Docker and pip update streams with bounde
 
 The Docker and pip mirror updates require deliberate propagation to the consuming workflows before the runtime is updated.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 

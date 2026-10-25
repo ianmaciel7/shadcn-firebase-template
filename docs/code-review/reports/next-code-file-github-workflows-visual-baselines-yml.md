@@ -17,7 +17,7 @@ Manually regenerates Playwright visual snapshots inside the pinned CI container 
 
 Baseline updates still require review and an explicit subsequent commit; generated screenshots alone do not approve visual changes.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 

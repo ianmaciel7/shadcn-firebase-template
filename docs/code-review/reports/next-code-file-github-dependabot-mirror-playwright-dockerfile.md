@@ -17,7 +17,7 @@ Tracks the exact Playwright noble container image by tag and digest. This mirror
 
 The image digest is duplicated by design; drift between workflows can produce inconsistent screenshots.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 

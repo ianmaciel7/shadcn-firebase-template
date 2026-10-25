@@ -17,7 +17,7 @@ Declares active default-branch protection: disallows deletion and non-fast-forwa
 
 This is a source-controlled desired-state ruleset, not proof it was installed or enforced for a specific GitHub repository.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 

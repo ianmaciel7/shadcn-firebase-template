@@ -17,7 +17,7 @@ Triggers on review-branch pushes and manual dispatch, installs frozen pnpm depen
 
 The focused regression list does not execute every unit, browser or emulator test. A passing review workflow must not be represented as a complete production CI pass.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 

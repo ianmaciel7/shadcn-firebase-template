@@ -17,7 +17,7 @@ Reads changed paths, avoids recursive rebuilds for Graphify output and detaches 
 
 A local Windows Python path is embedded as a preferred interpreter, and asynchronous graph rebuilding is not a CI gate. Platform behavior needs host testing.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 

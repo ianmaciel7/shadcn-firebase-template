@@ -17,7 +17,7 @@ Runs push and pull-request validation across static/coverage, browser build, Pla
 
 The active review branch runs a separate smaller workflow; passing that workflow does not prove the full main-branch CI matrix, build, emulator or vulnerability scans pass.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 
