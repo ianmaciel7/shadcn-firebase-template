@@ -7,7 +7,7 @@
 - **Item type:** CODE_FILE
 - **Source revision:** `203d55d4752758ade11d7105ef6fe19f1dadf914`
 - **Framework baseline:** Next.js 16.4.2
-- **Status:** Source inspected; validation pending.
+- **Status:** Completed following verified report CI.
 
 ## Source evidence
 
@@ -21,7 +21,7 @@ This document is an upstream skill or reference. It cannot be used as proof that
 
 ## Verification
 
-The source and reference relationships were inspected in the current tracked tree. The report must pass the branch's language, spelling, Markdown and inventory quality checks before the corresponding item is marked Completed.
+The source and reference relationships were inspected in the current tracked tree. The branch checks passed in [GitHub Actions run 40235002079](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40235002079), including inventory, Biome, TypeScript, regressions, English, spelling and Markdown.
 
 ## Disposition
 
