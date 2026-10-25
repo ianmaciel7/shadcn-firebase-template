@@ -6,7 +6,7 @@
 - **Primary folder:** `tests/visual.spec.ts-snapshots/`
 - **Type:** CODE_FOLDER
 - **Tracked revision:** `d78e695b49df8e89e888359cd7cd98ca0dc420b3`
-- **Status:** Organization reviewed; CI pending.
+- **Status:** Completed; report validation passed in GitHub Actions run 40210742964.
 
 ## Folder responsibilities
 
@@ -20,4 +20,4 @@ A folder review is not a substitute for its descendant file reviews, and no bina
 
 ## Verification
 
-The folder membership was read from the tracked Git tree. Mark the folder Completed only after the review workflow passes its report-quality and inventory checks.
+The folder membership was read from the tracked Git tree. The report quality and inventory checks passed in [run 40210742964](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40210742964).
