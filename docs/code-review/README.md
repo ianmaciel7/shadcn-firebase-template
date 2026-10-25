@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 453 |
+| Currently completed review reports | 473 |
 | Active report tasks | 0 |
-| Completed tasks | 453 |
-| Pending tasks (excluding active) | 757 |
+| Completed tasks | 473 |
+| Pending tasks (excluding active) | 737 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 428 / 695 items (61.58%) |
+| Project coverage | 448 / 695 items (64.46%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -138,3 +138,7 @@ Seven additional file-specific reviews covered component composition, naming and
 ## Validated infrastructure and agent rules checkpoint
 
 Thirty-nine source files and thirteen folder ownership boundaries were individually inspected, including GitHub Actions, branch policy, development hooks, Ladle, Firebase emulator scripts, project agent instructions and framework rules. All fifty-two reports passed [review validation run 40198107544](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40198107544) after spelling fixes. A folder report records its directory design; it does not imply that all its descendant files are complete. The project inventory now has 428 completed and 267 pending items. The 514-item installed Next.js documentation corpus still has 24 completed reviews.
+
+## Structural scanner rule checkpoint
+
+Twenty additional per-file reviews of grouped structural scanning rules and their hook scope test were inspected and validated in [review CI run 40198684005](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40198684005). Error-level project policies were distinguished from heuristic warning rules. The project now has 448 reviewed items of 695 (64.46%). The installed Next.js documentation corpus remains at 24 reviewed of 514; its separate audit is not implied by these rule reviews.

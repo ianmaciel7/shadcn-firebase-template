@@ -6,11 +6,11 @@
 | Project files inventoried | 576 |
 | Total project review items | 695 |
 | Folder reports completed | 53 |
-| File reports completed | 375 |
-| Items reviewed | 428 |
-| Coverage | 61.58% |
+| File reports completed | 395 |
+| Items reviewed | 448 |
+| Coverage | 64.46% |
 | Active reports | 0 |
-| Pending items | 267 |
+| Pending items | 247 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -78,3 +78,7 @@ Seven completed reviews of local checkers and their test fixtures were reconcile
 ## Infrastructure and repository instruction coverage
 
 The latest checkpoint validated thirty-nine unique source files and thirteen distinct folders from the current Git tree. GitHub workflow, development tooling and agent instruction boundaries have dedicated reports. Nested skill and other source files remain Pending until reviewed separately. Review workflow run 40198107544 passed for the related reports.
+
+## Grouped scanner rules
+
+Twenty additional rules or rule-specific tests were reviewed individually under `.ast-grep/rules/`. Rules for route ownership, component props, form composition, Firebase sessions, localization, React state and Tailwind class detection now have completed, distinct primary reports. Review CI run 40198684005 passed on the reports.

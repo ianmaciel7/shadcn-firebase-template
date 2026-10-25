@@ -239,3 +239,7 @@ These are static inspection findings from [the individual runner report](reports
 - Dependabot mirror files are manually synchronized to the corresponding CI workflows. Confirm that updates propagate to consumers.
 
 These notes do not change the confirmed finding totals above.
+
+## Structural scanner observations
+
+The inspected React rule set intentionally marks manual memoization, potential derived-state effects and custom-hook extraction as warnings instead of proven defects. Rules targeting route entrypoints are stricter local design choices. None of these review observations changes the count of confirmed project defects.

@@ -37,3 +37,7 @@ The current project rule and tooling configurations received twenty file-specifi
 ## Infrastructure folder audit
 
 The GitHub, Husky, Ladle, emulator script and agent-rule folders now have individual validated architecture reports. Their descendant inventory status remains independent. Source-only settings and local hook execution do not establish an actual deployed authorization boundary. See [run 40198107544](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40198107544).
+
+## Source-level structure policies
+
+The project structural rule family now has twenty current individual reviews covering source-only warnings and blocking checks. A rule's syntax match does not make its convention an official Next.js or React requirement. The review workflow passed in run 40198684005; its tests do not cover the full production build matrix.
