@@ -7,7 +7,7 @@
 - **Item type:** CODE_FILE
 - **Source revision:** `bb625db4a658b433aadb0eb7c82624d4da18bdf3`
 - **Next.js baseline:** 16.4.2
-- **Review status:** Source reviewed; CI pending.
+- **Review status:** Completed following successful review CI run 40198684005.
 
 ## Source behavior and enforcement
 
@@ -25,4 +25,4 @@ This report records the inspected rule's matching intent and coverage limits. Ru
 
 ## Disposition
 
-Complete this individual rule review only after the branch report checks pass.
+The branch report checks passed in [run 40198684005](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40198684005).
