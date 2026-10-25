@@ -7,7 +7,7 @@
 - **Type:** CODE_FILE
 - **Source checkpoint:** `03ecdad8670bd192d181a3e53f3f856921918775`
 - **Framework baseline:** Next.js 16.4.2
-- **Review status:** Source inspected; CI pending.
+- **Review status:** Completed after successful review CI run 40211467467.
 
 ## Recorded decision
 
@@ -25,4 +25,4 @@ The record and its decision or amendment sections were inspected. The branch rev
 
 ## Disposition
 
-Preserve the original record. Count its review Completed only after validation accepts this individual report.
+Preserve the original record. The report passed quality validation in [GitHub Actions run 40211467467](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40211467467).
