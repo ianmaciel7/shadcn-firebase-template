@@ -9,7 +9,7 @@
 - **Item type:** CODE_FILE
 - **Inspected source revision:** `00902bf93f1730bbfff7bda2b08f23a5e83cf3c3`
 - **Next.js baseline:** 16.4.2
-- **Review state:** Source inspected; validation pending.
+- **Review state:** Completed after successful review workflow.
 
 ## Evidence and intended behavior
 
@@ -23,7 +23,7 @@ No separate functional failure is asserted from this documentation review alone.
 
 ## Validation boundary
 
-The file's declared responsibility was inspected in the current repository revision. The branch workflow must validate the individual report's spelling, English, Markdown and inventory consistency before it may be marked Completed.
+The file's declared responsibility was inspected in the current repository revision. The review workflow passed inventory integrity, Biome, TypeScript, regressions, English, spelling and Markdown in [run 40234643392](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40234643392).
 
 ## Conclusion
 
