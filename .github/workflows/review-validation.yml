@@ -36,6 +36,8 @@ jobs:
         run: pnpm check:structure
       - name: Hook module scope fixtures
         run: pnpm exec vitest run --project unit .ast-grep/rules/react/hook-module-scope.test.ts
+      - name: Native Biome policy fixtures
+        run: pnpm exec vitest run --project unit .biome/rules/complexity/native-rules.test.ts .biome/rules/dom/rules.test.ts .biome/rules/nextjs/app-router-imports.test.ts .biome/rules/nextjs/rules.test.ts .biome/rules/react/native-rules.test.ts
       - name: TypeScript
         run: pnpm typecheck
       - name: Regression tests
