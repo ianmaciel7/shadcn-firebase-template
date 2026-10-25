@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 604 |
+| Currently completed review reports | 614 |
 | Active report tasks | 0 |
-| Completed tasks | 604 |
-| Pending tasks (excluding active) | 606 |
+| Completed tasks | 614 |
+| Pending tasks (excluding active) | 596 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 579 / 695 items (83.31%) |
+| Project coverage | 589 / 695 items (84.75%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -166,3 +166,7 @@ Seventeen additional primary source files were individually inspected for depend
 ## Agent skill review checkpoint
 
 Twelve additional agent skill source files and references were inspected under the current branch. After fixing a report dictionary exception for an interface filename, [review validation run 40234643392](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40234643392) passed. The source review distinguishes host-installed commands from upstream skill examples and does not certify external tool availability. The project review count is now 579 out of 695 items.
+
+## Firebase skill reference checkpoint
+
+Ten additional Firebase setup and Auth skill files received distinct source reviews and passed [review validation run 40235002079](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40235002079). The local reference audit confirmed a broken Markdown link in an upstream skill; the finding is open, without silently changing its external source. Mobile reference examples are not proof of a production Next.js web test.

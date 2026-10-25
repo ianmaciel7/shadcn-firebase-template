@@ -243,3 +243,10 @@ These notes do not change the confirmed finding totals above.
 ## Structural scanner observations
 
 The inspected React rule set intentionally marks manual memoization, potential derived-state effects and custom-hook extraction as warnings instead of proven defects. Rules targeting route entrypoints are stricter local design choices. None of these review observations changes the count of confirmed project defects.
+
+## Firebase skill reference defect
+
+- **FIREBASE-SKILL-LINK-001 (Low, open):** The tracked copy of `.agents/skills/firebase-basics/SKILL.md` links to `references/refresh/claude.md`, which does not exist in the repository tree. The sibling `references/refresh/other-agents.md` does exist. The maintainer should select the correct destination or restore the missing reference while keeping the external skill provenance aligned.
+- **Impact:** This breaks a setup-guide navigation path, not runtime authentication or Firebase authorization.
+- **Evidence:** [Individual skill report](reports/next-code-file-agents-skills-firebase-basics-skill-md.md). The link target was checked against tracked Git paths.
+- **Accounting:** This finding remains outside the historical severity summary until the consolidated issue list is reconciled.

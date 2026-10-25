@@ -6,11 +6,11 @@
 | Project files inventoried | 576 |
 | Total project review items | 695 |
 | Folder reports completed | 78 |
-| File reports completed | 501 |
-| Items reviewed | 579 |
-| Coverage | 83.31% |
+| File reports completed | 511 |
+| Items reviewed | 589 |
+| Coverage | 84.75% |
 | Active reports | 0 |
-| Pending items | 116 |
+| Pending items | 106 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -106,3 +106,7 @@ Seventeen further source file reports were validated under review workflow run 4
 ## Installed skill review checkpoint
 
 Twelve additional skill and reference file reviews are complete. The review focuses on available paths, expected workflows and the difference between local agent policies and upstream references. Review CI run 40234643392 passed; remaining skill files retain their own Pending entries.
+
+## Firebase skill reference checkpoint
+
+Ten additional skills and references were inspected for Firebase Auth flows, native platform boundaries, CLI discovery and local setup. One missing local reference is recorded in the findings register. Review run 40235002079 passed. Project review coverage is 589/695 primary items.
