@@ -25,3 +25,7 @@ The separate agent-evaluation fixture and runner files are not Next.js route con
 ## Validated library source checkpoint
 
 The latest review set recorded in run 40192558815 covers fourteen additional project files under the Next.js 16.4.2 baseline. Future framework upgrades remain outside its verified scope.
+
+## Validated configuration scope
+
+Version-matched build, test, routing and tooling configuration files have current individual reports and passed the branch validation workflow in run 40193275075. End-to-end hosting and Firebase rules testing are not established by this static inspection.

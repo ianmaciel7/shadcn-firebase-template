@@ -6,11 +6,11 @@
 | Project files inventoried | 576 |
 | Total project review items | 695 |
 | Folder reports completed | 40 |
-| File reports completed | 309 |
-| Items reviewed | 349 |
-| Coverage | 50.22% |
+| File reports completed | 329 |
+| Items reviewed | 369 |
+| Coverage | 53.09% |
 | Active reports | 0 |
-| Pending items | 346 |
+| Pending items | 326 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -66,3 +66,7 @@ Fourteen file-specific reviews completed at revision `db0f8dd`. The project now 
 ## Test review checkpoint
 
 Twenty unit and browser test files received individual reviewed reports in the current branch. The [successful validation run 40192955670](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40192955670) supports their current completion status; app, browser and Firebase integration gaps listed in each report remain outside this review scope.
+
+## Configuration review coverage
+
+Twenty additional configuration files were reviewed and validated through run 40193275075. The project inventory has 369 reviewed items of 695, with 326 project items still pending. Static examination of Firebase rules does not replace emulator authorization tests.

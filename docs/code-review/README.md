@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 374 |
+| Currently completed review reports | 394 |
 | Active report tasks | 0 |
-| Completed tasks | 374 |
-| Pending tasks (excluding active) | 836 |
+| Completed tasks | 394 |
+| Pending tasks (excluding active) | 816 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 349 / 695 items (50.22%) |
+| Project coverage | 369 / 695 items (53.09%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -126,3 +126,7 @@ Fourteen additional individual source reviews were checked under Next.js 16.4.2 
 ## Validated route and quality test checkpoint
 
 Twenty more file-specific reviews were completed for home and profile composition, access guards, App Router errors and loading, locale routing, responsive viewport behavior, and source quality guard tests. Branch run [40192955670](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40192955670) passed all configured checks before these entries were marked Completed. Project coverage is now 349/695 (50.22%); the documentation corpus remains 24/514.
+
+## Verified configuration review checkpoint
+
+Twenty primary configuration files covering Firebase rules and emulators, TypeScript tooling, Biome, shadcn registry configuration, security and documentation quality tooling, Vitest and Playwright were inspected individually. [Review CI run 40193275075](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40193275075) passed inventory integrity, Biome, TypeScript, regressions, English, spelling and Markdown before these reports were counted complete. Rule-emulator and deployment tests remain separate obligations; documentation corpus completion is unchanged.
