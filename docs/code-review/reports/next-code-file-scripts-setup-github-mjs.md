@@ -17,7 +17,7 @@ Checks gh CLI authorization, discovers the current repository, configures squash
 
 The setup script changes remote repository settings; it must run only for an intentionally selected repository with adequate permissions. It was read, not executed.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 

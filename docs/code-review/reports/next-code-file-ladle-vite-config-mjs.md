@@ -17,7 +17,7 @@ Configures Tailwind for Vite and resolves the @ alias to the application's src d
 
 Ladle uses Vite rather than Next.js, so framework-only imports or assets may need deliberate mocks in isolated stories.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 

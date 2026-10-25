@@ -17,7 +17,7 @@ Loads environment files, requires an explicit Auth emulator host and project ID,
 
 This command deliberately clears local test accounts; it should not be run with untrusted endpoint values or real production credentials. No network request was made during review.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 

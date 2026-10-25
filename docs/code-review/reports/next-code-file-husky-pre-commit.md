@@ -17,7 +17,7 @@ Runs staged-file checks and optionally Python pre-commit integrity hooks, config
 
 The Python pre-commit portion is explicitly skipped when the binary is absent; equivalent checks must remain enforced in CI.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 

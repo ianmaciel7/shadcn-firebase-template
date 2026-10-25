@@ -17,7 +17,7 @@ Imports shared app CSS, explicitly includes application sources for Tailwind and
 
 Fallback fonts can differ from production layout metrics; screenshots should use the production Playwright environment.
 
-This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that unrun local hooks, production deployments or the complete CI matrix were executed.
+This is a scope-specific source review. No additional confirmed exploitable vulnerability was established from this file alone. The review does not claim that local hooks that were not executed, production deployments or the complete CI matrix were executed.
 
 ## Disposition
 
