@@ -5,12 +5,12 @@
 | Project folders inventoried | 119 |
 | Project files inventoried | 576 |
 | Total project review items | 695 |
-| Folder reports completed | 71 |
-| File reports completed | 444 |
-| Items reviewed | 515 |
-| Coverage | 74.10% |
+| Folder reports completed | 78 |
+| File reports completed | 462 |
+| Items reviewed | 540 |
+| Coverage | 77.70% |
 | Active reports | 0 |
-| Pending items | 180 |
+| Pending items | 155 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -90,3 +90,7 @@ An additional 56 structural scanner inventory items were inspected and reconcile
 ## Native rule review coverage
 
 Eleven additional Biome primary source files have completed file-specific reviews and passing rule fixture evidence. Project coverage is 515 of 695 items (74.10%).
+
+## Tested source review checkpoint
+
+Eighteen new test and fixture reports and seven folder ownership reviews were completed after [branch validation run 40210742964](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40210742964). All reports retain independent primary file or folder identities. The project currently has 540 completed reviews of 695 source items (77.70%), including 78 folders and 462 files. The two visual baseline images remain outside any claim of pixel-level inspection.
