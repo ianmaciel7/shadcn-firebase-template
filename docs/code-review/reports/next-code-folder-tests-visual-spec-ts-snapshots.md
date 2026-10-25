@@ -16,7 +16,7 @@ Contains two committed Linux Chromium screenshot baselines for the light and dar
 
 The binary images were inventoried by path; this folder report does not claim pixel inspection or prove current screenshots still match.
 
-A folder review is not a substitute for its descendant file reviews, and no uninspected binary asset or production run is claimed as complete.
+A folder review is not a substitute for its descendant file reviews, and no binary asset not inspected or production run is claimed as complete.
 
 ## Verification
 
