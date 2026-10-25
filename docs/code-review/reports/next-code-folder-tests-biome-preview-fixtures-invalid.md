@@ -16,7 +16,7 @@ Contains two intentionally mismatched filename/export samples for ProfileCard an
 
 The sources deliberately violate the rule and are correct only when the preview lint step rejects them.
 
-A folder review is not a substitute for its descendant file reviews, and no uninspected binary asset or production run is claimed as complete.
+A folder review is not a substitute for its descendant file reviews, and no binary asset not inspected or production run is claimed as complete.
 
 ## Verification
 
