@@ -6,11 +6,11 @@
 | Project files inventoried | 576 |
 | Total project review items | 695 |
 | Folder reports completed | 78 |
-| File reports completed | 489 |
-| Items reviewed | 567 |
-| Coverage | 81.58% |
+| File reports completed | 501 |
+| Items reviewed | 579 |
+| Coverage | 83.31% |
 | Active reports | 0 |
-| Pending items | 128 |
+| Pending items | 116 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -102,3 +102,7 @@ Nine accepted numbered decisions and the ADR index were individually inspected, 
 ## Configuration and provenance checkpoint
 
 Seventeen further source file reports were validated under review workflow run 40234107521, including separate boundaries for dependency audit exceptions, static security patterns and version-specific upstream source indexes. Project review coverage is now 567/695 items; 128 project primary items remain pending. Recorded upstream document hashes were not independently re-retrieved in this batch.
+
+## Installed skill review checkpoint
+
+Twelve additional skill and reference file reviews are complete. The review focuses on available paths, expected workflows and the difference between local agent policies and upstream references. Review CI run 40234643392 passed; remaining skill files retain their own Pending entries.

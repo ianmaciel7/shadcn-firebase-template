@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 592 |
+| Currently completed review reports | 604 |
 | Active report tasks | 0 |
-| Completed tasks | 592 |
-| Pending tasks (excluding active) | 618 |
+| Completed tasks | 604 |
+| Pending tasks (excluding active) | 606 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 567 / 695 items (81.58%) |
+| Project coverage | 579 / 695 items (83.31%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -162,3 +162,7 @@ Ten architecture decision records and the decision index were inspected as separ
 ## Configuration and upstream source manifest review
 
 Seventeen additional primary source files were individually inspected for dependency policy, security rules, mutation testing, repository metadata, Serena configuration and recorded documentation provenance. [Review CI run 40234107521](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40234107521) passed before completion status changed. Documentation source manifests only record prior upstream retrieval checkpoints; their review does not replace the 490 outstanding installed Next.js documentation reviews.
+
+## Agent skill review checkpoint
+
+Twelve additional agent skill source files and references were inspected under the current branch. After fixing a report dictionary exception for an interface filename, [review validation run 40234643392](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40234643392) passed. The source review distinguishes host-installed commands from upstream skill examples and does not certify external tool availability. The project review count is now 579 out of 695 items.
