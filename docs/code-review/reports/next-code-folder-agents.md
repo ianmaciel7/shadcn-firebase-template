@@ -15,7 +15,7 @@ Holds project agent configuration, source-only synchronization, persistent rule 
 
 ## Coverage and verification limits
 
-Eighty tracked descendants were inventoried. The directory architecture was inspected, but unreviewed skill files remain Pending under their own agents.
+Eighty tracked descendants were inventoried. The directory architecture was inspected, but skill files that are not yet inspected remain Pending under their own agents.
 
 This directory report verifies file grouping and boundary intent rather than substituting for descendant file reports. It does not mark Pending children as Completed, and it does not claim that remote services or local developer hooks were executed.
 
