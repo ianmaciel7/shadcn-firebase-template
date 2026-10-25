@@ -6,11 +6,11 @@
 | Project files inventoried | 576 |
 | Total project review items | 695 |
 | Folder reports completed | 71 |
-| File reports completed | 433 |
-| Items reviewed | 504 |
-| Coverage | 72.52% |
+| File reports completed | 444 |
+| Items reviewed | 515 |
+| Coverage | 74.10% |
 | Active reports | 0 |
-| Pending items | 191 |
+| Pending items | 180 |
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
@@ -86,3 +86,7 @@ Twenty additional rules or rule-specific tests were reviewed individually under 
 ## Structural scanner verification checkpoint
 
 An additional 56 structural scanner inventory items were inspected and reconciled from the current Git tree, covering accepted and rejected rule cases, diagnostic snapshots and source folder boundaries. The current project coverage is 504 of 695 items (72.52%). The independent review workflow passed in run 40209883877.
+
+## Native rule review coverage
+
+Eleven additional Biome primary source files have completed file-specific reviews and passing rule fixture evidence. Project coverage is 515 of 695 items (74.10%).

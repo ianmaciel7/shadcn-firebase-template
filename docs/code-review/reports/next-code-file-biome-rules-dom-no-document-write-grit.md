@@ -1,28 +1,28 @@
-# Individual Biome review — `next-code-file-biome-rules-dom-no-document-write-grit`
+# Individual Biome rule or test review — `next-code-file-biome-rules-dom-no-document-write-grit`
 
 ## Identification
 
-- **Agent:** `next-code-file-biome-rules-dom-no-document-write-grit`
+- **Agent identity:** `next-code-file-biome-rules-dom-no-document-write-grit`
 - **Primary file:** `.biome/rules/dom/no-document-write.grit`
 - **Type:** CODE_FILE
-- **Next.js baseline:** 16.4.2
-- **Source checkpoint:** `eaf6acad93f92332cfb73787f9655febae53b4b6`
-- **Status:** Reviewed from source; validation pending.
+- **Framework:** Next.js 16.4.2
+- **Reviewed checkpoint:** `e5f84f00c293be80be70396aaf61afd17c06a61d`
+- **Status:** Completed after successful rule and report checks.
 
-## Implementation evidence
+## Source-specific evidence
 
-The rule registers an error for document.write and document.writeln on direct, window-qualified and globalThis-qualified document objects.
+The source rule rejects direct, window-qualified and globalThis-qualified document.write or writeln expressions.
 
-## Finding and coverage limits
+## Limits and findings
 
-The rule intentionally handles listed syntax forms only; custom aliases require a separate security review.
+Aliased document references are outside this specific syntax pattern.
 
-No additional confirmed defect was demonstrated solely by this source review. Project rules can be stricter than the framework.
+No additional confirmed source defect was established solely by this file inspection.
 
 ## Verification
 
-The dedicated review workflow now runs the native Biome policy fixtures as well as structural scanner fixtures, focused regressions, TypeScript, spelling and Markdown. Do not mark this file completed unless the updated workflow passes.
+[Branch validation run 40210742964](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40210742964) successfully executed five native Biome fixture suites, `pnpm check:structure`, hook scope fixtures, TypeScript, focused regressions, language, spelling, Markdown and inventory checks.
 
-## Disposition
+## Conclusion
 
-The file-specific policy or test contract has been inspected and recorded.
+This primary file was inspected and validated. Application runtime and remaining framework reference documents have independent review status.

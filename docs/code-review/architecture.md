@@ -45,3 +45,7 @@ The project structural rule family now has twenty current individual reviews cov
 ## Structural policy test boundary
 
 The structural scanner source policy has a dedicated test-and-scan step in the branch validation workflow. These completed file and folder reports document test fixture intent and expected scanner diagnostic ranges; they do not convert project heuristics into official React or Next.js restrictions. See run 40209883877.
+
+## Native rule verification
+
+The branch workflow runs the native Biome quality rule fixtures, Next.js typed route patterns, and JSX and DOM safety checks. Source policy verification does not certify untested application integration paths. See run 40210742964.

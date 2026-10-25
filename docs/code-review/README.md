@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 529 |
+| Currently completed review reports | 540 |
 | Active report tasks | 0 |
-| Completed tasks | 529 |
-| Pending tasks (excluding active) | 681 |
+| Completed tasks | 540 |
+| Pending tasks (excluding active) | 670 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 504 / 695 items (72.52%) |
+| Project coverage | 515 / 695 items (74.10%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -146,3 +146,7 @@ Twenty additional per-file reviews of grouped structural scanning rules and thei
 ## Verified structural scanner fixtures
 
 The current inventory includes 19 scanner fixture reviews, 19 diagnostic snapshot reviews and 18 structural scanner folder reviews completed after [GitHub Actions run 40209883877](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40209883877). The dedicated workflow now executes `pnpm check:structure` and focused hook module scope tests. Folder-level completion does not imply any pending child file is complete.
+
+## Native Biome policy fixture review
+
+Eleven file-specific reviews of pinned Biome configuration plugins, generated Next.js type rules, complexity checks and React and DOM fixtures were completed after [CI run 40210742964](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40210742964). The dedicated review workflow now executes all five native Biome rule test suites rather than relying only on the repository lint command.
