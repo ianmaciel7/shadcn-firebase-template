@@ -7,7 +7,7 @@
 - **Type:** CODE_FILE
 - **Source checkpoint:** `50944bedc7df432feff8928acf57433a20bce0c7`
 - **Framework baseline:** Next.js 16.4.2
-- **Review disposition:** Source inspected; validation pending.
+- **Review disposition:** Completed after CI validation.
 
 ## Specific evidence
 
@@ -19,8 +19,8 @@ No independently confirmed new defect was established within this individual fil
 
 ## Validation boundary
 
-The source and existing test assertions were inspected, not executed in this review step. The branch CI checks English, spelling, Markdown and the manifest before this item may be marked completed. Runtime correctness and full Next.js documentation coverage require their own tests and reviews.
+The source and existing test assertions were inspected, not executed in this review step. Branch CI passed inventory integrity, Biome, TypeScript, regression tests, English, spelling and Markdown in [run 40192558815](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40192558815). Runtime correctness and full Next.js documentation coverage require their own tests and reviews.
 
 ## Conclusion
 
-The current source is internally consistent with its documented responsibility for the inspected paths. Preserve the identified verification boundary when updating consolidated coverage.
+The source review is completed following the successful validation run 40192558815. Preserve the identified verification boundary when updating consolidated coverage.
