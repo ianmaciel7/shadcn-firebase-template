@@ -11,7 +11,7 @@
 
 ## Evidence from fixture assertions
 
-Valid examples include a state-only UI component and a nonrendering custom hook. Invalid cases combine useState, useEffect and JSX in UI functions.
+Valid examples include a state-only UI component and a custom hook that does not render. Invalid cases combine useState, useEffect and JSX in UI functions.
 
 ## Boundaries
 

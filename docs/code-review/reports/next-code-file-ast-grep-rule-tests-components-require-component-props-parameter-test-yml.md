@@ -11,7 +11,7 @@
 
 ## Evidence from fixture assertions
 
-Positive functions declare props or children parameters and noncomponent helpers lack a required prop parameter. Three negative named component functions include both asynchronous and ordinary declarations with empty parameter lists.
+Positive functions declare props or children parameters and helpers that are not components lack a required prop parameter. Three negative named component functions include both asynchronous and ordinary declarations with empty parameter lists.
 
 ## Boundaries
 
