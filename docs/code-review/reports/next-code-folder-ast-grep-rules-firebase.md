@@ -1,28 +1,26 @@
-# Individual structural folder review — `next-code-folder-ast-grep-rules-firebase`
+# Individual folder review — `next-code-folder-ast-grep-rules-firebase`
 
 ## Identification
 
 - **Agent:** `next-code-folder-ast-grep-rules-firebase`
-- **Primary directory:** `.ast-grep/rules/firebase/`
-- **Type:** CODE_FOLDER
-- **Tree revision:** `65362394c5976343901c59943db471eea6108996`
-- **Next.js baseline:** 16.4.2
-- **Review status:** Folder inspected; validation pending.
+- **Primary item:** `.ast-grep/rules/firebase/`
+- **Inventory type:** CODE_FOLDER
+- **Baseline:** Next.js 16.4.2
+- **Reviewed source revision:** `3f153caa103076b086888a3106a7de9bf8ab9d63`
+- **Status:** Completed following successful review checks.
 
-## Ownership and content
+## Source-specific evidence
 
-Direct Firebase Auth singleton property access restrictions.
+Direct Firebase Auth property access restrictions.
 
-The Git tree contains **1 tracked descendant files**, including **1 direct files**, at this checkpoint. The folder's structure and purpose were compared with the individually inspected structural rules, sample fixtures and expected diagnostic spans.
+## Coverage and limits
 
-## Boundaries
-
-The directory owns configuration or testing assets, not application runtime authorization. A completed folder report does not imply that all descendant files have individual completed reviews. Rules described in this folder may be stricter repository preferences than official framework requirements.
+The tracked Git tree contains 1 descendant files at the source checkpoint. This folder review documents ownership and does not imply that unfinished child reviews have passed.
 
 ## Verification
 
-The branch validation workflow executes the structural scanner's actual test fixtures and project scan, then verifies report spelling, Markdown and manifest consistency. The folder can be marked Completed after successful CI.
+[Review CI run 40209883877](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40209883877) passed the structural rule fixtures and source scan, hook module scope tests, Biome, TypeScript, focused regressions, English, spelling, Markdown and review inventory consistency.
 
-## Disposition
+## Conclusion
 
-Folder structure and responsibilities inspected. Other inventory entries retain independent review status.
+This individual inventory item is reviewed. It does not certify the full application, live Firebase services or every official Next.js document.

@@ -1,28 +1,26 @@
-# Individual structural fixture review — `next-code-file-ast-grep-rule-tests-components-require-button-props-test-yml`
+# Individual fixture review — `next-code-file-ast-grep-rule-tests-components-require-button-props-test-yml`
 
 ## Identification
 
-- **Agent identity:** `next-code-file-ast-grep-rule-tests-components-require-button-props-test-yml`
-- **Primary file:** `.ast-grep/rule-tests/components/require-button-props-test.yml`
-- **Type:** CODE_FILE
-- **Source checkpoint:** `3f153caa103076b086888a3106a7de9bf8ab9d63`
-- **Framework:** Next.js 16.4.2
-- **Review status:** Completed after passing structural and report checks.
+- **Agent:** `next-code-file-ast-grep-rule-tests-components-require-button-props-test-yml`
+- **Primary item:** `.ast-grep/rule-tests/components/require-button-props-test.yml`
+- **Inventory type:** CODE_FILE
+- **Baseline:** Next.js 16.4.2
+- **Reviewed source revision:** `3f153caa103076b086888a3106a7de9bf8ab9d63`
+- **Status:** Completed following successful review checks.
 
-## Evidence from fixture assertions
+## Source-specific evidence
 
-The positive examples cover Button and native button prop inheritance, other typed media controls and unrelated modal types. Negative cases reject standalone ButtonProps type aliases and interfaces.
+Button prop inheritance: valid native and component props, invalid standalone button interfaces.
 
-## Boundaries
+## Coverage and limits
 
-This fixture suite cannot identify arbitrary indirect type aliases without extending the structural rule.
-
-The fixture records expected valid and invalid samples for one rule and should be paired with its version-matched scanner. Existence of a fixture does not alone prove that the scanner passes.
+This source fixture defines accepted and rejected cases for one scanner rule. The fixture documents the rule's tested syntax boundary, not all possible equivalent TypeScript or JSX forms.
 
 ## Verification
 
-The review workflow executes `pnpm check:structure` to run the actual rule tests and project scan. Report quality, TypeScript, regression tests, language, spelling and Markdown must also pass before the manifest item is marked Completed.
+[Review CI run 40209883877](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40209883877) passed the structural rule fixtures and source scan, hook module scope tests, Biome, TypeScript, focused regressions, English, spelling, Markdown and review inventory consistency.
 
-## Disposition
+## Conclusion
 
-This is a file-specific fixture assessment, not a substitute for inspecting the corresponding scanner rule or generated snapshot.
+This individual inventory item is reviewed. It does not certify the full application, live Firebase services or every official Next.js document.

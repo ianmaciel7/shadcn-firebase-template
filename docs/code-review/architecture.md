@@ -41,3 +41,7 @@ The GitHub, Husky, Ladle, emulator script and agent-rule folders now have indivi
 ## Source-level structure policies
 
 The project structural rule family now has twenty current individual reviews covering source-only warnings and blocking checks. A rule's syntax match does not make its convention an official Next.js or React requirement. The review workflow passed in run 40198684005; its tests do not cover the full production build matrix.
+
+## Structural policy test boundary
+
+The structural scanner source policy has a dedicated test-and-scan step in the branch validation workflow. These completed file and folder reports document test fixture intent and expected scanner diagnostic ranges; they do not convert project heuristics into official React or Next.js restrictions. See run 40209883877.

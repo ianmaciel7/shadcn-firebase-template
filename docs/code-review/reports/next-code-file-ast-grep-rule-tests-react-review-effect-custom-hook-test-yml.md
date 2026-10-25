@@ -1,28 +1,26 @@
-# Individual structural fixture review — `next-code-file-ast-grep-rule-tests-react-review-effect-custom-hook-test-yml`
+# Individual fixture review — `next-code-file-ast-grep-rule-tests-react-review-effect-custom-hook-test-yml`
 
 ## Identification
 
-- **Agent identity:** `next-code-file-ast-grep-rule-tests-react-review-effect-custom-hook-test-yml`
-- **Primary file:** `.ast-grep/rule-tests/react/review-effect-custom-hook-test.yml`
-- **Type:** CODE_FILE
-- **Source checkpoint:** `3f153caa103076b086888a3106a7de9bf8ab9d63`
-- **Framework:** Next.js 16.4.2
-- **Review status:** Source inspected; CI pending.
+- **Agent:** `next-code-file-ast-grep-rule-tests-react-review-effect-custom-hook-test-yml`
+- **Primary item:** `.ast-grep/rule-tests/react/review-effect-custom-hook-test.yml`
+- **Inventory type:** CODE_FILE
+- **Baseline:** Next.js 16.4.2
+- **Reviewed source revision:** `3f153caa103076b086888a3106a7de9bf8ab9d63`
+- **Status:** Completed following successful review checks.
 
-## Evidence from fixture assertions
+## Source-specific evidence
 
-Valid code performs an ordinary calculation. Negative cases demonstrate direct useEffect and React.useEffect in component source.
+Ordinary calculations pass; useEffect and React.useEffect expressions produce advisory findings.
 
-## Boundaries
+## Coverage and limits
 
-The rule is a review hint and does not require every effect to be extracted into a custom hook.
-
-The fixture records expected valid and invalid samples for one rule and should be paired with its version-matched scanner. Existence of a fixture does not alone prove that the scanner passes.
+This source fixture defines accepted and rejected cases for one scanner rule. The fixture documents the rule's tested syntax boundary, not all possible equivalent TypeScript or JSX forms.
 
 ## Verification
 
-The review workflow executes `pnpm check:structure` to run the actual rule tests and project scan. Report quality, TypeScript, regression tests, language, spelling and Markdown must also pass before the manifest item is marked Completed.
+[Review CI run 40209883877](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40209883877) passed the structural rule fixtures and source scan, hook module scope tests, Biome, TypeScript, focused regressions, English, spelling, Markdown and review inventory consistency.
 
-## Disposition
+## Conclusion
 
-This is a file-specific fixture assessment, not a substitute for inspecting the corresponding scanner rule or generated snapshot.
+This individual inventory item is reviewed. It does not certify the full application, live Firebase services or every official Next.js document.
