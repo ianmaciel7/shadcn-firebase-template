@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 540 |
+| Currently completed review reports | 565 |
 | Active report tasks | 0 |
-| Completed tasks | 540 |
-| Pending tasks (excluding active) | 670 |
+| Completed tasks | 565 |
+| Pending tasks (excluding active) | 645 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 515 / 695 items (74.10%) |
+| Project coverage | 540 / 695 items (77.70%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -150,3 +150,7 @@ The current inventory includes 19 scanner fixture reviews, 19 diagnostic snapsho
 ## Native Biome policy fixture review
 
 Eleven file-specific reviews of pinned Biome configuration plugins, generated Next.js type rules, complexity checks and React and DOM fixtures were completed after [CI run 40210742964](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40210742964). The dedicated review workflow now executes all five native Biome rule test suites rather than relying only on the repository lint command.
+
+## Completed browser and test infrastructure checkpoint
+
+Ten Playwright and naming-fixture sources, eight focused regression tests and seven test infrastructure folders were inspected separately. [Review validation run 40210742964](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40210742964) passed the branch report checks, structural rule fixtures, TypeScript and focused regressions. The full Playwright, Firebase emulator and visual screenshot matrix is not claimed as executed by this review workflow. Project review coverage is now 540/695 (77.70%), with 155 project items pending.
