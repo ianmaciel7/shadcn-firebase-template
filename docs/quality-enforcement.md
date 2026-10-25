@@ -24,7 +24,7 @@ and a regression test.
 | Unused application code | Knip | Fallow supplies independent health and coverage signals. |
 | Duplicate code | jscpd | Keep its thresholds in its own configuration. |
 | Firebase emulator setup and seed data | Operational Node scripts | These are automation tasks, not custom linters. |
-| Discriminated status, form submission state | React + TypeScript + React Hook Form | Model mutually exclusive branches using `status`; use `formState.isSubmitting`, not duplicate flags. |
+| UI phase flags and form submission state | React + TypeScript + React Hook Form | Model loading, hidden and error conditions with explicit `isLoading`, `isHidden` and `isError` flags and nullable payloads; use `formState.isSubmitting` instead of a second saving flag. |
 | Persistence and dependency injection | Typed service adapter | `saveProfile` defaults to Firebase implementations but accepts `ProfileDependencies` for unit tests. |
 | Complexity, health, and warnings | Fallow + React Doctor | Fallow thresholds can fail CI; React Doctor diagnostics can be advisory. Do not confuse a successful process exit with no warnings. |
 | Agent tool-selection behavior | `pnpm eval:tool-usage` | On-demand Codex trace evaluation. The runner has deterministic Node tests and evaluates the agent's tool calls plus a structured receipt; it stays outside CI because configured MCP/plugin availability and agent behavior are external and non-deterministic. |

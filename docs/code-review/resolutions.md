@@ -166,3 +166,7 @@ while keeping semantic responsibility review distinct from metric enforcement.
 ## Evaluation runner remediation backlog
 
 Both `EVAL-RUNNER-CLI-001` and `EVAL-RUNNER-TRACE-001` remain **open** after the evaluation review reports were completed. The repository quality and documentation checks validate the review artifacts but do not execute the external agent evaluation suite or prove either behavior corrected.
+
+## Documentation state guidance reconciliation
+
+Reviewing `docs/quality-enforcement.md` identified a contradiction with the current `CODING_STANDARDS.md` and `.agents/rules/react.md`: the quality table prescribed a `status` tag for UI phases even though the active architecture requires explicit phase flags. The current quality guide now uses `isLoading`, `isHidden` and `isError` with nullable payloads, while continuing to rely on React Hook Form's native `formState.isSubmitting`. No accepted ADR was altered. The review workflow verifies the updated documentation; this is a corrected guidance discrepancy, not evidence of a runtime defect.
