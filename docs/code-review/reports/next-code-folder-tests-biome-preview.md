@@ -16,7 +16,7 @@ Contains four source fixtures used by the dedicated preview Biome filename plugi
 
 The preview plugin runs separately from the normal Biome configuration; fixtures are not application components.
 
-A folder review is not a substitute for its descendant file reviews, and no uninspected binary asset or production run is claimed as complete.
+A folder review is not a substitute for its descendant file reviews, and no binary asset not inspected or production run is claimed as complete.
 
 ## Verification
 
