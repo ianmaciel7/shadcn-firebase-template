@@ -111,7 +111,7 @@ function report(root, violations) {
   if (violations.length > 0) {
     console.error(
       `
-${violations.length} line(s) not in English. See .agents/rules/language.md.`,
+${violations.length} line(s) not in English. See .agents/rules/rules.md.`,
     );
     process.exit(1);
   }

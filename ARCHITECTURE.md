@@ -175,7 +175,7 @@ discriminated `status` and composes Card and Form parts with one
 `src/app/(protected)/profile/_lib/definitions.ts`, alongside the route-private profile
 workflow. The canonical profile
 responsibilities live in
-[the form rule](.agents/rules/forms.md). Profile preferences use
+[the form rule](.agents/rules/rules.md#6-form-architecture-and-context-standards). Profile preferences use
 Firestore at `users/{uid}` with owner and field/value validation rules. Avatar
 Storage rules restrict `users/{uid}/avatar` to its owner and enforce accepted
 image types and the 2 MiB upload limit. These browser SDK modules are not a
@@ -185,7 +185,7 @@ server code, rather than using those names for Firebase client modules
 ([Fetching Data](https://nextjs.org/docs/app/getting-started/fetching-data),
 [Mutating Data](https://nextjs.org/docs/app/getting-started/mutating-data),
 [Data Security](https://nextjs.org/docs/app/guides/data-security)). See
-[.agents/rules/data.md](.agents/rules/data.md) for the
+[.agents/rules/rules.md](.agents/rules/rules.md#5-data-layer-module-conventions) for the
 file taxonomy defining `definitions.ts`, `dto.ts`, `dal.ts`, and `data.ts`. The client
 SDK relies on Firebase Security Rules and does not provide server authorization
 for protected routes. No deployment integration is configured.
@@ -324,7 +324,8 @@ guard or submit permitted events for their own identity. Firebase resource rules
 still authorize profile data. Authoritative mutation auditing requires logging
 inside server-owned operations. New functionalities must use `withUsageGuard`
 and extend the server allowlist. Development remounts can generate duplicates.
-See [observability operations](docs/observability.md) for deployment and log controls.
+The application emits structured logs for authentication and security-critical
+telemetry via Cloud Functions and Cloud Logging.
 
 ## Next.js server error logging
 

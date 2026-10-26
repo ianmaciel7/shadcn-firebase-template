@@ -9,10 +9,10 @@ This skill governs how to classify, locate, and record knowledge, rules, decisio
 
 ## Core Principles
 
-1. **English by default**: All documentation, code comments, and rule descriptions must be in English per [.agents/rules/language.md](../../rules/language.md), even if the user provided the input in another language (e.g., Portuguese).
+1. **English by default**: All documentation, code comments, and rule descriptions must be in English per [.agents/rules/rules.md](../../rules/rules.md#7-language-policy), even if the user provided the input in another language (e.g., Portuguese).
 2. **Strict path portability**: NEVER store hardcoded host-specific or user-specific absolute paths (such as user home directories, drive prefixes, or machine root paths). Always sanitize and convert paths to repository-relative format (e.g., `TOOLING.md`, `src/app/`, `.agents/rules/`).
 3. **Single source of truth**: Store each rule or piece of knowledge in its authoritative canonical document. Do not duplicate rules across multiple guides.
-4. **ADR immutability**: Accepted Architecture Decision Records (`docs/adr/0001-*` through current) are historical and immutable per [.agents/rules/adr.md](../../rules/adr.md). Never rewrite, edit, or renumber an accepted record.
+4. **ADR immutability**: Accepted Architecture Decision Records (`docs/adr/0001-*` through current) are historical and immutable per [.agents/rules/rules.md](../../rules/rules.md#2-adr-naming-and-immutability). Never rewrite, edit, or renumber an accepted record.
 5. **Every rule needs a safeguard**: A rule that lives only in prose will be broken again. When you save a rule, convention, or lesson learned from a mistake, also make it mechanically enforced by the strongest installed tool, so the same error cannot return silently. Documentation records the rule; a safeguard defends it. See [Safeguards](#safeguards-make-every-saved-rule-enforceable).
 6. **Retrospective synthesis & environment improvement**: Findings from `/retro` suggest improvements to the agent's *environment*, not ephemeral patches to code. When persisting retro results, classify them:
    - **Mechanical violations** (fixed patterns, imports, banned APIs, file locations) must become deterministic checks and safeguards.
@@ -43,9 +43,7 @@ Use this matrix to identify the canonical destination file for any given piece o
 | **Database & persistence schema** | Entity-relationship model, tables, columns, relations, storage | `DER.md` | **Update / Create** |
 | **Global agent directives** | Overall mission, high-level engineering rules, documentation map for agents | `AGENTS.md` | **Update** |
 | **Agent tool configuration** | MCP servers, client integrations, sync settings | `.agents/agents.json` | **Update** |
-| **Persistent agent rules** | Standalone, machine-actionable behavioral constraints for AI agents (e.g., naming, language, thin routes, components) | `.agents/rules/<name>.md` | **Create / Update** |
-| **Quality enforcement & gates** | Matched inventory of policies to primary enforcement tools, test runners, and budgets | `docs/quality.md` | **Update** |
-| **Application operations & telemetry** | Runtime instrumentation, cloud logging, usage guards, operational runbooks | `docs/observability.md` | **Update** |
+| **Persistent agent rules** | Standalone, machine-actionable behavioral constraints for AI agents (e.g., naming, language, thin routes, components) | `.agents/rules/rules.md` | **Update** |
 | **Reusable agent skills** | Multi-step interactive agent workflows, tool guides, reusable recipes | `.agents/skills/<name>/SKILL.md` | **Create** |
 | **Architecture Decision Records (ADRs)** | Architectural choices, trade-offs, tech evaluations, paradigm changes | `docs/adr/NNNN-<phrase>.md` | **Create** (Immutable) |
 | **Retro: Navigation pointers** | Navigation aids to eliminate exploration friction surfaced in `/retro` | `AGENTS.md` (or domain index docs) | **Update** |
@@ -93,12 +91,12 @@ Create a new file only when the information constitutes a distinct, modular arti
 
 1. **Architecture Decision Records (`docs/adr/NNNN-<phrase>.md`)**:
   - **Trigger**: A significant architectural, structural, or technology choice that requires recording context, options considered, decision, and consequences.
-  - **Immutability rule**: Accepted ADRs are strictly immutable per [.agents/rules/adr.md](../../rules/adr.md). Never edit or rewrite accepted records.
+  - **Immutability rule**: Accepted ADRs are strictly immutable per [.agents/rules/rules.md](../../rules/rules.md#2-adr-naming-and-immutability). Never edit or rewrite accepted records.
   - **Naming format**: Next unused four-digit number followed by a kebab-case imperative phrase (e.g., `0009-adopt-database-orm.md`).
   - **Index update**: After creating the ADR, add its entry to `docs/adr/README.md`. If superseding an earlier ADR, note the supersession in `docs/adr/README.md` and in the new ADR.
-2. **Agent Persistent Rules (`.agents/rules/<name>.md`)**:
+2. **Agent Persistent Rules (`.agents/rules/rules.md`)**:
   - **Trigger**: A discrete, persistent behavioral constraint that applies to all coding agents working across the repository (e.g., formatting constraints, commit constraints, language requirements).
-  - **Format**: Concise markdown document focusing solely on the rule, its rationale, and mandatory requirements.
+  - **Format**: Concise section in the consolidated rules file focusing solely on the rule, its rationale, and mandatory requirements.
 3. **Reusable Agent Skills (`.agents/skills/<name>/SKILL.md`)**:
   - **Trigger**: A complex, multi-step interactive workflow, domain-specific procedure, or tool guide that agents should load on demand.
   - **Format**: Directory named with kebab-case, containing `SKILL.md` with YAML front matter (`name` and `description`).
@@ -235,7 +233,7 @@ flowchart TD
 
     D -- "Create New File" --> F["Modular / Architectural Artifact"]
     F --> F1["Architecture Decision -> docs/adr/NNNN-phrase.md (Immutable)"]
-    F --> F2["Persistent Agent Rule -> .agents/rules/name.md"]
+    F --> F2["Persistent Agent Rule -> .agents/rules/rules.md"]
     F --> F3["Reusable Agent Skill -> .agents/skills/name/SKILL.md"]
 
     E1 --> G["Step 4: Sanitize Paths (Repository-Relative)"]
@@ -275,7 +273,7 @@ When a user requests to save or document information (e.g., "save this rule", "s
 
 ### 1. Ingest & Interpret
 - Extract the core rule, convention, architectural decision, retrospective candidate (`/retro`), or tool specification from the user's input or session retrospective.
-- Check the language: if input is in Portuguese or another language, translate the technical guidance into idiomatic English for storage (per [.agents/rules/language.md](../../rules/language.md)).
+- Check the language: if input is in Portuguese or another language, translate the technical guidance into idiomatic English for storage (per [.agents/rules/rules.md](../../rules/rules.md#7-language-policy)).
 
 ### 2. Sanitize & Normalize
 - **Remove absolute machine paths**: Replace machine-specific absolute paths (such as full workspace paths or user directory prefixes) with repository-relative paths (e.g., `TOOLING.md`).

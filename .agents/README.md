@@ -24,21 +24,17 @@ The repository contains nine skills: `ask-matt`, `context7-cli`,
 `setup-matt-pocock-skills`, `shadcn`, and `project-verify`. See the
 [skill inventory](skills/README.md) for entrypoints and provenance.
 
-Persistent rules (see [rules/README.md](rules/README.md)) cover [language](rules/language.md),
-[ADR history](rules/adr.md), [component contracts](rules/components.md),
-[component composition](rules/composition.md),
-[compound forms](rules/forms.md),
-[data modules](rules/data.md),
-[route entrypoints](rules/routes.md),
-[shadcn/ui maintenance](rules/shadcn.md), and
-[Serena external-research memory](rules/serena.md). The
+Persistent rules are consolidated in [rules/rules.md](rules/rules.md), covering language,
+ADR history, component contracts, component composition, compound forms,
+data modules, route entrypoints, Next.js maintenance, React implementation,
+shadcn/ui maintenance, and Serena external-research memory. The
 [shadcn/ui reference](../docs/agents/shadcn.md) records upstream coverage.
 
 ## Source and local files
 
 - `agents.json`: enabled integrations, MCP servers, and workspace behavior.
 - `skills/*/SKILL.md`: reusable skill instructions and supporting references.
-- `rules/*.md`: persistent guidance for coding agents.
+- `rules/rules.md`: persistent guidance for coding agents.
 - [AGENTS.md](../AGENTS.md): canonical repository instructions.
 - `local.json`: private machine-specific overrides and secrets; do not commit.
 
@@ -60,12 +56,12 @@ Generated tool configuration and local state must remain untracked. The
 selected integrations and sync mode determine the materialized outputs; use
 `agents status` instead of assuming every supported output exists.
 
-The [Next.js maintenance rule](rules/nextjs.md) connects the version-matched
+The [Next.js maintenance rule](rules/rules.md#8-nextjs-maintenance) connects the version-matched
 installed docs to the [complete source review](../docs/agents/nextjs.md).
 Use that reference for App Router, Cache Components, and framework diagnostic
 ownership; existing route and component rules retain their stricter scope.
 
-The [React maintenance rules](rules/react.md) ([react.md](rules/react.md), [react-dom.md](rules/react-dom.md), [react-quality.md](rules/react-quality.md)) link current official sources to
+The [React maintenance rules](rules/rules.md#9-react-core-hooks-component-primitives-and-core-apis) link current official sources to
 installed runtime/Compiler support and canonical guidance. The
 [React review](../docs/agents/react.md) records complete content coverage and
 the separate versioned error catalog. Its detailed reference preserves all
