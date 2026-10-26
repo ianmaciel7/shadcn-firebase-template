@@ -14,13 +14,13 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 816 |
+| Currently completed review reports | 828 |
 | Active report tasks | 0 |
-| Completed tasks | 816 |
-| Pending tasks (excluding active) | 394 |
+| Completed tasks | 828 |
+| Pending tasks (excluding active) | 382 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
-| Documentation coverage | 120 / 514 items (23.35%) |
+| Documentation coverage | 132 / 514 items (25.68%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
@@ -150,6 +150,15 @@ tenancy, tracing, memory, MDX, offline and pre-rendering material.
 These are direct source-content audits, not independent agent
 executions or runtime checks. Documentation coverage is 120/514
 and 394 documentation file items remain Pending.
+
+## Rendering, deployment and styling guides checkpoint (2026-10-26)
+
+Twelve Next.js 16.4.2 guide files were inspected directly, with
+individual reports on theme hydration, PWA, public static output,
+redirects, rendering, Sass, scripts, deployment, SPA, static
+exports, Tailwind v3, and Cypress. Current documentation coverage:
+132/514; 382 source files pending. No independent agents or tests
+are claimed for this batch.
 
 ## Execution
 
