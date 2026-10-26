@@ -3,7 +3,7 @@
 Accepted records preserve the reasoning and implementation context at their
 original date. Read current operational details in the
 [documentation guide](../README.md), and follow the
-[naming and immutability rule](../../.agents/rules/adr.md) for new records.
+[naming and immutability rule](../../.agents/rules/rules.md#2-adr-naming-and-immutability) for new records.
 
 ## Index
 
