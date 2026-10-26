@@ -14,13 +14,13 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 804 |
+| Currently completed review reports | 816 |
 | Active report tasks | 0 |
-| Completed tasks | 804 |
-| Pending tasks (excluding active) | 406 |
+| Completed tasks | 816 |
+| Pending tasks (excluding active) | 394 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
-| Documentation coverage | 108 / 514 items (21.01%) |
+| Documentation coverage | 120 / 514 items (23.35%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
@@ -141,6 +141,15 @@ app behavior. The index page has no runnable examples.
 Source reports now total 804/1210; documentation is 108/514
 (21.01%), with 406 independent documentation file items Pending.
 These direct reviews are not separate subagent executions.
+
+## Migration and infrastructure guides checkpoint (2026-10-26)
+
+Twelve more installed-version App Router source pages were read
+and recorded individually, including migration, multi-zone,
+tenancy, tracing, memory, MDX, offline and pre-rendering material.
+These are direct source-content audits, not independent agent
+executions or runtime checks. Documentation coverage is 120/514
+and 394 documentation file items remain Pending.
 
 ## Execution
 
