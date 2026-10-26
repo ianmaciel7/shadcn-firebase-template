@@ -21,14 +21,14 @@ Documented section index:
 
 <!-- cspell:disable -->
 - Creating a PWA with Next.js
-- 1. Creating the Web App Manifest
-- 2. Implementing Web Push Notifications
-- 3. Implementing Server Actions
-- 4. Generating VAPID Keys
-- 5. Creating a Service Worker
-- 6. Adding to Home Screen
-- 7. Testing Locally
-- 8. Securing your application
+- Step 1: Creating the Web App Manifest
+- Step 2: Implementing Web Push Notifications
+- Step 3: Implementing Server Actions
+- Step 4: Generating VAPID Keys
+- Step 5: Creating a Service Worker
+- Step 6: Adding to Home Screen
+- Step 7: Testing Locally
+- Step 8: Securing your application
 - Extending your PWA
 
 <!-- cspell:enable -->

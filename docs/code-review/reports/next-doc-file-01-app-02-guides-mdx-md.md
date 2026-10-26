@@ -44,7 +44,7 @@ Source section headings (up to twelve):
 The guide includes these quoted advisory excerpts (truncated to identify their location):
 
 <!-- cspell:disable -->
-- > **Good to know**: View the [Portfolio Starter Kit](https://vercel.com/templates/nex…
+- An advisory references a starter template resource.
 - > **Good to know**:
 - > **Good to know**: Ensure you specify the '.mdx' file extension in your import. Whil…
 <!-- cspell:enable -->

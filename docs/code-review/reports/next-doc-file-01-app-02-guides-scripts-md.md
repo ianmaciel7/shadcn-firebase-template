@@ -39,7 +39,7 @@ The project should not load an external script unless it has a concrete UX need 
 The source includes caution or contextual advice at the following locations:
 
 <!-- cspell:disable -->
-- > **Warning:** The `worker` strategy is not yet stable and does not yet work with the App 
+- > **Warning:** The `worker` strategy is not yet stable and does not yet work with the App
 - > **Warning**: An `id` property must be assigned for inline scripts in order for Next.js t
 
 <!-- cspell:enable -->

@@ -26,8 +26,8 @@ Documented section index:
 - `redirects` in `next.config.js`
 - `NextResponse.redirect` in Proxy
 - Managing redirects at scale (advanced)
-- 1. Creating and storing a redirect map
-- 2. Optimizing data lookup performance
+- Step 1: Creating and storing a redirect map
+- Step 2: Optimizing data lookup performance
 
 <!-- cspell:enable -->
 
