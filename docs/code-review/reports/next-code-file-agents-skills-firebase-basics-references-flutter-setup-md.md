@@ -1,5 +1,7 @@
 # Individual source review — `.agents/skills/firebase-basics/references/flutter_setup.md`
 
+<!-- cspell:ignore flutterfire -->
+
 ## Identification
 
 - Review identity: `next-code-file-agents-skills-firebase-basics-references-flutter-setup-md`

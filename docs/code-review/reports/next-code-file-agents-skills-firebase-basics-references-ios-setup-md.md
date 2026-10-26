@@ -1,5 +1,7 @@
 # Individual source review — `.agents/skills/firebase-basics/references/ios_setup.md`
 
+<!-- cspell:ignore swiftui -->
+
 ## Identification
 
 - Review identity: `next-code-file-agents-skills-firebase-basics-references-ios-setup-md`
