@@ -199,14 +199,10 @@ const QuestionDescription = ({
 type QuestionOptionsProps = HTMLAttributes<HTMLDivElement>;
 
 const QuestionOptions = ({ className, ...props }: QuestionOptionsProps) => {
-  const { selectionMode } = useQuestion();
+  useQuestion();
 
   return (
-    <div
-      className={cn("flex flex-wrap gap-2", className)}
-      role={selectionMode === "single" ? "radiogroup" : "group"}
-      {...props}
-    />
+    <div className={cn("flex flex-wrap gap-2", className)} role="group" {...props} />
   );
 };
 
@@ -225,7 +221,7 @@ const QuestionOption = ({
 }: QuestionOptionProps) => {
   const question = useQuestion();
   const isSelected = question.selectedValues.includes(value);
-  const role = question.selectionMode === "single" ? "radio" : "checkbox";
+
   const handleClick = useCallback(
     (event: Parameters<NonNullable<QuestionOptionProps["onClick"]>>[0]) => {
       question.toggleValue(value);
@@ -236,11 +232,10 @@ const QuestionOption = ({
 
   return (
     <Button
-      aria-checked={isSelected}
+      aria-pressed={isSelected}
       className={cn("h-auto whitespace-normal", className)}
       disabled={question.disabled || disabled}
       onClick={handleClick}
-      role={role}
       type="button"
       variant={variant ?? (isSelected ? "default" : "outline")}
       {...props}

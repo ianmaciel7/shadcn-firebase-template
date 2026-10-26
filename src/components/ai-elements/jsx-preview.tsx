@@ -96,19 +96,25 @@ const completeJsxTag = (code: string) => {
   while (currentPosition < code.length) {
     const match = matchJsxTag(code.slice(currentPosition));
     if (!match) {
-      // No more tags found, strip any trailing incomplete tag
       result += stripIncompleteTag(code.slice(currentPosition));
       break;
     }
-    const { tagName, type, endIndex } = match;
-
-    // Include any text content before this tag
-    result += code.slice(currentPosition, currentPosition + endIndex);
+    const { tagName, type, startIndex, endIndex, tag } = match;
+    result += code.slice(currentPosition, currentPosition + startIndex);
 
     if (type === "opening") {
       stack.push(tagName);
+      result += tag;
     } else if (type === "closing") {
-      stack.pop();
+      if (stack.includes(tagName)) {
+        while (stack.at(-1) !== tagName) {
+          result += `</${stack.pop()}>`;
+        }
+        stack.pop();
+        result += tag;
+      }
+    } else {
+      result += tag;
     }
 
     currentPosition += endIndex;

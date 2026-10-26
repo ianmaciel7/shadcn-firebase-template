@@ -109,7 +109,7 @@ Adhere to these principles:
    - **Gemini CLI**: Follow
      [references/refresh/gemini-cli.md](references/refresh/gemini-cli.md)
    - **Claude Code**: Follow
-     [references/refresh/claude.md](references/refresh/claude.md)
+     [references/refresh/other-agents.md](references/refresh/other-agents.md)
    - **Cursor**: Follow
      [references/refresh/other-agents.md](references/refresh/other-agents.md)
    - **Android Studio**: Follow
