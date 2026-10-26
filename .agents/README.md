@@ -20,8 +20,8 @@ Agents CLI are host tools; `next-devtools-mcp` is a project dependency.
 ## Installed skills
 
 The repository contains nine skills: `ask-matt`, `context7-cli`,
-`firebase-basics`, `firebase-auth-basics`, `new-component`, `save`,
-`setup-matt-pocock-skills`, `shadcn`, and `verify`. See the
+`firebase-basics`, `firebase-auth-basics`, `project-new-component`, `project-save`,
+`setup-matt-pocock-skills`, `shadcn`, and `project-verify`. See the
 [skill inventory](skills/README.md) for entrypoints and provenance.
 
 Persistent rules (see [rules/README.md](rules/README.md)) cover [language](rules/language.md),

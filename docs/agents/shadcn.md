@@ -45,7 +45,7 @@ component variant before adopting a recipe.
 | Behavior, browser, accessibility, and visual verification | [TESTING.md](../../TESTING.md#shadcnui-update-verification) |
 | Registry trust, dependencies, credentials, authorization | [SECURITY.md](../../SECURITY.md#component-registry-updates) |
 | Branches, commits, review evidence | [CONTRIBUTING.md](../../CONTRIBUTING.md) |
-| Agent constraints and preservation workflow | [shadcn/ui rule](../../.agents/rules/shadcn.md), [save skill](../../.agents/skills/save/SKILL.md) |
+| Agent constraints and preservation workflow | [shadcn/ui rule](../../.agents/rules/shadcn.md), [save skill](../../.agents/skills/project-save/SKILL.md) |
 
 Keep these as separate sources of truth instead of copying the same rule into
 each guide. The inventory is an evidence index, not another application config.

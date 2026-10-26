@@ -54,7 +54,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Codebase graph | Graphify | Host tool | Builds an on-demand knowledge graph; versioned products are `graphify-out/graph.json`, `GRAPH_REPORT.md`, and the portable `manifest.json`; the rest of `graphify-out/` is machine-local and ignored. `graphify hook install` (run once per clone) adds the Husky `post-commit`/`post-checkout` rebuild hooks and registers the local `graph.json` merge driver; after `git pull`/`merge`, run `graphify update .` to re-anchor `manifest.json`. | `.gitignore`, `.gitattributes`, `.husky/post-commit`, `.husky/post-checkout` |
 | Git hooks | Husky + lint-staged + Commitlint | 9.1.7 / 17.6.0 / 21.2.3 | Check staged files with Biome and the language policy, and validate commit messages with Commitlint and `check:english`. | `.husky/`, `package.json`, `commitlint.config.mjs` |
 | Repository integrity | pre-commit | Host tool | Runs file-integrity hooks (large files, except the generated `graphify-out/graph.json`; case conflicts, JSON/YAML, merge markers). | `.pre-commit-config.yaml` |
-| Agent documentation | Nine installed skills | Project-local `new-component`, `save`, and `verify` plus six external skills | See [.agents/skills/README.md](.agents/skills/README.md) for names, provenance, and entrypoints. | `.agents/skills/`, `skills-lock.json` |
+| Agent documentation | Nine installed skills | Project-local `project-new-component`, `project-save`, and `project-verify` plus six external skills | See [.agents/skills/README.md](.agents/skills/README.md) for names, provenance, and entrypoints. | `.agents/skills/`, `skills-lock.json` |
 | Agent configuration | Agents CLI | Repository configuration; CLI is externally provided | Synchronizes reusable agent skills and MCP settings (Serena, Next.js DevTools, Playwright). | `.agents/agents.json`, `.agents/skills/` |
 
 ## Host prerequisites
@@ -492,8 +492,8 @@ Reusable agent skills and MCP configuration live in `.agents/`. Run
 
 The configured MCP servers are Serena, Next.js DevTools, and Playwright. The
 installed nine skills are `ask-matt`, `context7-cli`, `firebase-basics`,
-`firebase-auth-basics`, `new-component`, `save`, `setup-matt-pocock-skills`,
-`shadcn`, and `verify`;
+`firebase-auth-basics`, `project-new-component`, `project-save`, `setup-matt-pocock-skills`,
+`shadcn`, and `project-verify`;
 see the [agent inventory](.agents/README.md). Configuration does not guarantee
 that an external executable is installed or a server is running.
 

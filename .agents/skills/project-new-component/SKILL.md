@@ -1,5 +1,5 @@
 ---
-name: new-component
+name: project-new-component
 description: Scaffold an application-owned React component that follows the repository's naming, runtime-boundary, and compound-component contracts. Use when the user asks to create a new component, a route-private component, or a shared extension.
 disable-model-invocation: true
 ---

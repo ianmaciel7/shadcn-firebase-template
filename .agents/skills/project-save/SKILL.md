@@ -1,5 +1,5 @@
 ---
-name: save
+name: project-save
 description: Persist and organize user-provided rules, architecture decisions, retrospective improvements (/retro), project conventions, tooling specifications, and domain knowledge into canonical documentation. Activate when the user instructs to save, record, persist, remember, or document rules, configurations, decisions, or conventions.
 ---
 
@@ -269,7 +269,7 @@ flowchart TD
 
 ## Step-by-Step Execution Workflow
 
-When a user requests to save or document information (e.g., "save this rule", "salve essa regra no TOOLING.md", "lembre-se dessa convenção"):
+When a user requests to save or document information (e.g., "save this rule", "save this rule to TOOLING.md", "remember this convention"):
 
 ### 1. Ingest & Interpret
 - Extract the core rule, convention, architectural decision, retrospective candidate (`/retro`), or tool specification from the user's input or session retrospective.
