@@ -2,8 +2,8 @@
 
 <!-- cspell:ignore DOCSTART DOCUPGRADE -->
 
-The active inventory has **1,212 completed individual source/documentation
-reports** (514 installed Next.js documentation items, 697 project items,
+The active inventory has **1,214 completed individual source/documentation
+reports** (514 installed Next.js documentation items, 699 project items,
 and one coordinator). Completion means a static report exists and passed
 inventory checks; it is not proof that 1,212 independent agents ran.
 See [README](README.md), [findings](findings.md), and

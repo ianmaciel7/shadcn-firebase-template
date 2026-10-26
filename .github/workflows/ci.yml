@@ -269,51 +269,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
       - name: Check deployed HTML response languages
         env:
           PRODUCTION_URL: ${{ inputs.production_url }}
-        run: |
-          node --input-type=module <<'NODE'
-          const raw = process.env.PRODUCTION_URL;
-          const target = new URL(raw);
-          if (
-            target.protocol !== "https:" ||
-            target.username ||
-            target.password ||
-            target.search ||
-            target.hash ||
-            target.pathname !== "/" ||
-            target.port ||
-            target.hostname === "localhost" ||
-            /^(?:127|10|192\.168)\\./.test(target.hostname)
-          ) {
-            throw new Error("Use a public HTTPS origin without paths or credentials.");
-          }
-
-          for (const locale of ["en", "pt-BR", "es"]) {
-            const response = await fetch(target, {
-              redirect: "manual",
-              headers: { cookie: `NEXT_LOCALE=${locale}` },
-              signal: AbortSignal.timeout(15000),
-            });
-            if (response.status !== 200) {
-              throw new Error(`Unexpected status ${response.status} for ${locale}`);
-            }
-            const contentType = response.headers.get("content-type") ?? "";
-            if (!contentType.includes("text/html")) {
-              throw new Error(`Expected HTML for ${locale}, got ${contentType}`);
-            }
-            const html = await response.text();
-            const declared = html.match(/<html\b[^>]*\blang=["']([^"']+)["']/i)?.[1];
-            if (declared !== locale) {
-              throw new Error(`Expected server HTML lang ${locale}, got ${declared ?? "missing"}`);
-            }
-            console.log(`Public HTML smoke passed for ${locale}`);
-          }
-          NODE
+        run: node scripts/checks/check-production-smoke.mjs
 
   # Single required status check for branch protection: fails when any job
   # failed, was cancelled, or was skipped unexpectedly.

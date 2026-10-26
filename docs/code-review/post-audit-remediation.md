@@ -2,10 +2,10 @@
 
 <!-- cspell:ignore FILETREE OPENIN NONSEEK NXLAYOUT DOCSTART DOCUPGRADE unkeyed -->
 
-The active manifest contains **1,212 completed individual reports**.
+The active manifest contains **1,214 completed individual reports**.
 The earlier automated candidate-finding sweep inspected 1,211 reports
-(2,253,517 bytes) before the document-language component gained its
-own report, and highlighted 45 candidate files. Those historical numbers
+(2,253,517 bytes) before the document-language component and two production smoke guard files
+were assigned individual reports, and highlighted 45 candidate files. Those historical numbers
 do not describe the current inventory or 45 distinct unresolved bugs.
 A completed review file does not mean every potential defect was corrected.
 
@@ -99,8 +99,9 @@ streaming repair strategy rather than a complete formal JSX parser.
   keys; positional fallback only represents a static list. Regression tests
   verify keyed reorder and same-count replacement.
 - **Production smoke — not executed yet:** the CI workflow now accepts an
-  HTTPS production URL on a manual run and validates public responses and
-  server-rendered locale labels. No target URL was provided for this review,
+  HTTPS production URL on a manual run. The guard rejects local and private DNS
+  addresses and pins a validated public address for HTTPS requests. It verifies
+  public responses and server-rendered locale labels. No target URL was provided for this review,
   so this is a prepared verification, not a successful production check.
   Authenticated production flows still require separate credentials and a
   suitable test account.

@@ -3,11 +3,11 @@
 | Measure | Count |
 | --- | ---: |
 | Project folders inventoried | 119 |
-| Project files inventoried | 578 |
-| Total project review items | 697 |
+| Project files inventoried | 580 |
+| Total project review items | 699 |
 | Folder reports completed | 119 |
-| File reports completed | 578 |
-| Items reviewed | 697 |
+| File reports completed | 580 |
+| Items reviewed | 699 |
 | Coverage | 100.00% |
 | Active reports | 0 |
 | Pending items | 0 |
@@ -167,3 +167,9 @@ This does not imply that the service worker was tested in a deployed browser.
 `src/components/ui/extensions/intl-document-server.tsx` has a separate
 static review report for the proposed request-locale HTML root. As with all
 review reports, behavioral certification depends on the recorded CI tests.
+
+## Production smoke security follow-up (2026-10-26)
+
+The runner and negative-test suite under `scripts/checks/` have individual
+static reports. CI tests their URL/DNS rejection and response validation without
+using actual production credentials or making external deployment requests.
