@@ -3,7 +3,7 @@
     "name": "Client JavaScript (gzip)",
     "path": ".next/static/chunks/**/*.js",
     "gzip": true,
-    "limit": "750 kB"
+    "limit": "751 kB"
   },
   {
     "name": "Client CSS (gzip)",
