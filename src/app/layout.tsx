@@ -42,20 +42,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   const fontClassName = `${geist.variable} ${geistMono.variable} h-full antialiased`;
   return (
-    <Suspense
-      fallback={
-        <html lang="en" suppressHydrationWarning className={fontClassName}>
-          <body className="min-h-full flex flex-col">
-            <div className="flex min-h-svh items-center justify-center">
-              <Spinner
-                className="size-8 text-muted-foreground"
-                aria-hidden="true"
-              />
-            </div>
-          </body>
-        </html>
-      }
-    >
+    <Suspense fallback={null}>
       <IntlDocumentServer className={fontClassName}>
         <Suspense
           fallback={

@@ -114,16 +114,17 @@ placeholders match the reference catalog. Global message type safety is enforced
 by augmenting the `IntlMessages` interface in `src/types/global.d.ts`. Spelling
 validation integrates `@cspell/dict-pt-br`.
 
-The root layout (`src/app/layout.tsx`) currently declares a static `<html
-lang="en">` attribute even when translated content is rendered through
-`IntlProvider` via the cookie. A dynamic server-rendered `lang` needs an explicit locale/rendering design:
-with Cache Components, awaiting a request cookie at the root above all
-`Suspense` boundaries can block prerendering. Moving the existing cookie read
-there is not a complete fix. Preserve the current behavior until that design
-and its accessibility tests are implemented. See
-[ADR 0004](docs/adr/0004-configure-internationalization.md) for the original
-decision and current cookie-only constraint. Document-language debt does not
-authorize adding locale route segments, Proxy, or changing the rendering model.
+The root layout (`src/app/layout.tsx`) remains synchronous and
+composition-only. Its outer `Suspense` boundary renders
+`IntlDocumentServer` (`src/components/ui/extensions/intl-document-server.tsx`),
+which resolves `getLocale()` from the existing request cookie and emits the
+root `<html lang={locale}>` on the server. The outer fallback is empty rather
+than an English-language document, so a slower locale lookup cannot send an
+incorrect language declaration. The nested provider boundary retains the
+existing loading UI and translations. No locale route segment, Proxy, or
+Cache Components configuration change is required. Production browser tests
+check the rendered language and first root tag of the raw response for each
+supported locale. See [ADR 0004](docs/adr/0004-configure-internationalization.md).
 
 ## Runtime and component boundaries
 

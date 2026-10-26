@@ -51,19 +51,23 @@ streaming repair strategy rather than a complete formal JSX parser.
 
 ## Remaining external or architecture-dependent work
 
-- **NXLAYOUT-001:** root document `html lang` remains static while the
-  selected locale comes from request cookies. ADR 0004 forbids the
-  locale-segment/Proxy redesign. Correct server-rendered language requires
-  a separately validated solution respecting root streaming behavior and
-  browser tests for all three configured locales. This is open.
-- **DOCSTART-001 / DOCUPGRADE-001:** these defects belong to the installed
-  Next.js upstream documentation, which must not be edited in `node_modules`.
-  Local navigation mitigation is in
-  [installed-next-navigation.md](installed-next-navigation.md).
-- **AI-MESSAGE-BRANCH-KEY-001:** unkeyed branches have an index fallback.
-  Dynamic branch reordering still requires stable caller-provided keys;
-  this should be explicitly documented by consumers rather than treating
-  indices as stable identities.
+- **NXLAYOUT-001 — remediated in this branch:** the root
+  `IntlDocumentServer` resolves the cookie locale behind an outer Suspense
+  boundary with an empty fallback. The original server HTML and browser
+  document language are checked for English, Portuguese and Spanish. ADR 0004
+  continues to forbid locale route segments and Proxy.
+- **DOCSTART-001 / DOCUPGRADE-001 — locally mitigated:** the installed
+  Next.js indexes are upstream editorial issues, not application defects.
+  [Installed documentation navigation](installed-next-navigation.md) provides
+  every immediate guide link, and the inventory guard checks that the links
+  remain complete when the installed version changes. An upstream editorial
+  correction would still require a contribution to Next.js.
+- **AI-MESSAGE-BRANCH-KEY-001 — remediated for keyed children:**
+  MessageBranch now reconciles child identities even when counts do not
+  change, preserving the selected key across reorders and clearing removed
+  selections. Unkeyed dynamic children still need caller-provided stable React
+  keys; positional fallback only represents a static list. Regression tests
+  verify keyed reorder and same-count replacement.
 - Individual audit findings are not proof that separate named reviewer
   agents executed. Production deployments and external agent
   evaluations have not been claimed as successful.

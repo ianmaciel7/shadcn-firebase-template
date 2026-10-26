@@ -149,6 +149,29 @@ for (const [label, expectedValue] of [
     );
   }
 }
+// Keep the repository-owned replacement indexes complete for the installed
+// Getting Started and Upgrading guides, whose upstream indexes omit links.
+const installedNavigation = readFileSync(
+  resolve(root, "docs/code-review/installed-next-navigation.md"),
+  "utf8",
+);
+for (const section of [
+  "01-app/01-getting-started",
+  "01-app/02-guides/upgrading",
+]) {
+  const directory = `node_modules/next/dist/docs/${section}`;
+  for (const name of readdirSync(resolve(root, directory))) {
+    if (!name.endsWith(".md")) continue;
+    const reference = `<../../${directory}/${name}>`;
+    const occurrences = installedNavigation.split(reference).length - 1;
+    if (occurrences !== 1) {
+      throw new Error(
+        `Installed Next.js navigation must link ${reference} once; found ${occurrences}`,
+      );
+    }
+  }
+}
+
 console.log(
   `Review inventory matches ${expected.size} tracked project items; ${completed} completed.`,
 );

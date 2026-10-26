@@ -40,6 +40,8 @@ test.describe("home page smoke tests", () => {
       expect(initialResponse.ok()).toBe(true);
       const initialHtml = await initialResponse.text();
       expect(initialHtml.match(/<html[^>]*\slang="([^"]+)"/)?.[1]).toBe(locale);
+      const htmlTagCount = [...initialHtml.matchAll(/<html\b[^>]*>/g)].length;
+      expect(htmlTagCount).toBe(1);
     });
   }
 
