@@ -14,13 +14,13 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 1197 |
+| Currently completed review reports | 1210 |
 | Active report tasks | 0 |
-| Completed tasks | 1197 |
-| Pending tasks (excluding active) | 13 |
+| Completed tasks | 1210 |
+| Pending tasks (excluding active) | 0 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
-| Documentation coverage | 501 / 514 items (97.47%) |
+| Documentation coverage | 514 / 514 items (100.00%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
@@ -359,6 +359,22 @@ execution or complete behavioral validation.
 Thirteen additional source files received individual static
 inspections. Independent subagents and application behavior
 validation remain separate requirements.
+
+## Source inspection inventory closure (2026-10-26)
+
+All 1,210 primary inventory items now have distinct source inspection
+reports: one coordinator, 695 project items and 514 installed
+Next.js documentation items. The final thirteen Pages Router and
+platform-reference files were inspected individually at the
+immutable Next.js 16.4.2 documentation revision.
+
+**Scope warning:** this is 100% report coverage for direct static
+source inspections. It does not prove the original requirement
+of one independently executed reviewer subagent per item, nor
+complete runtime behavior, integration tests, production
+deployment or closure of previously recorded findings.
+CI and report lint validation must pass at the final branch head
+before this static coverage checkpoint is considered validated.
 
 ## Execution
 

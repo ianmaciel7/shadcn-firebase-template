@@ -8,12 +8,12 @@ Source: installed `node_modules/next/dist/docs/`, Next.js **16.4.2**.
 | Documentation files inventoried | 474 |
 | Total documentary review items | 514 |
 | Folder reports completed | 40 |
-| File reports completed | 461 |
-| Items reviewed | 501 |
-| Coverage | 97.47% |
+| File reports completed | 474 |
+| Items reviewed | 514 |
+| Coverage | 100.00% |
 | Active reports | 0 |
 | Completed as not applicable to current application | 3 |
-| Pending items | 13 |
+| Pending items | 0 |
 
 ## Twelve version-matched App Router guides (2026-10-26)
 
@@ -50,6 +50,15 @@ inspected, including an index-only navigation page. Optional
 recipes were not interpreted as required architecture.
 All project items remain reviewed and 406 documentation files
 still require their own source inspections.
+
+## Source inspection coverage closure (2026-10-26)
+
+All 40 Next.js documentation folder items and 474 installed
+documentation files now have individual source reports.
+These reports use direct inspection of a version-matched source
+and do not claim separately executed subagents or behavioral
+validation. Existing findings remain subject to reconciliation
+and executable checks.
 
 Completed folder reports: `next-doc-folder-root`, `next-doc-folder-01-app`, and `next-doc-folder-01-app-01-getting-started`.
 
