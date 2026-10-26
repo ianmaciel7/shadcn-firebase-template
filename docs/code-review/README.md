@@ -5,7 +5,13 @@
 This began as an in-progress, read-only audit against the installed Next.js **16.4.2** documentation in `node_modules/next/dist/docs/`. The full one-agent-per-item inventory was generated and validated before review began.
 
 The current post-audit finding dispositions and limitations are tracked in
-[post-audit remediation](post-audit-remediation.md).
+[post-audit remediation](post-audit-remediation.md). The current
+[recommendations](recommendations.md) and
+[compatibility summary](compatibility.md) supersede old progress checkpoint
+language preserved below as historical evidence. The most recent full
+application CI passed on main at `0d6574d`
+([run 40344252388](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40344252388)).
+A green CI is not a live production or external-agent evaluation.
 
 ## Current metrics
 
@@ -14,19 +20,19 @@ The current post-audit finding dispositions and limitations are tracked in
 | Documentation folders | 40 |
 | Documentation files | 474 |
 | Project folders | 119 |
-| Project files | 578 |
+| Project files | 580 |
 | Coordinator | 1 |
-| Expected agents / primary items | 1212 |
-| Currently completed review reports | 1212 |
+| Expected agents / primary items | 1214 |
+| Currently completed review reports | 1214 |
 | Active report tasks | 0 |
-| Completed tasks | 1212 |
+| Completed tasks | 1214 |
 | Pending tasks (excluding active) | 0 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 514 / 514 items (100.00%) |
-| Project coverage | 697 / 697 items (100.00%) |
+| Project coverage | 699 / 699 items (100.00%) |
 
-**Active report inventory:** Exactly 1,212 individual Markdown reports
+**Active report inventory:** Exactly 1,214 individual Markdown reports
 belong in `docs/code-review/reports/`. Six superseded historical
 reports for paths removed in prior source refactors have been retained
 under `docs/code-review/archive/`. They are excluded from active
@@ -551,3 +557,11 @@ now inventories 578 files and 119 folders; the overall total is 1,212.
 Document-language correctness and Cache Components hydration must be verified
 by build and browser tests at the latest branch commit. This is an additional
 source inspection, not evidence of delegated agent execution.
+
+## Production smoke guard sources (2026-10-26)
+
+The optional public deployment check adds two project files and two individual
+reports. The current project inventory has 119 folders and 580 files; the
+total active review inventory is 1,214 items. The guard's deterministic tests
+run in CI, while network requests to production require a separately
+authorized manual dispatch with the intended deployment URL.

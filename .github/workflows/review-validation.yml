@@ -59,8 +59,8 @@ jobs:
             reportsWithCandidateFindings: observations.length,
             observations,
           }, null, 2));
-          if (reports.length !== 1212) {
-            throw new Error(`Expected 1212 reports; read ${reports.length}`);
+          if (reports.length !== 1214) {
+            throw new Error(`Expected 1214 reports; read ${reports.length}`);
           }
           NODE
       - name: Biome lint
