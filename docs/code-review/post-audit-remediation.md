@@ -63,7 +63,7 @@ streaming repair strategy rather than a complete formal JSX parser.
   this should be explicitly documented by consumers rather than treating
   indices as stable identities.
 - Individual audit findings are not proof that separate named reviewer
-  agents executed. Production deployments and unconfigured external agent
+  agents executed. Production deployments and external agent
   evaluations have not been claimed as successful.
 
 Do not squash-merge this follow-up until its own PR CI is green.
