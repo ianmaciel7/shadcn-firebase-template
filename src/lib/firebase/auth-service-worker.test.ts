@@ -69,6 +69,15 @@ describe("Firebase auth service worker", () => {
     expect(forwarded?.headers.get("x-firebase-auth-bridge")).toBe("1");
   });
 
+  it("does not retry a failed network request without authorization", async () => {
+    const { navigate, fetchRequest } = createWorker(
+      vi.fn().mockResolvedValue("fresh-token"),
+    );
+    fetchRequest.mockRejectedValue(new Error("network unavailable"));
+    await expect(navigate()).rejects.toThrow("network unavailable");
+    expect(fetchRequest).toHaveBeenCalledOnce();
+  });
+
   it("forwards the original request without a bridge token on refresh failure", async () => {
     const { navigate, fetchRequest } = createWorker(
       vi.fn().mockRejectedValue(new Error("auth/network-request-failed")),
