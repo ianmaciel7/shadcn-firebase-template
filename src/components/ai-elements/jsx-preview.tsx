@@ -30,7 +30,7 @@ interface JSXPreviewContextValue {
 
 const JSXPreviewContext = createContext<JSXPreviewContextValue | null>(null);
 
-const TAG_START_REGEX = /^<\\/?([a-zA-Z][a-zA-Z0-9.:-]*)/;
+const TAG_START_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9.:-]*)/;
 
 function findTagEnd(source: string, start: number): number {
   let quote: string | null = null;
@@ -38,7 +38,7 @@ function findTagEnd(source: string, start: number): number {
   for (let index = start; index < source.length; index++) {
     const character = source[index];
     if (quote) {
-      if (character === "\\\\") {
+      if (character === "\\") {
         index++;
       } else if (character === quote) {
         quote = null;
@@ -71,7 +71,7 @@ const matchJsxTag = (code: string) => {
   for (let index = 0; index < code.length; index++) {
     const character = code[index];
     if (quote) {
-      if (character === "\\\\") {
+      if (character === "\\") {
         index++;
       } else if (character === quote) {
         quote = null;
@@ -101,13 +101,13 @@ const matchJsxTag = (code: string) => {
     const start = code.slice(index).match(TAG_START_REGEX);
     if (!start) continue;
     const boundary = code[index + start[0].length];
-    if (boundary && !/[\\s/>]/.test(boundary)) continue;
+    if (boundary && !/[\s/>]/.test(boundary)) continue;
     const closingIndex = findTagEnd(code, index + start[0].length);
     if (closingIndex < 0) return null;
     const tag = code.slice(index, closingIndex + 1);
-    const type = /^<\\//.test(tag)
+    const type = /^<\//.test(tag)
       ? "closing"
-      : /\\/\\s*>$/.test(tag)
+      : /\/\s*>$/.test(tag)
         ? "self-closing"
         : "opening";
     return {
@@ -127,7 +127,7 @@ const stripIncompleteTag = (text: string) => {
   if (openComment >= 0 && text.indexOf("-->", openComment) < 0) {
     return text.slice(0, openComment);
   }
-  return text.replace(/<\\/?[a-zA-Z][a-zA-Z0-9.:-]*(?:\\s[^<>]*)?$/, "");
+  return text.replace(/<\/?[a-zA-Z][a-zA-Z0-9.:-]*(?:\s[^<>]*)?$/, "");
 };
 
 const completeJsxTag = (code: string) => {
