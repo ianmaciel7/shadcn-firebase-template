@@ -21,6 +21,16 @@ No independently confirmed new defect was established from the inspected source 
 
 The file was inspected in the GitHub source tree. The existing test fixtures and independent branch validation passed in [GitHub Actions run 40193670924](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40193670924). This review does not claim that static checks replace runtime integration or official framework behavior.
 
+## Subsequent source reconciliation (2026-10-26)
+
+The live checker was strengthened to validate every completed
+documentation report, reject orphaned active report files and
+verify installed documentation sources against the current
+version-matched package. Six stale historical reports were
+preserved outside the active reports directory.
+This extension requires validation in the current CI workflow;
+prior workflow results refer to the earlier implementation.
+
 ## Conclusion
 
 The source has a documented individual review, with its project-specific contracts and blind spots recorded.

@@ -23,6 +23,16 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Documentation coverage | 514 / 514 items (100.00%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
+**Active report inventory:** Exactly 1,210 individual Markdown reports
+belong in `docs/code-review/reports/`. Six superseded historical
+reports for paths removed in prior source refactors have been retained
+under `docs/code-review/archive/`. They are excluded from active
+coverage. The review inventory checker now rejects missing,
+duplicate or orphaned active reports and verifies that each installed
+Next.js documentation source is available in the checked version.
+These are static integrity checks, not evidence of independent
+reviewer execution or complete defect remediation.
+
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
 ## Direct documentation and policy file review checkpoint (2026-10-26)

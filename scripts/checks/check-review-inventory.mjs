@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -75,6 +75,32 @@ const docRows = allRows.filter(
     line.startsWith("| DOC_FILE |") || line.startsWith("| DOC_FOLDER |"),
 );
 const coordinator = allRows.find((line) => line.startsWith("| COORDINATOR |"));
+const activeReportAgents = new Set();
+for (const row of [...rows, ...docRows, ...(coordinator ? [coordinator] : [])]) {
+  const agent = row.split("|")[2]?.trim().replaceAll("`", "");
+  if (!agent || activeReportAgents.has(agent)) {
+    throw new Error(`Missing or duplicate review identity: ${agent}`);
+  }
+  activeReportAgents.add(agent);
+  if (row.includes("| Completed |")) {
+    const report = resolve(root, "docs/code-review/reports", `${agent}.md`);
+    if (!existsSync(report)) {
+      throw new Error(`Missing completed primary report: ${agent}`);
+    }
+  }
+  if (row.startsWith("| DOC_")) {
+    const source = row.split("](<../../")[1]?.split(">)")[0];
+    if (!source || !existsSync(resolve(root, source))) {
+      throw new Error(`Missing installed documentation source: ${source}`);
+    }
+  }
+}
+const reportsDir = resolve(root, "docs/code-review/reports");
+for (const name of readdirSync(reportsDir)) {
+  if (name.endsWith(".md") && !activeReportAgents.has(name.slice(0, -3))) {
+    throw new Error(`Orphaned active review report: ${name}`);
+  }
+}
 const completedDocumentation = docRows.filter((line) =>
   line.includes("| Completed |"),
 ).length;
