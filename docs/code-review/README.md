@@ -14,13 +14,13 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 732 |
+| Currently completed review reports | 769 |
 | Active report tasks | 0 |
-| Completed tasks | 732 |
-| Pending tasks (excluding active) | 478 |
+| Completed tasks | 769 |
+| Pending tasks (excluding active) | 441 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
-| Documentation coverage | 36 / 514 items (7.00%) |
+| Documentation coverage | 73 / 514 items (14.20%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
@@ -108,6 +108,17 @@ Documentation coverage is now 36/514 (7.00%) and 478 items remain
 Pending. Project reports are 695/695 and overall progress is
 732/1210 items (60.50%).
 No local browser/emulator or full CI run was asserted for these reports.
+
+## Installed Next.js folder inventory closure checkpoint (2026-10-26)
+
+All 40 documentation folder primary items now have distinct reports.
+The 37 new directory inspections used the non-truncated official
+Next.js 16.4.2 `docs/` Git tree (39 nested folders plus root),
+not guessed folder names. Every remaining documentation item is
+a Markdown file (441 pending). Folder inspections do not substitute
+for reading child bodies or for independent subagent processes.
+Overall reports: 769/1210; documentation: 73/514 (14.20%).
+All 695 tracked project items have individual direct review reports.
 
 ## Execution
 
