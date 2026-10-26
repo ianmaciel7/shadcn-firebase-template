@@ -58,15 +58,17 @@ self.addEventListener("fetch", (event) => {
     return;
 
   event.respondWith(
-    getFreshIdToken().then((token) => {
-      const headers = new Headers(request.headers);
-      // A terminated worker loses its config; without a token it must not
-      // claim an unauthenticated verdict, so the client guard stays in charge.
-      if (token) {
-        headers.set("x-firebase-auth-bridge", "1");
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return fetch(new Request(request, { headers }));
-    }).catch(() => fetch(request)),
+    getFreshIdToken()
+      .then((token) => {
+        const headers = new Headers(request.headers);
+        // A terminated worker loses its config; without a token it must not
+        // claim an unauthenticated verdict, so the client guard stays in charge.
+        if (token) {
+          headers.set("x-firebase-auth-bridge", "1");
+          headers.set("Authorization", `Bearer ${token}`);
+        }
+        return fetch(new Request(request, { headers }));
+      })
+      .catch(() => fetch(request)),
   );
 });

@@ -65,9 +65,7 @@ describe("Firebase auth service worker", () => {
     );
     const { forwarded } = await navigate();
     expect(fetchRequest).toHaveBeenCalledOnce();
-    expect(forwarded?.headers.get("Authorization")).toBe(
-      "Bearer fresh-token",
-    );
+    expect(forwarded?.headers.get("Authorization")).toBe("Bearer fresh-token");
     expect(forwarded?.headers.get("x-firebase-auth-bridge")).toBe("1");
   });
 
