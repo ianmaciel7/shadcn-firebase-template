@@ -39,10 +39,7 @@ async function requireCurrentAdmin(request, auth, HttpsError) {
       true,
     );
   } catch {
-    throw new HttpsError(
-      "permission-denied",
-      "Administrator session revoked.",
-    );
+    throw new HttpsError("permission-denied", "Administrator session revoked.");
   }
   if (verified.uid !== request.auth.uid || verified.role !== "admin") {
     throw new HttpsError("permission-denied", "Administrator role required.");
