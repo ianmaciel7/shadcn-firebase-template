@@ -90,7 +90,7 @@ export function requestProductionHtml(target, record, locale) {
         lookup: (_hostname, _options, callback) =>
           callback(null, record.address, record.family),
         timeout: 15000,
-        headers: { accept: "text/html", cookie: "NEXT_LOCALE=" + locale },
+        headers: { accept: "text/html", cookie: `NEXT_LOCALE=${locale}` },
       },
       (response) => {
         let html = "";
