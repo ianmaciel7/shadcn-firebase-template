@@ -1,5 +1,7 @@
 # Post-audit remediation status
 
+<!-- cspell:ignore FILETREE OPENIN NONSEEK NXLAYOUT DOCSTART DOCUPGRADE unkeyed -->
+
 The Review Validation workflow inspected the **1,211 individual reports**
 (2,253,517 bytes). The candidate-finding sweep highlighted 45 report files,
 including duplicates, historical findings and source-specific observations.
