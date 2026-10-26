@@ -118,7 +118,6 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm test` | Fast `unit` Vitest project in `jsdom`. |
 | `pnpm test:watch` / `pnpm test:coverage` | Watch mode / coverage (writes `coverage/`). |
 | `pnpm test:logging` | Run logging and diagnostic test suite. |
-| `pnpm test:emulator` | Test seed CLI exit status with mocked HTTP/network failures and idempotent existing-user responses; no emulator is contacted. |
 | `pnpm test:browser` | `browser` Vitest project in Chromium. |
 | `pnpm test:e2e` | Functional Playwright specs (excludes `@a11y` and `@visual`). |
 | `pnpm test:auth` | Run Playwright's `auth-emulator` project with Firebase Auth, Firestore, and Functions via `firebase emulators:exec`; install the separate Functions dependencies first. |
@@ -128,7 +127,6 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm test:mutation` | Stryker on selected logic (manual dispatch only in hosted CI until verified; see limitations). |
 | `pnpm emulator` | Start local Firebase Emulator Suite importing `./emulator-data` and exporting on exit. |
 | `pnpm emulator:export` | Export running emulator state to `./emulator-data` (`firebase emulators:export ./emulator-data --force`). |
-| `pnpm emulator:seed` | Seed test user accounts into the running Firebase Auth Emulator (`node scripts/emulator/seed.mjs`). |
 | `pnpm emulator:clear` | Clear all accounts from the Firebase Auth Emulator (`node scripts/emulator/clear.mjs`). |
 | `pnpm ladle` / `pnpm ladle:build` | Serve or build the component workbench (`reports/ladle`). |
 | `pnpm check:architecture` | dependency-cruiser. |
@@ -365,12 +363,10 @@ or move shared modules merely to satisfy a folder name.
 | A completed send erases a newer draft or attachment. | `prompt-input.test.tsx` checks provider draft revisions, identical text re-entered as a new revision, attachment identities, local edits, success reset, and failure preservation. |
 | Permission resolves after media cleanup, or recorder setup fails. | `speech-input.test.tsx` checks late-stream release, setup/start failures, duplicate pending requests, active-track cleanup, and obsolete transcription callbacks. |
 | A session changes during a profile operation. | `src/lib/profile.test.ts` checks that later profile/preference writes do not start after session validation fails. Keep Firebase Security Rules as the authoritative authorization boundary. |
-| A CLI logs HTTP errors but exits successfully. | `scripts/emulator/seed.test.mjs` checks process status and completion output for HTTP/network errors, successful creation, and `EMAIL_EXISTS`. |
 | Root audit misses a separately deployed dependency graph. | `pnpm audit:functions` audits `functions/package-lock.json` explicitly; both `verify:security` and the CI security job run it. |
 
 `pnpm test` includes the component lifecycle regressions even where copied
-registry code is excluded from some lint/coverage analyses. `test:emulator`
-is part of `verify:fast` and `verify:static`, so CI runs the seed regressions.
+registry code is excluded from some lint/coverage analyses.
 The existing `check:components` covers private hook file/export parity and
 follows local helper imports, including `_lib`, for boundary classification.
 Keep its valid/invalid fixtures when changing those policies.
@@ -557,8 +553,6 @@ The operational commands for the Firebase Emulator Suite are:
 - `pnpm emulator`: starts the local Emulator Suite with `--import=./emulator-data --export-on-exit`. The Emulator Suite UI is
   accessible at `http://127.0.0.1:4000`.
 - `pnpm emulator:export` (`firebase emulators:export ./emulator-data --force`): saves current emulator state into `./emulator-data`.
-- `pnpm emulator:seed` (`node scripts/emulator/seed.mjs`): sends seed test accounts to the running emulator for
-  local development and testing.
 - `pnpm emulator:clear` (`node scripts/emulator/clear.mjs`): clears all accounts in the emulator.
 
 See [Firebase setup](https://firebase.google.com/docs/auth/web/start) and

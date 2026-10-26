@@ -7,11 +7,10 @@ Run the checks relevant to a change before opening a pull request. See
 
 | Command | Use it for |
 | --- | --- |
-| `pnpm verify:fast` | Code changes: Biome CI, typecheck, unit tests, logging and seed CLI regressions, ast-grep structural rules, route-entrypoint guard, owned-component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Browser suites run separately. |
+| `pnpm verify:fast` | Code changes: Biome CI, typecheck, unit tests, logging regressions, ast-grep structural rules, route-entrypoint guard, owned-component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Browser suites run separately. |
 | `pnpm verify:full` | Before a pull request: `verify:static` (adds coverage thresholds, architecture, unused code, duplication, ast-grep structural checks, route/component/responsiveness guards, spelling, Markdown, complexity, React diagnostics) plus `verify:build` (browser tests, production build with size budgets, Ladle build). |
 | `pnpm verify:e2e` | Changes that affect pages or visual output: functional, accessibility, and visual Playwright specs. |
 | `pnpm verify:security` | Dependency or configuration changes: Semgrep rule tests and scan, Gitleaks, workflow lint, `pnpm audit`, and the separate Functions lockfile audit. Needs the host tools in [TOOLING.md](TOOLING.md#host-prerequisites). |
-| `pnpm test:emulator` | Seed CLI process behavior with mocked requests; part of fast/static verification and requires no running emulator. |
 | `pnpm audit:functions` | Separate dependency audit of the deployed Cloud Functions npm lockfile; part of security verification and CI. |
 | `pnpm eval:tool-usage` | On-demand evaluation of Codex tool selection. Requires authenticated Codex plus configured MCP/plugin tools; saves JSONL traces and a report under ignored `reports/tool-usage-evals/`. It is intentionally outside CI because agent results and external tool availability are non-deterministic. |
 
@@ -21,7 +20,7 @@ commands against the repository. These checks do not replace CI; the pull
 request still runs the configured jobs. Markdown lint intentionally excludes
 agent files and ADRs 0001–0005, so review those manually when applicable.
 
-`pnpm verify:fast` runs the unit Vitest project, logging and seed CLI
+`pnpm verify:fast` runs the unit Vitest project, logging
 regressions, and structural ast-grep checks, including migrated route rules for
 client directives, hooks, and JSX event handlers. Browser, end-to-end, visual,
 and mutation suites run separately.
