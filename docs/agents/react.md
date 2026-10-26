@@ -940,7 +940,7 @@ contracts; use the canonical owners below for their full project policies.
 | DOM/hydration and rendering APIs | Next.js owns root rendering; preserve matching server/hydration output and accessible fallback/focus behavior. | [Architecture](../../ARCHITECTURE.md#react-runtime-and-lifecycle-boundaries), [Design](../../DESIGN.md#react-identity-refs-and-lifecycle-presentation) |
 | Testing and diagnostics | Use RTL and supported act integration, production/browser tests for framework behavior, and lifecycle assertions for owned resources. | [Testing](../../TESTING.md#react-rules-and-lifecycle-verification) |
 | Security | Escaped text does not sanitize arbitrary HTML/URLs, and React UI/optimistic state does not authorize network operations. | [Security](../../SECURITY.md#react-rendering-and-input-boundaries) |
-| Maintenance | Save verified findings in canonical guides and preserve accepted ADRs, dependencies, external skills, and local edits. | [Contributing](../../CONTRIBUTING.md#react-documentation-and-runtime-changes), [save skill](../../.agents/skills/save/SKILL.md) |
+| Maintenance | Save verified findings in canonical guides and preserve accepted ADRs, dependencies, external skills, and local edits. | [Contributing](../../CONTRIBUTING.md#react-documentation-and-runtime-changes), [save skill](../../.agents/skills/project-save/SKILL.md) |
 
 The blog includes React 19/19.2/19.3 releases, Compiler 1.0, Create React App
 deprecation, and historical RSC security reports. Review release dates and

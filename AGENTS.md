@@ -48,7 +48,7 @@ external lookups ad hoc.
   reaching for shell commands. For example: Next.js DevTools for runtime
   diagnostics, Playwright for browser verification (CUA only when it is the
   available browser fallback), Serena or Graphify for symbol-aware code
-  navigation, and the project `verify` skill for scoped validation.
+  navigation, and the project `project-verify` skill for scoped validation.
 - Treat the `Purpose` and `Source of truth` columns in `TOOLING.md` as the
   decision guide. If a listed tool is unavailable, say so clearly and use the
   smallest safe fallback; never claim that its check or lookup ran.
@@ -77,7 +77,7 @@ external lookups ad hoc.
 - `ARCHITECTURE.md`: repository layout and application boundaries.
 - `CODING_STANDARDS.md`: conventions for TypeScript, React, Next.js, UI, and i18n.
 - `TOOLING.md`: package manager, commands, and configuration ownership.
-- `docs/quality-enforcement.md`: primary enforcement tools and rule limits.
+- `docs/quality.md`: primary enforcement tools and rule limits.
 - `TESTING.md`: required validation and test strategy.
 - `SECURITY.md`: vulnerability reporting and secure contribution practices.
 - `CONTRIBUTING.md`: branch, commit, release, and pull-request conventions.
@@ -124,7 +124,7 @@ source inventory, and applicability boundaries. Use the installed CLI and
 current component documentation before changing copied source. Report
 unavailable network lookups or host tools without claiming they passed.
 
-When `/save` is requested, use `.agents/skills/save/SKILL.md` to persist verified
+When `/save` is requested, use `.agents/skills/project-save/SKILL.md` to persist verified
 knowledge in its canonical document. Preserve accepted ADRs and local changes;
 document a new architectural decision in a new ADR when one is actually made.
 
@@ -160,7 +160,7 @@ React/React DOM 19.3.1 and Compiler 1.0.0 support before adopting live examples.
 Keep React's rules distinct from stricter repository orchestration conventions.
 Use native Biome diagnostics, the existing guards, and appropriate lifecycle /
 browser tests; do not claim coverage of every upstream ESLint or Compiler rule.
-Persist verified findings with the [save skill](.agents/skills/save/SKILL.md)
+Persist verified findings with the [save skill](.agents/skills/project-save/SKILL.md)
 in their canonical guide, preserving accepted ADRs and local changes.
 
 The [detailed React reference](docs/agents/react.md#user-supplied-react-1931-reference)

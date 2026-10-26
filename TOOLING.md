@@ -54,7 +54,7 @@ repository. It is not a catalog of every runtime library; `package.json` and
 | Codebase graph | Graphify | Host tool | Builds an on-demand knowledge graph; versioned products are `graphify-out/graph.json`, `GRAPH_REPORT.md`, and the portable `manifest.json`; the rest of `graphify-out/` is machine-local and ignored. `graphify hook install` (run once per clone) adds the Husky `post-commit`/`post-checkout` rebuild hooks and registers the local `graph.json` merge driver; after `git pull`/`merge`, run `graphify update .` to re-anchor `manifest.json`. | `.gitignore`, `.gitattributes`, `.husky/post-commit`, `.husky/post-checkout` |
 | Git hooks | Husky + lint-staged + Commitlint | 9.1.7 / 17.6.0 / 21.2.3 | Check staged files with Biome and the language policy, and validate commit messages with Commitlint and `check:english`. | `.husky/`, `package.json`, `commitlint.config.mjs` |
 | Repository integrity | pre-commit | Host tool | Runs file-integrity hooks (large files, except the generated `graphify-out/graph.json`; case conflicts, JSON/YAML, merge markers). | `.pre-commit-config.yaml` |
-| Agent documentation | Nine installed skills | Project-local `new-component`, `save`, and `verify` plus six external skills | See [.agents/skills/README.md](.agents/skills/README.md) for names, provenance, and entrypoints. | `.agents/skills/`, `skills-lock.json` |
+| Agent documentation | Nine installed skills | Project-local `project-new-component`, `project-save`, and `project-verify` plus six external skills | See [.agents/skills/README.md](.agents/skills/README.md) for names, provenance, and entrypoints. | `.agents/skills/`, `skills-lock.json` |
 | Agent configuration | Agents CLI | Repository configuration; CLI is externally provided | Synchronizes reusable agent skills and MCP settings (Serena, Next.js DevTools, Playwright). | `.agents/agents.json`, `.agents/skills/` |
 
 ## Host prerequisites
@@ -118,7 +118,6 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm test` | Fast `unit` Vitest project in `jsdom`. |
 | `pnpm test:watch` / `pnpm test:coverage` | Watch mode / coverage (writes `coverage/`). |
 | `pnpm test:logging` | Run logging and diagnostic test suite. |
-| `pnpm test:emulator` | Test seed CLI exit status with mocked HTTP/network failures and idempotent existing-user responses; no emulator is contacted. |
 | `pnpm test:browser` | `browser` Vitest project in Chromium. |
 | `pnpm test:e2e` | Functional Playwright specs (excludes `@a11y` and `@visual`). |
 | `pnpm test:auth` | Run Playwright's `auth-emulator` project with Firebase Auth, Firestore, and Functions via `firebase emulators:exec`; install the separate Functions dependencies first. |
@@ -126,8 +125,8 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm test:visual` | Compare screenshots with baselines. Never rewrites them. Skipped locally; runs in CI (or with `PLAYWRIGHT_VISUAL=1`). |
 | `pnpm test:visual:update` | Rewrite baselines. Run it through the **Update visual baselines** workflow, not on your machine. |
 | `pnpm test:mutation` | Stryker on selected logic (manual dispatch only in hosted CI until verified; see limitations). |
-| `pnpm emulator` | Start local Firebase Auth Emulator. |
-| `pnpm emulator:seed` | Seed test user accounts into the running Firebase Auth Emulator (`node scripts/emulator/seed.mjs`). |
+| `pnpm emulator` | Start local Firebase Emulator Suite importing `./emulator-data` and exporting on exit. |
+| `pnpm emulator:export` | Export running emulator state to `./emulator-data` (`firebase emulators:export ./emulator-data --force`). |
 | `pnpm emulator:clear` | Clear all accounts from the Firebase Auth Emulator (`node scripts/emulator/clear.mjs`). |
 | `pnpm ladle` / `pnpm ladle:build` | Serve or build the component workbench (`reports/ladle`). |
 | `pnpm check:architecture` | dependency-cruiser. |
@@ -364,12 +363,10 @@ or move shared modules merely to satisfy a folder name.
 | A completed send erases a newer draft or attachment. | `prompt-input.test.tsx` checks provider draft revisions, identical text re-entered as a new revision, attachment identities, local edits, success reset, and failure preservation. |
 | Permission resolves after media cleanup, or recorder setup fails. | `speech-input.test.tsx` checks late-stream release, setup/start failures, duplicate pending requests, active-track cleanup, and obsolete transcription callbacks. |
 | A session changes during a profile operation. | `src/lib/profile.test.ts` checks that later profile/preference writes do not start after session validation fails. Keep Firebase Security Rules as the authoritative authorization boundary. |
-| A CLI logs HTTP errors but exits successfully. | `scripts/emulator/seed.test.mjs` checks process status and completion output for HTTP/network errors, successful creation, and `EMAIL_EXISTS`. |
 | Root audit misses a separately deployed dependency graph. | `pnpm audit:functions` audits `functions/package-lock.json` explicitly; both `verify:security` and the CI security job run it. |
 
 `pnpm test` includes the component lifecycle regressions even where copied
-registry code is excluded from some lint/coverage analyses. `test:emulator`
-is part of `verify:fast` and `verify:static`, so CI runs the seed regressions.
+registry code is excluded from some lint/coverage analyses.
 The existing `check:components` covers private hook file/export parity and
 follows local helper imports, including `_lib`, for boundary classification.
 Keep its valid/invalid fixtures when changing those policies.
@@ -492,8 +489,8 @@ Reusable agent skills and MCP configuration live in `.agents/`. Run
 
 The configured MCP servers are Serena, Next.js DevTools, and Playwright. The
 installed nine skills are `ask-matt`, `context7-cli`, `firebase-basics`,
-`firebase-auth-basics`, `new-component`, `save`, `setup-matt-pocock-skills`,
-`shadcn`, and `verify`;
+`firebase-auth-basics`, `project-new-component`, `project-save`, `setup-matt-pocock-skills`,
+`shadcn`, and `project-verify`;
 see the [agent inventory](.agents/README.md). Configuration does not guarantee
 that an external executable is installed or a server is running.
 
@@ -551,12 +548,11 @@ Task queues, Pub/Sub, Extensions, and Admin SDK operations are server-side servi
 implement them in `functions/`, never in `src/lib/firebase/client.ts`. See
 [TESTING.md](TESTING.md#first-time-setup) for the isolated browser suite. For
 interactive local development, run `pnpm dev` with the emulator variables in `.env`.
-The operational commands for the Firebase Auth Emulator are:
+The operational commands for the Firebase Emulator Suite are:
 
-- `pnpm emulator`: starts the local Auth Emulator. The Emulator Suite UI is
-  accessible at `http://127.0.0.1:4000/auth`.
-- `pnpm emulator:seed` (`node scripts/emulator/seed.mjs`): sends seed test accounts to the running emulator for
-  local development and testing.
+- `pnpm emulator`: starts the local Emulator Suite with `--import=./emulator-data --export-on-exit`. The Emulator Suite UI is
+  accessible at `http://127.0.0.1:4000`.
+- `pnpm emulator:export` (`firebase emulators:export ./emulator-data --force`): saves current emulator state into `./emulator-data`.
 - `pnpm emulator:clear` (`node scripts/emulator/clear.mjs`): clears all accounts in the emulator.
 
 See [Firebase setup](https://firebase.google.com/docs/auth/web/start) and

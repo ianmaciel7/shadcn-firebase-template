@@ -1,10 +1,23 @@
 # Agent rules index
 
-Index of the persistent rules in `rules/`. Each rule file stays under 12,000
+Index of the persistent rules in `.agents/rules/`. Each rule file stays under 12,000
 characters; use single-word `<topic>.md` filenames by default, or
 `<topic>-<scope>.md` when a rule family is split across multiple files
 (`react.md`, `react-dom.md`, `react-quality.md`) to stay within the per-file
 budget.
+
+## Architectural boundary: `.agents/rules/` vs `docs/`
+
+- **`.agents/rules/` (Behavioral constraints for agents)**:
+  - Contains **prescriptive, enforce-everywhere agent guardrails and constraints**.
+  - Dictates *how agents must behave, write, and verify code* across the codebase (e.g. naming, file limits, thin routes, language, framework patterns).
+  - Kept concise and machine-actionable to conserve prompt context.
+- **`docs/` (Human and domain documentation & system operations)**:
+  - Contains **descriptive reference documentation, operational guides, and history**.
+  - Maps system architecture ([`docs/README.md`](../../docs/README.md)), verification ownership ([`docs/quality.md`](../../docs/quality.md)), operational services ([`docs/observability.md`](../../docs/observability.md)), immutable decisions ([`docs/adr/`](../../docs/adr/)), upstream inventories ([`docs/agents/`](../../docs/agents/)), and review snapshots ([`docs/reviews/`](../../docs/reviews/)).
+  - Intended for human engineers, onboarding, production operations, and authoritative reference.
+
+## Rule catalog
 
 | Topic | Rule | Scope |
 | --- | --- | --- |
