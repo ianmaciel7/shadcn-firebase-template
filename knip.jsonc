@@ -34,5 +34,12 @@
     "@stryker-mutator/command-runner"
   ],
   // Host tools installed outside pnpm (see TOOLING.md).
-  "ignoreBinaries": ["semgrep", "gitleaks", "actionlint", "zizmor", "firebase", "codex"]
+  "ignoreBinaries": [
+    "semgrep",
+    "gitleaks",
+    "actionlint",
+    "zizmor",
+    "firebase",
+    "codex"
+  ]
 }
