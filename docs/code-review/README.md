@@ -14,13 +14,13 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 864 |
+| Currently completed review reports | 876 |
 | Active report tasks | 0 |
-| Completed tasks | 864 |
-| Pending tasks (excluding active) | 346 |
+| Completed tasks | 876 |
+| Pending tasks (excluding active) | 334 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
-| Documentation coverage | 168 / 514 items (32.68%) |
+| Documentation coverage | 180 / 514 items (35.02%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
@@ -184,6 +184,16 @@ route convention files were read and documented with individual
 source evidence and project relevance. No independent subagents
 or runtime tests were used. Documentation: 168/514 (32.68%).
 Files still pending: 346; project primary items: 695/695.
+
+## Special file conventions checkpoint (2026-10-26)
+
+Twelve special file and route convention documents were inspected
+individually against the immutable Next.js 16.4.2 source.
+Notes cover deprecated middleware, experimental forbidden and
+global-not-found conventions, async params, error handling,
+instrumentation, loading and MDX requirements.
+These are source inspections, not independently executed subagent
+reviews or runtime tests. Documentation: 180/514; pending: 334.
 
 ## Execution
 
