@@ -34,7 +34,7 @@ Document sections:
 
 ## Reconciliation and applicability
 
-The repository avoids logic in template.tsx files by project convention. React state and effect lifecycles differ between templates and layouts.
+The repository avoids logic in template.tsx files by project convention. React state and effect behavior differ between templates and layouts.
 
 ## Cautions and limits
 
