@@ -6,11 +6,11 @@
 | Project files inventoried | 576 |
 | Total project review items | 695 |
 | Folder reports completed | 78 |
-| File reports completed | 519 |
-| Items reviewed | 597 |
-| Coverage | 85.90% |
+| File reports completed | 534 |
+| Items reviewed | 612 |
+| Coverage | 88.06% |
 | Active reports | 0 |
-| Pending items | 98 |
+| Pending items | 83 |
 
 ## Direct documentation and policy source reviews (2026-10-26)
 
@@ -19,6 +19,14 @@ Eight project documentation/policy files were inspected at commit
 separate report and linked-source evidence. These inspections did not
 run independent subagents or execute runtime, CI, emulator or browser tests.
 Project coverage is 597/695 (85.90%); 98 project items remain Pending.
+
+## Firebase basics vendor reference checkpoint (2026-10-26)
+
+Fifteen individual setup and refresh Markdown items were inspected
+directly against the installed skill entrypoint, skill lock and project
+runtime configuration. See the per-file reports for scope and two
+upstream naming observations. No independent subagents or CLI tests
+were executed. Current project source coverage is 612/695 (88.06%).
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
