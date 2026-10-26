@@ -4,13 +4,14 @@ on:
   push:
     branches:
       - fix/react-review-findings
+    paths:
+      - .github/workflows/repair-audit-lockfile.yml
 
 permissions:
   contents: write
 
 jobs:
   repair:
-    if: github.event.head_commit.message == 'chore(ci): repair vulnerable transitive dependencies'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
