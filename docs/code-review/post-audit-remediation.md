@@ -41,6 +41,15 @@ The full CI matrix passed for the merged head `09d7cd7` at
 This verifies the configured build, unit, browser, emulator and security suites,
 not every possible production usage.
 
+## Request-time Firebase verification (2026-10-26)
+
+The protected server session validates ID tokens after `await connection()`,
+so Firebase Admin time-sensitive checks do not run during Cache Components
+prerendering. The token remains checked with revocation enabled. A unit
+regression verifies that the request-time boundary is entered only when a
+worker-bridged bearer token exists. The emulator suite continues to check the
+real authenticated flow.
+
 ## Follow-up corrections in this branch
 
 `AI-JSX-STREAM-001` is addressed more thoroughly: streamed tag scanning

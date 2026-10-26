@@ -1,6 +1,7 @@
 import "server-only";
 
 import { headers } from "next/headers";
+import { connection } from "next/server";
 import { readUserRole, type UserRole } from "@/lib/role";
 import { getAdminAuth } from "./admin";
 
@@ -21,6 +22,8 @@ async function verifyIdToken(authIdToken: string) {
   try {
     // checkRevoked rejects tokens of disabled users and revoked sessions, so a
     // demoted role stops working as soon as its refresh tokens are revoked.
+    // Firebase Admin performs time-sensitive verification only per request.
+    await connection();
     const claims = await getAdminAuth().verifyIdToken(authIdToken, true);
     return { role: readUserRole(claims), userId: claims.uid };
   } catch {
