@@ -1,3 +1,5 @@
+<!-- cspell:ignore Etags -->
+
 # Individual installed Next.js documentation review — `01-app/03-api-reference/05-config/01-next-config-js/generateEtags.mdx`
 
 ## Evidence

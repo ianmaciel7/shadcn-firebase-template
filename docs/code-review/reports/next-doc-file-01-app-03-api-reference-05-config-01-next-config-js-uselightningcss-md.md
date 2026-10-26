@@ -1,3 +1,5 @@
+<!-- cspell:ignore Lightningcss -->
+
 # Individual installed documentation inspection — `01-app/03-api-reference/05-config/01-next-config-js/useLightningcss.mdx`
 
 ## Source details
