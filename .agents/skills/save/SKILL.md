@@ -1,6 +1,6 @@
 ---
 name: save
-description: Persist and organize user-provided rules, architecture decisions, project conventions, tooling specifications, and domain knowledge into canonical documentation. Activate when the user instructs to save, record, persist, remember, or document rules, configurations, decisions, or conventions.
+description: Persist and organize user-provided rules, architecture decisions, retrospective improvements (/retro), project conventions, tooling specifications, and domain knowledge into canonical documentation. Activate when the user instructs to save, record, persist, remember, or document rules, configurations, decisions, or conventions.
 ---
 
 # Save Knowledge & Project Rules
@@ -14,6 +14,11 @@ This skill governs how to classify, locate, and record knowledge, rules, decisio
 3. **Single source of truth**: Store each rule or piece of knowledge in its authoritative canonical document. Do not duplicate rules across multiple guides.
 4. **ADR immutability**: Accepted Architecture Decision Records (`docs/adr/0001-*` through current) are historical and immutable per [.agents/rules/adr.md](../../rules/adr.md). Never rewrite, edit, or renumber an accepted record.
 5. **Every rule needs a safeguard**: A rule that lives only in prose will be broken again. When you save a rule, convention, or lesson learned from a mistake, also make it mechanically enforced by the strongest installed tool, so the same error cannot return silently. Documentation records the rule; a safeguard defends it. See [Safeguards](#safeguards-make-every-saved-rule-enforceable).
+6. **Retrospective synthesis & environment improvement**: Findings from `/retro` suggest improvements to the agent's *environment*, not ephemeral patches to code. When persisting retro results, classify them:
+   - **Mechanical violations** (fixed patterns, imports, banned APIs, file locations) must become deterministic checks and safeguards.
+   - **Judgement calls** (cross-file consistency, style, heuristics) belong in `CODING_STANDARDS.md`, where they are reviewed by the review agent (`/code-review`) without imposing context pressure on implementation.
+   - **Navigation friction** belongs as navigation pointers in `AGENTS.md` or domain indices.
+   - **Tooling inefficiency / no-ops** must be pruned or streamlined in `TOOLING.md` / `AGENTS.md`.
 
 ---
 
@@ -41,6 +46,11 @@ Use this matrix to identify the canonical destination file for any given piece o
 | **Persistent agent rules** | Standalone, enforce-everywhere agent constraints (e.g., language, naming) | `.agents/rules/<name>.md` | **Create** |
 | **Reusable agent skills** | Multi-step interactive agent workflows, tool guides, reusable recipes | `.agents/skills/<name>/SKILL.md` | **Create** |
 | **Architecture Decision Records (ADRs)** | Architectural choices, trade-offs, tech evaluations, paradigm changes | `docs/adr/NNNN-<phrase>.md` | **Create** (Immutable) |
+| **Retro: Navigation pointers** | Navigation aids to eliminate exploration friction surfaced in `/retro` | `AGENTS.md` (or domain index docs) | **Update** |
+| **Retro: Mechanical safeguards** | Deterministic checks for mechanical errors caught during `/retro` | `TOOLING.md` (## Custom rule registry / Commands) | **Update** |
+| **Retro: Reviewer standards** | Review-time heuristics and judgement rules for the reviewer agent (`code-review`) | `CODING_STANDARDS.md` | **Update** |
+| **Retro: Steering & no-ops** | Pruning bloat, removing no-op instructions, or streamlining steering | `AGENTS.md` | **Update** |
+| **Retro: Tool economy** | Streamlining expensive tool calls, adjusting MCP configs or logging access | `TOOLING.md`, `.agents/agents.json` | **Update** |
 
 ---
 
@@ -57,14 +67,17 @@ Modify an existing document when the user's information refines, extends, or upd
   - Adding a custom lint/ast rule to the Custom Rule Registry (table in `TOOLING.md`).
   - Adding a verification or maintenance command to the command tables.
   - Recording a known tool limitation, vendor exclusion, or advisory exception.
+  - Adding automated guardrails, pre-commit checks, or CI jobs proposed by `/retro` to prevent repeated failures.
 - **`CODING_STANDARDS.md`**:
   - Adding or refining a TypeScript convention, React idiom, Next.js guideline, or file structure rule.
+  - Adding review-time judgement rules surfaced by `/retro` that cannot be automated via mechanical checks (evaluated by `/code-review`).
 - **`DESIGN.md`**:
   - Updating design tokens, color palette definitions, typography scales, or component guidelines.
 - **`TESTING.md`**:
   - Adding testing patterns, assertion guidelines, coverage expectations, or mocking conventions.
 - **`AGENTS.md`**:
   - Updating high-level guidance, repository-wide rules, or indices of skills and MCP servers.
+  - Adding navigation pointers surfaced by `/retro` to reduce agent search time, or pruning no-op instructions to save context.
 - **`ARCHITECTURE.md`**:
   - Clarifying module boundaries, layer dependency rules, or internationalization flow.
 - **`GLOSSARY.md` / `DER.md`**:
@@ -172,6 +185,12 @@ When turning a coding convention into an enforceable automated rule:
 - **ast-grep**: Use `sgconfig.yml` and `.ast-grep/` for syntax-aware pattern enforcement (e.g., forbidding dynamic class names or manual memoization). Run snapshot tests via `pnpm check:structure`.
 - If an automated rule is created, record it in the **Custom rule registry** table in `TOOLING.md`.
 
+### 5. Session Transcripts & Retrospectives (`/retro`)
+When persisting findings from a retrospective or debugging session:
+- **Transcript analysis**: Read primary session logs (`transcript.jsonl`) to identify what caused friction or confusion.
+- **Rule classification**: Split findings into mechanical mistakes (requiring automated checks in `TOOLING.md` / linters / CI) and judgement calls (requiring rules in `CODING_STANDARDS.md` enforced at review time by `code-review`).
+- **Context optimization**: Identify navigation bottlenecks and add pointers in `AGENTS.md`, or prune no-op instructions to conserve context tokens.
+
 ---
 
 ## End-to-End Decision & Execution Flow
@@ -180,7 +199,7 @@ When turning a coding convention into an enforceable automated rule:
 
 ```mermaid
 flowchart TD
-    A["User Input: Rule, Decision, or Convention"] --> B["Step 1: Ingest & Language Normalization (English default)"]
+    A["User Input: Rule, Decision, or /retro Finding"] --> B["Step 1: Ingest & Language Normalization (English default)"]
     B --> C["Step 2: Investigate & Validate with Tools"]
     
     subgraph ToolingInvestigation ["Tooling & Codebase Investigation"]
@@ -188,17 +207,20 @@ flowchart TD
         C2["Context7 CLI: ctx7 library, ctx7 docs"]
         C3["Next.js DevTools: Routes & Server Components"]
         C4["ast-grep & Biome: Syntactic pattern validation"]
+        C5["Session Logs & /retro: Friction & Transcripts"]
     end
 
     C --> C1
     C --> C2
     C --> C3
     C --> C4
+    C --> C5
 
     C1 --> D{"Step 3: Decision - Update or Create?"}
     C2 --> D
     C3 --> D
     C4 --> D
+    C5 --> D
 
     D -- "Update Existing File" --> E["Operational / Incremental Knowledge"]
     E --> E1["Tooling & Rules -> TOOLING.md"]
@@ -250,7 +272,7 @@ flowchart TD
 When a user requests to save or document information (e.g., "save this rule", "salve essa regra no TOOLING.md", "lembre-se dessa convenção"):
 
 ### 1. Ingest & Interpret
-- Extract the core rule, convention, architectural decision, or tool specification from the user's input.
+- Extract the core rule, convention, architectural decision, retrospective candidate (`/retro`), or tool specification from the user's input or session retrospective.
 - Check the language: if input is in Portuguese or another language, translate the technical guidance into idiomatic English for storage (per [.agents/rules/language.md](../../rules/language.md)).
 
 ### 2. Sanitize & Normalize
