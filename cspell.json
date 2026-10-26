@@ -6,6 +6,7 @@
   "useGitignore": true,
   "ignorePaths": [
     "node_modules",
+    "graphify-out",
     ".next",
     "coverage",
     "reports",
