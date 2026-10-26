@@ -20,16 +20,4 @@ async function IntlProviderServer({
   );
 }
 
-async function IntlDocumentServer({
-  className,
-  children,
-}: Pick<React.ComponentProps<"html">, "className" | "children">) {
-  const locale = await getLocale();
-  return (
-    <html lang={locale} className={className} suppressHydrationWarning>
-      <body className="min-h-full flex flex-col">{children}</body>
-    </html>
-  );
-}
-
-export { IntlDocumentServer, IntlProviderServer };
+export { IntlProviderServer };

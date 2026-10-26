@@ -14,19 +14,19 @@ The current post-audit finding dispositions and limitations are tracked in
 | Documentation folders | 40 |
 | Documentation files | 474 |
 | Project folders | 119 |
-| Project files | 577 |
+| Project files | 578 |
 | Coordinator | 1 |
-| Expected agents / primary items | 1211 |
-| Currently completed review reports | 1211 |
+| Expected agents / primary items | 1212 |
+| Currently completed review reports | 1212 |
 | Active report tasks | 0 |
-| Completed tasks | 1211 |
+| Completed tasks | 1212 |
 | Pending tasks (excluding active) | 0 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 514 / 514 items (100.00%) |
-| Project coverage | 696 / 696 items (100.00%) |
+| Project coverage | 697 / 697 items (100.00%) |
 
-**Active report inventory:** Exactly 1,211 individual Markdown reports
+**Active report inventory:** Exactly 1,212 individual Markdown reports
 belong in `docs/code-review/reports/`. Six superseded historical
 reports for paths removed in prior source refactors have been retained
 under `docs/code-review/archive/`. They are excluded from active
@@ -543,3 +543,11 @@ file count from 576 to 577 and the total primary-item count from 1210 to 1211.
 All counts above describe the current branch; older chronological checkpoint
 figures are historical. The worker harness covers token forwarding and failure
 fallback, but does not replace deployed browser or Firebase integration tests.
+
+## Cookie-specific document language follow-up (2026-10-26)
+
+The `IntlDocumentServer` source has its own project-file report. The project
+now inventories 578 files and 119 folders; the overall total is 1,212.
+Document-language correctness and Cache Components hydration must be verified
+by build and browser tests at the latest branch commit. This is an additional
+source inspection, not evidence of delegated agent execution.
