@@ -14,7 +14,7 @@ language, as defined in `.agents/rules/language.md`.
 | [Coding standards](../CODING_STANDARDS.md) | Source and test conventions | Biome, TypeScript, accepted decisions |
 | [Tooling](../TOOLING.md) | Tools, commands, configuration ownership | `package.json`, configuration, workflows |
 | [Testing](../TESTING.md) | Test layers, required Firebase Emulator E2E, CI limitations | Vitest, Playwright, Firebase, Stryker, workflows |
-| [Quality gates](quality-gates.md) | Which tool owns each rule, coverage limits, regressions | Biome, ast-grep, TypeScript AST, Playwright, CI |
+| [Quality](quality.md) | Which tool owns each rule, coverage limits, regressions | Biome, ast-grep, TypeScript AST, Playwright, CI |
 | [Contributing](../CONTRIBUTING.md) | Branch, commit, and PR conventions | Commitlint, hooks, CI |
 | [Security](../SECURITY.md) | Reporting policy and accepted dependency risk | Audit configuration and security workflow |
 | [Glossary](../GLOSSARY.md) | Agreed product vocabulary; currently pending | Adopted product terminology |
@@ -59,7 +59,7 @@ language, as defined in `.agents/rules/language.md`.
 
 Update the guide that owns a changed practice in the same change as its
 implementation. When changing an architectural rule, update
-[quality gates](quality-gates.md), the executable fixtures, the
+[quality](quality.md), the executable fixtures, the
 [tool inventory](../TOOLING.md), and the relevant agent rule in the same PR.
 Never document planned behavior as a passing CI check. Check cross-references when renaming paths, adding scripts,
 changing locale behavior, or upgrading tools. Preserve accepted ADRs without

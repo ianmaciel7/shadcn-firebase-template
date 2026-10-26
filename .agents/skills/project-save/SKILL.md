@@ -44,7 +44,7 @@ Use this matrix to identify the canonical destination file for any given piece o
 | **Global agent directives** | Overall mission, high-level engineering rules, documentation map for agents | `AGENTS.md` | **Update** |
 | **Agent tool configuration** | MCP servers, client integrations, sync settings | `.agents/agents.json` | **Update** |
 | **Persistent agent rules** | Standalone, machine-actionable behavioral constraints for AI agents (e.g., naming, language, thin routes, components) | `.agents/rules/<name>.md` | **Create / Update** |
-| **Quality enforcement & gates** | Matched inventory of policies to primary enforcement tools, test runners, and budgets | `docs/quality-gates.md` | **Update** |
+| **Quality enforcement & gates** | Matched inventory of policies to primary enforcement tools, test runners, and budgets | `docs/quality.md` | **Update** |
 | **Application operations & telemetry** | Runtime instrumentation, cloud logging, usage guards, operational runbooks | `docs/observability.md` | **Update** |
 | **Reusable agent skills** | Multi-step interactive agent workflows, tool guides, reusable recipes | `.agents/skills/<name>/SKILL.md` | **Create** |
 | **Architecture Decision Records (ADRs)** | Architectural choices, trade-offs, tech evaluations, paradigm changes | `docs/adr/NNNN-<phrase>.md` | **Create** (Immutable) |

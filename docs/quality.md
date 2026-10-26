@@ -1,4 +1,4 @@
-# Quality gates
+# Quality
 
 This project favors the native capabilities of its installed tools over custom
 TypeScript AST scanners. Every policy should have one primary enforcement tool

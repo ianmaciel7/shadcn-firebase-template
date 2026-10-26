@@ -14,7 +14,7 @@ budget.
   - Kept concise and machine-actionable to conserve prompt context.
 - **`docs/` (Human and domain documentation & system operations)**:
   - Contains **descriptive reference documentation, operational guides, and history**.
-  - Maps system architecture ([`docs/README.md`](../../docs/README.md)), verification ownership ([`docs/quality-gates.md`](../../docs/quality-gates.md)), operational services ([`docs/observability.md`](../../docs/observability.md)), immutable decisions ([`docs/adr/`](../../docs/adr/)), upstream inventories ([`docs/agents/`](../../docs/agents/)), and review snapshots ([`docs/reviews/`](../../docs/reviews/)).
+  - Maps system architecture ([`docs/README.md`](../../docs/README.md)), verification ownership ([`docs/quality.md`](../../docs/quality.md)), operational services ([`docs/observability.md`](../../docs/observability.md)), immutable decisions ([`docs/adr/`](../../docs/adr/)), upstream inventories ([`docs/agents/`](../../docs/agents/)), and review snapshots ([`docs/reviews/`](../../docs/reviews/)).
   - Intended for human engineers, onboarding, production operations, and authoritative reference.
 
 ## Rule catalog

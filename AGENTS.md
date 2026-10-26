@@ -77,7 +77,7 @@ external lookups ad hoc.
 - `ARCHITECTURE.md`: repository layout and application boundaries.
 - `CODING_STANDARDS.md`: conventions for TypeScript, React, Next.js, UI, and i18n.
 - `TOOLING.md`: package manager, commands, and configuration ownership.
-- `docs/quality-gates.md`: primary enforcement tools and rule limits.
+- `docs/quality.md`: primary enforcement tools and rule limits.
 - `TESTING.md`: required validation and test strategy.
 - `SECURITY.md`: vulnerability reporting and secure contribution practices.
 - `CONTRIBUTING.md`: branch, commit, release, and pull-request conventions.
