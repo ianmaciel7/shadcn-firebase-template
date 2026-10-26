@@ -13,6 +13,7 @@
 ## Document scope and observed contracts
 
 The Next.js source guide covers **react server component and server action security**.
+
 - Compares external HTTP services, a server-only Data Access Layer, and component-level data access.
 - Advises keeping sensitive data off Client Component props and using explicit limited return DTOs.
 - Requires trusted-session authorization and input validation on server mutations, even when UI is hidden.

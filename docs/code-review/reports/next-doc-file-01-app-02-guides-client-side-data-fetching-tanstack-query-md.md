@@ -13,6 +13,7 @@
 ## Document scope and observed contracts
 
 The Next.js source guide covers **client-side fetching with tanstack query**.
+
 - Describes a QueryClientProvider and distinct per-server-render clients to prevent sharing state across requests.
 - Shows browser caching, Suspense, hydration and coordination with Cache Components.
 - Separates query invalidation from server cache invalidation after mutations.

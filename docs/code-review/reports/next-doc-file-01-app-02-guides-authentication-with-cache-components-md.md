@@ -13,6 +13,7 @@
 ## Document scope and observed contracts
 
 The Next.js source guide covers **authenticated rendering under cache components**.
+
 - Explains why request-time session reads cannot be prerendered into a shared static shell.
 - Shows streaming authenticated content under Suspense and separating session-derived caching from public data.
 - Covers conditional cache invalidation after session mutation and authenticated navigation prefetch.

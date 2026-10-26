@@ -13,6 +13,7 @@
 ## Document scope and observed contracts
 
 The Next.js source guide covers **next.js as a backend for frontend**.
+
 - Describes Route Handlers as public HTTP endpoints, API response types, webhook handling and proxying to an external API.
 - Explicitly covers auth, request payload validation, rate limiting and protected resource checks.
 - Separates Server Actions and Server Components from public route handlers and mentions deployment caveats.

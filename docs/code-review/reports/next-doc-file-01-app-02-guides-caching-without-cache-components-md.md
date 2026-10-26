@@ -13,6 +13,7 @@
 ## Document scope and observed contracts
 
 The Next.js source guide covers **pre-cache components caching model**.
+
 - States explicitly that the guide assumes `cacheComponents` is not enabled.
 - Explains fetch force-cache, unstable_cache, segment revalidate and invalidation in the earlier model.
 - Demonstrates data preloading and route-level cache configuration in its intended mode.

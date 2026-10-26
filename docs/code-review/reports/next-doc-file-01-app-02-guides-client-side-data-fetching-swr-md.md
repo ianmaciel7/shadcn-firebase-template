@@ -13,6 +13,7 @@
 ## Document scope and observed contracts
 
 The Next.js source guide covers **client-side data fetching with swr**.
+
 - Explains useSWR for browser fetching with local loading/error states and conditional request keys.
 - Describes `suspense: true`, server-provided fallback data and coordination of client versus server caches.
 - Notes that a client cache needs an explicit mutation or invalidation strategy after a server update.

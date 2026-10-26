@@ -13,6 +13,7 @@
 ## Document scope and observed contracts
 
 The Next.js source guide covers **environment variables and browser bundling**.
+
 - Documents Next.js environment load order and referencing variables in Node and browser contexts.
 - `NEXT_PUBLIC_` variables are statically bundled for browser use; private service keys must not use this prefix.
 - Discusses runtime values, testing and when `@next/env` is useful outside framework execution.

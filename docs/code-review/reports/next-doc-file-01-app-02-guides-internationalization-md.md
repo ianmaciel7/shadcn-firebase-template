@@ -13,6 +13,7 @@
 ## Document scope and observed contracts
 
 The Next.js source guide covers **localized content and locale-aware routing**.
+
 - Defines locale negotiation and translated content.
 - Examples demonstrate locale-prefixed or locale-specific route selection and dictionary loading.
 - Dynamic language selection interacts with rendering and metadata ownership.

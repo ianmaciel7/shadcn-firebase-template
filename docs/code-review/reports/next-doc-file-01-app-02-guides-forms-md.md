@@ -13,6 +13,7 @@
 ## Document scope and observed contracts
 
 The Next.js source guide covers **forms backed by react server actions**.
+
 - Covers Server Function form actions, pending UI, validation errors, nested forms and optimistic updates.
 - Requires authenticating and authorizing inside a Server Action regardless of who can view the page.
 - Examples use server mutations; the framework does not require replacing client Firebase forms with Server Actions.

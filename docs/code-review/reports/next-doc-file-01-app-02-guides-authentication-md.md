@@ -13,6 +13,7 @@
 ## Document scope and observed contracts
 
 The Next.js source guide covers **authentication, sessions and authorization**.
+
 - Separates user identity verification, session persistence and permission decisions.
 - Recommends repeated permission checks at the data boundary, with Data Access Layer and DTO examples rather than relying on UI visibility.
 - Warns against treating layout or Proxy checks as the sole authorization boundary.

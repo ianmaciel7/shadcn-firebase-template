@@ -13,6 +13,7 @@
 ## Document scope and observed contracts
 
 The Next.js source guide covers **instrumentation startup convention**.
+
 - Describes the root or src/instrumentation.ts convention and optional register function.
 - Shows runtime-specific imports and server startup instrumentation.
 - Distinguishes instrumentation initialization from request-error reporting API.

@@ -13,6 +13,7 @@
 ## Document scope and observed contracts
 
 The Next.js source guide covers **content security policy with next.js**.
+
 - Covers nonce-based CSP setup, rendering consequences and configuration for third-party resources.
 - Explains that request-specific nonces require dynamic rendering, with performance implications for static content.
 - Describes a non-nonce CSP alternative and experimental integrity options.
