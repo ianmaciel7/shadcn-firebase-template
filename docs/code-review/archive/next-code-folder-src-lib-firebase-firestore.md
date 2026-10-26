@@ -1,3 +1,5 @@
+<!-- cspell:ignore Colocates -->
+
 # Individual report - `next-code-folder-src-lib-firebase-firestore`
 
 ## Identification
