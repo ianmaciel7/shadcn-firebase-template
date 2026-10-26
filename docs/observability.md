@@ -1,4 +1,4 @@
-# Application logging
+# Observability and application logging
 
 ## Native services
 

@@ -14,8 +14,7 @@ language, as defined in `.agents/rules/language.md`.
 | [Coding standards](../CODING_STANDARDS.md) | Source and test conventions | Biome, TypeScript, accepted decisions |
 | [Tooling](../TOOLING.md) | Tools, commands, configuration ownership | `package.json`, configuration, workflows |
 | [Testing](../TESTING.md) | Test layers, required Firebase Emulator E2E, CI limitations | Vitest, Playwright, Firebase, Stryker, workflows |
-| [Quality enforcement](quality-enforcement.md) | Which tool owns each rule, coverage limits, regressions | Biome, ast-grep, TypeScript AST, Playwright, CI |
-| [Biome plugin preview](biome-plugin-preview.md) | Isolated 2.6 preview and migration guard | `biome.preview.json`, pilot fixtures, CI |
+| [Quality gates](quality-gates.md) | Which tool owns each rule, coverage limits, regressions | Biome, ast-grep, TypeScript AST, Playwright, CI |
 | [Contributing](../CONTRIBUTING.md) | Branch, commit, and PR conventions | Commitlint, hooks, CI |
 | [Security](../SECURITY.md) | Reporting policy and accepted dependency risk | Audit configuration and security workflow |
 | [Glossary](../GLOSSARY.md) | Agreed product vocabulary; currently pending | Adopted product terminology |
@@ -27,7 +26,7 @@ language, as defined in `.agents/rules/language.md`.
 
 ## Application operations
 
-- [Logging](logging.md): Next.js server errors, authenticated Firebase usage
+- [Observability](observability.md): Next.js server errors, authenticated Firebase usage
   events, Cloud Logging queries, and deployment requirements.
 
 ## Review snapshots
@@ -60,7 +59,7 @@ language, as defined in `.agents/rules/language.md`.
 
 Update the guide that owns a changed practice in the same change as its
 implementation. When changing an architectural rule, update
-[quality enforcement](quality-enforcement.md), the executable fixtures, the
+[quality gates](quality-gates.md), the executable fixtures, the
 [tool inventory](../TOOLING.md), and the relevant agent rule in the same PR.
 Never document planned behavior as a passing CI check. Check cross-references when renaming paths, adding scripts,
 changing locale behavior, or upgrading tools. Preserve accepted ADRs without

@@ -1,4 +1,4 @@
-# Quality enforcement
+# Quality gates
 
 This project favors the native capabilities of its installed tools over custom
 TypeScript AST scanners. Every policy should have one primary enforcement tool
@@ -8,7 +8,7 @@ and a regression test.
 | --- | --- | --- |
 | Formatting, imports, React and Next.js lint | Biome 2.5.15 | Prefer native rules over Grit plugins; `prefer-is-error` was removed. ESLint is not installed. |
 | Owned function cognitive complexity, body size and callback depth | Biome native | Runtime budgets 8 / 40 lines excluding blanks / 2; real-config boundary and scope regressions. Fallow still owns cyclomatic/coverage health signals; neither proves a hook's semantic cohesion. |
-| Filename/export matching preview | Biome 2.6.2 plugin (CI-only) | Developer Preview, scoped to TSX; component AST guard remains authoritative until parity is demonstrated. |
+| Filename/export matching preview | Biome 2.6.2 plugin (CI-only) | Developer Preview, scoped to TSX; component AST guard remains authoritative until parity is demonstrated. See [Biome plugin pilot](#biome-26-plugin-pilot-developer-preview). |
 | Route-only Firebase SDK import boundaries | Biome `noRestrictedImports` | Specific to `page.tsx`, `layout.tsx`, and `template.tsx`. |
 | Route client directives, hook calls, JSX handlers | ast-grep | Structural rules with YAML regression tests. |
 | Other route logic and mutation restrictions | `scripts/checks/check-route-files.mjs` | Kept until equivalent structural rules are tested. |
@@ -28,6 +28,38 @@ and a regression test.
 | Persistence and dependency injection | Typed service adapter | `saveProfile` defaults to Firebase implementations but accepts `ProfileDependencies` for unit tests. |
 | Complexity, health, and warnings | Fallow + React Doctor | Fallow thresholds can fail CI; React Doctor diagnostics can be advisory. Do not confuse a successful process exit with no warnings. |
 | Agent tool-selection behavior | `pnpm eval:tool-usage` | On-demand Codex trace evaluation. The runner has deterministic Node tests and evaluates the agent's tool calls plus a structured receipt; it stays outside CI because configured MCP/plugin availability and agent behavior are external and non-deterministic. |
+
+## Biome 2.6 plugin pilot (Developer Preview)
+
+This is an **isolated proof of concept**; the application's supported linter
+remains Biome 2.5.15. ESLint is neither used nor installed.
+
+Biome 2.6 introduced JavaScript lint plugins, currently labeled **Developer
+Preview**. The file-based pilot uses `ctx.filePath` and the semantic
+model to reject *exported function components* whose names do not match the
+filename's PascalCase root (compound parts like `ProfileCardHeader` are
+permitted in `profile-card.tsx`).
+
+To exercise the pilot, run the CI step `Biome 2.6 plugin pilot`. The step
+uses a temporary `pnpm dlx @biomejs/biome@2.6.2` executable, a separate
+`biome.preview.json`, and valid/invalid fixtures. CI verifies that the
+valid fixtures and the owned project components pass, and invalid fixtures fail **for the expected
+plugin diagnostic**, not merely due to a parse/config error.
+
+**Production source is now scanned in CI as a preview check.** Keep
+`scripts/checks/check-component-conventions.mjs` as the source of truth for the
+following cases until corresponding plugin tests exist: missing root export;
+aliases and re-exports; all local component declarations; props types,
+parameter forwarding, and compound component composition. The experiment only enforces exported function name/filename parity,
+alongside the mature checker. It does not cover private hook file names,
+named hook exports, missing component roots, props forwarding, or native
+React hook semantics. Keep those with their current owners.
+
+If successful, a later change can upgrade the pinned Biome dependency and
+regenerate `pnpm-lock.yaml` using pnpm, then run the complete suite before
+removing the redundant part of the Node checker.
+
+Documentation: [Biome linter plugins](https://biomejs.dev/linter/plugins/)
 
 ## Maintaining the boundary
 

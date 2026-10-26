@@ -324,7 +324,7 @@ guard or submit permitted events for their own identity. Firebase resource rules
 still authorize profile data. Authoritative mutation auditing requires logging
 inside server-owned operations. New functionalities must use `withUsageGuard`
 and extend the server allowlist. Development remounts can generate duplicates.
-See [logging operations](docs/logging.md) for deployment and log controls.
+See [observability operations](docs/observability.md) for deployment and log controls.
 
 ## Next.js server error logging
 
