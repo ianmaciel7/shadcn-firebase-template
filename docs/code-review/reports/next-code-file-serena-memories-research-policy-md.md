@@ -1,22 +1,37 @@
-# Individual file review — `next-code-file-serena-memories-research-policy-md`
+# Individual source review — `.serena/memories/research/policy.md`
 
 ## Identification
 
-- **Agent identity:** `next-code-file-serena-memories-research-policy-md`
-- **Primary item:** `.serena/memories/research/policy.md`
-- **Type:** CODE_FILE
-- **Source revision:** `0be7ee0f4c06a32bae63de7c4d0b8562b9350fb2`
-- **Next.js baseline:** 16.4.2
-- **Review state:** Source inspected; quality checks pending.
+- Review identity: `next-code-file-serena-memories-research-policy-md`
+- Item type: `CODE_FILE`
+- Primary path: `.serena/memories/research/policy.md`
+- Source baseline: `0a4aae9d663220e953b4de7ef88140472c73e5be`
+- Next.js / React baseline: 16.4.2 / 19.3.1
+- Status: Completed direct static review; CI validation pending
 
-## Evidence
+## Scope and evidence
 
-Requires checking existing research before fetching sources and storing reusable non-sensitive results with date and version markers.
+The primary source covers **external research memory policy**.
+Inspected the named file at the recorded branch checkpoint
+and compared its stated obligations against related source, tool
+configuration and application boundaries where appropriate.
 
-## Verification boundaries
+## Verified source observations
 
-The file was inspected directly, but a static source review alone does not prove live security or tooling behavior. The branch review workflow provides TypeScript, native Biome and structural rule test evidence, plus spelling and Markdown verification. Production security checks and live Serena tooling remain separate responsibilities.
+- Instructs agents to consult sufficiently current project-scoped research memory before new external lookup.
+- Requires source, retrieval date and freshness/version boundary for durable conclusions.
+- Prohibits secrets, personal data, large copyrighted content and raw transient responses in memory.
 
-## Conclusion
+## Findings and verification boundaries
 
-This source item has an individual file or folder review and awaits successful branch quality validation.
+- This policy reference does not prove a Serena tool invocation or that stored research is fresh; current sources must be verified when material.
+No separate independent subagent was invoked for this report.
+This static source inspection does not replace runtime, security,
+emulator, browser or integration tests.
+
+## Disposition
+
+The primary file was inspected and the scope/limitations recorded.
+No additional confirmed blocking defect was established within this
+source item alone. Outstanding related items and CI verification
+remain tracked separately.

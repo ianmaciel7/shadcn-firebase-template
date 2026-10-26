@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 702 |
+| Currently completed review reports | 720 |
 | Active report tasks | 0 |
-| Completed tasks | 702 |
-| Pending tasks (excluding active) | 508 |
+| Completed tasks | 720 |
+| Pending tasks (excluding active) | 490 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 677 / 695 items (97.41%) |
+| Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -76,6 +76,24 @@ No independent subagents or runtime checks were executed for these
 individual source reviews. There are now 18 Pending project files,
 zero Pending project folders and 490 Pending Next.js documentation items.
 CI status for this commit remains separate from the source inspection.
+
+## Full project source inventory checkpoint (2026-10-26)
+
+All 695 tracked project primary items now have individual static reports
+(119 folder boundaries and 576 files). The final 18 items covered
+architecture, coding, design, React/Next.js/shadcn references, testing,
+security, engineering guard tests, research policy, and four PNG assets
+which were decoded and visually inspected.
+**Execution caveat:** these new reports are direct source inspections;
+the original request for one independent real subagent process per item
+has not been executed in this environment. This count is review-report
+coverage, not certification that independent agent reviews, browser
+journeys or production behavior are complete.
+All 490 remaining inventory items are from the installed Next.js
+documentation corpus. Project source coverage is 695/695 (100.00%);
+overall recorded coverage is 720/1210 (59.50%).
+CI validation of this checkpoint is not established until the
+associated workflow runs finish.
 
 ## Execution
 
