@@ -14,13 +14,13 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 888 |
+| Currently completed review reports | 900 |
 | Active report tasks | 0 |
-| Completed tasks | 888 |
-| Pending tasks (excluding active) | 322 |
+| Completed tasks | 900 |
+| Pending tasks (excluding active) | 310 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
-| Documentation coverage | 192 / 514 items (37.35%) |
+| Documentation coverage | 204 / 514 items (39.69%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
@@ -203,6 +203,16 @@ route groups, route handlers, parallel routes, template remounts,
 and caching API contracts. These are direct inspections without
 independent subagents or application runtime tests.
 Document items completed: 192/514; remaining: 322.
+
+## Request APIs and metadata function checkpoint (2026-10-26)
+
+Twelve official function references were inspected individually,
+including cookies, headers, request-time rendering, fetch,
+metadata generation and forbidden access. Source evidence and
+current application relevance appear in each unique report.
+The project inventory remains complete; documentation progress
+is 204/514, with 310 items pending. No independent subagent
+or runtime execution is claimed.
 
 ## Execution
 
