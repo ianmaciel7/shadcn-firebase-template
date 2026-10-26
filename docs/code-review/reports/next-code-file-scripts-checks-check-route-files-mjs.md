@@ -1,0 +1,26 @@
+# Individual source check review — `next-code-file-scripts-checks-check-route-files-mjs`
+
+## Identification
+
+- **Review identity:** `next-code-file-scripts-checks-check-route-files-mjs`
+- **Primary file:** `scripts/checks/check-route-files.mjs`
+- **Type:** CODE_FILE
+- **Source revision:** `99b9b1c0959ac9a949970265d64e91307dc54339`
+- **Next.js baseline:** 16.4.2
+- **Status:** Completed following validated review CI.
+
+## Evidence
+
+Restricts the route scanner to page, layout and template entrypoints, permits framework metadata generators, and rejects embedded control flow, mutable state, browser APIs and helper declarations using TypeScript AST inspection.
+
+## Findings and limitations
+
+No independently confirmed new defect was established from the inspected source in this review. This rule is an intentionally stricter repository convention; some constructs permitted by the Next.js framework are disallowed by project policy.
+
+## Test and quality boundary
+
+The file was inspected in the GitHub source tree. The existing test fixtures and independent branch validation passed in [GitHub Actions run 40193670924](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40193670924). This review does not claim that static checks replace runtime integration or official framework behavior.
+
+## Conclusion
+
+The source has a documented individual review, with its project-specific contracts and blind spots recorded.

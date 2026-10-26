@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import type { ComponentProps } from "react";
-import { buttonVariants } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
+import { FieldGroup } from "@/components/ui/field";
 import { useProfileSectionClient } from "../_hooks/use-profile-section-client";
-import { ProfileSessionContext } from "../_hooks/use-profile-session-context";
+import { ProfileSessionContext } from "../_lib/session";
 import { ProfileAvatarFieldClient } from "./profile-avatar-field-client";
+import { ProfileBackToHomeButton } from "./profile-back-to-home-button";
 import {
   ProfileCard,
   ProfileCardContent,
@@ -17,11 +16,8 @@ import {
 } from "./profile-card";
 import { ProfileDisplayNameField } from "./profile-display-name-field";
 import { ProfileEmailField } from "./profile-email-field";
-import {
-  ProfileFormClient,
-  ProfileFormClientContent,
-  ProfileFormClientFooter,
-} from "./profile-form-client";
+import { ProfileFormClient } from "./profile-form-client";
+import { ProfileGuard } from "./profile-guard";
 import { ProfileLocaleField } from "./profile-locale-field";
 import { ProfileSaveButton } from "./profile-save-button";
 import { ProfileThemeField } from "./profile-theme-field";
@@ -29,67 +25,36 @@ import { ProfileThemeField } from "./profile-theme-field";
 type ProfileSectionClientProps = ComponentProps<"div">;
 
 function ProfileSectionClient(props: ProfileSectionClientProps) {
-  const { profile, state, t } = useProfileSectionClient();
-
-  if (state.status === "loading") {
-    return (
-      <div {...props}>
-        <LoadingIndicator className="w-full text-sm text-muted-foreground">
-          {t("loading")}
-        </LoadingIndicator>
-      </div>
-    );
-  }
-
-  if (state.status === "hidden") return null;
-
-  if (state.status === "error") {
-    return (
-      <ProfileCard {...props}>
-        <ProfileCardContent>
-          <p role="alert">{state.message}</p>
-        </ProfileCardContent>
-      </ProfileCard>
-    );
-  }
+  const { profile, status, userId, t } = useProfileSectionClient();
 
   return (
-    <ProfileSessionContext value={profile}>
-      <ProfileCard {...props}>
-        <ProfileFormClient key={state.userId}>
-          <ProfileCardHeader>
-            <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
-            <ProfileCardDescription>
-              {t("personalInfoDescription")}
-            </ProfileCardDescription>
-          </ProfileCardHeader>
-          <ProfileCardContent>
-            <ProfileFormClientContent>
-              <ProfileAvatarFieldClient />
-              <ProfileDisplayNameField />
-              <ProfileEmailField />
-              <ProfileLocaleField />
-              <ProfileThemeField />
-            </ProfileFormClientContent>
-          </ProfileCardContent>
-          <ProfileCardFooter>
-            <ProfileFormClientFooter>
+    <ProfileGuard status={status} {...props}>
+      <ProfileSessionContext value={profile}>
+        <ProfileCard {...props}>
+          <ProfileFormClient key={userId}>
+            <ProfileCardHeader>
+              <ProfileCardTitle>{t("personalInfoTitle")}</ProfileCardTitle>
+              <ProfileCardDescription>
+                {t("personalInfoDescription")}
+              </ProfileCardDescription>
+            </ProfileCardHeader>
+            <ProfileCardContent>
+              <FieldGroup className="gap-4">
+                <ProfileAvatarFieldClient />
+                <ProfileDisplayNameField />
+                <ProfileEmailField />
+                <ProfileLocaleField />
+                <ProfileThemeField />
+              </FieldGroup>
+            </ProfileCardContent>
+            <ProfileCardFooter>
               <ProfileSaveButton />
-              <Link
-                href="/"
-                className={buttonVariants({
-                  variant: "link",
-                  size: "sm",
-                  className: "w-full text-xs",
-                })}
-              >
-                {t("backToHome")}
-              </Link>
-            </ProfileFormClientFooter>
-          </ProfileCardFooter>
-        </ProfileFormClient>
-      </ProfileCard>
-    </ProfileSessionContext>
+              <ProfileBackToHomeButton />
+            </ProfileCardFooter>
+          </ProfileFormClient>
+        </ProfileCard>
+      </ProfileSessionContext>
+    </ProfileGuard>
   );
 }
 

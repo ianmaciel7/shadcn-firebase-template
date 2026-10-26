@@ -40,14 +40,28 @@ function ProfileCardDescription(props: ProfileCardDescriptionProps) {
   return <CardDescription {...props} />;
 }
 
-function ProfileCardContent(props: ProfileCardContentProps) {
-  return <CardContent {...props} />;
+function ProfileCardContent({
+  children,
+  className,
+  ...props
+}: ProfileCardContentProps) {
+  return (
+    <CardContent
+      className={cn("flex w-full flex-col gap-4", className)}
+      {...props}
+    >
+      {children}
+    </CardContent>
+  );
 }
 
 function ProfileCardFooter({ className, ...props }: ProfileCardFooterProps) {
   return (
     <CardFooter
-      className={cn("border-t-0 bg-transparent pt-0", className)}
+      className={cn(
+        "w-full flex-col gap-4 border-t-0 bg-transparent pt-0",
+        className,
+      )}
       {...props}
     />
   );

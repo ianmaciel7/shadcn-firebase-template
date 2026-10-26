@@ -28,7 +28,7 @@ export function OAuthButton({ provider, children, themed, onSignIn }: OAuthButto
           children
         )}
       </Button>
-      {error && <div className="text-destructive text-left text-xs">{error}</div>}
+      {error && <div role="alert" className="text-destructive text-left text-xs">{error}</div>}
     </div>
   );
 }

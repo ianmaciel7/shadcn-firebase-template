@@ -35,7 +35,9 @@ describe("ProfileCard", () => {
           <ProfileCardTitle>{title}</ProfileCardTitle>
           <ProfileCardDescription>{description}</ProfileCardDescription>
         </ProfileCardHeader>
-        <ProfileCardContent>{content}</ProfileCardContent>
+        <ProfileCardContent className="custom-profile-card-content">
+          {content}
+        </ProfileCardContent>
         <ProfileCardFooter>{footer}</ProfileCardFooter>
       </ProfileCard>,
     );
@@ -55,17 +57,22 @@ describe("ProfileCard", () => {
     expect(
       card.querySelector('[data-slot="card-header"]')?.textContent,
     ).toContain(header);
-    expect(card.querySelector('[data-slot="card-content"]')?.textContent).toBe(
-      "Content",
-    );
+    const cardContent = card.querySelector('[data-slot="card-content"]');
+    expect(cardContent?.textContent).toBe("Content");
+    expect(cardContent?.className).toContain("w-full");
+    expect(cardContent?.className).toContain("flex-col");
+    expect(cardContent?.className).toContain("gap-4");
+    expect(cardContent?.className).toContain("custom-profile-card-content");
     expect(card.querySelector('[data-slot="card-title"]')?.textContent).toBe(
       title,
     );
     expect(
       card.querySelector('[data-slot="card-description"]')?.textContent,
     ).toBe(description);
-    expect(card.querySelector('[data-slot="card-footer"]')?.textContent).toBe(
-      "Footer",
-    );
+    const cardFooter = card.querySelector('[data-slot="card-footer"]');
+    expect(cardFooter?.textContent).toBe("Footer");
+    expect(cardFooter?.className).toContain("w-full");
+    expect(cardFooter?.className).toContain("flex-col");
+    expect(cardFooter?.className).toContain("gap-4");
   });
 });

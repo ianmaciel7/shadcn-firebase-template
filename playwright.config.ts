@@ -23,7 +23,6 @@ const authTestBaseUrl = `http://${authTestHost}:3100`;
 
 export default defineConfig({
   testDir: "./tests",
-  // tests/unit holds Vitest files, which Playwright's default match would also pick up.
   testMatch: authEmulator ? "**/firebase-auth.spec.ts" : "**/*.spec.ts",
   testIgnore: authEmulator ? undefined : "**/firebase-auth.spec.ts",
   fullyParallel: !authEmulator,

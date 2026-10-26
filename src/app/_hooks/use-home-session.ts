@@ -2,23 +2,29 @@
 
 import type { User } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { subscribeToSession } from "@/lib/auth/session";
+import { subscribeToSession } from "@/lib/session";
 
-function useHomeSession() {
-  const [session, setSession] = useState<{ ready: boolean; user: User | null }>(
-    { ready: false, user: null },
-  );
+type HomeSession = {
+  isError: boolean;
+  isLoading: boolean;
+  user: User | null;
+};
+
+export function useHomeSession() {
+  const [session, setSession] = useState<HomeSession>({
+    isError: false,
+    isLoading: true,
+    user: null,
+  });
   useEffect(() => {
     try {
       return subscribeToSession(
-        (user) => setSession({ ready: true, user }),
-        () => setSession({ ready: true, user: null }),
+        (user) => setSession({ isError: false, isLoading: false, user }),
+        () => setSession({ isError: true, isLoading: false, user: null }),
       );
     } catch {
-      setSession({ ready: true, user: null });
+      setSession({ isError: true, isLoading: false, user: null });
     }
   }, []);
   return session;
 }
-
-export { useHomeSession };

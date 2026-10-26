@@ -142,9 +142,7 @@ const tokensCache = new Map<string, TokenizedCode>();
 const subscribers = new Map<string, Set<(result: TokenizedCode) => void>>();
 
 const getTokensCacheKey = (code: string, language: BundledLanguage) => {
-  const start = code.slice(0, 100);
-  const end = code.length > 100 ? code.slice(-100) : "";
-  return `${language}:${code.length}:${start}:${end}`;
+  return JSON.stringify([language, code]);
 };
 
 const getHighlighter = (
@@ -500,6 +498,7 @@ const CodeBlockCopyButton = ({
 
   return (
     <Button
+      aria-label={children ? undefined : "Copy code"}
       className={cn("shrink-0", className)}
       onClick={copyToClipboard}
       size="icon"

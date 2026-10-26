@@ -5,11 +5,14 @@ import { useHomeSession } from "./use-home-session";
 
 export function useHomeSectionClient() {
   const t = useTranslations("Home");
-  const { ready, user } = useHomeSession();
+  const session = useHomeSession();
 
   return {
     t,
-    ready,
-    user,
+    session,
+    title: session.user
+      ? t("welcome", { name: session.user.displayName?.trim() || t("friend") })
+      : t("title"),
+    description: session.user ? t("signedInDescription") : t("description"),
   };
 }

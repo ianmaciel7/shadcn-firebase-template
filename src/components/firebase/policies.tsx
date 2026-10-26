@@ -17,7 +17,7 @@ export function Policies() {
 
   const className = cn("hover:underline font-semibold");
   const Handler = onNavigate ? (
-    <button className={className} />
+    <button type="button" className={className} />
   ) : (
     <a target="_blank" rel="noopener noreferrer" className={className} />
   );

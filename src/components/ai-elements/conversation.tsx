@@ -86,6 +86,7 @@ const ConversationScrollButton = ({
           "absolute bottom-4 left-[50%] translate-x-[-50%] rounded-full dark:bg-background dark:hover:bg-muted",
           className,
         )}
+        aria-label="Scroll to newest message"
         onClick={handleScrollToBottom}
         size="icon"
         type="button"
@@ -154,6 +155,7 @@ const ConversationDownload = ({
         "absolute top-4 right-4 rounded-full dark:bg-background dark:hover:bg-muted",
         className,
       )}
+      aria-label="Download conversation"
       onClick={handleDownload}
       size="icon"
       type="button"

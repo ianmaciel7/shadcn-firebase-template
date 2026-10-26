@@ -32,6 +32,27 @@ Deliver correct, maintainable changes with minimal risk.
 - Local MCP overrides/secrets: `.agents/local.json`
 - Project skills: `.agents/skills/*/SKILL.md`
 
+## Tool selection
+
+`TOOLING.md` is the operational inventory for this repository. Before choosing
+an implementation, diagnosis, research, or verification approach, read the
+relevant inventory and command entry. Prefer the installed or configured tool
+whose stated purpose covers the task; do not recreate its checks, scripts, or
+external lookups ad hoc.
+
+- For library, framework, SDK, API, CLI, or cloud-service documentation, use
+  the native Context7 plugin (`resolve-library-id`, then `query-docs`) when it
+  is available. Otherwise use the installed `context7-cli` skill. Use web
+  research only to complement Context7 or for material outside its corpus.
+- Use the configured MCP server or project skill when one is applicable before
+  reaching for shell commands. For example: Next.js DevTools for runtime
+  diagnostics, Playwright for browser verification (CUA only when it is the
+  available browser fallback), Serena or Graphify for symbol-aware code
+  navigation, and the project `verify` skill for scoped validation.
+- Treat the `Purpose` and `Source of truth` columns in `TOOLING.md` as the
+  decision guide. If a listed tool is unavailable, say so clearly and use the
+  smallest safe fallback; never claim that its check or lookup ran.
+
 ## MCP & Skills workflow
 
 1. Add or update MCP entries in `.agents/agents.json`.
@@ -50,12 +71,13 @@ Deliver correct, maintainable changes with minimal risk.
 ## Project documentation
 
 - `docs/README.md`: documentation ownership and maintenance guide.
+- `docs/code-review/README.md`: historical per-item audit coverage and resumption queue;
+  `docs/code-review/resolutions.md`: current finding dispositions and verification limits.
 - `DESIGN.md`: implemented tokens, typography, and component design reference.
 - `ARCHITECTURE.md`: repository layout and application boundaries.
 - `CODING_STANDARDS.md`: conventions for TypeScript, React, Next.js, UI, and i18n.
 - `TOOLING.md`: package manager, commands, and configuration ownership.
-- `docs/quality-rule-ownership.md`: primary enforcement tools and rule limits.
-- `docs/biome-javascript-plugin-pilot.md`: separate Biome 2.6 pilot scope.
+- `docs/quality-enforcement.md`: primary enforcement tools and rule limits.
 - `TESTING.md`: required validation and test strategy.
 - `SECURITY.md`: vulnerability reporting and secure contribution practices.
 - `CONTRIBUTING.md`: branch, commit, release, and pull-request conventions.
@@ -63,12 +85,14 @@ Deliver correct, maintainable changes with minimal risk.
   product-specific terms are resolved.
 - `DER.md`: pending product entity-relationship diagram and the existing
   technical Firebase persistence boundary.
-- `.agents/rules/adr-naming.md`: naming and immutability policy for future
+- `.agents/rules/adr.md`: naming and immutability policy for future
   architecture decision records.
+- `.agents/rules/serena.md`: cache-first policy for
+  external research and durable Serena-memory findings.
 
 Accepted ADRs are historical records; use `docs/adr/README.md` and current
-configuration to identify later operational changes. The seven installed skills
-and two configured MCP servers are indexed in `.agents/README.md`.
+configuration to identify later operational changes. The nine installed skills
+and three configured MCP servers are indexed in `.agents/README.md`.
 
 Read the documentation relevant to the change before editing it. For changes
 to tooling, checks, or conventions, update the executable config, positive
@@ -89,7 +113,7 @@ Single-context (`GLOSSARY.md` + `docs/adr/`). See `docs/agents/domain.md`.
 
 ## shadcn/ui documentation workflow
 
-Before UI work, read `.agents/rules/shadcn-ui.md` and load the installed
+Before UI work, read `.agents/rules/shadcn.md` and load the installed
 `.agents/skills/shadcn/SKILL.md`. The project uses Base UI (`base-nova`), not
 the API of another primitive family. Current CLI commands belong in
 `TOOLING.md`; component contracts belong in `CODING_STANDARDS.md`; theme and
@@ -128,7 +152,9 @@ skills, hosting configuration, or migration to another rendering model.
 
 ## React documentation workflow
 
-For React changes, read [.agents/rules/react.md](.agents/rules/react.md) and
+For React changes, read [.agents/rules/react.md](.agents/rules/react.md)
+(alongside [.agents/rules/react-dom.md](.agents/rules/react-dom.md) and
+[.agents/rules/react-quality.md](.agents/rules/react-quality.md)) and
 [the complete official-source review](docs/agents/react.md). Verify installed
 React/React DOM 19.3.1 and Compiler 1.0.0 support before adopting live examples.
 Keep React's rules distinct from stricter repository orchestration conventions.
@@ -136,3 +162,11 @@ Use native Biome diagnostics, the existing guards, and appropriate lifecycle /
 browser tests; do not claim coverage of every upstream ESLint or Compiler rule.
 Persist verified findings with the [save skill](.agents/skills/save/SKILL.md)
 in their canonical guide, preserving accepted ADRs and local changes.
+
+The [detailed React reference](docs/agents/react.md#user-supplied-react-1931-reference)
+preserves all 20 topics from the supplied catalog, including its 15 examples.
+The [React implementation and review rules](.agents/rules/react.md) cover the
+same 20 topics as actionable guidance. Consult both for hooks, components,
+React DOM rendering, forms, server boundaries, Compiler, lint, identity,
+legacy APIs, Fragment refs, experiments, version context, feature selection,
+and the implementation checklist.

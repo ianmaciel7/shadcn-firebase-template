@@ -112,6 +112,14 @@ const ToolContent = ({ className, ...props }: ToolContentProps) => (
   />
 );
 
+function formatToolValue(value: unknown): string {
+  try {
+    return JSON.stringify(value, null, 2) ?? "undefined";
+  } catch {
+    return "[Unserializable value]";
+  }
+}
+
 type ToolInputProps = ComponentProps<"div"> & {
   input: ToolPart["input"];
 };
@@ -122,7 +130,7 @@ const ToolInput = ({ className, input, ...props }: ToolInputProps) => (
       Parameters
     </h4>
     <div className="rounded-md bg-muted/50">
-      <CodeBlock code={JSON.stringify(input, null, 2)} language="json" />
+      <CodeBlock code={formatToolValue(input)} language="json" />
     </div>
   </div>
 );
@@ -146,7 +154,7 @@ const ToolOutput = ({
 
   if (typeof output === "object" && !isValidElement(output)) {
     Output = (
-      <CodeBlock code={JSON.stringify(output, null, 2)} language="json" />
+      <CodeBlock code={formatToolValue(output)} language="json" />
     );
   } else if (typeof output === "string") {
     Output = <CodeBlock code={output} language="json" />;

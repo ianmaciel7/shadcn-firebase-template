@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
@@ -33,12 +34,21 @@ export default defineConfig({
       {
         test: {
           name: "unit",
+          // Match the server graph's marker resolution only in unit tests.
+          alias: {
+            "server-only": fileURLToPath(
+              new URL(
+                "./node_modules/next/dist/compiled/server-only/empty.js",
+                import.meta.url,
+              ),
+            ),
+          },
           environment: "jsdom",
           testTimeout: 30000,
           include: [
             "src/**/*.test.{ts,tsx}",
             ".biome/**/*.test.ts",
-            "tests/unit/**/*.test.ts",
+            ".ast-grep/**/*.test.ts",
           ],
           exclude: ["src/**/*.browser.test.{ts,tsx}"],
         },

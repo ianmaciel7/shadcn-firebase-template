@@ -2,7 +2,6 @@
 
 import type { ComponentProps } from "react";
 import { FormProvider } from "react-hook-form";
-import { FieldGroup } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import { useProfileFormClient } from "../_hooks/use-profile-form-client";
 
@@ -29,24 +28,4 @@ function ProfileFormClient({
   );
 }
 
-type ProfileFormClientContentProps = ComponentProps<typeof FieldGroup>;
-
-function ProfileFormClientContent({
-  className,
-  ...props
-}: ProfileFormClientContentProps) {
-  return <FieldGroup className={cn("gap-4", className)} {...props} />;
-}
-
-type ProfileFormClientFooterProps = ComponentProps<"div">;
-
-function ProfileFormClientFooter({
-  className,
-  ...props
-}: ProfileFormClientFooterProps) {
-  return (
-    <div className={cn("flex w-full flex-col gap-4", className)} {...props} />
-  );
-}
-
-export { ProfileFormClient, ProfileFormClientContent, ProfileFormClientFooter };
+export { ProfileFormClient };

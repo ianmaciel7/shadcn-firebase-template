@@ -17,6 +17,7 @@ overrides:
   qs: ">=6.16.0"
   smol-toml: ">=1.9.0"
   katex: ">=0.18.2"
+  zod@<4.6.6: ^4.6.6
 auditConfig:
   ignoreGhsas:
     # braces <=3.0.3 (stack exhaustion DoS on deeply nested patterns) has no

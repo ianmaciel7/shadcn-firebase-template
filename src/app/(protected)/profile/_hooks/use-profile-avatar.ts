@@ -2,12 +2,7 @@ import { useTranslations } from "next-intl";
 import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import { toast } from "@/components/ui/toast";
 
-const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
-const ACCEPTED_AVATAR_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
+import { ACCEPTED_AVATAR_TYPES, MAX_AVATAR_SIZE } from "../_lib/avatar";
 
 export function useProfileAvatar(
   file: File | null,

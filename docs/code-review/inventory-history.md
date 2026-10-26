@@ -1,0 +1,171 @@
+# Review inventory history
+
+This document preserves the exact path drift from the earlier code-review manifest to the tracked GitHub tree at `44c7bfd3f4c5bedc457416d455689f731f103110` plus the inventory guard added in this reconciliation. Historical reports remain in the repository but do not cover removed or renamed paths automatically.
+
+## Inventory changes
+
+- Removed or renamed former project paths: 63
+- Newly inventoried project paths: 76
+- Current project files: 565
+- Current project folders: 115
+- Current project items: 680
+- Overall items including official documentation and coordinator: 1195
+- Current completed reports: 159
+- Pending primary items: 1036
+
+## Retired path inventory
+
+- `src/lib/firebase/firestore/`
+- `src/lib/user/`
+- `tests/semgrep/`
+- `tests/unit/`
+- `.ast-grep/rule-tests/no-client-route-entrypoint-test.yml`
+- `.ast-grep/rule-tests/no-direct-auth-current-user-test.yml`
+- `.ast-grep/rule-tests/no-dynamic-tailwind-class-test.yml`
+- `.ast-grep/rule-tests/no-hardcoded-ui-attribute-test.yml`
+- `.ast-grep/rule-tests/no-manual-memoization-ts-test.yml`
+- `.ast-grep/rule-tests/no-manual-memoization-tsx-test.yml`
+- `.ast-grep/rule-tests/no-module-support-in-hooks-ts-test.yml`
+- `.ast-grep/rule-tests/no-module-support-in-hooks-tsx-test.yml`
+- `.ast-grep/rule-tests/no-route-jsx-event-handlers-test.yml`
+- `.ast-grep/rule-tests/require-button-props-test.yml`
+- `.ast-grep/rule-tests/require-component-props-parameter-test.yml`
+- `.ast-grep/rule-tests/require-component-props-test.yml`
+- `.ast-grep/rule-tests/require-field-data-invalid-test.yml`
+- `.ast-grep/rule-tests/require-form-provider-test.yml`
+- `.ast-grep/rule-tests/review-effect-custom-hook-test.yml`
+- `.ast-grep/rule-tests/review-redundant-state-effect-test.yml`
+- `.ast-grep/rule-tests/review-route-special-files-logic-test.yml`
+- `.ast-grep/rule-tests/review-route-test-sdk-mock-test.yml`
+- `.ast-grep/rule-tests/review-stateful-component-hook-test.yml`
+- `.ast-grep/rules/no-client-route-entrypoint.yml`
+- `.ast-grep/rules/no-direct-auth-current-user.yml`
+- `.ast-grep/rules/no-dynamic-tailwind-class.yml`
+- `.ast-grep/rules/no-hardcoded-ui-attribute.yml`
+- `.ast-grep/rules/no-manual-memoization-ts.yml`
+- `.ast-grep/rules/no-manual-memoization-tsx.yml`
+- `.ast-grep/rules/no-module-support-in-hooks-ts.yml`
+- `.ast-grep/rules/no-module-support-in-hooks-tsx.yml`
+- `.ast-grep/rules/no-route-jsx-event-handlers.yml`
+- `.ast-grep/rules/require-button-props.yml`
+- `.ast-grep/rules/require-component-props-parameter.yml`
+- `.ast-grep/rules/require-component-props.yml`
+- `.ast-grep/rules/require-field-data-invalid.yml`
+- `.ast-grep/rules/require-form-provider.yml`
+- `.ast-grep/rules/review-effect-custom-hook.yml`
+- `.ast-grep/rules/review-redundant-state-effect.yml`
+- `.ast-grep/rules/review-route-special-files-logic.yml`
+- `.ast-grep/rules/review-route-test-sdk-mock.yml`
+- `.ast-grep/rules/review-stateful-component-hook.yml`
+- `scripts/check-component-composition.mjs`
+- `scripts/check-component-composition.test.mjs`
+- `scripts/check-component-conventions.mjs`
+- `scripts/check-component-conventions.test.mjs`
+- `scripts/check-english.mjs`
+- `scripts/check-english.test.mjs`
+- `scripts/check-responsiveness.mjs`
+- `scripts/check-responsiveness.test.mjs`
+- `scripts/check-route-files.mjs`
+- `scripts/check-route-files.test.mjs`
+- `src/app/(protected)/profile/_lib/defaults.test.ts`
+- `src/app/(protected)/profile/_lib/defaults.ts`
+- `src/lib/firebase/firestore/user-preferences.test.ts`
+- `src/lib/firebase/firestore/user-preferences.ts`
+- `src/lib/user/dal.test.ts`
+- `src/lib/user/dal.ts`
+- `src/lib/user/definitions.test.ts`
+- `src/lib/user/definitions.ts`
+- `tests/semgrep/rules.tsx`
+- `tests/semgrep/rules.yml`
+- `tests/unit/hook-module-scope.test.ts`
+
+## Newly inventoried paths
+
+- `.ast-grep/rule-tests/components/`
+- `.ast-grep/rule-tests/firebase/`
+- `.ast-grep/rule-tests/forms/`
+- `.ast-grep/rule-tests/i18n/`
+- `.ast-grep/rule-tests/nextjs/`
+- `.ast-grep/rule-tests/react/`
+- `.ast-grep/rule-tests/styling/`
+- `.ast-grep/rules/components/`
+- `.ast-grep/rules/firebase/`
+- `.ast-grep/rules/forms/`
+- `.ast-grep/rules/i18n/`
+- `.ast-grep/rules/nextjs/`
+- `.ast-grep/rules/react/`
+- `.ast-grep/rules/styling/`
+- `.semgrep/`
+- `scripts/checks/`
+- `.ast-grep/rule-tests/components/require-button-props-test.yml`
+- `.ast-grep/rule-tests/components/require-component-props-parameter-test.yml`
+- `.ast-grep/rule-tests/components/require-component-props-test.yml`
+- `.ast-grep/rule-tests/firebase/no-direct-auth-current-user-test.yml`
+- `.ast-grep/rule-tests/forms/require-field-data-invalid-test.yml`
+- `.ast-grep/rule-tests/forms/require-form-provider-test.yml`
+- `.ast-grep/rule-tests/i18n/no-hardcoded-ui-attribute-test.yml`
+- `.ast-grep/rule-tests/nextjs/no-client-route-entrypoint-test.yml`
+- `.ast-grep/rule-tests/nextjs/no-route-jsx-event-handlers-test.yml`
+- `.ast-grep/rule-tests/nextjs/review-route-special-files-logic-test.yml`
+- `.ast-grep/rule-tests/nextjs/review-route-test-sdk-mock-test.yml`
+- `.ast-grep/rule-tests/react/no-manual-memoization-ts-test.yml`
+- `.ast-grep/rule-tests/react/no-manual-memoization-tsx-test.yml`
+- `.ast-grep/rule-tests/react/no-module-support-in-hooks-ts-test.yml`
+- `.ast-grep/rule-tests/react/no-module-support-in-hooks-tsx-test.yml`
+- `.ast-grep/rule-tests/react/review-effect-custom-hook-test.yml`
+- `.ast-grep/rule-tests/react/review-redundant-state-effect-test.yml`
+- `.ast-grep/rule-tests/react/review-stateful-component-hook-test.yml`
+- `.ast-grep/rule-tests/styling/no-dynamic-tailwind-class-test.yml`
+- `.ast-grep/rules/components/require-button-props.yml`
+- `.ast-grep/rules/components/require-component-props-parameter.yml`
+- `.ast-grep/rules/components/require-component-props.yml`
+- `.ast-grep/rules/firebase/no-direct-auth-current-user.yml`
+- `.ast-grep/rules/forms/require-field-data-invalid.yml`
+- `.ast-grep/rules/forms/require-form-provider.yml`
+- `.ast-grep/rules/i18n/no-hardcoded-ui-attribute.yml`
+- `.ast-grep/rules/nextjs/no-client-route-entrypoint.yml`
+- `.ast-grep/rules/nextjs/no-route-jsx-event-handlers.yml`
+- `.ast-grep/rules/nextjs/review-route-special-files-logic.yml`
+- `.ast-grep/rules/nextjs/review-route-test-sdk-mock.yml`
+- `.ast-grep/rules/react/hook-module-scope.test.ts`
+- `.ast-grep/rules/react/no-manual-memoization-ts.yml`
+- `.ast-grep/rules/react/no-manual-memoization-tsx.yml`
+- `.ast-grep/rules/react/no-module-support-in-hooks-ts.yml`
+- `.ast-grep/rules/react/no-module-support-in-hooks-tsx.yml`
+- `.ast-grep/rules/react/review-effect-custom-hook.yml`
+- `.ast-grep/rules/react/review-redundant-state-effect.yml`
+- `.ast-grep/rules/react/review-stateful-component-hook.yml`
+- `.ast-grep/rules/styling/no-dynamic-tailwind-class.yml`
+- `.biome/rules/test-helpers.ts`
+- `.github/workflows/review-validation.yml`
+- `.semgrep/rules.tsx`
+- `.semgrep/rules.yml`
+- `scripts/checks/check-component-composition.mjs`
+- `scripts/checks/check-component-composition.test.mjs`
+- `scripts/checks/check-component-conventions.mjs`
+- `scripts/checks/check-component-conventions.test.mjs`
+- `scripts/checks/check-english.mjs`
+- `scripts/checks/check-english.test.mjs`
+- `scripts/checks/check-responsiveness.mjs`
+- `scripts/checks/check-responsiveness.test.mjs`
+- `scripts/checks/check-route-files.mjs`
+- `scripts/checks/check-route-files.test.mjs`
+- `src/app/(protected)/_lib/require-protected-access.test.ts`
+- `src/components/ui/carousel.test.tsx`
+- `src/components/ui/code-block.test.tsx`
+- `src/components/ui/sidebar.test.tsx`
+- `src/lib/role.test.ts`
+- `src/lib/role.ts`
+- `scripts/checks/check-review-inventory.mjs`
+
+## Previous reviews requiring renewed inspection
+
+- `package.json`
+- `src/app/(protected)/_lib/require-protected-access.ts`
+- `src/app/(protected)/profile/_hooks/use-profile-preferences.ts`
+- `src/app/(protected)/profile/_lib/data.ts`
+- `src/app/(protected)/profile/_lib/definitions.ts`
+- `src/lib/firebase/server.ts`
+- `tsconfig.json`
+
+The pending status for these seven paths preserves their historical reports while preventing an obsolete source version from appearing reviewed. The three UI reports added at the validated checkpoint are distinct, current source reviews.

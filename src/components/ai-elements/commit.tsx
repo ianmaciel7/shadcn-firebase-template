@@ -35,6 +35,7 @@ type CommitHeaderProps = ComponentProps<typeof CollapsibleTrigger>;
 const CommitHeader = ({ className, children, ...props }: CommitHeaderProps) => (
   <CollapsibleTrigger
     {...props}
+    nativeButton={false}
     render={
       <div
         className={cn(

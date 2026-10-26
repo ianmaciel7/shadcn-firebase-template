@@ -6,12 +6,15 @@ import type * as React from "react";
 async function IntlProviderServer({
   children,
   ...props
-}: React.ComponentProps<typeof NextIntlClientProvider>) {
+}: Omit<
+  React.ComponentProps<typeof NextIntlClientProvider>,
+  "locale" | "messages"
+>) {
   const locale = await getLocale();
   const messages = await getMessages();
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages} {...props}>
+    <NextIntlClientProvider {...props} locale={locale} messages={messages}>
       {children}
     </NextIntlClientProvider>
   );

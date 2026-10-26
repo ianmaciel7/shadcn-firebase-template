@@ -39,34 +39,68 @@ if (!defaultPassword) {
 
 const DEFAULT_USERS = [
   { email: "user@example.test", password: defaultPassword },
-  { email: "admin@example.test", password: defaultPassword },
+  { email: "admin@example.test", password: defaultPassword, role: "admin" },
 ];
 
-async function createUser(endpoint, user) {
+async function createUser(endpoint, { role: _role, ...credentials }) {
   return fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...user, returnSecureToken: true }),
+    body: JSON.stringify({ ...credentials, returnSecureToken: true }),
   });
+}
+
+// Mirrors the setUserRole Cloud Function; "Bearer owner" is emulator-only.
+async function assignRole(user) {
+  const signIn = await fetch(
+    `${emulatorHost}/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=emulator-only`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: user.email,
+        password: user.password,
+        returnSecureToken: true,
+      }),
+    },
+  );
+  if (!signIn.ok) return false;
+  const { localId } = await signIn.json();
+  const update = await fetch(
+    `${emulatorHost}/identitytoolkit.googleapis.com/v1/projects/${projectId}/accounts:update`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer owner",
+      },
+      body: JSON.stringify({
+        localId,
+        customAttributes: JSON.stringify({ role: user.role }),
+      }),
+    },
+  );
+  return update.ok;
 }
 
 async function reportCreateUserResult(response, email) {
   if (response.ok) {
     const data = await response.json();
     console.log(`[seed] Created user: ${email} (UID: ${data.localId})`);
-    return;
+    return true;
   }
 
   const errorData = await response.json().catch(() => ({}));
   if (errorData?.error?.message === "EMAIL_EXISTS") {
     console.log(`[seed] User already exists: ${email}`);
-    return;
+    return true;
   }
 
   console.error(
     `[seed] Failed to create user ${email} (${response.status} ${response.statusText}):`,
     errorData?.error?.message || errorData,
   );
+  return false;
 }
 
 function reportSeedError(error, email) {
@@ -93,7 +127,17 @@ export async function seedUsers(users = DEFAULT_USERS) {
   for (const user of users) {
     try {
       const response = await createUser(endpoint, user);
-      await reportCreateUserResult(response, user.email);
+      if (!(await reportCreateUserResult(response, user.email))) {
+        process.exitCode = 1;
+        return;
+      }
+      if (user.role && !(await assignRole(user))) {
+        console.error(
+          `[seed] Failed to assign role ${user.role}: ${user.email}`,
+        );
+        process.exitCode = 1;
+        return;
+      }
     } catch (error) {
       reportSeedError(error, user.email);
       process.exitCode = 1;

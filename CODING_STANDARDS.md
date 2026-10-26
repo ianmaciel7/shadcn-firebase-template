@@ -25,22 +25,40 @@ When standards conflict, apply them in this order:
   feature-local custom hook would make its purpose and data flow clearer. React
   recommends considering a custom hook for each Effect ([Reusing Logic with
   Custom Hooks](https://react.dev/learn/reusing-logic-with-custom-hooks#when-to-use-custom-hooks)). Remove unnecessary Effects first, and extract a hook only when it creates a useful boundary; do not add one solely to shorten a component.
-- Prefer a discriminated state such as `{ status: "loading" | "ready" | "error" }`
-  when a feature has mutually exclusive states. Components should branch on
-  `state.status`; TypeScript can narrow properties available in each branch.
-  Do not duplicate status with redundant `isError` or `isLoading` flags.
+- Do not model UI phases with a `status` tag. Use explicit boolean flags such
+  as `isLoading`, `isHidden`, and `isError`; components should branch on the
+  applicable flag and keep payloads such as `message` and `userId` nullable
+  when unavailable.
   Boolean flags remain appropriate for independent conditions.
 - **State derivation and Effect elimination**:
   - Do not use `useEffect` to copy, derive, or mirror state from props or other state variables. Calculate derived values during rendering or synchronize atomic changes directly in event handlers ([You Might Not Need an Effect](https://react.dev/learn/you-might-not-need-an-effect)).
   - Consolidate state variables that always transition together into a single atomic state object rather than maintaining fragmented, dependent `useState` declarations.
   - Allocate external resources after commit in the appropriate Effect or in the user event that owns them, never during render. Pair setup with cleanup for replacement, hiding, and unmount as appropriate. An Effect can legitimately synchronize an external resource; avoid blanket rewrites that move necessary synchronization into handlers.
 - React permits composing multiple focused hooks. This repository adds the
-  stricter [component-named orchestration policy](.agents/rules/component-naming.md#component-named-orchestration-hooks)
+  stricter [component-named orchestration policy](.agents/rules/composition.md#component-named-orchestration-hooks)
   for owned components: put behavior/context orchestration in a separate
   `use<ComponentName>` hook, which may compose focused hooks internally.
-  Keep route-specific hooks in private `_hooks` folders. Any combination
+  Keep route-specific hooks in private `_hooks` folders and hooks shared by
+  several route trees in `src/hooks/` ([ADR 0005](docs/adr/0005-document-project-standards.md)). Any combination
   of the supported presentation hooks may be called directly. React itself
   does not require one orchestration hook per component.
+- **Hook modules do not own module-level support declarations**: Put helper
+  functions, constants, lookup sets and context objects outside the hook in the
+  route's `_lib/`. Private `_hooks` modules keep imports, types and the hook
+  implementations themselves. Constants and event/lifecycle callbacks inside a
+  hook remain valid. The blocking ast-grep rules and syntax limits are documented
+  in [the hook module contract](.agents/rules/composition.md#private-hook-module-support-declarations).
+- **No inline state derivation or type guards in JSX**: Owned components must not
+  perform inline type discrimination (such as `"userId" in status ? status.userId : undefined`),
+  ternary logic for keys, or derived state calculations within JSX attributes or render bodies.
+  All conditional identifiers and resolved properties must be derived inside the
+  component-named orchestration hook and exposed as clean, ready-to-consume values
+  (for example, exposing `userId` so JSX can simply pass `key={userId}`).
+- **Self-contained fallback components**: Status and fallback wrapper components
+  (such as `ProfileGuard`) must encapsulate their internal presentation logic,
+  localized spinner text, and error card structures directly using local translations,
+  rather than requiring callers to pass down redundant presentation labels (for example,
+  avoid passing `loadingLabel={t("loading")}`).
 - **Dependency inversion without prop drilling**: Inject infrastructure
   through typed service functions at the persistence boundary when behavior
   benefits from independent testing. `saveProfile` accepts
@@ -59,14 +77,14 @@ When standards conflict, apply them in this order:
   - Name standalone field components after their React Hook Form data property (for example `ProfileDisplayNameField` for `Controller name="displayName"`). Prefer built-in `FieldGroup`/`FieldSet` over arbitrary wrapper components.
   - Allow React Hook Form `UseFormProps<Values>` as an appropriate form component contract. Extract `onSubmit` and component presentation props before passing only RHF options into `useForm`.
   - Form fields use `Field`, `FieldLabel`, `FieldError`, `data-invalid` and `aria-invalid` as documented by shadcn/ui.
-  - See `.agents/rules/form-architecture.md`; run `pnpm check:structure` and `pnpm check:components`.
+  - See `.agents/rules/forms.md`; run `pnpm check:structure` and `pnpm check:components`.
 
 - **Data and Authentication Module Architecture**:
-  - Follow the canonical module taxonomy in [.agents/rules/data-layer-modules.md](.agents/rules/data-layer-modules.md) for data and auth boundaries:
+  - Follow the canonical module taxonomy in [.agents/rules/data.md](.agents/rules/data.md) for data and auth boundaries:
     - `definitions.ts`: Types, interfaces, and validation schemas (e.g. Zod schemas).
     - `dto.ts`: Select and structure transferred data crossing system boundaries.
     - `dal.ts`: Protected data access and authorization boundary (`verifySession()`).
-    - `data.ts`: Low-level database/persistence operations and query execution.
+    - `data.ts`: Low-level database/persistence operations and query execution. Exported functions must use explicit `<verb><DomainNoun>` naming (`read*`, `write*`, `save*`, `create*`, `update*`, `delete*`, `remove*`, `upload*`, `fetch*`, `get*`, `set*`, `list*`, `verify*`), stay within **150 non-empty lines per file**, and obey the Biome per-function budgets (cognitive complexity **<= 8**, body **<= 40 non-empty lines**, callback nesting **<= 2**).
     - `auth.ts`: Authentication operations answering identity verification ("Who are you?"), such as credential validation, sign-in, sign-up, password recovery, and sign-out.
     - `session.ts`: Session lifecycle, state, token verification, and cookie persistence ("Are you authenticated and what is your active session?").
 
@@ -98,9 +116,9 @@ When standards conflict, apply them in this order:
 
 - Consult [DESIGN.md](DESIGN.md) for tokens and component conventions. Update
   that reference when changing fonts, theme tokens, or `components.json`.
-- The owned-component naming and Next.js Client/Server boundary guard is enforced by `pnpm check:components` (included in CI); registry-generated UI is excluded. See [.agents/rules/component-naming.md](.agents/rules/component-naming.md).
+- The owned-component naming and Next.js Client/Server boundary guard is enforced by `pnpm check:components` (included in CI); registry-generated UI is excluded. See [.agents/rules/components.md](.agents/rules/components.md).
 - Follow the component taxonomy and file naming conventions in
-  [.agents/rules/component-naming.md](.agents/rules/component-naming.md) for UI
+  [.agents/rules/components.md](.agents/rules/components.md) for UI
   and feature components (such as `*-field.tsx`, `*-fields.tsx`, `*-form.tsx`,
   `*-card.tsx`, `*-dialog.tsx`, and `*-header.tsx`).
 - Biome disables formatting and import organization for vendored UI and AI
@@ -119,9 +137,9 @@ When standards conflict, apply them in this order:
   and form components extend `ComponentProps<"form">`) so they inherit standard attributes,
   support `className` pass-through, and remain composable.
 - Maintain single-responsibility module separation: keep domain types, constants,
-  and type guards (such as `theme.ts` and `locale.ts`) in dedicated modules under
-  `src/lib/`, decoupled from persistence and database clients (e.g. `src/lib/firebase/firestore/`).
-- **Enforced thin route entrypoints**: `page.tsx`, `layout.tsx`, and `template.tsx` are Server Component composition seams in this repository. They can orchestrate server data reads, access route props, declare metadata, and compose UI, but must not embed client hooks, direct Firebase SDK calls, browser APIs, event handlers, state mutation, branching, loops, or helper callbacks. Extract UI into `_components/`, hooks into `_hooks/`, and business logic into dedicated `src/lib/` services. Run `pnpm check:routes` locally; it is mandatory in `verify:fast` and `verify:static` CI. This is a repository policy, not a general Next.js restriction. See [.agents/rules/route-special-files.md](.agents/rules/route-special-files.md).
+  and type guards (such as `role.ts`, `theme.ts`, and `locale.ts`) in dedicated modules under
+  `src/lib/`, decoupled from persistence and database clients (e.g. `src/lib/firebase/` and route `_lib/data.ts`).
+- **Enforced thin route entrypoints**: `page.tsx`, `layout.tsx`, and `template.tsx` are Server Component composition seams in this repository. They can orchestrate server data reads, access route props, declare metadata, and compose UI, but must not embed client hooks, direct Firebase SDK calls, browser APIs, event handlers, state mutation, branching, loops, or helper callbacks. Extract UI into `_components/`, hooks into `_hooks/`, and business logic into dedicated `src/lib/` services. Run `pnpm check:routes` locally; it is mandatory in `verify:fast` and `verify:static` CI. This is a repository policy, not a general Next.js restriction. See [.agents/rules/routes.md](.agents/rules/routes.md).
 - Use the configured `@/*` path aliases instead of deep relative imports when
   crossing module boundaries.
 - Use Tailwind CSS and the existing design tokens. Avoid inline styles unless a
@@ -316,7 +334,7 @@ rules, without a schema resolver. Add one only when the feature needs it.
 
 - Initialize complete defaults for controlled values. When external values
   change, choose RHF `values` or `reset` deliberately and preserve unsaved edits.
-- Follow [.agents/rules/form-architecture.md](.agents/rules/form-architecture.md)
+- Follow [.agents/rules/forms.md](.agents/rules/forms.md)
   for the single form instance, compound children, Provider boundary, profile
   submit state, reset, avatar cleanup, and fixed button action types. These
   are repository policies rather than universal shadcn/ui requirements.
@@ -338,7 +356,7 @@ rules, without a schema resolver. Add one only when the feature needs it.
 
 ### shadcn/ui API and accessibility
 
-Read [.agents/rules/shadcn-ui.md](.agents/rules/shadcn-ui.md) before UI work and
+Read [.agents/rules/shadcn.md](.agents/rules/shadcn.md) before UI work and
 use the CLI workflow in [TOOLING.md](TOOLING.md#shadcnui-cli-workflow). Base UI
 uses `render` and presence state attributes; Radix `asChild` and
 `data-state` examples do not establish the local API. For navigation, apply
@@ -351,6 +369,21 @@ accessible title; avatars need a fallback. An icon-only action needs a localized
 accessible name. Preserve `ref`, applicable element props, keyboard behavior,
 and focus management when adapting primitives. Use `ComponentProps` of the
 actual primitive, not a prop contract copied from a different base.
+
+Keep each trigger and its panel inside the same primitive root so generated
+IDs, focus and lifecycle belong to one instance; synchronizing only an `open`
+boolean across separate roots does not share `aria-controls`. Compose a Tooltip
+trigger with its existing button through `render` instead of nesting buttons.
+For a non-native element that needs Base UI button behavior, configure
+`nativeButton={false}`. If a third-party custom element already owns keyboard
+activation, style it with `buttonVariants` rather than adding a second event
+owner. Preserve the actual element property/ref contract, not only attributes.
+
+Icon-only default actions and progress indicators need accessible names that
+consumers can localize. Actions revealed on hover must also be visible on
+keyboard focus and usable on devices without hover. Forward adapter options to
+the primitive part that owns them: the installed Preview Card delays belong to
+its Trigger, not its Root; explicit Trigger values may override wrapper defaults.
 
 Use semantic colors and existing variants. Application classes should primarily
 control layout; shared visual changes belong in the primitive or theme. Use
@@ -376,7 +409,10 @@ Components throughout the application—regardless of whether they are Server Co
   following `.agents/rules/language.md`. Localized catalogs use their own
   language.
 - Follow the implemented cookie-based request resolution. Localized navigation
-  helpers alone do not establish locale-prefixed routes.
+  helpers alone do not establish locale-prefixed routes. The current architecture
+  and maintainer constraint are recorded in
+  [Architecture](ARCHITECTURE.md#internationalization); do not infer permission
+  for a route or rendering migration from a request to fix an accessibility finding.
 
 - Put user-facing application text in the `next-intl` message catalogs under
   `src/messages/`.
@@ -385,7 +421,7 @@ Components throughout the application—regardless of whether they are Server Co
 - When metadata varies by locale, use the `next-intl` metadata pattern from
   ADR 0004.
 
-## Quality gate
+## Quality guard
 
 - Format only the files you changed, then run the relevant checks from
   [TESTING.md](TESTING.md).
@@ -445,6 +481,9 @@ For new shared cached work, prefer `"use cache"` with an explicit `cacheLife`
 and, when invalidation is needed, `cacheTag`. Choose a lifetime from freshness
 requirements; never increase it only to silence a prerender diagnostic.
 React `cache()` deduplicates work within a request; it is not a persistent cache.
+For local presentation caches, identify the complete input and every relevant
+option. Length plus a text prefix/suffix is not a safe content identity. Use
+the same complete identity for cached values and asynchronous subscribers.
 Plain `fetch` results are not persistently cached by default.
 
 With `cacheComponents` enabled, do not introduce old `dynamic`, `dynamicParams`,
@@ -481,6 +520,20 @@ extensions, while untouched registry components keep their exclusions. Static
 imports and re-exports are checked; this is not a complete transitive graph
 analysis. Keep the current unprefixed locale URLs and use the existing safe
 return-URL validator for user-controlled redirect destinations.
+
+Centralize application route paths and sign-in redirects in
+`src/lib/navigation.ts`. Owned modules reference `routes` (`home`, `signIn`,
+`register`, `forgotPassword`, `profile`) instead of string literals such as
+`"/sign-in"`, build `?next=` URLs with `getSignInUrl(destination)`, and call
+`redirectToSignIn(destination)` (defaults to the profile route) for server-side
+sign-in redirects. `authRoutes` also drives the auth-route exclusion in
+`src/lib/return-url.ts`, so a new auth route is added in one place. The
+presentation-screen rule below still applies: screens receive callbacks and do
+not import `routes`; route-private composition roots and hooks do.
+
+With installed Next.js 16.4.2, use the error boundary's `retry()` for an action
+that promises to retry a failed read. `reset()` only clears and rerenders the
+boundary state; it is not equivalent to refetching.
 
 Use `error.tsx` / `global-error.tsx` according to their Client Component contracts;
 a global error boundary replaces the root layout and needs its own document
@@ -521,6 +574,32 @@ installed reference. Image allowlists, script strategy, CSP, telemetry,
 instrumentation, remote cache handlers, and hosting adapters are separate
 configuration decisions. Do not enable experimental flags, run codemods, or
 install upstream agent skills simply because a guide mentions them.
+
+### Owned function complexity and hook responsibility trees
+
+Main component hooks coordinate focused sub-hooks and expose rendering-ready
+state/callbacks. A sub-hook owns one cohesive lifecycle or workflow, not one line
+of code. For example, `useAuthProviderClient` composes `useAuthUiStore`,
+`useFirebaseUiReturnNavigation` and `useAuthUiLocale`; it does not initialize Firebase,
+subscribe to authentication and synchronize locale inside one monolithic Effect.
+`useProfileSession` delegates preference loading to `useProfilePreferences`, and
+`useProfileSubmit` delegates successful UI feedback to `useProfileSaveFeedback`.
+Pure transformations, constants and subscription support functions remain in the
+route's `_lib`, following the hook support placement contract.
+
+The native Biome budget for owned runtime source is cognitive complexity **8**,
+function body size **40 lines excluding blanks**, and callback nesting **2**. Values at
+the limit are allowed; the next value is an error. These checks include focused
+sub-hooks and `_lib`/shared functions, so moving a large body to a helper does not
+remove its budget. The existing copied registry and test/spec/story exclusions
+remain; non-source scripts keep the existing cognitive limit of 15.
+
+Decompose along responsibilities, preserve cancellation and authorization checks,
+and test public behavior after extraction. Do not suppress diagnostics, raise a
+threshold for a single offending function, compress code onto fewer lines or
+create trivial hook wrappers to disguise a monolith. The budgets detect size and
+control-flow growth; they do not prove semantic cohesion or replace architectural
+review. Fallow's cyclomatic/coverage metrics remain a separate health check.
 
 ## React rendering, hooks, and identity
 
@@ -656,7 +735,8 @@ verify actual behavior before changing it.
 
 New APIs described in current docs require installed runtime/type/framework
 support. In this review, `Activity`, `ViewTransition`, `addTransitionType`, `use`,
-and `useEffectEvent` exist in React 19.3.1; `browser` is not an installed export.
+and `useEffectEvent` exist in React 19.3.1. `browser` is exported by the installed
+React DOM 19.3.1 package and declared in its types; import it from `react-dom`.
 Availability alone is not a request to adopt an animation, browser-only-rendering,
 optimistic-state, or experimental Suspense feature.
 
@@ -664,7 +744,7 @@ optimistic-state, or experimental Suspense feature.
 
 Place shared application components in `src/components/ui/extensions/` and
 route-private components in `src/app/**/_components/`. For example,
-`LoadingIndicator` belongs alongside `Loading` in `ui/extensions` because both
+`LabeledSpinner` belongs in `ui/extensions` because both
 route components and Firebase UI consume it. Do not create parallel application
 component folders such as `src/components/loading/`.
 
@@ -676,7 +756,7 @@ policy, not a Next.js requirement.
 
 Placement does not classify runtime. `IntlProvider` in `intl-provider-server.tsx` is an async Server
 Component using server-only translation APIs; `ThemeProvider` in `theme-provider-client.tsx` declares
-`"use client"`; `LoadingIndicator` has no directive and can be used in either
+`"use client"`; `LabeledSpinner` has no directive and can be used in either
 rendering graph. Keep those boundaries even when the files share a directory.
 The existing direct server-import guard complements placement checks; Next.js
 validates the complete module graph.
@@ -700,7 +780,7 @@ review those implementations. `ProfileFormClient` persists through `useProfileSu
 so it remains in `profile-form-client.tsx`. `ProfileEmailField` uses only form
 context and translations, so it lives in `profile-email-field.tsx` while keeping
 `"use client"`. `ProfileAvatarFieldClient` accesses browser object URLs through its
-hook and keeps `profile-avatar-field-client.tsx`. `LoadingIndicator` remains
+hook and keeps `profile-avatar-field-client.tsx`. `LabeledSpinner` remains
 without a suffix and compatible with either graph.
 
 Owned component exports, props types, and component-named orchestration hooks
@@ -713,6 +793,49 @@ Mandatory Next.js filenames, registry output, hooks and non-component modules
 retain their existing contracts. Integrations stay in their current route or
 shared extension placement; no new container directory is required.
 
-See [the naming rule](.agents/rules/component-naming.md#ci-enforcement) for
-executable coverage and limits. [ADR 0016](docs/adr/0016-name-components-by-integration-responsibility.md)
-supersedes the broader runtime naming policy from ADR 0015.
+See [the naming rule](.agents/rules/components.md#ci-enforcement) for
+executable coverage and limits, and [ADR 0005](docs/adr/0005-document-project-standards.md)
+for the integration naming and exact export-stem parity decision.
+
+## Source naming and export style
+
+Owned source (`src/`, `scripts/`, `functions/`, `tests/`) follows one style:
+
+- Files and folders use lowercase `kebab-case`. Tests use `.test.ts(x)` or
+  `.spec.ts`; browser tests add `.browser.test.tsx`.
+- Components declare a local `function` and export it with a trailing
+  `export { ... }`. Hooks live in `use-<stem>.ts` and export `use<Stem>` inline
+  with `export function`.
+- Use `type` aliases, not `interface`. Props are named `<ComponentName>Props`.
+- Only module-level constants use `SCREAMING_CASE`.
+- Message files (`en`, `es`, `pt-BR`) keep an identical key set.
+
+Documented exceptions, not to be renamed:
+
+- Next.js route groups and private folders (`(public)`, `_components`), dotfiles
+  and root documents in uppercase (`AGENTS.md`).
+- Vendored Firebase skill references in `snake_case` under
+  `.agents/skills/firebase-basics/` and `.agents/skills/firebase-auth-basics/`
+  (mirrored in `.gemini/` and pinned by `skills-lock.json`), and
+  `.agents/skills/ask-matt/PHASE-BOUNDARIES.md`.
+- `src/hooks/use-mobile.ts` exports `useIsMobile` (shadcn registry output).
+- Top-level message namespaces in PascalCase (`App`, `Auth`, `Home`), the
+  `next-intl` convention.
+
+## SDK and provider adapter contracts
+
+Request-owned locale and messages stay owned by the server translation provider:
+omit them from caller props and assign resolved values after caller spreads.
+Never replace `console.error` globally to hide a dependency warning; preserve
+unrelated diagnostics and address the warning at its source.
+
+AI SDK tool input schemas may be lazy or asynchronously converted. Resolve them
+through installed `asSchema(...).jsonSchema`, keep loading/failure presentation
+as valid strings, and prevent obsolete conversions from replacing current data.
+`JSON.stringify` of a schema factory is not JSON Schema conversion.
+
+AI SDK input totals include cached input. Adapt uncached input, cache reads and
+cache writes to the installed pricing helper once, then derive totals and rows
+from the same result. Output totals already include reasoning tokens; do not
+charge reasoning a second time. Treat catalog estimates as estimates, not proof
+of provider billing. Verified regression examples live in `context.test.tsx`.

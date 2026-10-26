@@ -10,23 +10,7 @@ import { connectDatabaseEmulator, getDatabase } from "firebase/database";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
 import { connectStorageEmulator, getStorage } from "firebase/storage";
-
-function getFirebaseConfig(): FirebaseOptions {
-  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
-  const storageBucket = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
-  const databaseURL = process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL;
-
-  return {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-    projectId,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-    ...(projectId
-      ? { storageBucket: storageBucket || `${projectId}.appspot.com` }
-      : {}),
-    ...(databaseURL ? { databaseURL } : {}),
-  };
-}
+import { getFirebaseConfig } from "./config";
 
 function getEmulatorUrl(): string | undefined {
   const host = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST?.trim();

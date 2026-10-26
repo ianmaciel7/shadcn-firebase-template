@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ComponentProps } from "react";
 import { buttonVariants } from "@/components/ui/button";
-import { LoadingIndicator } from "@/components/ui/extensions/loading-indicator";
+import { LabeledSpinner } from "@/components/ui/extensions/labeled-spinner";
+import { routes } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 import { useHomeSectionClient } from "../_hooks/use-home-section-client";
 import {
@@ -19,9 +20,10 @@ import { HomeSignOutButtonClient } from "./home-sign-out-button-client";
 type HomeSectionClientProps = ComponentProps<"main">;
 
 function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
-  const { t, ready, user } = useHomeSectionClient();
+  const { t, session, title, description } = useHomeSectionClient();
+  const user = session.user;
 
-  if (!ready) {
+  if (session.isLoading) {
     return (
       <main
         {...props}
@@ -30,7 +32,7 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
           className,
         )}
       >
-        <LoadingIndicator label={t("loading")} />
+        <LabeledSpinner label={t("loading")} />
       </main>
     );
   }
@@ -44,33 +46,14 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
       )}
     >
       <div className="flex flex-1 w-full max-w-3xl flex-col items-center justify-center gap-12 p-6 sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt=""
-          role="presentation"
-          width={100}
-          height={20}
-          priority
-        />
+        <HomeSectionClientLogo />
         <HomeHero>
-          <HomeHeroHeader>
-            <HomeHeroTitle>
-              {user
-                ? t("welcome", {
-                    name: user.displayName?.trim() || t("friend"),
-                  })
-                : t("title")}
-            </HomeHeroTitle>
-            <HomeHeroDescription>
-              {user ? t("signedInDescription") : t("description")}
-            </HomeHeroDescription>
-          </HomeHeroHeader>
+          <HomeSectionClientHeading title={title} description={description} />
           <HomeHeroActions>
             {user ? (
               <>
                 <Link
-                  href="/profile"
+                  href={routes.profile}
                   className={buttonVariants({
                     className:
                       "flex h-12 items-center justify-center rounded-full px-5 text-base font-medium sm:w-[158px]",
@@ -83,7 +66,7 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
             ) : (
               <>
                 <Link
-                  href="/sign-in"
+                  href={routes.signIn}
                   className={buttonVariants({
                     className:
                       "flex h-12 items-center justify-center rounded-full px-5 text-base font-medium sm:w-[158px]",
@@ -92,7 +75,7 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
                   {t("signIn")}
                 </Link>
                 <Link
-                  href="/register"
+                  href={routes.register}
                   className={buttonVariants({
                     variant: "outline",
                     className:
@@ -110,4 +93,45 @@ function HomeSectionClient({ className, ...props }: HomeSectionClientProps) {
   );
 }
 
-export { HomeSectionClient };
+type HomeSectionClientLogoProps = Omit<
+  ComponentProps<typeof Image>,
+  "src" | "alt"
+>;
+
+function HomeSectionClientLogo({
+  className,
+  ...props
+}: HomeSectionClientLogoProps) {
+  return (
+    <Image
+      className={cn("dark:invert h-5 w-[100px]", className)}
+      src="/next.svg"
+      alt=""
+      role="presentation"
+      width={100}
+      height={20}
+      priority
+      {...props}
+    />
+  );
+}
+
+type HomeSectionClientHeadingProps = ComponentProps<typeof HomeHeroHeader> & {
+  title: string;
+  description: string;
+};
+
+function HomeSectionClientHeading({
+  title,
+  description,
+  ...props
+}: HomeSectionClientHeadingProps) {
+  return (
+    <HomeHeroHeader {...props}>
+      <HomeHeroTitle>{title}</HomeHeroTitle>
+      <HomeHeroDescription>{description}</HomeHeroDescription>
+    </HomeHeroHeader>
+  );
+}
+
+export { HomeSectionClient, HomeSectionClientHeading, HomeSectionClientLogo };

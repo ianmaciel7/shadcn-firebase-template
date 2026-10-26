@@ -4,7 +4,8 @@ import { useProfileStatus } from "./use-profile-status";
 
 export function useProfileSectionClient() {
   const profile = useProfileSession();
-  const state = useProfileStatus(profile);
+  const status = useProfileStatus(profile);
   const t = useTranslations("Auth");
-  return { profile, state, t };
+  const { userId } = status;
+  return { profile, status, userId, t };
 }

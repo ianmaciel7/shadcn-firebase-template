@@ -3,31 +3,38 @@
 Accepted records preserve the reasoning and implementation context at their
 original date. Read current operational details in the
 [documentation guide](../README.md), and follow the
-[naming and immutability rule](../../.agents/rules/adr-naming.md) for new records.
+[naming and immutability rule](../../.agents/rules/adr.md) for new records.
 
 ## Index
 
 | Record | Status | Subject |
 | --- | --- | --- |
-| [0001](0001-configure-nextjs.md) | Accepted | Next.js App Router, TypeScript, Biome, React Compiler, pnpm |
-| [0002](0002-configure-shadcn-ui.md) | Accepted | Base UI, locally owned components, typography, AI Elements |
+| [0001](0001-configure-nextjs.md) | Accepted | Next.js App Router, TypeScript, Biome, React Compiler, pnpm, and server error instrumentation |
+| [0002](0002-configure-shadcn-ui.md) | Accepted | Base UI, locally owned components, consolidated `ui/extensions` placement, typography, AI Elements |
 | [0003](0003-configure-theming.md) | Accepted | Class-based light, dark, and system themes |
-| [0004](0004-configure-internationalization.md) | Accepted | next-intl, locale catalogs, providers, typed messages |
-| [0005](0005-document-project-standards.md) | Accepted; testing detail superseded by 0006 | Documentation ownership and repository standards |
+| [0004](0004-configure-internationalization.md) | Accepted | Cookie-only `next-intl` resolution without Proxy or `[locale]` routes, catalogs, providers, typed messages |
+| [0005](0005-document-project-standards.md) | Accepted; testing detail superseded by 0006 | Documentation ownership, repository boundaries, cross-route placement, and owned component naming |
 | [0006](0006-configure-testing.md) | Accepted | Colocated Vitest tests, Vitest Browser Mode, Playwright suites, coverage thresholds, mutation testing |
 | [0007](0007-configure-ci.md) | Accepted | Continuous integration, quality tooling, custom rules catalog, layered verification, and Git hooks |
 | [0008](0008-install-firebase-ui-registry.md) | Accepted (amended) | Dynamic cross-platform installer and locally owned source model for `@firebase` registry |
-| [0009](0009-integrate-firebase-authentication.md) | Accepted (amended) | Browser Firebase Authentication, emulator configuration, protected profile route, and dynamic navigation |
-| [0010](0010-use-redirect-oauth-in-electron.md) | Accepted | Environment-aware FirebaseUI OAuth strategy for Electron |
-| [0011](0011-record-authenticated-usage.md) | Superseded in storage by 0012 | Authenticated usage records |
-| [0012](0012-use-native-firebase-logging.md) | Accepted | Native Firebase usage logging |
-| [0013](0013-capture-nextjs-server-errors.md) | Accepted | Next.js server error logging |
-| [0014](0014-consolidate-owned-component-placement.md) | Accepted | Shared application components in UI extensions and route-private components in private folders |
-| [0015](0015-adopt-component-runtime-suffixes.md) | Superseded in classification by 0016 | Client/server filename suffixes with shared presentation names |
-| [0016](0016-name-components-by-integration-responsibility.md) | Accepted; export naming superseded by 0017 | Integration suffixes independent of presentation runtime |
-| [0017](0017-enforce-exact-component-export-names.md) | Accepted | Match owned component, props, and orchestration hook names to full file stem |
+| [0009](0009-integrate-firebase-authentication.md) | Accepted (amended) | Browser Firebase Authentication, Electron redirect OAuth, native usage logging, role custom claims, and emulators |
 
 ## Current operational clarifications
+
+- **ADR 0001: Server error instrumentation**:
+  - `src/instrumentation.ts` uses Next.js native `onRequestError` to emit structured
+    `ERROR` JSON on `stderr` with route metadata and optional numeric error digest,
+    excluding raw stacks, headers, URLs, and bodies.
+
+- **ADR 0002 & ADR 0005: Owned component placement, integration suffixes, and export parity**:
+  - Shared application components live in `src/components/ui/extensions/`, shared hooks in
+    `src/hooks/`, shared helpers in `src/lib/`, and route-private code in `src/app/**/_components`,
+    `_hooks`, and `_lib`.
+  - Owned components reserve `-client.tsx` for browser integrations and `-server.tsx` for
+    server integrations while keeping presentation filenames suffix-free.
+  - Owned component exports, `*Props` types, and `use*` orchestration hooks match the
+    complete filename stem 1:1 (including `Client` or `Server` suffixes), enforced by
+    `pnpm check:components`.
 
 - **ADR 0006: Testing layers and standards**:
   - Vitest runs a multi-project configuration: `unit` project in `jsdom` (including
@@ -55,7 +62,7 @@ original date. Read current operational details in the
     - GritQL DOM rule (`no-document-write.grit`).
     - 3 GritQL Next.js rules (`prefer-page-props.grit`, `prefer-layout-props.grit`, `prefer-route-context.grit`).
     - 4 ast-grep rules (`no-dynamic-tailwind-class`, `no-hardcoded-ui-attribute`, `no-manual-memoization-ts`, `no-manual-memoization-tsx`).
-    - 9 Semgrep security rules (`tests/semgrep/rules.yml`).
+    - 9 Semgrep security rules (`.semgrep/rules.yml`).
   - Verification is layered into `verify:fast`, `verify:static`, `verify:build`,
     `verify:security`, and `verify:full`.
   - Husky in `.husky/pre-commit` sets `VIRTUALENV_OVERRIDE_APP_DATA` on Windows to
@@ -85,7 +92,7 @@ original date. Read current operational details in the
     locale route segment or request proxy. See
     [Architecture](../../ARCHITECTURE.md#internationalization).
 
-- **ADR 0009: Firebase Authentication, emulator configuration, and protected routes**:
+- **ADR 0009: Firebase Authentication, Electron OAuth, usage logging, role custom claims, and emulators**:
   - The Auth Emulator connects using the official `FIREBASE_AUTH_EMULATOR_HOST`
     variable and demo project convention (`demo-*`, such as `demo-test`).
   - Canonical root `firebase.json` and `.firebaserc` files configure the emulators
@@ -94,24 +101,29 @@ original date. Read current operational details in the
   - In-code default fallback values are removed; environment configuration is
     strictly driven by `.env`.
   - The home page (`src/app/page.tsx`) incorporates a dynamic client navigation control
-    (`src/app/_components/auth-nav-button.tsx`) observing auth state via `onAuthStateChanged`,
+    (`src/app/_components/auth-nav-button-client.tsx`) observing auth state via `onAuthStateChanged`,
     presenting an accessible "Sign In" link to `/sign-in` when unauthenticated and dynamically
     switching to "Open App" leading to `/profile` when authenticated.
   - The `(protected)` route group guards client-rendered UI via `layout.tsx` observing
     `onAuthStateChanged`, redirecting unauthenticated visitors to `/sign-in`.
   - The `/profile` landing page presents authenticated user details (`email`, `displayName`,
     `uid`) and provides sign-out controls invoking `signOut(auth)`.
-  - Public `AuthProvider` redirects authenticated users from public authentication pages to
+  - Public `AuthProviderClient` redirects authenticated users from public authentication pages to
     `/profile`.
+  - FirebaseUI preserves its popup strategy in ordinary browsers and uses its supported redirect
+    strategy only for Electron user agents. In development, Next proxies the Auth Emulator handler
+    through the app origin to avoid cross-origin browser storage and relay conflicts.
+  - Authenticated screen and profile-save guards invoke the `recordUsage` callable Cloud Function,
+    emitting structured entries via `firebase-functions/logger` to Cloud Logging (`usageLogs`
+    Firestore storage is retired and denied to browser clients).
+  - Role-based authorization uses a `role` custom claim (`user` or `admin` in `src/lib/role.ts`),
+    verified on the server via `firebase-admin` (`verifyIdToken(token, true)`) with the fail-closed
+    `requireRole` boundary (`src/app/(protected)/_lib/require-protected-access.ts`) and managed via
+    the `setUserRole` callable Cloud Function.
   - Client-side route groups provide UI navigation guarding and UX routing, not zero-trust
     server authorization.
   - Vitest unit/component coverage must satisfy the strict `>= 70%` threshold, and end-to-end
     authentication flows run against the Playwright Firebase Auth Emulator suite.
-
-- **ADR 0010: Electron OAuth strategy**:
-  - FirebaseUI preserves its popup strategy in ordinary browsers and uses its supported redirect
-    strategy only for Electron user agents. In development, Next proxies the Auth Emulator handler
-    through the app origin to avoid cross-origin browser storage and relay conflicts.
 
 These clarifications describe the checked-in configuration. They do not claim
 that a hosted run succeeded or that all tooling is installed on a contributor's
@@ -131,13 +143,3 @@ component contracts, and theme details belong in `TOOLING.md`,
 `CODING_STANDARDS.md`, and `DESIGN.md`. Refreshing these references does not
 change the accepted records above or imply a preset, primitive-family, or
 component-source migration.
-
-- [ADR 0011: Record authenticated usage](0011-record-authenticated-usage.md)
-  adds append-only usage records to the protected screen and profile-save guards.
-
-- [ADR 0012: Use native Firebase logging](0012-use-native-firebase-logging.md)
-  supersedes ADR 0011's Firestore usage storage with Cloud Functions and native
-  Cloud Logging; the screen and functionality guards remain.
-
-- [ADR 0013: Capture Next.js server errors](0013-capture-nextjs-server-errors.md)
-  adds native request error instrumentation with structured JSON stderr output.

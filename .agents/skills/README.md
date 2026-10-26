@@ -1,6 +1,6 @@
 # Project skills
 
-This directory contains seven installed skills. `skills-lock.json` at the
+This directory contains nine installed skills. `skills-lock.json` at the
 repository root records upstream sources, paths, and computed hashes for external
 skills.
 
@@ -10,9 +10,11 @@ skills.
 | context7-cli | [SKILL.md](context7-cli/SKILL.md) | `upstash/context7` | Resolve a library and query current documentation |
 | firebase-basics | [SKILL.md](firebase-basics/SKILL.md) | `firebase/agent-skills` | Firebase CLI setup, project selection, and app configuration downloads |
 | firebase-auth-basics | [SKILL.md](firebase-auth-basics/SKILL.md) | `firebase/agent-skills` | Firebase Authentication concepts, integration, and security rules |
+| new-component | [SKILL.md](new-component/SKILL.md) | Project-local | Scaffold components that follow the naming and boundary contracts |
 | save | [SKILL.md](save/SKILL.md) | Project-local | Persist knowledge, rules, decisions, and conventions to canonical documentation |
 | setup-matt-pocock-skills | [SKILL.md](setup-matt-pocock-skills/SKILL.md) | `mattpocock/skills` | Configure engineering skill and tracker documentation |
 | shadcn | [SKILL.md](shadcn/SKILL.md) | `shadcn/ui` | Work with shadcn components, registries, and design systems |
+| verify | [SKILL.md](verify/SKILL.md) | Project-local | Run the smallest verification tier covering the current diff |
 
 Supporting Markdown under each skill is an upstream reference, not a claim
 that every example, provider, or workflow is configured in this application.

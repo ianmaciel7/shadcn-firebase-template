@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { isLocale, locales } from "@/i18n/routing";
-import type { ProfileValues } from "@/lib/profile";
+import type { ProfileValues } from "../_lib/definitions";
 
 type ProfileLocaleFieldProps = ComponentProps<typeof Field>;
 

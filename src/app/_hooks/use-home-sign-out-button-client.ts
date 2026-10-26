@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { signOutUser } from "@/lib/auth/auth";
+import { signOutUser } from "@/lib/auth";
 
 export function useHomeSignOutButtonClient() {
   const t = useTranslations("Home");
@@ -19,15 +19,10 @@ export function useHomeSignOutButtonClient() {
     }
   }
 
-  const isPending = state === "pending";
-  const isError = state === "error";
-
   return {
     t,
     auth,
     state,
-    isPending,
-    isError,
     handleSignOut,
   };
 }

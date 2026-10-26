@@ -264,7 +264,12 @@ const EnvironmentVariableCopyButton = ({
 
   const getTextToCopy = useCallback((): string => {
     const formatMap = {
-      export: () => `export ${name}="${value}"`,
+      export: () => {
+        if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) {
+          throw new Error("Invalid environment variable name");
+        }
+        return `export ${name}='${value.replaceAll("'", "'\"'\"'")}'`;
+      },
       name: () => name,
       value: () => value,
     };
@@ -299,6 +304,7 @@ const EnvironmentVariableCopyButton = ({
   return (
     <Button
       className={cn("size-6 shrink-0", className)}
+      aria-label={isCopied ? "Copied environment variable" : "Copy environment variable"}
       onClick={copyToClipboard}
       size="icon"
       variant="ghost"

@@ -12,7 +12,8 @@ This skill governs how to classify, locate, and record knowledge, rules, decisio
 1. **English by default**: All documentation, code comments, and rule descriptions must be in English per [.agents/rules/language.md](../../rules/language.md), even if the user provided the input in another language (e.g., Portuguese).
 2. **Strict path portability**: NEVER store hardcoded host-specific or user-specific absolute paths (such as user home directories, drive prefixes, or machine root paths). Always sanitize and convert paths to repository-relative format (e.g., `TOOLING.md`, `src/app/`, `.agents/rules/`).
 3. **Single source of truth**: Store each rule or piece of knowledge in its authoritative canonical document. Do not duplicate rules across multiple guides.
-4. **ADR immutability**: Accepted Architecture Decision Records (`docs/adr/0001-*` through current) are historical and immutable per [.agents/rules/adr-naming.md](../../rules/adr-naming.md). Never rewrite, edit, or renumber an accepted record.
+4. **ADR immutability**: Accepted Architecture Decision Records (`docs/adr/0001-*` through current) are historical and immutable per [.agents/rules/adr.md](../../rules/adr.md). Never rewrite, edit, or renumber an accepted record.
+5. **Every rule needs a safeguard**: A rule that lives only in prose will be broken again. When you save a rule, convention, or lesson learned from a mistake, also make it mechanically enforced by the strongest installed tool, so the same error cannot return silently. Documentation records the rule; a safeguard defends it. See [Safeguards](#safeguards-make-every-saved-rule-enforceable).
 
 ---
 
@@ -77,7 +78,7 @@ Create a new file only when the information constitutes a distinct, modular arti
 
 1. **Architecture Decision Records (`docs/adr/NNNN-<phrase>.md`)**:
   - **Trigger**: A significant architectural, structural, or technology choice that requires recording context, options considered, decision, and consequences.
-  - **Immutability rule**: Accepted ADRs are strictly immutable per [.agents/rules/adr-naming.md](../../rules/adr-naming.md). Never edit or rewrite accepted records.
+  - **Immutability rule**: Accepted ADRs are strictly immutable per [.agents/rules/adr.md](../../rules/adr.md). Never edit or rewrite accepted records.
   - **Naming format**: Next unused four-digit number followed by a kebab-case imperative phrase (e.g., `0009-adopt-database-orm.md`).
   - **Index update**: After creating the ADR, add its entry to `docs/adr/README.md`. If superseding an earlier ADR, note the supersession in `docs/adr/README.md` and in the new ADR.
 2. **Agent Persistent Rules (`.agents/rules/<name>.md`)**:
@@ -87,6 +88,53 @@ Create a new file only when the information constitutes a distinct, modular arti
   - **Trigger**: A complex, multi-step interactive workflow, domain-specific procedure, or tool guide that agents should load on demand.
   - **Format**: Directory named with kebab-case, containing `SKILL.md` with YAML front matter (`name` and `description`).
   - **Registration**: Register new skills in `.agents/skills/README.md`, `.agents/README.md`, and `TOOLING.md`.
+
+---
+
+## Safeguards: Make Every Saved Rule Enforceable
+
+Applies to every kind of knowledge this skill saves, not only one topic (language, naming, layering, security, testing, tooling, and so on). Before finishing, ask: "If someone, human or agent, breaks this tomorrow, what fails?" If the answer is "nothing", add a safeguard.
+
+### 1. Pick the strongest fitting tool
+
+Read [TOOLING.md](../../../TOOLING.md) (tool inventory, commands, custom rule registry) first and reuse what is installed before adding anything new. Prefer native tool rules over custom scripts.
+
+| What must be prevented | Preferred enforcement |
+| --- | --- |
+| Code style, lint, import order, unsafe patterns | Biome native rule, then a Biome GritQL plugin in `.biome/rules/` |
+| Structural or syntactic patterns in code | ast-grep rule in `.ast-grep/` with snapshot tests |
+| Type contracts, props, route shapes | TypeScript types, then a TypeScript-AST script in `scripts/checks/check-*.mjs` |
+| Layering and dependency direction | dependency-cruiser (`.dependency-cruiser.cjs`) |
+| Dead code, unused exports and dependencies | Knip; duplication via jscpd; complexity via Fallow |
+| Security patterns and secrets | Semgrep rules in `.semgrep/`, Gitleaks, `pnpm audit` |
+| Behavior and regressions | Vitest, Vitest Browser Mode, Playwright, axe, Stryker |
+| Docs, spelling, prose, language | markdownlint, CSpell, a `scripts/checks/check-*.mjs` guard |
+| Commit and branch conventions | Commitlint, Husky, lint-staged |
+| Workflow and CI correctness | actionlint, zizmor |
+| Rule that no tool above can express | A small dependency-free `scripts/checks/check-<topic>.mjs` with a `node --test` suite |
+
+### 2. Test the safeguard
+
+Every new check ships with at least one passing (valid) case and one failing (invalid) case, plus a documented escape hatch (for example an ignore marker with a stated reason) for intentional exceptions. A check that has never been seen failing is not a safeguard.
+
+### 3. Wire it into every gate
+
+A check that nobody runs does not protect anything. Connect it at each layer that fits, from fastest to slowest:
+
+1. **Editor or agent time**: a persistent rule in `.agents/rules/` and the owning guide.
+2. **Commit time**: lint-staged for staged files, the Husky `pre-commit` and `commit-msg` hooks, or `.pre-commit-config.yaml`.
+3. **Local verification**: add the script to `package.json` and to `verify:fast` and/or `verify:static`.
+4. **CI**: confirm the corresponding job in `.github/workflows/ci.yml` runs it, usually through a `verify:*` command.
+
+### 4. Record it
+
+- Add the tool or command to `TOOLING.md` (tool inventory, commands, and the custom rule registry for custom rules).
+- Mention the enforcement in the owning rule or guide, and update `TESTING.md` when a job or suite changes.
+- Keep config, positive and negative tests, `TOOLING.md`, and the owning agent rule in the same change.
+
+### 5. Handle existing violations honestly
+
+Run the new check against the whole repository before wiring it in. If it already fails, either fix the backlog or, only when the user agrees, add a narrow documented exemption. Never wire in a gate that is knowingly red without reporting it, and never weaken the check to make it pass.
 
 ---
 
@@ -182,14 +230,17 @@ flowchart TD
         H1["pnpm check:markdown"]
         H2["pnpm check:spelling"]
         H3["agents sync"]
+        H4["Safeguard: tool + tests + hooks + CI"]
     end
     H --> H1
     H --> H2
     H --> H3
+    H --> H4
 
     H1 --> I["Step 6: User Confirmation & Rationale"]
     H2 --> I
     H3 --> I
+    H4 --> I
 ```
 
 ---
@@ -231,13 +282,20 @@ pnpm check:markdown
 # 2. Verify spelling across code and documentation
 pnpm check:spelling
 
-# 3. Synchronize agent skill manifests (when .agents/ is modified)
+# 3. Verify the language policy (English by default)
+pnpm check:english
+
+# 4. Synchronize agent skill manifests (when .agents/ is modified)
 agents sync
 ```
+
+### 5b. Add or Verify the Safeguard
+Follow [Safeguards](#safeguards-make-every-saved-rule-enforceable): select an installed tool from `TOOLING.md`, add valid and invalid tests, wire the check into hooks, `verify:*`, and CI, and register it in `TOOLING.md`. If no safeguard is feasible, state why in the confirmation.
 
 ### 6. Confirm to User
 Provide a concise summary of the action taken:
 - The target file path (repository-relative).
 - The section or table updated, or the new file created.
 - The rationale for the chosen target.
-- Results of verification checks.
+- The safeguard added (tool, tests, and gates it is wired into), or why none was possible.
+- Results of verification checks, including any pre-existing violations.

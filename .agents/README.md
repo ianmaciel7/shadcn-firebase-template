@@ -9,8 +9,9 @@ and Antigravity, with `syncMode` set to `source-only`.
 
 | MCP server | Command | Purpose |
 | --- | --- | --- |
-| Serena | `serena start-mcp-server --project-from-cwd --context=codex` | Project-local semantic symbol analysis |
+| Serena | `node .agents/scripts/serena-stdio-guard.mjs serena start-mcp-server --project-from-cwd --context=codex` | Project-local semantic symbol analysis; closes Serena's process tree when the stdio client disconnects |
 | Next.js DevTools | `pnpm exec next-devtools-mcp` | Runtime diagnostics and route inspection |
+| Playwright | `pnpm dlx @playwright/mcp@0.0.83` | Browser automation for verifying UI changes |
 
 These are configured servers, not a statement that the executables are
 installed or that runtime connectivity has been verified. Serena and the
@@ -18,17 +19,19 @@ Agents CLI are host tools; `next-devtools-mcp` is a project dependency.
 
 ## Installed skills
 
-The repository contains seven skills: `ask-matt`, `context7-cli`,
-`firebase-basics`, `firebase-auth-basics`, `save`, `setup-matt-pocock-skills`,
-and `shadcn`. See the
+The repository contains nine skills: `ask-matt`, `context7-cli`,
+`firebase-basics`, `firebase-auth-basics`, `new-component`, `save`,
+`setup-matt-pocock-skills`, `shadcn`, and `verify`. See the
 [skill inventory](skills/README.md) for entrypoints and provenance.
 
-Persistent rules cover [language](rules/language.md),
-[ADR history](rules/adr-naming.md), [component naming](rules/component-naming.md),
-[compound forms](rules/form-architecture.md),
-[data modules](rules/data-layer-modules.md),
-[route entrypoints](rules/route-special-files.md), and
-[shadcn/ui maintenance](rules/shadcn-ui.md). The
+Persistent rules (see [rules/README.md](rules/README.md)) cover [language](rules/language.md),
+[ADR history](rules/adr.md), [component contracts](rules/components.md),
+[component composition](rules/composition.md),
+[compound forms](rules/forms.md),
+[data modules](rules/data.md),
+[route entrypoints](rules/routes.md),
+[shadcn/ui maintenance](rules/shadcn.md), and
+[Serena external-research memory](rules/serena.md). The
 [shadcn/ui reference](../docs/agents/shadcn.md) records upstream coverage.
 
 ## Source and local files
@@ -62,7 +65,9 @@ installed docs to the [complete source review](../docs/agents/nextjs.md).
 Use that reference for App Router, Cache Components, and framework diagnostic
 ownership; existing route and component rules retain their stricter scope.
 
-The [React maintenance rule](rules/react.md) links current official sources to
+The [React maintenance rules](rules/react.md) ([react.md](rules/react.md), [react-dom.md](rules/react-dom.md), [react-quality.md](rules/react-quality.md)) link current official sources to
 installed runtime/Compiler support and canonical guidance. The
 [React review](../docs/agents/react.md) records complete content coverage and
-the separate versioned error catalog.
+the separate versioned error catalog. Its detailed reference preserves all
+20 user-supplied topics and 15 examples; the rule contains matching
+implementation/review guidance for each topic.

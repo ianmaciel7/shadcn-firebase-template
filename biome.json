@@ -22,7 +22,7 @@
       "!.agents",
       "!.claude",
       "!.serena",
-      "!tests/semgrep",
+      "!.semgrep",
       "!src/components/firebase",
       "!public/*.svg"
     ]
@@ -78,9 +78,14 @@
       "includes": [
         "src/components/ai-elements/**",
         "src/components/ui/**",
-        "!src/components/ui/extensions/**",
-        "src/lib/highlighter.tsx"
+        "!src/components/ui/extensions/**"
       ],
+      "formatter": {
+        "enabled": false
+      },
+      "assist": {
+        "enabled": false
+      },
       "linter": {
         "rules": {
           "a11y": {
@@ -119,19 +124,6 @@
             "useExportsLast": "error"
           }
         }
-      }
-    },
-    {
-      "includes": [
-        "src/components/ai-elements/**",
-        "src/components/ui/**",
-        "!src/components/ui/extensions/**"
-      ],
-      "formatter": {
-        "enabled": false
-      },
-      "assist": {
-        "enabled": false
       }
     },
     {
@@ -209,6 +201,48 @@
                     "message": "Route entrypoints must access Firebase through a data layer."
                   }
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "src/**",
+        "!src/components/ai-elements/**",
+        "!src/components/firebase/**",
+        "!src/components/ui/*.tsx",
+        "!src/**/*.test.ts",
+        "!src/**/*.test.tsx",
+        "!src/**/*.spec.ts",
+        "!src/**/*.spec.tsx",
+        "!src/**/*.stories.ts",
+        "!src/**/*.stories.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": {
+              "level": "error",
+              "options": {
+                "maxAllowedComplexity": 8
+              }
+            },
+            "noExcessiveLinesPerFunction": {
+              "level": "error",
+              "options": {
+                "maxLines": 40,
+                "skipBlankLines": true,
+                "skipIifes": false
+              }
+            }
+          },
+          "nursery": {
+            "noExcessiveNestedCallbacks": {
+              "level": "error",
+              "options": {
+                "max": 2
               }
             }
           }

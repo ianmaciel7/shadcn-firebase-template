@@ -12,8 +12,9 @@ function HomeSignOutButtonClient({
   className,
   ...props
 }: HomeSignOutButtonClientProps) {
-  const { t, auth, isPending, isError, handleSignOut } =
-    useHomeSignOutButtonClient();
+  const { t, auth, state, handleSignOut } = useHomeSignOutButtonClient();
+  const isPending = state === "pending";
+  const isError = state === "error";
   const errorId = "home-sign-out-error";
 
   return (

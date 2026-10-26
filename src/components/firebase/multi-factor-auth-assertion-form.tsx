@@ -50,11 +50,11 @@ export function MultiFactorAuthAssertionForm({ onSuccess }: MultiFactorAuthAsser
       <p className="text-sm text-muted-foreground">{mfaAssertionFactorPrompt}</p>
       {resolver.hints.map((hint) => {
         if (hint.factorId === TotpMultiFactorGenerator.FACTOR_ID) {
-          return <TotpButton key={hint.factorId} onClick={() => setHint(hint)} />;
+          return <TotpButton key={hint.uid} onClick={() => setHint(hint)} />;
         }
 
         if (hint.factorId === PhoneMultiFactorGenerator.FACTOR_ID) {
-          return <SmsButton key={hint.factorId} onClick={() => setHint(hint)} />;
+          return <SmsButton key={hint.uid} onClick={() => setHint(hint)} />;
         }
 
         return null;

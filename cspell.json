@@ -6,6 +6,7 @@
   "useGitignore": true,
   "ignorePaths": [
     "node_modules",
+    "graphify-out",
     ".next",
     "coverage",
     "reports",
@@ -20,7 +21,7 @@
     "src/components/firebase",
     "src/components/ui",
     "src/messages",
-    "src/lib/highlighter.tsx",
+    "docs/code-review/cspell.review.json",
     "docs/agents/nextjs-sources.json",
     "docs/agents/react-sources.json"
   ],
@@ -37,6 +38,7 @@
     "comenzar",
     "depcruise",
     "dispatchable",
+    "evals",
     "esnext",
     "exfiltration",
     "fallowrc",

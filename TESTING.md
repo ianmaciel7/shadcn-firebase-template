@@ -7,10 +7,13 @@ Run the checks relevant to a change before opening a pull request. See
 
 | Command | Use it for |
 | --- | --- |
-| `pnpm verify:fast` | Code changes: Biome CI, typecheck, unit tests, ast-grep structural rules, route-entrypoint guard, owned-component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Browser suites run separately. |
+| `pnpm verify:fast` | Code changes: Biome CI, typecheck, unit tests, logging and seed CLI regressions, ast-grep structural rules, route-entrypoint guard, owned-component naming/boundary guard, and responsiveness guard (`check:responsiveness`). Browser suites run separately. |
 | `pnpm verify:full` | Before a pull request: `verify:static` (adds coverage thresholds, architecture, unused code, duplication, ast-grep structural checks, route/component/responsiveness guards, spelling, Markdown, complexity, React diagnostics) plus `verify:build` (browser tests, production build with size budgets, Ladle build). |
 | `pnpm verify:e2e` | Changes that affect pages or visual output: functional, accessibility, and visual Playwright specs. |
-| `pnpm verify:security` | Dependency or configuration changes: Semgrep rule tests and scan, Gitleaks, workflow lint, and `pnpm audit`. Needs the host tools in [TOOLING.md](TOOLING.md#host-prerequisites). |
+| `pnpm verify:security` | Dependency or configuration changes: Semgrep rule tests and scan, Gitleaks, workflow lint, `pnpm audit`, and the separate Functions lockfile audit. Needs the host tools in [TOOLING.md](TOOLING.md#host-prerequisites). |
+| `pnpm test:emulator` | Seed CLI process behavior with mocked requests; part of fast/static verification and requires no running emulator. |
+| `pnpm audit:functions` | Separate dependency audit of the deployed Cloud Functions npm lockfile; part of security verification and CI. |
+| `pnpm eval:tool-usage` | On-demand evaluation of Codex tool selection. Requires authenticated Codex plus configured MCP/plugin tools; saves JSONL traces and a report under ignored `reports/tool-usage-evals/`. It is intentionally outside CI because agent results and external tool availability are non-deterministic. |
 
 For documentation-only changes, run `pnpm check:markdown` and
 `pnpm check:spelling`, then verify relative links, referenced paths, and
@@ -18,12 +21,24 @@ commands against the repository. These checks do not replace CI; the pull
 request still runs the configured jobs. Markdown lint intentionally excludes
 agent files and ADRs 0001–0005, so review those manually when applicable.
 
-`pnpm verify:fast` runs the unit Vitest project and structural ast-grep
-checks, including migrated route rules for client directives, hooks, and JSX
-event handlers. Browser, end-to-end, visual, and mutation suites run separately.
+`pnpm verify:fast` runs the unit Vitest project, logging and seed CLI
+regressions, and structural ast-grep checks, including migrated route rules for
+client directives, hooks, and JSX event handlers. Browser, end-to-end, visual,
+and mutation suites run separately.
 
 For a manual smoke test, run `pnpm dev` and verify the affected route in a
 browser, including its loading, error, and localized states where applicable.
+
+## Agent evaluations
+
+`pnpm eval:tool-usage` runs the five core scenarios defined in
+`evals/tool-usage/cases.json` through `codex exec --json` with a read-only
+sandbox. The runner checks both trace tool calls and the schema-constrained
+final receipt, so a tool merely named in prose does not pass. Its unit tests
+are `scripts/evals/run-tool-usage-evals.test.mjs`; run them with
+`node --test scripts/evals/run-tool-usage-evals.test.mjs` when changing the
+runner or cases. See [agent evaluations](docs/agents/evals.md) for the general
+rubric, manual review, and failure follow-up.
 
 ## Test layers
 
@@ -35,7 +50,7 @@ browser, including its loading, error, and localized states where applicable.
 | End-to-end / Responsiveness | `tests/*.spec.ts`, `tests/responsive.spec.ts` | Playwright | `pnpm test:e2e` | User journeys and responsive layout against a production build. `tests/responsive.spec.ts` covers multi-viewport matrix (320px, 390px, 768px, 1280px), horizontal overflow prevention (`scrollWidth <= clientWidth`), and WCAG 2.2 SC 2.5.8 touch target compliance. |
 | Accessibility | `tests/a11y.spec.ts`, titled `@a11y` | Playwright and axe-core | `pnpm test:a11y` | Automated WCAG 2.0, 2.1, and 2.2 A/AA scans (`wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa`) across desktop (`1280x800`) and mobile (`390x844`) viewports in light and dark mode. |
 | Visual regression | `tests/visual.spec.ts`, titled `@visual` | Playwright screenshots (CI only) | `pnpm test:visual` | Layout and theme changes in rendered pages. |
-| Firebase Auth and profile | `tests/firebase-auth.spec.ts` | Playwright with Firebase Auth, Firestore and Functions emulators | CI `auth-emulator` job | Sign-in, registration, recovery, profile, and authenticated axe checks, including the `recordUsage` callable gate. Not included in ordinary `verify:e2e`. |
+| Firebase Auth and profile | `tests/firebase-auth.spec.ts` | Playwright with Firebase Auth, Firestore and Functions emulators | CI `auth-emulator` job | Sign-in, registration, recovery, profile, and authenticated axe checks, including the `recordUsage` callable guard. Not included in ordinary `verify:e2e`. |
 | Mutation | `stryker.config.json` | Stryker | `pnpm test:mutation` | Command-runner mutation testing. Manual CI run until a hosted-run success is confirmed; see [TOOLING.md](TOOLING.md#known-limitations). |
 
 Choose the lightest layer that can fail for the right reason. Keep a behavior
@@ -44,6 +59,15 @@ browser matters (for example, `use-mobile.browser.test.tsx` uses a real viewport
 instead of a stubbed `matchMedia`).
 
 ## Test placement and scope
+
+The review regressions in `prompt-input.test.tsx` and `speech-input.test.tsx`
+run in the existing unit project despite the registry's coverage exclusions.
+They verify newer edits, attachment ownership, resource cleanup, and obsolete
+async callbacks. Profile tests verify that session changes stop later writes.
+The seed CLI tests use a child process and mocked fetch/environment-file loading
+to assert actual exit status without contacting Firebase. Maintain these
+behavioral assertions when changing related `_hooks`, `_components`, `_lib`,
+or shared service code; do not replace them with source-text assertions.
 
 - Place Vitest unit tests for functions, utilities, hooks, and business logic
   next to their source module with `*.test.ts`.
@@ -59,16 +83,24 @@ instead of a stubbed `matchMedia`).
 - Do not write a test only to make a tool report success. When a tool has no
   suitable subject yet, leave it unused and say so.
 
-Five Vitest suites verify configuration rather than application behavior:
-`src/messages/messages.test.ts` checks locale catalog keys and ICU arguments.
+Seven Vitest suites verify configuration rather than application behavior:
+`src/messages/messages.test.ts` checks locale catalog keys and ICU arguments,
+alongside the 6 rule-configuration suites (`.biome/rules/nextjs/rules.test.ts`,
+`.biome/rules/dom/rules.test.ts`, `.biome/rules/nextjs/app-router-imports.test.ts`,
+`.biome/rules/react/native-rules.test.ts`, `.biome/rules/complexity/native-rules.test.ts`,
+and `.ast-grep/rules/react/hook-module-scope.test.ts`):
 `.biome/rules/nextjs/rules.test.ts` and `.biome/rules/dom/rules.test.ts`
 verify valid and invalid Grit fixtures.
 `.biome/rules/nextjs/app-router-imports.test.ts` verifies the native App
 Router import policy and exclusions.
 `.biome/rules/react/native-rules.test.ts` verifies native React diagnostics,
-allowed React 19 patterns, and discriminated status branches. The earlier
-`prefer-is-error` Grit policy and its test were removed because they forced
-redundant state flags; do not restore them.
+allowed React 19 patterns, and explicit UI phase flags. The earlier
+`prefer-is-error` Grit policy remains removed; use the project's named flags
+when a component exposes loading, hidden, or error state.
+`.biome/rules/complexity/native-rules.test.ts` verifies cognitive complexity,
+function length, and callback nesting depth limits.
+`.ast-grep/rules/react/hook-module-scope.test.ts` verifies private hook module
+scope and path exclusions.
 Semgrep rules are tested with `semgrep --test` (`pnpm check:security:rules`) and
 ast-grep rules with `ast-grep test`.
 
@@ -95,7 +127,7 @@ Vitest Browser Mode component tests, and Playwright end-to-end specifications.
 
 ### 1. Static responsiveness guard (`pnpm check:responsiveness`)
 
-`scripts/check-responsiveness.mjs` runs in `pnpm verify:fast` and `pnpm verify:static`
+`scripts/checks/check-responsiveness.mjs` runs in `pnpm verify:fast` and `pnpm verify:static`
 to catch responsive anti-patterns and accessibility regressions before runtime:
 
 - **Viewport scalability (WCAG 1.4.4 Resize Text)**: The root layout (`src/app/layout.tsx`)
@@ -264,7 +296,7 @@ labels rather than guessing from old screenshots or component names.
 **Resolved emulator setup issue (2026-10-23):** Run
 [39970721905](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/39970721905)
 failed profile email, locale, and authenticated accessibility scenarios
-because the Functions Emulator was missing while the protected gate awaited
+because the Functions Emulator was missing while the protected guard awaited
 the `recordUsage` callable. The Google popup scenario also required a retry.
 After starting Auth, Firestore, and Functions together and installing the
 Functions dependencies, run
@@ -383,7 +415,7 @@ transitive RSC imports; builds and behavior tests still validate those paths.
 
 ## Responsiveness guard regression tests
 
-`pnpm check:responsiveness` executes `scripts/check-responsiveness.test.mjs` before scanning
+`pnpm check:responsiveness` executes `scripts/checks/check-responsiveness.test.mjs` before scanning
 application files. The suite tests both valid implementations and rejected anti-patterns:
 
 - **Path classifiers**: Confirms discrimination between owned application components, App
@@ -493,3 +525,85 @@ Next.js build and a deployed Cloud Logging smoke test remain separate checks; mo
 prove provider ingestion or IAM configuration. Native SWC loading failures can
 prevent Next.js type generation and leave `LayoutProps` unresolved in TypeScript;
 report the environment failure rather than treating those checks as passed.
+
+## Review finding regressions
+
+The unit project resolves the `server-only` marker to Next.js's bundled empty server implementation for direct provider-contract tests. This alias applies only to unit tests; it does not relax production or browser import boundaries. The provider tests verify request-owned props and preservation of the global console.
+
+AI Elements regressions exercise full-content token cache identity, asynchronous SDK schema conversion, pricing distribution, accessible names, shared primitive IDs and keyboard operation. Browser cases cover attachment focus visibility and Media Chrome activation without a second keyboard-event owner. Run these in the existing unit and browser projects; isolated Chromium checks do not replace Next.js production tests.
+
+Cookie resolution is covered by `src/i18n/request.test.ts`: all supported
+cookies load their catalogs, missing/invalid values fall back to English, and
+explicit server translation overrides remain supported. Navigation tests keep
+public paths unchanged without root-parameter or Proxy mocks. These tests do
+not resolve the static root document-language finding.
+
+The cache regressions use installed Shiki with equal-length text whose beginning
+and ending match but whose middle differs, including concurrent requests. Schema
+regressions use real SDK conversion with a narrowly mocked code renderer; they
+cover lazy, pending, rejected and obsolete results. Pricing tests use the real
+installed catalog with fixed model cases, including cache writes and missing
+uncached-token detail. This tests integration contracts without claiming every
+library behavior is covered.
+
+Browser tests count actual media request events for click, Enter and Space,
+including seek offsets and disabled controls, and inspect attachment focus
+visibility. A system Chromium executable was used through an uncommitted local
+launch configuration; no machine-specific browser path is required by the
+committed project config. Browser launch/server binding failures are environment
+failures, not passed tests or reasons to remove cases.
+
+Historical counts, commands and limits are recorded in
+[the remediation checkpoint](docs/code-review/resolutions.md). Keep results tied
+to a revision: the final cookie-only correction passed 232 unit tests, while the
+rejected locale-route checkpoint had a different test set. Neither result means
+the full audit or production verification is complete.
+
+## Private hook support placement regressions
+
+`pnpm check:structure` runs the `no-module-support-in-hooks-ts` and `-tsx`
+ast-grep fixtures. Negative cases cover ordinary/exported functions, arrow and
+function-expression helpers, constants, context objects, destructuring, mixed
+hook/helper declarations and non-function values disguised with a hook name.
+Positive cases retain imports, types, direct hook declarations and callbacks or
+constants inside hook bodies.
+
+`.ast-grep/rules/react/hook-module-scope.test.ts` invokes the installed ast-grep executable
+on temporary source trees. It verifies root and nested private hook directories
+are scanned while `_lib`, shared/vendor directories and test/spec/story files
+are excluded. It runs in the existing unit project without adding a scanner or
+changing CI entry points. `profile/_lib/avatar.test.ts` preserves preview priority,
+missing-photo behavior, versioned URL query parameters and upload limits after
+extracting the support declarations. Existing profile component tests exercise
+the same context singleton from its `_lib` owner.
+
+## Function complexity and orchestration regressions
+
+`.biome/rules/complexity/native-rules.test.ts` runs the installed Biome CLI against
+the actual project config. Tests verify inclusive cognitive 8, body length 40 and
+callback depth 2 limits, the immediately failing value for each, ignored blank
+lines, TS/TSX functions, owned hooks, route `_lib`, shared modules and UI extensions.
+Test/spec/story and copied registry exclusions are checked separately. Passing
+with `--only` is not equivalent: that flag enables selected rules even where
+normal configuration disables them, so these regressions use normal lint rules.
+
+Auth-provider tests cover initialization errors, first-session loading, safe
+post-auth redirects, locale updates without resubscribing, and cleanup ignoring
+late callbacks. Protected-guard regressions preserve logging acknowledgments and
+obsolete-session rejection after moving subscription ownership. Profile defaults
+tests cover stored/default preferences, lifecycle cancellation and a changed user;
+profile save tests keep session rechecks after every asynchronous write boundary.
+Home component tests preserve signed-in/out presentation after composing smaller
+header/logo parts. Budgets supplement these behavior tests rather than replacing
+them with assertions about implementation call counts.
+
+Do not run source-wide scans while configuration regression tests have temporary
+invalid fixtures inside `src/`. Finish the unit process and its cleanup before
+running Biome, ast-grep, dependency or component scans against the source tree.
+
+The native complexity regression locations explicitly include every current hook
+directory: shared hooks, root App Router hooks, protected and profile hooks, public
+hooks, and the sign-in, register and forgot-password hook directories. The
+configured `src/**` scope also covers future owned directories and support modules.
+After hook changes, finish with a full source scan after fixture cleanup; checking
+one orchestrator or only staged files does not verify the rest of the hook tree.

@@ -8,6 +8,11 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // The `role` custom claim is set only by the setUserRole Cloud Function.
+    function isAdmin() {
+      return request.auth != null && request.auth.token.role == 'admin';
+    }
+
     match /users/{uid} {
       function isOwner() {
         return request.auth != null && request.auth.uid == uid;
@@ -21,7 +26,7 @@ service cloud.firestore {
             || request.resource.data.theme in ['light', 'dark', 'system']);
       }
 
-      allow read: if isOwner();
+      allow read: if isOwner() || isAdmin();
       allow create: if isOwner() && hasValidPreferences();
       allow update: if isOwner()
         && request.resource.data.diff(resource.data).affectedKeys()

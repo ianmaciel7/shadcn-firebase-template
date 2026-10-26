@@ -32,7 +32,7 @@ configuration and repository documentation.
 │   ├── lib/                 # Framework-independent utilities
 │   ├── messages/            # Locale message catalogs
 │   └── types/               # Shared TypeScript declarations
-├── tests/                   # Playwright E2E tests, visual baselines, and Semgrep rules
+├── tests/                   # Playwright E2E tests and visual baselines
 ├── AGENTS.md
 ├── ARCHITECTURE.md
 ├── CODING_STANDARDS.md
@@ -79,7 +79,7 @@ When an unauthenticated user requests a protected route, the client guard redire
 - Colocate Ladle stories (`*.stories.tsx`) next to UI primitives under
   `src/components/ui/` for isolated component development and visual inspection.
 - Keep repository tooling guard self-tests beside their scripts, such as
-  `scripts/check-component-conventions.test.mjs`. Do not introduce a global
+  `scripts/checks/check-component-conventions.test.mjs`. Do not introduce a global
   `tests/unit/` hierarchy for application tests.
 - Keep Playwright E2E specifications in root `tests/` with `*.spec.ts`.
   Feature-specific fixtures and helpers stay with their consumer unless shared
@@ -95,7 +95,10 @@ commands and implementation conventions.
 The internationalization architecture is 100% cookie-driven (`NEXT_LOCALE`)
 without `middleware.ts` and without a `[locale]` folder segment in the App
 Router. The application serves `src/app/page.tsx` directly at `/`; there are no
-localized URL route prefixes or proxy scripts.
+localized URL route prefixes or proxy scripts. This is an explicit maintainer
+requirement recorded in [ADR 0004](docs/adr/0004-configure-internationalization.md).
+An internally rewritten locale segment also
+violates this requirement; keeping only the browser URL unprefixed is insufficient.
 
 `src/i18n/routing.ts` defines `en`, `pt-BR`, and `es`, defaulting to `en`, and
 exports `localeCookie = "NEXT_LOCALE"` along with the `isLocale` type guard.
@@ -118,8 +121,9 @@ with Cache Components, awaiting a request cookie at the root above all
 `Suspense` boundaries can block prerendering. Moving the existing cookie read
 there is not a complete fix. Preserve the current behavior until that design
 and its accessibility tests are implemented. See
-[ADR 0004](docs/adr/0004-configure-internationalization.md) for the complete
-decision.
+[ADR 0004](docs/adr/0004-configure-internationalization.md) for the original
+decision and current cookie-only constraint. Document-language debt does not
+authorize adding locale route segments, Proxy, or changing the rendering model.
 
 ## Runtime and component boundaries
 
@@ -147,18 +151,30 @@ It does not ban all third-party React dependencies in `src/lib`.
 
 Firebase Authentication provides browser authentication on public auth routes and
 client-guarded protected routes (`(protected)/profile`); see [ADR 0009](docs/adr/0009-integrate-firebase-authentication.md).
-Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`; Firestore
-operations live in descriptive modules under `src/lib/firebase/firestore/`, such
-as `user-preferences.ts`. The profile route's `useProfileSubmit` hook coordinates the save
-workflow; `saveProfile` in `src/lib/profile.ts` injects typed Firebase
-persistence adapters for independent tests.
+`FirebaseAuthSessionBridgeClient` registers the root-scoped
+`firebase-auth-sw.js` worker. The worker refreshes an ID token and attaches it
+only to same-origin Next navigation requests; `src/lib/firebase/server.ts` verifies that
+bridged token through `FirebaseServerApp`. Until the worker controls a tab, the
+browser guard remains the first-load fallback. The development worker receives
+the existing public Auth Emulator host, so it shares the local emulator session.
+The authentication modules intentionally remain flat under `src/lib`:
+`auth.ts`, `session.ts`, and `return-url.ts`; consumers should import them as
+`@/lib/auth`, `@/lib/session`, and `@/lib/return-url`.
+Firebase Web SDK initialization lives in `src/lib/firebase/client.ts`. The
+profile route's `useProfilePreferences` and `useProfileSubmit` hooks coordinate
+the load and save workflows; `readProfile`, `readUserPreferences`,
+`writeUserPreferences`, and `saveProfile` in
+`src/app/(protected)/profile/_lib/data.ts` handle Firestore/Storage/Auth
+persistence and inject typed Firebase adapters for independent tests.
 `useProfileFormClient` owns the React Hook Form lifecycle and uses the
 native submitting state. `useProfileSectionClient` composes session,
 status, and translation hooks; `ProfileSectionClient` renders a
 discriminated `status` and composes Card and Form parts with one
-`FieldGroup`. Shared value types also live in `src/lib/profile.ts`. The canonical profile
+`FieldGroup`. Profile value types live in
+`src/app/(protected)/profile/_lib/definitions.ts`, alongside the route-private profile
+workflow. The canonical profile
 responsibilities live in
-[the form rule](.agents/rules/form-architecture.md). Profile preferences use
+[the form rule](.agents/rules/forms.md). Profile preferences use
 Firestore at `users/{uid}` with owner and field/value validation rules. Avatar
 Storage rules restrict `users/{uid}/avatar` to its owner and enforce accepted
 image types and the 2 MiB upload limit. These browser SDK modules are not a
@@ -168,7 +184,7 @@ server code, rather than using those names for Firebase client modules
 ([Fetching Data](https://nextjs.org/docs/app/getting-started/fetching-data),
 [Mutating Data](https://nextjs.org/docs/app/getting-started/mutating-data),
 [Data Security](https://nextjs.org/docs/app/guides/data-security)). See
-[.agents/rules/data-layer-modules.md](.agents/rules/data-layer-modules.md) for the
+[.agents/rules/data.md](.agents/rules/data.md) for the
 file taxonomy defining `definitions.ts`, `dto.ts`, `dal.ts`, and `data.ts`. The client
 SDK relies on Firebase Security Rules and does not provide server authorization
 for protected routes. No deployment integration is configured.
@@ -265,7 +281,7 @@ and stable/experimental boundaries.
 
 Place shared application components in `src/components/ui/extensions/` and
 route-private components in `src/app/**/_components/`. For example,
-`LoadingIndicator` belongs alongside `Loading` in `ui/extensions` because both
+`LabeledSpinner` belongs in `ui/extensions` because both
 route components and Firebase UI consume it. Do not create parallel application
 component folders such as `src/components/loading/`.
 
@@ -281,12 +297,12 @@ interactive and declare `"use client"`; names do not define React runtime.
 Integrations may delegate persistence, session or browser access to hooks.
 Presentation can compose an integration child without becoming an integration.
 Semantic exports, Next.js special files and registry source retain their names.
-See [ADR 0016](docs/adr/0016-name-components-by-integration-responsibility.md)
+See [ADR 0005](docs/adr/0005-document-project-standards.md)
 and [the integration convention](CODING_STANDARDS.md#integration-filename-convention).
 
 ## Usage records
 
-The protected gate calls `recordUsage` on pathname changes before releasing
+The protected guard calls `recordUsage` on pathname changes before releasing
 children. Profile saves call `withUsageGuard` before starting the operation.
 The Firebase callable validates authentication and an allowlist of screen and
 functionality names, then emits structured `INFO` entries using the native

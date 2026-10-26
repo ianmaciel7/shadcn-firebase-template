@@ -5,7 +5,7 @@ import { type ComponentProps, useId } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import type { ProfileValues } from "@/lib/profile";
+import type { ProfileValues } from "../_lib/definitions";
 
 type ProfileEmailFieldProps = ComponentProps<typeof Field>;
 

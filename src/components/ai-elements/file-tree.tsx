@@ -85,7 +85,7 @@ const FileTree = ({
           "rounded-lg border bg-background font-mono text-sm",
           className,
         )}
-        role="tree"
+        role="group"
         {...props}
       >
         <div className="p-2">{children}</div>
@@ -157,8 +157,8 @@ const FileTreeFolder = ({
       <Collapsible onOpenChange={handleOpenChange} open={isExpanded}>
         <div
           className={cn("", className)}
-          role="treeitem"
-          tabIndex={0}
+          aria-label={name}
+          role="group"
           {...props}
         >
           <div
@@ -240,6 +240,7 @@ const FileTreeFile = ({
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
         onSelect?.(path);
       }
     },
@@ -258,7 +259,7 @@ const FileTreeFile = ({
         )}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
-        role="treeitem"
+        role="button"
         tabIndex={0}
         {...props}
       >
