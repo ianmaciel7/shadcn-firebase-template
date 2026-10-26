@@ -35,6 +35,11 @@ test.describe("home page smoke tests", () => {
       expect(response?.ok()).toBe(true);
       await expect(page.locator("main")).toBeVisible();
       await expect(page.locator("html")).toHaveAttribute("lang", locale);
+      // Verify the original server HTML, not a client-side attribute patch.
+      const initialResponse = await context.request.get("/");
+      expect(initialResponse.ok()).toBe(true);
+      const initialHtml = await initialResponse.text();
+      expect(initialHtml.match(/<html[^>]*\slang="([^"]+)"/)?.[1]).toBe(locale);
     });
   }
 
