@@ -16,7 +16,7 @@ The official version-matched guide addresses **static route preservation with ca
 
 - Explains which route shell content can remain static while other state is dynamic.
 - Shows cached route detail and selective build-time generation.
-- Distinguishes prerenderable content from request-scoped session-dependent material.
+- Distinguishes suitable for prerendering content from request-scoped session-dependent material.
 
 ## Project-specific applicability
 
