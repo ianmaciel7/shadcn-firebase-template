@@ -20,6 +20,7 @@ import {
 import { Commit, CommitContent, CommitHeader } from "./commit";
 import { FileTree, FileTreeFile } from "./file-tree";
 import { JSXPreview, useJSXPreview } from "./jsx-preview";
+import { MessageBranch, MessageBranchContent, MessageBranchNext, MessageBranchPage } from "./message";
 import { Question, QuestionOption, QuestionOptions } from "./question";
 import { TestResults, TestResultsProgress } from "./test-results";
 
@@ -34,6 +35,30 @@ function ProcessedJsx() {
 }
 
 describe("reviewed primitive compositions", () => {
+  it("preserves the selected keyed message across reordering and same-size replacement", () => {
+    const onBranchChange = vi.fn();
+    const renderBranches = (order: string[]) => (
+      <MessageBranch onBranchChange={onBranchChange}>
+        <MessageBranchContent>
+          {order.map((key) => <p key={key} data-testid={key}>{key}</p>)}
+        </MessageBranchContent>
+        <MessageBranchPage />
+        <MessageBranchNext />
+      </MessageBranch>
+    );
+    const view = render(renderBranches(["first", "second"]));
+    fireEvent.click(screen.getByRole("button", { name: "Next branch" }));
+    expect(screen.getByText("2 of 2")).toBeTruthy();
+    view.rerender(renderBranches(["second", "first"]));
+    expect(screen.getByText("1 of 2")).toBeTruthy();
+    expect(screen.getByTestId("second").parentElement?.className).toContain("block");
+    view.rerender(renderBranches(["third", "first"]));
+    expect(screen.getByText("1 of 2")).toBeTruthy();
+    expect(screen.getByTestId("third").parentElement?.className).toContain("block");
+    expect(onBranchChange).toHaveBeenCalledTimes(1);
+  });
+
+
   it.each([
     ["<div><span>Text</div>", "<div><span>Text</span></div>"],
     ['<div>{"<Fake>"}</div>', '<div>{"<Fake>"}</div>'],

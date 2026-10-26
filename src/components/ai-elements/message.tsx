@@ -6,9 +6,11 @@ import { math } from "@streamdown/math";
 import { mermaid } from "@streamdown/mermaid";
 import type { UIMessage } from "ai";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import type { ComponentProps, HTMLAttributes, ReactElement } from "react";
+import type { ComponentProps, HTMLAttributes } from "react";
 import {
+  Children,
   createContext,
+  isValidElement,
   memo,
   useCallback,
   useContext,
@@ -115,8 +117,7 @@ interface MessageBranchContextType {
   totalBranches: number;
   goToPrevious: () => void;
   goToNext: () => void;
-  branches: ReactElement[];
-  setBranches: (branches: ReactElement[]) => void;
+  setBranchKeys: (keys: string[]) => void;
 }
 
 const MessageBranchContext = createContext<MessageBranchContextType | null>(
@@ -146,39 +147,63 @@ const MessageBranch = ({
   className,
   ...props
 }: MessageBranchProps) => {
-  const [currentBranch, setCurrentBranch] = useState(defaultBranch);
-  const [branches, setBranches] = useState<ReactElement[]>([]);
+  const [branchKeys, setBranchKeysState] = useState<string[]>([]);
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const selectedIndex = branchKeys.indexOf(selectedKey ?? "");
+  const currentBranch =
+    selectedIndex >= 0
+      ? selectedIndex
+      : Math.min(Math.max(0, defaultBranch), Math.max(0, branchKeys.length - 1));
+
+  const setBranchKeys = useCallback(
+    (nextKeys: string[]) => {
+      setBranchKeysState((previous) =>
+        previous.length === nextKeys.length &&
+        previous.every((key, index) => key === nextKeys[index])
+          ? previous
+          : nextKeys,
+      );
+      setSelectedKey((previous) =>
+        previous && nextKeys.includes(previous)
+          ? previous
+          : (nextKeys[Math.min(Math.max(0, defaultBranch), Math.max(0, nextKeys.length - 1))] ?? null),
+      );
+    },
+    [defaultBranch],
+  );
 
   const handleBranchChange = useCallback(
     (newBranch: number) => {
-      setCurrentBranch(newBranch);
+      if (!branchKeys[newBranch]) return;
+      setSelectedKey(branchKeys[newBranch]);
       onBranchChange?.(newBranch);
     },
-    [onBranchChange],
+    [branchKeys, onBranchChange],
   );
 
   const goToPrevious = useCallback(() => {
-    const newBranch =
-      currentBranch > 0 ? currentBranch - 1 : branches.length - 1;
-    handleBranchChange(newBranch);
-  }, [currentBranch, branches.length, handleBranchChange]);
+    if (branchKeys.length < 2) return;
+    handleBranchChange(
+      currentBranch > 0 ? currentBranch - 1 : branchKeys.length - 1,
+    );
+  }, [branchKeys.length, currentBranch, handleBranchChange]);
 
   const goToNext = useCallback(() => {
-    const newBranch =
-      currentBranch < branches.length - 1 ? currentBranch + 1 : 0;
-    handleBranchChange(newBranch);
-  }, [currentBranch, branches.length, handleBranchChange]);
+    if (branchKeys.length < 2) return;
+    handleBranchChange(
+      currentBranch < branchKeys.length - 1 ? currentBranch + 1 : 0,
+    );
+  }, [branchKeys.length, currentBranch, handleBranchChange]);
 
   const contextValue = useMemo<MessageBranchContextType>(
     () => ({
-      branches,
       currentBranch,
       goToNext,
       goToPrevious,
-      setBranches,
-      totalBranches: branches.length,
+      setBranchKeys,
+      totalBranches: branchKeys.length,
     }),
-    [branches, currentBranch, goToNext, goToPrevious],
+    [branchKeys.length, currentBranch, goToNext, goToPrevious, setBranchKeys],
   );
 
   return (
@@ -197,26 +222,27 @@ const MessageBranchContent = ({
   children,
   ...props
 }: MessageBranchContentProps) => {
-  const { currentBranch, setBranches, branches } = useMessageBranch();
-  const childrenArray = useMemo(
-    () => (Array.isArray(children) ? children : [children]),
+  const { currentBranch, setBranchKeys } = useMessageBranch();
+  const branches = useMemo(
+    () => Children.toArray(children).filter(isValidElement),
     [children],
   );
+  const keys = branches.map((branch) => String(branch.key));
+  const keySignature = JSON.stringify(keys);
 
-  // Use useEffect to update branches when they change
+  // Reconcile identities, not just list length: same-sized replacements and
+  // reorders must refresh the selector while preserving a selected keyed item.
   useEffect(() => {
-    if (branches.length !== childrenArray.length) {
-      setBranches(childrenArray);
-    }
-  }, [childrenArray, branches, setBranches]);
+    setBranchKeys(keys);
+  }, [keySignature, setBranchKeys]);
 
-  return childrenArray.map((branch, index) => (
+  return branches.map((branch, index) => (
     <div
       className={cn(
         "grid gap-2 overflow-hidden [&>div]:pb-0",
         index === currentBranch ? "block" : "hidden",
       )}
-      key={branch?.key ?? index}
+      key={branch.key}
       {...props}
     >
       {branch}
