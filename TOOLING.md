@@ -126,7 +126,8 @@ project skills are tracked in `.agents/skills/` and `skills-lock.json`.
 | `pnpm test:visual` | Compare screenshots with baselines. Never rewrites them. Skipped locally; runs in CI (or with `PLAYWRIGHT_VISUAL=1`). |
 | `pnpm test:visual:update` | Rewrite baselines. Run it through the **Update visual baselines** workflow, not on your machine. |
 | `pnpm test:mutation` | Stryker on selected logic (manual dispatch only in hosted CI until verified; see limitations). |
-| `pnpm emulator` | Start local Firebase Auth Emulator. |
+| `pnpm emulator` | Start local Firebase Emulator Suite importing `./emulator-data` and exporting on exit. |
+| `pnpm emulator:export` | Export running emulator state to `./emulator-data` (`firebase emulators:export ./emulator-data --force`). |
 | `pnpm emulator:seed` | Seed test user accounts into the running Firebase Auth Emulator (`node scripts/emulator/seed.mjs`). |
 | `pnpm emulator:clear` | Clear all accounts from the Firebase Auth Emulator (`node scripts/emulator/clear.mjs`). |
 | `pnpm ladle` / `pnpm ladle:build` | Serve or build the component workbench (`reports/ladle`). |
@@ -551,10 +552,11 @@ Task queues, Pub/Sub, Extensions, and Admin SDK operations are server-side servi
 implement them in `functions/`, never in `src/lib/firebase/client.ts`. See
 [TESTING.md](TESTING.md#first-time-setup) for the isolated browser suite. For
 interactive local development, run `pnpm dev` with the emulator variables in `.env`.
-The operational commands for the Firebase Auth Emulator are:
+The operational commands for the Firebase Emulator Suite are:
 
-- `pnpm emulator`: starts the local Auth Emulator. The Emulator Suite UI is
-  accessible at `http://127.0.0.1:4000/auth`.
+- `pnpm emulator`: starts the local Emulator Suite with `--import=./emulator-data --export-on-exit`. The Emulator Suite UI is
+  accessible at `http://127.0.0.1:4000`.
+- `pnpm emulator:export` (`firebase emulators:export ./emulator-data --force`): saves current emulator state into `./emulator-data`.
 - `pnpm emulator:seed` (`node scripts/emulator/seed.mjs`): sends seed test accounts to the running emulator for
   local development and testing.
 - `pnpm emulator:clear` (`node scripts/emulator/clear.mjs`): clears all accounts in the emulator.
