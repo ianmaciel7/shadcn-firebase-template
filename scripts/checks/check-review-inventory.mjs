@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -76,7 +76,11 @@ const docRows = allRows.filter(
 );
 const coordinator = allRows.find((line) => line.startsWith("| COORDINATOR |"));
 const activeReportAgents = new Set();
-for (const row of [...rows, ...docRows, ...(coordinator ? [coordinator] : [])]) {
+for (const row of [
+  ...rows,
+  ...docRows,
+  ...(coordinator ? [coordinator] : []),
+]) {
   const agent = row.split("|")[2]?.trim().replaceAll("`", "");
   if (!agent || activeReportAgents.has(agent)) {
     throw new Error(`Missing or duplicate review identity: ${agent}`);
