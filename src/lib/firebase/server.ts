@@ -1,6 +1,7 @@
 import "server-only";
 
 import { headers } from "next/headers";
+import { connection } from "next/server";
 import { readUserRole, type UserRole } from "@/lib/role";
 import { getAdminAuth } from "./admin";
 
@@ -18,6 +19,8 @@ function readBearerToken(requestHeaders: Headers) {
 }
 
 async function verifyIdToken(authIdToken: string) {
+  // Dynamic rendering errors must not be interpreted as invalid user tokens.
+  await connection();
   try {
     // checkRevoked rejects tokens of disabled users and revoked sessions, so a
     // demoted role stops working as soon as its refresh tokens are revoked.

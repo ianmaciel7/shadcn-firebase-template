@@ -37,8 +37,20 @@ We adopt `next-intl` with a decoupled routing, provider, and message structure:
 3. **Server Request Configuration (`src/i18n/request.ts`)**:
    Resolves the active locale from the `NEXT_LOCALE` request cookie (`cookies()`) or explicit server translation overrides and dynamically imports the corresponding JSON message dictionary from `src/messages/${locale}.json`. If missing or unsupported, it cleanly falls back to `defaultLocale` (`"en"`). Cookie-resolution regression tests cover every supported locale, invalid or missing cookies, and explicit overrides without mocking root parameters.
 
-4. **Static Root HTML Lang Attribute (`src/app/layout.tsx`)**:
-   The top-level `<html lang="en">` attribute in `src/app/layout.tsx` is intentionally static while component content within the suspended `IntlProviderServer` boundary renders dynamically according to the active cookie locale. With Next.js 16 Cache Components enabled, awaiting `cookies()` above the root `Suspense` boundary blocks prerendering of the static document shell, and a client-only attribute update leaves initial server HTML and JavaScript-disabled clients with the wrong language. Do not introduce `[locale]` route segments, `src/proxy.ts` rewrites, a rendering-model change, or an unverified root cookie read to work around this; any future document-language solution must preserve the cookie-only architecture and be verified with Cache Components.
+4. **Request-Localized Root HTML Language (`src/app/layout.tsx`)**:
+   The root layout remains synchronous and composition-only. An outer `Suspense`
+   boundary with an empty fallback renders the async `IntlDocumentServer` from
+   `src/components/ui/extensions/intl-document-server.tsx`. It resolves
+   `getLocale()` from the existing cookie-only request configuration and emits
+   `<html lang={locale}>` with the original body classes. A separate nested
+   `Suspense` retains the existing provider loading UI. The empty root fallback
+   prevents an English document shell from being sent while a non-English
+   request is pending. Production Playwright tests verify both the visible
+   document language and the raw HTML response's first root tag for English,
+   Portuguese and Spanish. This preserves `cacheComponents: true`,
+   `partialPrefetching: true`, direct unprefixed routes and the explicit
+   prohibition on `[locale]` segments or Proxy rewrites. Any change to the
+   root fallback must rerun the server-response language checks.
 
 5. **Navigation**:
    Navigation uses the standard Next.js `Link`, `useRouter`, and `usePathname` directly against unprefixed public URLs (localized navigation wrappers are also available via `src/i18n/navigation.ts` when needed, without internal pathname normalization helpers).
@@ -123,6 +135,6 @@ We adopt `next-intl` with a decoupled routing, provider, and message structure:
   - Automated Biome static analysis preventing un-translated JSX text without breaking Tailwind `className` DX.
 - **Negative / Trade-offs**:
   - Requires maintaining translations across 3 language JSON files for UI strings.
-  - The `<html lang="en">` attribute in `src/app/layout.tsx` is static, requiring derived projects to read cookies in `RootLayout` if dynamic SSR `lang` is desired.
+  - Root document output waits for request-specific locale resolution before emitting the HTML element, trading an immediate static root fallback for correct server-rendered language.
   - Requires configuring `next.config.ts` with `createNextIntlPlugin`.
   - Developers must use `generateMetadata()` with `getTranslations()` when metadata needs localization.

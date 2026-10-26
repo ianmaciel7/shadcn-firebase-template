@@ -3,11 +3,11 @@
 | Measure | Count |
 | --- | ---: |
 | Project folders inventoried | 119 |
-| Project files inventoried | 577 |
-| Total project review items | 696 |
+| Project files inventoried | 578 |
+| Total project review items | 697 |
 | Folder reports completed | 119 |
-| File reports completed | 577 |
-| Items reviewed | 696 |
+| File reports completed | 578 |
+| Items reviewed | 697 |
 | Coverage | 100.00% |
 | Active reports | 0 |
 | Pending items | 0 |
@@ -161,3 +161,9 @@ Ten additional skills and references were inspected for Firebase Auth flows, nat
 `reports/next-code-file-src-lib-firebase-auth-service-worker-test-ts.md`.
 The current project inventory has 119 folders and 577 files, all with reports.
 This does not imply that the service worker was tested in a deployed browser.
+
+## Dynamic document-language file (2026-10-26)
+
+`src/components/ui/extensions/intl-document-server.tsx` has a separate
+static review report for the proposed request-locale HTML root. As with all
+review reports, behavioral certification depends on the recorded CI tests.

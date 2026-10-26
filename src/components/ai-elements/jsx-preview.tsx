@@ -30,7 +30,31 @@ interface JSXPreviewContextValue {
 
 const JSXPreviewContext = createContext<JSXPreviewContextValue | null>(null);
 
-const TAG_REGEX = /<\/?([a-zA-Z][a-zA-Z0-9]*)\s*([^>]*?)(\/)?>/;
+const TAG_START_REGEX = /^<\/?([a-zA-Z][a-zA-Z0-9.:-]*)/;
+
+function findTagEnd(source: string, start: number): number {
+  let quote: string | null = null;
+  let depth = 0;
+  for (let index = start; index < source.length; index++) {
+    const character = source[index];
+    if (quote) {
+      if (character === "\\") {
+        index++;
+      } else if (character === quote) {
+        quote = null;
+      }
+    } else if (character === '"' || character === "'" || character === "`") {
+      quote = character;
+    } else if (character === "{") {
+      depth++;
+    } else if (character === "}" && depth > 0) {
+      depth--;
+    } else if (character === ">" && depth === 0) {
+      return index;
+    }
+  }
+  return -1;
+}
 
 const useJSXPreview = () => {
   const context = useContext(JSXPreviewContext);
@@ -41,51 +65,81 @@ const useJSXPreview = () => {
 };
 
 const matchJsxTag = (code: string) => {
-  if (code.trim() === "") {
-    return null;
+  let quote: string | null = null;
+  let expressionDepth = 0;
+
+  for (let index = 0; index < code.length; index++) {
+    const character = code[index];
+    if (quote) {
+      if (character === "\\") {
+        index++;
+      } else if (character === quote) {
+        quote = null;
+      }
+      continue;
+    }
+    if (code.startsWith("<!--", index)) {
+      const end = code.indexOf("-->", index + 4);
+      if (end < 0) return null;
+      index = end + 2;
+      continue;
+    }
+    if (expressionDepth > 0 && code.startsWith("/*", index)) {
+      const commentEnd = code.indexOf("*/", index + 2);
+      if (commentEnd < 0) return null;
+      index = commentEnd + 1;
+      continue;
+    }
+    if (expressionDepth > 0 && code.startsWith("//", index)) {
+      const lineEnd = code.indexOf("\n", index + 2);
+      if (lineEnd < 0) return null;
+      index = lineEnd;
+      continue;
+    }
+    if (expressionDepth > 0 && (character === '"' || character === "'" || character === "`")) {
+      quote = character;
+      continue;
+    }
+    if (character === "{") {
+      expressionDepth++;
+      continue;
+    }
+    if (character === "}" && expressionDepth > 0) {
+      expressionDepth--;
+      continue;
+    }
+    if (expressionDepth > 0 || character !== "<") continue;
+
+    const start = code.slice(index).match(TAG_START_REGEX);
+    if (!start) continue;
+    const boundary = code[index + start[0].length];
+    if (boundary && !/[\s/>]/.test(boundary)) continue;
+    const closingIndex = findTagEnd(code, index + start[0].length);
+    if (closingIndex < 0) return null;
+    const tag = code.slice(index, closingIndex + 1);
+    const type = /^<\//.test(tag)
+      ? "closing"
+      : /\/\s*>$/.test(tag)
+        ? "self-closing"
+        : "opening";
+    return {
+      attributes: "",
+      endIndex: closingIndex + 1,
+      startIndex: index,
+      tag,
+      tagName: start[1],
+      type,
+    };
   }
-
-  const match = code.match(TAG_REGEX);
-
-  if (!match || match.index === undefined) {
-    return null;
-  }
-
-  const [fullMatch, tagName, attributes, selfClosing] = match;
-
-  let type: "self-closing" | "closing" | "opening";
-  if (selfClosing) {
-    type = "self-closing";
-  } else if (fullMatch.startsWith("</")) {
-    type = "closing";
-  } else {
-    type = "opening";
-  }
-
-  return {
-    attributes: attributes.trim(),
-    endIndex: match.index + fullMatch.length,
-    startIndex: match.index,
-    tag: fullMatch,
-    tagName,
-    type,
-  };
+  return null;
 };
 
 const stripIncompleteTag = (text: string) => {
-  // Find the last '<' that isn't part of a complete tag
-  const lastOpen = text.lastIndexOf("<");
-  if (lastOpen === -1) {
-    return text;
+  const openComment = text.lastIndexOf("<!--");
+  if (openComment >= 0 && text.indexOf("-->", openComment) < 0) {
+    return text.slice(0, openComment);
   }
-
-  const afterOpen = text.slice(lastOpen);
-  // If there's no closing '>' after the last '<', it's an incomplete tag
-  if (!afterOpen.includes(">")) {
-    return text.slice(0, lastOpen);
-  }
-
-  return text;
+  return text.replace(/<\/?(?:[a-zA-Z][a-zA-Z0-9.:-]*(?:\s[^<>]*)?)?$/, "");
 };
 
 const completeJsxTag = (code: string) => {

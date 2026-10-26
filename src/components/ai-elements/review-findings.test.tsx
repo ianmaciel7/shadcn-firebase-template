@@ -19,6 +19,8 @@ import {
 } from "./chain-of-thought";
 import { Commit, CommitContent, CommitHeader } from "./commit";
 import { FileTree, FileTreeFile } from "./file-tree";
+import { JSXPreview, useJSXPreview } from "./jsx-preview";
+import { MessageBranch, MessageBranchContent, MessageBranchNext, MessageBranchPage } from "./message";
 import { Question, QuestionOption, QuestionOptions } from "./question";
 import { TestResults, TestResultsProgress } from "./test-results";
 
@@ -27,7 +29,55 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+function ProcessedJsx() {
+  const { processedJsx } = useJSXPreview();
+  return <output data-testid="processed-jsx">{processedJsx}</output>;
+}
+
 describe("reviewed primitive compositions", () => {
+  it("preserves the selected keyed message across reordering and same-size replacement", () => {
+    const onBranchChange = vi.fn();
+    const renderBranches = (order: string[]) => (
+      <MessageBranch onBranchChange={onBranchChange}>
+        <MessageBranchContent>
+          {order.map((key) => <p key={key} data-testid={key}>{key}</p>)}
+        </MessageBranchContent>
+        <MessageBranchPage />
+        <MessageBranchNext />
+      </MessageBranch>
+    );
+    const view = render(renderBranches(["first", "second"]));
+    fireEvent.click(screen.getByRole("button", { name: "Next branch" }));
+    expect(screen.getByText("2 of 2")).toBeTruthy();
+    view.rerender(renderBranches(["second", "first"]));
+    expect(screen.getByText("1 of 2")).toBeTruthy();
+    expect(screen.getByTestId("second").parentElement?.className).toContain("block");
+    view.rerender(renderBranches(["third", "first"]));
+    expect(screen.getByText("1 of 2")).toBeTruthy();
+    expect(screen.getByTestId("third").parentElement?.className).toContain("block");
+    expect(onBranchChange).toHaveBeenCalledTimes(1);
+  });
+
+
+  it.each([
+    ["<div>Text<", "<div>Text</div>"],
+    ["<div>Text</", "<div>Text</div>"],
+    ["<div>{/* don't */}<span>Text</span></div>", "<div>{/* don't */}<span>Text</span></div>"],
+    ["<div>{/* don't <Foo /> */}<span>Text</span></div>", "<div>{/* don't <Foo /> */}<span>Text</span></div>"],
+    ["<div><span>Text</div>", "<div><span>Text</span></div>"],
+    ['<div>{"<Fake>"}</div>', '<div>{"<Fake>"}</div>'],
+    ["<div><!-- <Ignored> --><span>Text", "<div><!-- <Ignored> --><span>Text</span></div>"],
+    ['<div><span title="incomplete', "<div></div>"],
+  ])("repairs streamed JSX without parsing attribute or expression literals", (input, expected) => {
+    render(
+      <JSXPreview jsx={input} isStreaming>
+        <ProcessedJsx />
+      </JSXPreview>,
+    );
+    expect(screen.getByTestId("processed-jsx").textContent).toBe(expected);
+  });
+
+
   it("renders finite progress when a test suite is empty", () => {
     const view = render(
       <TestResults summary={{ passed: 0, failed: 0, skipped: 0, total: 0 }}>

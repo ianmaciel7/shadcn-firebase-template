@@ -2,10 +2,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   headers: new Headers(),
+  connection: vi.fn(),
   verifyIdToken: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({ headers: async () => mocks.headers }));
+vi.mock("next/server", () => ({ connection: mocks.connection }));
 vi.mock("./admin", () => ({
   getAdminAuth: () => ({ verifyIdToken: mocks.verifyIdToken }),
 }));
@@ -29,6 +31,7 @@ describe("getFirebaseServerSession", () => {
     setHeaders({ "x-firebase-auth-bridge": "1" });
     expect((await getFirebaseServerSession()).userId).toBeNull();
     expect(mocks.verifyIdToken).not.toHaveBeenCalled();
+    expect(mocks.connection).not.toHaveBeenCalled();
   });
 
   it("verifies with revocation checks and exposes the role claim", async () => {
@@ -40,6 +43,7 @@ describe("getFirebaseServerSession", () => {
       userId: "a1",
     });
     expect(mocks.verifyIdToken).toHaveBeenCalledWith("t", true);
+    expect(mocks.connection).toHaveBeenCalledOnce();
   });
 
   it("treats revoked or malformed tokens as unauthenticated", async () => {

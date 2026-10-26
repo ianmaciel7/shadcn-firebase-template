@@ -10,7 +10,7 @@ they are not assertions that the defects remain in the current source.
 
 | Finding | Change | Validation |
 | --- | --- | --- |
-| NXLAYOUT-001 | Open. The maintainer rejected the locale-segment migration; [ADR 0004](../adr/0004-configure-internationalization.md) preserves direct cookie resolution without Proxy. Static root document language remains English. | Cookie-resolution and unprefixed-navigation regressions cover the restored architecture; they do not establish a fix for document language. |
+| NXLAYOUT-001 | The outer root Suspense now renders the request-specific `IntlDocumentServer` with an empty fallback instead of a static English document. Locale segments and Proxy remain forbidden by [ADR 0004](../adr/0004-configure-internationalization.md). | Production browser tests check the active `html lang` and the raw response's first HTML tag for every supported locale; the latest CI result must remain green. |
 | CODEBLOCK-001 | Cache and subscriptions identify the complete language/content pair. | Sequential and concurrent regressions with installed Shiki. |
 | NEXTERR-001 | Recovery control calls the installed Next.js `retry` API. | Recovery callback regression. |
 | THEME-001 | Removed the global console replacement. | Import preserves error logging, including the formerly suppressed text. |
