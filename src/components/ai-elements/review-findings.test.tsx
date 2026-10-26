@@ -19,6 +19,7 @@ import {
 } from "./chain-of-thought";
 import { Commit, CommitContent, CommitHeader } from "./commit";
 import { FileTree, FileTreeFile } from "./file-tree";
+import { JSXPreview, useJSXPreview } from "./jsx-preview";
 import { Question, QuestionOption, QuestionOptions } from "./question";
 import { TestResults, TestResultsProgress } from "./test-results";
 
@@ -27,7 +28,27 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
+function ProcessedJsx() {
+  const { processedJsx } = useJSXPreview();
+  return <output data-testid="processed-jsx">{processedJsx}</output>;
+}
+
 describe("reviewed primitive compositions", () => {
+  it.each([
+    ["<div><span>Text</div>", "<div><span>Text</span></div>"],
+    ['<div>{"<Fake>"}</div>', '<div>{"<Fake>"}</div>'],
+    ["<div><!-- <Ignored> --><span>Text", "<div><!-- <Ignored> --><span>Text</span></div>"],
+    ['<div><span title="incomplete', "<div></div>"],
+  ])("repairs streamed JSX without parsing attribute or expression literals", (input, expected) => {
+    render(
+      <JSXPreview jsx={input} isStreaming>
+        <ProcessedJsx />
+      </JSXPreview>,
+    );
+    expect(screen.getByTestId("processed-jsx").textContent).toBe(expected);
+  });
+
+
   it("renders finite progress when a test suite is empty", () => {
     const view = render(
       <TestResults summary={{ passed: 0, failed: 0, skipped: 0, total: 0 }}>
