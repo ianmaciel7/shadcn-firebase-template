@@ -14,13 +14,13 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 1002 |
+| Currently completed review reports | 1015 |
 | Active report tasks | 0 |
-| Completed tasks | 1002 |
-| Pending tasks (excluding active) | 208 |
+| Completed tasks | 1015 |
+| Pending tasks (excluding active) | 195 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
-| Documentation coverage | 306 / 514 items (59.53%) |
+| Documentation coverage | 319 / 514 items (62.06%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
@@ -269,6 +269,12 @@ process and integration tests remain separate work.
 Thirteen additional Next.js files were inspected directly
 with independent primary reports. Separate reviewer-agent and
 runtime verification is not asserted.
+
+## Documentation checkpoint (1015/1210)
+
+Thirteen more Next.js documentation files were reviewed
+through their pinned source bodies. Each has a separate report;
+independent agent execution and live tests are not claimed.
 
 ## Execution
 
