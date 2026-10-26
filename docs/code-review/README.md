@@ -14,13 +14,13 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 912 |
+| Currently completed review reports | 924 |
 | Active report tasks | 0 |
-| Completed tasks | 912 |
-| Pending tasks (excluding active) | 298 |
+| Completed tasks | 924 |
+| Pending tasks (excluding active) | 286 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
-| Documentation coverage | 216 / 514 items (42.02%) |
+| Documentation coverage | 228 / 514 items (44.36%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
@@ -222,6 +222,15 @@ objects, refresh, prefetch, and cache path invalidation.
 App Router and Firebase integration limitations remain explicit.
 The documentation has 216/514 completed reports with 298 pending.
 No separate subagents, runtime tests or deployments were executed.
+
+## Client navigation and invalidation checkpoint (2026-10-26)
+
+Twelve more Next.js 16.4.2 functions were examined in
+separate source reports, covering tag invalidation, older
+cache utilities, navigation hooks, offline status and Web Vitals.
+These direct inspections do not include independent subagents,
+test runs or deployment behavior. Documentation 228/514;
+286 files remain pending.
 
 ## Execution
 
