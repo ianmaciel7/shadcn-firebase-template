@@ -18,6 +18,9 @@ import {
   ChainOfThoughtHeader,
 } from "./chain-of-thought";
 import { Commit, CommitContent, CommitHeader } from "./commit";
+import { FileTree, FileTreeFile } from "./file-tree";
+import { Question, QuestionOption, QuestionOptions } from "./question";
+import { TestResults, TestResultsProgress } from "./test-results";
 
 afterEach(() => {
   cleanup();
@@ -25,6 +28,44 @@ afterEach(() => {
 });
 
 describe("reviewed primitive compositions", () => {
+  it("renders finite progress when a test suite is empty", () => {
+    const view = render(
+      <TestResults summary={{ passed: 0, failed: 0, skipped: 0, total: 0 }}>
+        <TestResultsProgress />
+      </TestResults>,
+    );
+    expect(screen.getByText("0%")).toBeTruthy();
+    expect(view.container.innerHTML).not.toMatch(/NaN|Infinity/);
+  });
+
+  it("uses accessible toggle-button semantics instead of unsupported radio navigation", () => {
+    render(
+      <Question>
+        <QuestionOptions>
+          <QuestionOption value="first">First option</QuestionOption>
+        </QuestionOptions>
+      </Question>,
+    );
+    const option = screen.getByRole("button", { name: "First option" });
+    expect(option.getAttribute("aria-pressed")).toBe("false");
+    fireEvent.click(option);
+    expect(option.getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("supports Space and Enter on a file in a button group without scrolling", () => {
+    const onSelect = vi.fn();
+    render(
+      <FileTree onSelect={onSelect}>
+        <FileTreeFile name="readme" path="/readme" />
+      </FileTree>,
+    );
+    const item = screen.getByRole("button", { name: "readme" });
+    expect(fireEvent.keyDown(item, { key: " ", cancelable: true })).toBe(false);
+    fireEvent.keyDown(item, { key: "Enter" });
+    expect(onSelect).toHaveBeenCalledTimes(2);
+    expect(onSelect).toHaveBeenCalledWith("/readme");
+  });
+
   it("uses one named tooltip action and preserves single activation and disabled state", () => {
     const onClick = vi.fn();
     const view = render(

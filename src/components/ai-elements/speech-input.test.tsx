@@ -53,6 +53,10 @@ afterEach(() => {
 });
 
 describe("SpeechInput recording lifetime", () => {
+  it("names the recording control without caller-provided labels", () => {
+    render(<SpeechInput onAudioRecorded={async () => ""} />);
+    expect(screen.getByRole("button", { name: "Start recording" })).toBeTruthy();
+  });
   it("releases a permission result that arrives after unmount", async () => {
     let grant: (stream: unknown) => void = () => {};
     const stop = vi.fn();

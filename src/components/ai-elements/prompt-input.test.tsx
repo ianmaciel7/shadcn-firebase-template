@@ -88,6 +88,19 @@ afterEach(() => {
 });
 
 describe("PromptInput submission ownership", () => {
+  it("accepts extension-based file filters regardless of MIME detection", () => {
+    render(
+      <PromptInput accept=".pdf" onSubmit={async () => {}}>
+        <input aria-label="Draft" name="message" defaultValue="" />
+        <AttachmentNames />
+      </PromptInput>,
+    );
+    fireEvent.change(screen.getByLabelText("Upload files"), {
+      target: { files: [new File(["pdf"], "report.PDF", { type: "" })] },
+    });
+    expect(screen.getByLabelText("Attachments").textContent).toBe("report.PDF");
+  });
+
   it.each(["next message", "first message"])(
     "keeps a newer provider draft (%s) and attachments",
     async (next) => {
