@@ -34,6 +34,7 @@ test.describe("home page smoke tests", () => {
       const response = await page.goto("/");
       expect(response?.ok()).toBe(true);
       await expect(page.locator("main")).toBeVisible();
+      await expect(page.locator("html")).toHaveAttribute("lang", locale);
     });
   }
 

@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { FirebaseAuthSessionBridgeClient } from "@/components/ui/extensions/firebase-auth-session-bridge-client";
-import { IntlProviderServer } from "@/components/ui/extensions/intl-provider-server";
+import { IntlDocumentServer, IntlProviderServer } from "@/components/ui/extensions/intl-provider-server";
 import { ThemeProviderClient } from "@/components/ui/extensions/theme-provider-client";
 import { Spinner } from "@/components/ui/spinner";
 import { Toaster } from "@/components/ui/toast";
@@ -39,13 +39,20 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  const fontClassName = `${geist.variable} ${geistMono.variable} h-full antialiased`;
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${geist.variable} ${geistMono.variable} h-full antialiased`}
+    <Suspense
+      fallback={
+        <html lang="en" suppressHydrationWarning className={fontClassName}>
+          <body className="min-h-full flex flex-col">
+            <div className="flex min-h-svh items-center justify-center">
+              <Spinner className="size-8 text-muted-foreground" aria-hidden="true" />
+            </div>
+          </body>
+        </html>
+      }
     >
-      <body className="min-h-full flex flex-col">
+      <IntlDocumentServer className={fontClassName}>
         <Suspense
           fallback={
             <div className="flex min-h-svh items-center justify-center">
@@ -69,7 +76,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </ThemeProviderClient>
           </IntlProviderServer>
         </Suspense>
-      </body>
-    </html>
+      </IntlDocumentServer>
+    </Suspense>
   );
 }
