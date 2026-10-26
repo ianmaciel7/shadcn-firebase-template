@@ -30,6 +30,38 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Review manifest integrity
         run: node scripts/checks/check-review-inventory.mjs
+      - name: Triage every individual audit report
+        run: |
+          node --input-type=module <<'NODE'
+          import { readdirSync, readFileSync } from "node:fs";
+          import { join } from "node:path";
+
+          const directory = "docs/code-review/reports";
+          const reports = readdirSync(directory).filter((name) => name.endsWith(".md"));
+          const observations = [];
+          let bytesRead = 0;
+          for (const name of reports) {
+            const source = readFileSync(join(directory, name), "utf8");
+            bytesRead += Buffer.byteLength(source);
+            const lines = source.split(/\r?\n/);
+            const hits = lines.filter((line) =>
+              /(?:^#{2,4} .*?(?:[A-Z][A-Z0-9]+-){1,3}\\d{3}|^[-*] (?:\\*\\*)?(?:Severity|Finding|Recommendation|Risk|Impact):|^[-*] .*?\\b(?:open|unresolved|defect|bug|broken|incorrect|missing|unsafe|invalid|unhandled|mismatch)\\b)/i.test(line) &&
+              !/no (?:additional |independently )?(?:confirmed |blocking )?(?:finding|defect|risk|issue)|not (?:a |an )?(?:bug|defect|issue)|no .*?mismatch|not a confirmed/i.test(line),
+            );
+            if (hits.length) {
+              observations.push({ report: name, hits: hits.slice(0, 5).map((line) => line.trim().slice(0, 180)) });
+            }
+          }
+          console.log(JSON.stringify({
+            reportsRead: reports.length,
+            bytesRead,
+            reportsWithCandidateFindings: observations.length,
+            observations,
+          }, null, 2));
+          if (reports.length !== 1211) {
+            throw new Error(`Expected 1211 reports; read ${reports.length}`);
+          }
+          NODE
       - name: Biome lint
         run: pnpm lint:ci
       - name: Structural rule fixtures and scan
