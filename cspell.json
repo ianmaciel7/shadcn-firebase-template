@@ -21,6 +21,7 @@
     "src/components/firebase",
     "src/components/ui",
     "src/messages",
+    "docs/code-review/cspell.review.json",
     "docs/agents/nextjs-sources.json",
     "docs/agents/react-sources.json"
   ],
