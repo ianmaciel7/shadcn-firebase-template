@@ -184,3 +184,14 @@ Reviewing `docs/quality-enforcement.md` identified a contradiction with the curr
 - Historical individual review findings and their evidence remain unchanged.
   These implementation changes require fresh PR CI validation and do not
   constitute a deployed security assessment.
+
+## External agent evaluation runner remediation (2026-10-26)
+
+- **EVAL-RUNNER-CLI-001:** Missing Codex executables now result in an empty
+  trace artifact and a failed per-case receipt instead of passing null to the
+  file writer. The runner permits dependency-injected spawn errors in tests.
+- **EVAL-RUNNER-TRACE-001:** Tool evidence now requires completed MCP-tool
+  events without recorded errors; arbitrary command text and failed or
+  incomplete events no longer establish a successful external connector call.
+- `pnpm test:evals` is included in the fast and static verification chains.
+  This validates the local evaluator contract, not a real external agent run.

@@ -28,18 +28,20 @@ function stringsIn(value) {
 
 export function findToolEvidence(events) {
   return events.flatMap((event) => {
-    const item = event.item ?? event;
-    const type = String(item.type ?? event.type ?? "").toLowerCase();
-    if (!type.includes("tool") && !type.includes("command_execution")) {
+    const item = event.item;
+    // A command that mentions an MCP server is not a successful tool call.
+    if (
+      event.type !== "item.completed" ||
+      item?.type !== "mcp_tool_call" ||
+      item.error ||
+      item.isError ||
+      item.status === "failed"
+    ) {
       return [];
     }
-    return [
-      type,
-      String(item.server ?? ""),
-      String(item.tool ?? ""),
-      String(item.command ?? ""),
-    ]
+    return [item.type, item.server, item.tool]
       .filter(Boolean)
+      .map(String)
       .join("\n");
   });
 }
@@ -94,8 +96,8 @@ export function scoreCase(testCase, events, exitCode) {
   };
 }
 
-function runCase(testCase, artifactsDirectory) {
-  const run = spawnSync(
+export function runCase(testCase, artifactsDirectory, execute = spawnSync) {
+  const run = execute(
     "codex",
     [
       "exec",
@@ -113,9 +115,18 @@ function runCase(testCase, artifactsDirectory) {
   );
   const tracePath = resolve(artifactsDirectory, `${testCase.id}.jsonl`);
   mkdirSync(dirname(tracePath), { recursive: true });
-  writeFileSync(tracePath, run.stdout, "utf8");
+  const output = typeof run.stdout === "string" ? run.stdout : "";
+  writeFileSync(tracePath, output, "utf8");
+  if (run.error) {
+    return {
+      id: testCase.id,
+      passed: false,
+      checks: { spawnSucceeded: false },
+      error: run.error.message,
+    };
+  }
   try {
-    return scoreCase(testCase, parseJsonl(run.stdout), run.status ?? 1);
+    return scoreCase(testCase, parseJsonl(output), run.status ?? 1);
   } catch (error) {
     return {
       id: testCase.id,
