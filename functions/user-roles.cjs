@@ -27,6 +27,12 @@ function createSetUserRoleHandler({ auth, HttpsError }) {
     if (!isRoleRequest(data)) {
       throw new HttpsError("invalid-argument", "Unsupported role request.");
     }
+    // Callable token claims may outlive an admin demotion. Check the latest
+    // server-owned claims and disabled state before changing any user's role.
+    const caller = await auth.getUser(request.auth.uid);
+    if (caller.disabled || caller.customClaims?.role !== "admin") {
+      throw new HttpsError("permission-denied", "Administrator role required.");
+    }
     // Prevents the last administrator from locking everyone out.
     if (data.uid === request.auth.uid && data.role !== "admin") {
       throw new HttpsError(

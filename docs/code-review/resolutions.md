@@ -170,3 +170,17 @@ Both `EVAL-RUNNER-CLI-001` and `EVAL-RUNNER-TRACE-001` remain **open** after the
 ## Documentation state guidance reconciliation
 
 Reviewing `docs/quality-enforcement.md` identified a contradiction with the current `CODING_STANDARDS.md` and `.agents/rules/react.md`: the quality table prescribed a `status` tag for UI phases even though the active architecture requires explicit phase flags. The current quality guide now uses `isLoading`, `isHidden` and `isError` with nullable payloads, while continuing to rely on React Hook Form's native `formState.isSubmitting`. No accepted ADR was altered. The review workflow verifies the updated documentation; this is a corrected guidance discrepancy, not evidence of a runtime defect.
+
+## Post-audit security and navigation follow-up (2026-10-26)
+
+- **FIREBASE-ROLE-001:** The role callable now requires both the decoded
+  caller role and the current server-side admin claim from Firebase Admin.
+  Disabled or demoted accounts cannot use a stale administrator ID token for
+  role mutation. Node regressions cover demotion and disabled-account cases.
+- **FIREBASE-SW-001:** Token-refresh rejection now forwards the original
+  navigation request without injected auth headers. A Vitest Service Worker
+  harness covers successful header injection and the original-request fallback.
+  Protected server routes must continue to enforce authorization independently.
+- Historical individual review findings and their evidence remain unchanged.
+  These implementation changes require fresh PR CI validation and do not
+  constitute a deployed security assessment.

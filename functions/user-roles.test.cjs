@@ -9,10 +9,20 @@ class HttpsError extends Error {
   }
 }
 
-function setup() {
+function setup({ callerRole = "admin", callerDisabled = false } = {}) {
   const calls = [];
   const auth = {
-    getUser: async (uid) => ({ uid, customClaims: { plan: "pro" } }),
+    getUser: async (uid) => {
+      calls.push(["lookup", uid]);
+      if (uid === "admin-1") {
+        return {
+          uid,
+          disabled: callerDisabled,
+          customClaims: { role: callerRole },
+        };
+      }
+      return { uid, customClaims: { plan: "pro" } };
+    },
     setCustomUserClaims: async (uid, claims) =>
       calls.push(["claims", uid, claims]),
     revokeRefreshTokens: async (uid) => calls.push(["revoke", uid]),
@@ -69,6 +79,24 @@ test("administrators cannot demote themselves", async () => {
   assert.deepEqual(calls, []);
 });
 
+test("rejects stale administrator tokens after server-side demotion", async () => {
+  const { handler, calls } = setup({ callerRole: "user" });
+  await assert.rejects(
+    handler({ auth: admin, data: { uid: "admin-1", role: "admin" } }),
+    { code: "permission-denied" },
+  );
+  assert.deepEqual(calls, [["lookup", "admin-1"]]);
+});
+
+test("rejects disabled administrators even with a cached admin token", async () => {
+  const { handler, calls } = setup({ callerDisabled: true });
+  await assert.rejects(
+    handler({ auth: admin, data: { uid: "u1", role: "admin" } }),
+    { code: "permission-denied" },
+  );
+  assert.deepEqual(calls, [["lookup", "admin-1"]]);
+});
+
 test("merges the role into existing claims and revokes sessions", async () => {
   const { handler, calls } = setup();
   const result = await handler({
@@ -77,6 +105,8 @@ test("merges the role into existing claims and revokes sessions", async () => {
   });
   assert.deepEqual(result, { uid: "u1", role: "admin" });
   assert.deepEqual(calls, [
+    ["lookup", "admin-1"],
+    ["lookup", "u1"],
     ["claims", "u1", { plan: "pro", role: "admin" }],
     ["revoke", "u1"],
   ]);

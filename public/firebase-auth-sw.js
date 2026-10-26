@@ -67,6 +67,6 @@ self.addEventListener("fetch", (event) => {
         headers.set("Authorization", `Bearer ${token}`);
       }
       return fetch(new Request(request, { headers }));
-    }),
+    }).catch(() => fetch(request)),
   );
 });
