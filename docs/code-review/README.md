@@ -14,13 +14,13 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 720 |
+| Currently completed review reports | 732 |
 | Active report tasks | 0 |
-| Completed tasks | 720 |
-| Pending tasks (excluding active) | 490 |
+| Completed tasks | 732 |
+| Pending tasks (excluding active) | 478 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
-| Documentation coverage | 24 / 514 items (4.67%) |
+| Documentation coverage | 36 / 514 items (7.00%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
@@ -94,6 +94,20 @@ documentation corpus. Project source coverage is 695/695 (100.00%);
 overall recorded coverage is 720/1210 (59.50%).
 CI validation of this checkpoint is not established until the
 associated workflow runs finish.
+
+## Version-matched App Router guide checkpoint (2026-10-26)
+
+Twelve individual installed Next.js guide items were inspected against
+the immutable Next.js 16.4.2 upstream source, with explicit relevance
+checks against the repository's Firebase/server, internationalization,
+Cache Components, environment and instrumentation configuration.
+The guides include authentication, security, forms, data fetching,
+caching, localization and CSP. Each retains its distinct report.
+These were direct inspections, not independent subagent executions.
+Documentation coverage is now 36/514 (7.00%) and 478 items remain
+Pending. Project reports are 695/695 and overall progress is
+732/1210 items (60.50%).
+No local browser/emulator or full CI run was asserted for these reports.
 
 ## Execution
 

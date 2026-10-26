@@ -8,12 +8,22 @@ Source: installed `node_modules/next/dist/docs/`, Next.js **16.4.2**.
 | Documentation files inventoried | 474 |
 | Total documentary review items | 514 |
 | Folder reports completed | 3 |
-| File reports completed | 21 |
-| Items reviewed | 24 |
-| Coverage | 4.67% |
+| File reports completed | 33 |
+| Items reviewed | 36 |
+| Coverage | 7.00% |
 | Active reports | 0 |
 | Completed as not applicable to current application | 3 |
-| Pending items | 490 |
+| Pending items | 478 |
+
+## Twelve version-matched App Router guides (2026-10-26)
+
+An additional twelve guide files under `01-app/02-guides/` were
+read at the pinned Next.js 16.4.2 documentation source revision
+and compared with the current project configuration. Individual
+reports distinguish applicable cache/auth patterns from optional
+framework features; no independent subagents or runtime checks
+were executed in this review session. Current documentation
+coverage is 36/514 items, with 478 Pending.
 
 Completed folder reports: `next-doc-folder-root`, `next-doc-folder-01-app`, and `next-doc-folder-01-app-01-getting-started`.
 
