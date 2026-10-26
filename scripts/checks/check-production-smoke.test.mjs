@@ -22,7 +22,9 @@ describe("production URL security boundary", () => {
       "metadata.google.internal",
       "app.local",
     ]) {
-      await assert.rejects(validateProductionOrigin("https://" + host, publicAddress));
+      await assert.rejects(
+        validateProductionOrigin(`https://${host}`, publicAddress),
+      );
     }
   });
 
@@ -70,7 +72,8 @@ describe("production URL security boundary", () => {
         return {
           status: 200,
           contentType: "text/html; charset=utf-8",
-          html: '<!doctype html><html lang="' + locale + '"><body>OK</body></html>',
+          html:
+            `<!doctype html><html lang="${locale}"><body>OK</body></html>`,
         };
       },
     });

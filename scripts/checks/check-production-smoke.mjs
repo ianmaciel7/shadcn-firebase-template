@@ -48,7 +48,9 @@ export async function validateProductionOrigin(raw, resolveHost = lookup) {
     target.pathname !== "/" ||
     target.port
   ) {
-    throw new Error("Use an HTTPS origin without credentials, ports, paths or query.");
+    throw new Error(
+      "Use an HTTPS origin without credentials, ports, paths or query.",
+    );
   }
 
   const host = target.hostname;
@@ -68,7 +70,10 @@ export async function validateProductionOrigin(raw, resolveHost = lookup) {
   }
   for (const record of addresses) {
     const type = record.family === 6 ? "ipv6" : "ipv4";
-    if (isIP(record.address) !== record.family || blocked.check(record.address, type)) {
+    if (
+      isIP(record.address) !== record.family ||
+      blocked.check(record.address, type)
+    ) {
       throw new Error("Deployment DNS resolves to a non-public address.");
     }
   }
@@ -93,7 +98,9 @@ export function requestProductionHtml(target, record, locale) {
         response.on("data", (chunk) => {
           html += chunk;
           if (html.length > 2_000_000) {
-            request.destroy(new Error("Production HTML exceeds smoke test limit."));
+            request.destroy(
+              new Error("Production HTML exceeds smoke test limit."),
+            );
           }
         });
         response.on("error", reject);
@@ -106,7 +113,9 @@ export function requestProductionHtml(target, record, locale) {
         });
       },
     );
-    request.on("timeout", () => request.destroy(new Error("Production request timeout.")));
+    request.on("timeout", () =>
+      request.destroy(new Error("Production request timeout.")),
+    );
     request.on("error", reject);
     request.end();
   });
@@ -119,15 +128,18 @@ export async function runProductionSmoke(
   const { target, record } = await validateProductionOrigin(raw, resolveHost);
   for (const locale of ["en", "pt-BR", "es"]) {
     const response = await readHtml(target, record, locale);
-    if (response.status !== 200 || !response.contentType.includes("text/html")) {
-      throw new Error("Unexpected deployed HTML response for locale " + locale);
+    if (
+      response.status !== 200 ||
+      !response.contentType.includes("text/html")
+    ) {
+      throw new Error(`Unexpected deployed HTML response for locale ${locale}`);
     }
     const firstHtml = response.html.match(/<html\b[^>]*>/i)?.[0];
     const declared = firstHtml?.match(/\blang=["']([^"']+)["']/i)?.[1];
     if (declared !== locale) {
-      throw new Error("Unexpected server HTML language for locale " + locale);
+      throw new Error(`Unexpected server HTML language for locale ${locale}`);
     }
-    console.log("Production HTML locale verified: " + locale);
+    console.log(`Production HTML locale verified: ${locale}`);
   }
 }
 
