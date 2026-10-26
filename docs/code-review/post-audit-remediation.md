@@ -41,6 +41,16 @@ The full CI matrix passed for the merged head `09d7cd7` at
 This verifies the configured build, unit, browser, emulator and security suites,
 not every possible production usage.
 
+## Additional tooltip trigger audit (2026-10-26)
+
+The Base UI tooltip uses an actionable trigger by default. Two previously
+unreconciled AI Elements primitives, `MessageAction` and `PromptInputButton`,
+rendered a native button inside that trigger instead of composing it through
+the supported `render` prop. Both now render exactly one interactive button,
+consistent with the earlier `ArtifactAction` remediation. Unit regressions
+assert DOM button count, activation and disabled behavior; browser regressions
+check keyboard focus ordering and a single Enter activation.
+
 ## JSX streaming review corrections (2026-10-26)
 
 The PR reviewer identified two additional streaming parser edge cases:

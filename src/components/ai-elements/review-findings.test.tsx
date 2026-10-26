@@ -20,7 +20,8 @@ import {
 import { Commit, CommitContent, CommitHeader } from "./commit";
 import { FileTree, FileTreeFile } from "./file-tree";
 import { JSXPreview, useJSXPreview } from "./jsx-preview";
-import { MessageBranch, MessageBranchContent, MessageBranchNext, MessageBranchPage } from "./message";
+import { MessageAction, MessageBranch, MessageBranchContent, MessageBranchNext, MessageBranchPage } from "./message";
+import { PromptInputButton } from "./prompt-input";
 import { Question, QuestionOption, QuestionOptions } from "./question";
 import { TestResults, TestResultsProgress } from "./test-results";
 
@@ -114,6 +115,36 @@ describe("reviewed primitive compositions", () => {
     fireEvent.keyDown(item, { key: "Enter" });
     expect(onSelect).toHaveBeenCalledTimes(2);
     expect(onSelect).toHaveBeenCalledWith("/readme");
+  });
+
+  it.each([
+    {
+      name: "message",
+      renderAction: (onClick: () => void, disabled: boolean) => (
+        <MessageAction tooltip="Copy message" onClick={onClick} disabled={disabled}>
+          Copy
+        </MessageAction>
+      ),
+    },
+    {
+      name: "prompt",
+      renderAction: (onClick: () => void, disabled: boolean) => (
+        <PromptInputButton tooltip="Attach file" onClick={onClick} disabled={disabled}>
+          Attach
+        </PromptInputButton>
+      ),
+    },
+  ])("$name tooltip trigger renders a single keyboard-actionable button", ({ renderAction }) => {
+    const onClick = vi.fn();
+    const view = render(renderAction(onClick, false));
+    const button = screen.getByRole("button");
+    expect(view.container.querySelectorAll("button")).toHaveLength(1);
+    expect(button.querySelector("button")).toBeNull();
+    fireEvent.click(button);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    view.rerender(renderAction(onClick, true));
+    fireEvent.click(screen.getByRole("button"));
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 
   it("uses one named tooltip action and preserves single activation and disabled state", () => {
