@@ -14,16 +14,30 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 614 |
+| Currently completed review reports | 622 |
 | Active report tasks | 0 |
-| Completed tasks | 614 |
-| Pending tasks (excluding active) | 596 |
+| Completed tasks | 622 |
+| Pending tasks (excluding active) | 588 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 589 / 695 items (84.75%) |
+| Project coverage | 597 / 695 items (85.90%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
+
+## Direct documentation and policy file review checkpoint (2026-10-26)
+
+Eight previously pending repository files were read individually and checked
+against their linked local sources: domain guidance, issue tracking,
+the Biome preview, quality ownership, documentation navigation, the root
+README, contributing conventions and authenticated logging guidance.
+Each item now has its own report under `reports/` and is marked Completed.
+These are direct source inspections, not executions by independent subagents.
+The source checkpoint is `bbb02cee5bb8ec943fb66fdfbde8cc67a1bb0170`.
+CI and browser/emulator suites were not executed locally in this session;
+their results must be checked on the resulting PR commit.
+The overall inventory is 622/1210 completed and 588 pending; documentation
+coverage is unchanged at 24/514, with 98 project items still pending.
 
 ## Execution
 

@@ -6,11 +6,19 @@
 | Project files inventoried | 576 |
 | Total project review items | 695 |
 | Folder reports completed | 78 |
-| File reports completed | 511 |
-| Items reviewed | 589 |
-| Coverage | 84.75% |
+| File reports completed | 519 |
+| Items reviewed | 597 |
+| Coverage | 85.90% |
 | Active reports | 0 |
-| Pending items | 106 |
+| Pending items | 98 |
+
+## Direct documentation and policy source reviews (2026-10-26)
+
+Eight project documentation/policy files were inspected at commit
+`bbb02cee5bb8ec943fb66fdfbde8cc67a1bb0170`, each with a
+separate report and linked-source evidence. These inspections did not
+run independent subagents or execute runtime, CI, emulator or browser tests.
+Project coverage is 597/695 (85.90%); 98 project items remain Pending.
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 
