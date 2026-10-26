@@ -11,19 +11,19 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Documentation folders | 40 |
 | Documentation files | 474 |
 | Project folders | 119 |
-| Project files | 576 |
+| Project files | 577 |
 | Coordinator | 1 |
-| Expected agents / primary items | 1210 |
-| Currently completed review reports | 1210 |
+| Expected agents / primary items | 1211 |
+| Currently completed review reports | 1211 |
 | Active report tasks | 0 |
-| Completed tasks | 1210 |
+| Completed tasks | 1211 |
 | Pending tasks (excluding active) | 0 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 514 / 514 items (100.00%) |
-| Project coverage | 695 / 695 items (100.00%) |
+| Project coverage | 696 / 696 items (100.00%) |
 
-**Active report inventory:** Exactly 1,210 individual Markdown reports
+**Active report inventory:** Exactly 1,211 individual Markdown reports
 belong in `docs/code-review/reports/`. Six superseded historical
 reports for paths removed in prior source refactors have been retained
 under `docs/code-review/archive/`. They are excluded from active
@@ -531,3 +531,12 @@ Twelve additional agent skill source files and references were inspected under t
 ## Firebase skill reference checkpoint
 
 Ten additional Firebase setup and Auth skill files received distinct source reviews and passed [review validation run 40235002079](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40235002079). The local reference audit confirmed a broken Markdown link in an upstream skill; the finding is open, without silently changing its external source. Mobile reference examples are not proof of a production Next.js web test.
+
+## Post-audit regression inventory update (2026-10-26)
+
+The new Firebase auth Service Worker regression test has its own project-file
+inventory row and individual review report. This increases the tracked project
+file count from 576 to 577 and the total primary-item count from 1210 to 1211.
+All counts above describe the current branch; older chronological checkpoint
+figures are historical. The worker harness covers token forwarding and failure
+fallback, but does not replace deployed browser or Firebase integration tests.

@@ -3,11 +3,11 @@
 | Measure | Count |
 | --- | ---: |
 | Project folders inventoried | 119 |
-| Project files inventoried | 576 |
-| Total project review items | 695 |
+| Project files inventoried | 577 |
+| Total project review items | 696 |
 | Folder reports completed | 119 |
-| File reports completed | 576 |
-| Items reviewed | 695 |
+| File reports completed | 577 |
+| Items reviewed | 696 |
 | Coverage | 100.00% |
 | Active reports | 0 |
 | Pending items | 0 |
@@ -153,3 +153,11 @@ Twelve additional skill and reference file reviews are complete. The review focu
 ## Firebase skill reference checkpoint
 
 Ten additional skills and references were inspected for Firebase Auth flows, native platform boundaries, CLI discovery and local setup. One missing local reference is recorded in the findings register. Review run 40235002079 passed. Project review coverage is 589/695 primary items.
+
+## Post-audit Firebase regression file (2026-10-26)
+
+`src/lib/firebase/auth-service-worker.test.ts` was added after the original
+1,210-item source inspection. Its VM harness is reviewed separately under
+`reports/next-code-file-src-lib-firebase-auth-service-worker-test-ts.md`.
+The current project inventory has 119 folders and 577 files, all with reports.
+This does not imply that the service worker was tested in a deployed browser.
