@@ -14,13 +14,13 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 852 |
+| Currently completed review reports | 864 |
 | Active report tasks | 0 |
-| Completed tasks | 852 |
-| Pending tasks (excluding active) | 358 |
+| Completed tasks | 864 |
+| Pending tasks (excluding active) | 346 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
-| Documentation coverage | 156 / 514 items (30.35%) |
+| Documentation coverage | 168 / 514 items (32.68%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
@@ -176,6 +176,14 @@ Client and Server directives, Image, Link, Form, fonts, scripts
 and metadata conventions. Project adoption and behavior tests
 remain separate from a documentation source inspection.
 Documentation coverage is now 156/514 and 358 files remain pending.
+
+## Metadata and route segment API checkpoint (2026-10-26)
+
+Twelve version-matched metadata, route segment and parallel
+route convention files were read and documented with individual
+source evidence and project relevance. No independent subagents
+or runtime tests were used. Documentation: 168/514 (32.68%).
+Files still pending: 346; project primary items: 695/695.
 
 ## Execution
 
