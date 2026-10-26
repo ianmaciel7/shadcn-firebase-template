@@ -42,7 +42,7 @@ export const CountrySelector = forwardRef<CountrySelectorRef, CountrySelectorPro
 
   return (
     <Select value={selected.code} onValueChange={setCountry}>
-      <SelectTrigger className="w-[120px]">
+      <SelectTrigger aria-label="Country calling code" className="w-[120px]">
         <SelectValue>
           {selected.emoji} {selected.dialCode}
         </SelectValue>

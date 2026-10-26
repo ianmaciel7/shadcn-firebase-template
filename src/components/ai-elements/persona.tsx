@@ -90,6 +90,9 @@ const getCurrentTheme = (): "light" | "dark" => {
     if (document.documentElement.classList.contains("dark")) {
       return "dark";
     }
+    if (document.documentElement.classList.contains("light")) {
+      return "light";
+    }
     if (window.matchMedia?.("(prefers-color-scheme: dark)").matches) {
       return "dark";
     }

@@ -40,10 +40,10 @@ export function PhoneAuthScreen({ children, onSignIn }: PhoneAuthScreenProps) {
               <Separator className="my-4" />
               <div className="space-y-2">
                 {children}
-                <RedirectError />
               </div>
             </>
           ) : null}
+          <RedirectError />
         </CardContent>
       </Card>
     </div>

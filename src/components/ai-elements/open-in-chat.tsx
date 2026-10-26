@@ -237,14 +237,15 @@ const OpenInSeparator = (props: OpenInSeparatorProps) => (
 type OpenInTriggerProps = ComponentProps<typeof DropdownMenuTrigger>;
 
 const OpenInTrigger = ({ children, ...props }: OpenInTriggerProps) => (
-  <DropdownMenuTrigger {...props}>
-    {children ?? (
+  <DropdownMenuTrigger
+    render={
       <Button type="button" variant="outline">
-        Open in chat
+        {children ?? "Open in chat"}
         <ChevronDownIcon className="size-4" />
       </Button>
-    )}
-  </DropdownMenuTrigger>
+    }
+    {...props}
+  />
 );
 
 type OpenInChatGPTProps = ComponentProps<typeof DropdownMenuItem>;

@@ -115,6 +115,7 @@ const TranscriptionSegment = ({
       data-active={isActive}
       data-index={index}
       data-slot="transcription-segment"
+      disabled={!onSeek && !onClick}
       onClick={handleClick}
       type="button"
       {...props}

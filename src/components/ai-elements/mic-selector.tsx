@@ -129,13 +129,12 @@ const useAudioDevices = () => {
       }
     };
 
-    navigator.mediaDevices.addEventListener("devicechange", handleDeviceChange);
+    const mediaDevices = navigator.mediaDevices;
+    if (!mediaDevices?.addEventListener) return;
+    mediaDevices.addEventListener("devicechange", handleDeviceChange);
 
     return () => {
-      navigator.mediaDevices.removeEventListener(
-        "devicechange",
-        handleDeviceChange,
-      );
+      mediaDevices.removeEventListener("devicechange", handleDeviceChange);
     };
   }, [hasPermission, loadDevicesWithPermission, loadDevicesWithoutPermission]);
 
