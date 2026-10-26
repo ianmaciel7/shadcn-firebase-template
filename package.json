@@ -55,7 +55,7 @@
     "ladle:build": "ladle build",
     "prepare": "husky",
     "test:visual:update": "playwright test --grep @visual --update-snapshots",
-    "analyze:fallow": "fallow health --coverage coverage/coverage-final.json",
+    "analyze:fallow": "fallow health --coverage coverage/coverage-final.json --min-score 75",
     "analyze:health": "pnpm test:coverage && pnpm analyze:fallow",
     "check:routes": "node --test scripts/checks/check-route-files.test.mjs && node scripts/checks/check-route-files.mjs",
     "check:components": "node --test scripts/checks/check-component-conventions.test.mjs scripts/checks/check-component-composition.test.mjs && node scripts/checks/check-component-conventions.mjs",
