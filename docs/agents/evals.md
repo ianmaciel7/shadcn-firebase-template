@@ -118,3 +118,20 @@ edits do not need browser tests, static code search does not need a running
 Next.js server, and Context7 does not replace web research outside a library's
 documentation corpus. A passing answer never compensates for missing safety,
 evidence, or verification.
+
+## Live agent execution evidence
+
+The local `pnpm test:evals` command checks deterministic parser, trace and
+missing-executable scenarios. It does **not** launch an external agent. The
+`pnpm eval:tool-usage` command is an explicit external evaluation and must
+be executed only on a separately provisioned environment with:
+
+- an authenticated Codex CLI and adequate usage entitlement;
+- the actual MCP servers named by the scenarios, installed and connected;
+- any development server and browser fixtures needed for runtime scenarios.
+
+Review `reports/tool-usage-evals/report.json` and the per-case JSONL traces.
+Mark a live evaluation verified only when all required cases have successful
+connector-call evidence and independently review the outcomes and limitations.
+Do not upload auth keys, raw personal data, or session credentials with traces.
+The CI's unit tests must never fabricate those external call results.

@@ -2,10 +2,12 @@
 
 <!-- cspell:ignore FILETREE OPENIN NONSEEK NXLAYOUT DOCSTART DOCUPGRADE unkeyed -->
 
-The Review Validation workflow inspected the **1,211 individual reports**
-(2,253,517 bytes). The candidate-finding sweep highlighted 45 report files,
-including duplicates, historical findings and source-specific observations.
-A completed review file does not mean every defect was corrected.
+The active manifest contains **1,212 completed individual reports**.
+The earlier automated candidate-finding sweep inspected 1,211 reports
+(2,253,517 bytes) before the document-language component gained its
+own report, and highlighted 45 candidate files. Those historical numbers
+do not describe the current inventory or 45 distinct unresolved bugs.
+A completed review file does not mean every potential defect was corrected.
 
 ## Implementation reconciliation
 
@@ -36,10 +38,10 @@ The original historical finding resolutions are preserved in
 [resolutions.md](resolutions.md), including CodeBlock, theme-provider,
 tooltip, attachment, audio-player, error retry and context-cost fixes.
 
-The full CI matrix passed for the merged head `09d7cd7` at
-[run 40334286929](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40334286929).
-This verifies the configured build, unit, browser, emulator and security suites,
-not every possible production usage.
+The latest completed application-fix CI passed on `main` at commit
+`0d6574d` ([run 40344252388](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40344252388)).
+This verifies the configured build, unit, browser, emulator and security
+suites, not a deployment to a production environment.
 
 ## Additional tooltip trigger audit (2026-10-26)
 
@@ -69,7 +71,7 @@ regression verifies that the request-time boundary is entered only when a
 worker-bridged bearer token exists. The emulator suite continues to check the
 real authenticated flow.
 
-## Follow-up corrections in this branch
+## Completed follow-up corrections
 
 `AI-JSX-STREAM-001` is addressed more thoroughly: streamed tag scanning
 now skips comments and JSX string expressions, respects quoted attributes,
@@ -79,7 +81,7 @@ streaming repair strategy rather than a complete formal JSX parser.
 
 ## Remaining external or architecture-dependent work
 
-- **NXLAYOUT-001 — remediated in this branch:** the root
+- **NXLAYOUT-001 — remediated on main:** the root
   `IntlDocumentServer` resolves the cookie locale behind an outer Suspense
   boundary with an empty fallback. The original server HTML and browser
   document language are checked for English, Portuguese and Spanish. ADR 0004
@@ -96,8 +98,18 @@ streaming repair strategy rather than a complete formal JSX parser.
   selections. Unkeyed dynamic children still need caller-provided stable React
   keys; positional fallback only represents a static list. Regression tests
   verify keyed reorder and same-count replacement.
-- Individual audit findings are not proof that separate named reviewer
-  agents executed. Production deployments and external agent
-  evaluations have not been claimed as successful.
+- **Production smoke — not executed yet:** the CI workflow now accepts an
+  HTTPS production URL on a manual run and validates public responses and
+  server-rendered locale labels. No target URL was provided for this review,
+  so this is a prepared verification, not a successful production check.
+  Authenticated production flows still require separate credentials and a
+  suitable test account.
+- **Live external agent evaluations — not executed:** unit tests validate
+  evaluator failure handling and trace scoring. Actual Codex and configured
+  MCP calls require a provisioned host and credentials, with receipts
+  recorded before declaring success.
+- Individual reports do not establish that separate named reviewer
+  agents executed. Upstream documentation edits remain outside the repo.
 
-Do not squash-merge this follow-up until its own PR CI is green.
+The source remediation PRs (#32, #33 and #34) are already merged. The
+report records the current mainline state rather than an open branch.

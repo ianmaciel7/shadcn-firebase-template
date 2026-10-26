@@ -1,35 +1,49 @@
 # Next.js compatibility
 
-- Installed version: **16.4.2**, read from `node_modules/next/package.json`.
-- Primary source: `node_modules/next/dist/docs/` from the installed package.
-- The project uses the App Router under `src/app/`, with Cache Components and Partial Prefetching configured. The completed reviews of setup, project structure, layouts, navigation, Server/Client Components, data fetching, mutation, and caching found no proven mismatch for the inspected surfaces, except the `html lang` issue documented in [findings](findings.md).
-- Pages Router guidance, Proxy/Middleware examples, Server Actions, Route Handlers, and deployment recipes must be marked not applicable when the relevant feature is absent; they are not blanket requirements.
-- Recommendations from current upstream `canary` are not treated as installed-version contracts unless the installed package supports them. This partial report has not performed a full comparison with canary.
+## Current source baseline
 
-The reconciled official documentation corpus contains 474 files and 40 folders (after excluding 12 generated `graphify-out/` artifacts). Only 21 files and 3 folders have completed individual reports so far. Compatibility conclusions are therefore limited to those reports and are not a whole-framework certification.
+- Installed Next.js version: **16.4.2**, with React **19.3.1**.
+- Documentation source: `node_modules/next/dist/docs/` matching that
+  installed version, not the evolving canary branch.
+- Framework usage: App Router in `src/app/`, Cache Components and Partial
+  Prefetching; cookie-selected locale without a route prefix or Proxy.
+- The root `IntlDocumentServer` resolves the locale behind a suspense
+  boundary and renders the server HTML `lang`. Production-mode browser tests
+  also check the first HTML element of the HTTP response.
+- Firebase Auth roles and privileged server sessions are validated separately
+  from the client navigation gate.
 
-Subsequent implementation retains the installed error-boundary retry API. [ADR 0004](../adr/0004-configure-internationalization.md) preserves direct cookie-only locale selection after reversing the temporary internal route migration: current locale selection uses request cookies without a locale segment or Proxy. [ADR 0005](../adr/0005-document-project-standards.md) and [ADR 0009](../adr/0009-integrate-firebase-authentication.md) place cross-route components/hooks outside `src/app/` and add server-side Firebase session verification with custom claims. Historical applicability statements above describe the audit checkpoint. See [remediation verification limits](resolutions.md); production verification is not established by the individual audit reports.
+## Audited scope and its meaning
 
-## Current reviewed source status
+The active manifest contains **514 documentation items**, **697 project
+items**, and **one coordinator**, each with a completed individual static
+report. The inventory guard checks the manifest and reports against the
+tracked project tree and installed documentation.
 
-As of the validated UI checkpoint, the active inventory has 680 project items and 514 official installed-documentation items. The three new UI corrections are not Next.js-specific API upgrades; their focused unit tests and TypeScript checks passed in the branch review workflow. No complete compatibility certification is claimed for the remaining 1036 pending items.
+All configured CI checks passed on `main` at commit `0d6574d`
+([run 40344252388](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40344252388)):
+type checking, unit/browser/emulator tests, build, security, and accessibility.
+This shows the configured surfaces work, not that every optional Next.js
+feature or a hosted deployment has been certified.
 
-## Validated source-review completion scope
+Pages Router, Proxy, and unused platform features are not required to be
+implemented just because their documentation was inspected.
+The two upstream Next.js navigation gaps are mitigated by
+[installed documentation navigation](installed-next-navigation.md), which
+does not modify `node_modules`.
 
-The updated manifest records 330 completed items (including coordinator and documentary reviews) out of 1210. The additional source-review reports passed English, spelling and Markdown validations at [run 40134059605](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40134059605); this is not an exhaustive installed Next.js 16.4.2 documentation review, nor a framework-wide compatibility certification.
+## Remaining evidence boundaries
 
-## Evaluation scope
+- Production hosting, production identity flows, deployment credentials,
+  operational behavior and availability are not established by static
+  reports or the local Firebase emulator. Use the opt-in HTTPS production
+  smoke verification and document which environment was checked.
+- Real external Codex/MCP evaluation calls require a configured agent host.
+  The local deterministic evaluator and its tests cannot substitute for them.
+- The per-item reports may refer to historical source checkpoints. Read
+  [finding dispositions](resolutions.md) for current fixes and preserve
+  archived evidence in [README](README.md).
 
-The separate agent-evaluation fixture and runner files are not Next.js route conventions. Their source-level reviews contribute to project inventory coverage only; they do not increase the count of reviewed installed Next.js documentation files or certify runtime behavior.
-
-## Validated library source checkpoint
-
-The latest review set recorded in run 40192558815 covers fourteen additional project files under the Next.js 16.4.2 baseline. Future framework upgrades remain outside its verified scope.
-
-## Validated configuration scope
-
-Version-matched build, test, routing and tooling configuration files have current individual reports and passed the branch validation workflow in run 40193275075. End-to-end hosting and Firebase rules testing are not established by this static inspection.
-
-## Current source maintenance checks
-
-The versioned GitHub Actions and agent rule files were inspected at Next.js 16.4.2 and React 19.3.1. The independent review workflow validates report quality, not all hosted production builds or mobile and browser behavior. See run 40198107544.
+See [ADR 0004](../adr/0004-configure-internationalization.md) and
+[ADR 0009](../adr/0009-integrate-firebase-authentication.md)
+for accepted architectural decisions.

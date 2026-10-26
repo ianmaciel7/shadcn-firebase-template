@@ -1,28 +1,50 @@
-# Recommendations
+# Post-audit recommendations
 
-Provisional recommendations based only on completed reports:
+The active inventory has **1,212 completed individual source/documentation
+reports** (514 installed Next.js documentation items, 697 project items,
+and one coordinator). Completion means a static report exists and passed
+inventory checks; it is not proof that 1,212 independent agents ran.
+See [README](README.md), [findings](findings.md), and
+[remediation status](post-audit-remediation.md).
 
-1. Keep the root `html lang` issue tracked as known accessibility/localization debt. Decide how locale reaches the root document within the existing streaming model, then add browser coverage for English, Brazilian Portuguese, and Spanish before changing it.
-2. Continue the one-item-per-agent queue. Mark a row complete only after its individually named report exists; keep active, failed, and pending items distinguishable.
-3. Maintain the existing distinction between Next.js documentation requirements and repository-specific policies. Several installed guides are optional or describe features not present in this application.
-4. Audit lock files through dependency/security tooling rather than treating their generated contents as line-by-line application code.
-5. Reconcile copied component ownership wording across the component contracts, ADR 0008's current amendment, and `ARCHITECTURE.md` before changing UI, Firebase, or AI Elements maintenance rules.
+## Implemented and verified in repository CI
 
-6. Correct full-content cache identity in CodeBlock before relying on changing tool/code output, with sequential and concurrent collision regressions.
-7. Address the individually evidenced Base UI composition and naming issues with focused browser checks; keep the commit/audio native-button mismatch deduplicated and distinct from nested-button composition.
-8. Adapt cache token pricing once and derive context totals and detail rows consistently.
+- The root document language follows the cookie-selected locale. Raw server
+  response checks and browser tests cover English, Portuguese, and Spanish.
+  ADR 0004 continues to prohibit locale route segments and Proxy rewrites.
+- Firebase role mutation rechecks revoked ID tokens and current administrator
+  claims. Server-side verification occurs at request time.
+- Service Worker navigation degrades safely when token refresh fails.
+- React, accessibility, tooltip composition, code caching, context pricing,
+  JSX stream repair and component guard fixes have regression coverage.
+- The external evaluation runner's deterministic unit tests reject missing
+  executables and unsupported success evidence.
+- Local documentation navigation mitigates two upstream Next.js index gaps;
+  its link completeness is checked against the installed version.
 
-These are recommendations for future implementation. This audit changed no application source. No broad migration, dependency upgrade, or architecture change is recommended by the reviewed subset.
+The exact source changes, limitations, and linked verification belong in
+[resolutions.md](resolutions.md) and
+[post-audit-remediation.md](post-audit-remediation.md).
+The full CI passed for commit `0d6574d`
+([run 40344252388](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40344252388)).
+That is not evidence of a deployed production system.
 
-## Current follow-up priorities
+## External verification still needed
 
-- Keep the focused UI regression tests and the independent review-validation workflow running on this branch; avoid disabling quality gates when generated documentation outside `docs/code-review/` has lint violations.
-- Review the seven modified historical source files again and complete the remaining per-item reports. Treat existing external drafts as unverified until they are applied to the current inventory and validated.
+- **Production deployment:** use the opt-in production smoke job on the CI
+  workflow with an explicitly supplied HTTPS deployment URL. Confirm the
+  environment under test is the intended release and separately exercise
+  authenticated flows with appropriate test accounts. A successful local
+  browser/emulator run does not prove production auth or hosting.
+- **Actual agent/tool execution:** the repository's `pnpm eval:tool-usage`
+  needs an explicitly provisioned Codex CLI, credentials and configured MCP
+  tools. Unit tests validate the runner, not live agent behavior. Record
+  trace receipts before claiming real external evaluations passed.
+- **Upstream documentation:** `DOCSTART-001` and `DOCUPGRADE-001` belong to
+  installed Next.js editorial indexes. The repository has complete local
+  links; a change to the upstream Next.js package requires an upstream
+  contribution or dependency release.
 
-## New source-review batch follow-up
-
-Use the 166 individual reviews as a scoped triage queue. Reproduce higher-impact authentication, authorization, navigation and accessibility findings before patching. Add dedicated unit or browser regressions for issues with measurable behavior. Do not expand completion counts for the 880 remaining items without individual source or documentation evidence.
-
-## External evaluation runner next steps
-
-Add negative tests for an unavailable external executable and for trace events that contain matching tool names without a successful connector invocation. Keep the general read-only fixture as untrusted test data, not instructions for the evaluator to follow. Maintain evidence-backed status before deciding a runner issue is fixed.
+No application-code change should be made solely to turn an external
+limitation into a false green status. Follow
+[agent evaluation guidance](../agents/evals.md) for real runs.

@@ -12,3 +12,16 @@ Ten new evaluation inventory items were inspected individually at source baselin
 - `evals/tool-usage/receipt.schema.json`
 - `scripts/evals/run-tool-usage-evals.mjs`
 - `scripts/evals/run-tool-usage-evals.test.mjs`
+
+## Current verification status (2026-10-26)
+
+The evaluation runner's negative cases now have regression coverage, and
+`pnpm test:evals` is part of the repository's focused verification suite.
+That validates trace scoring and missing-CLI behavior, not real tool usage.
+The original ten item reports remain historical static inspections.
+
+A live `pnpm eval:tool-usage` run requires a host with an authenticated
+Codex CLI, the expected MCP servers (Context7, browser/Playwright,
+Next.js DevTools, Serena or Graphify), and access to the application
+needed by each scenario. Preserve actual JSONL traces and per-case receipts,
+including failed or unavailable tools; do not record success without them.

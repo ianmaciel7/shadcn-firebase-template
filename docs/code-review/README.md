@@ -5,7 +5,13 @@
 This began as an in-progress, read-only audit against the installed Next.js **16.4.2** documentation in `node_modules/next/dist/docs/`. The full one-agent-per-item inventory was generated and validated before review began.
 
 The current post-audit finding dispositions and limitations are tracked in
-[post-audit remediation](post-audit-remediation.md).
+[post-audit remediation](post-audit-remediation.md). The current
+[recommendations](recommendations.md) and
+[compatibility summary](compatibility.md) supersede old progress checkpoint
+language preserved below as historical evidence. The most recent full
+application CI passed on main at `0d6574d`
+([run 40344252388](https://github.com/ianmaciel7/shadcn-firebase-template/actions/runs/40344252388)).
+A green CI is not a live production or external-agent evaluation.
 
 ## Current metrics
 
