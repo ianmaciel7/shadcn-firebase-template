@@ -1,3 +1,4 @@
+// cspell:ignore gstatic firebasejs
 import { readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";
 import { describe, expect, it, vi } from "vitest";
