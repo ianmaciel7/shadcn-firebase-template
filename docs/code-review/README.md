@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 678 |
+| Currently completed review reports | 702 |
 | Active report tasks | 0 |
-| Completed tasks | 678 |
-| Pending tasks (excluding active) | 532 |
+| Completed tasks | 702 |
+| Pending tasks (excluding active) | 508 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 653 / 695 items (93.96%) |
+| Project coverage | 677 / 695 items (97.41%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -64,6 +64,18 @@ Project folder coverage is 119/119, while project file coverage is
 534/576. The complete project audit still has 42 Pending file items.
 Official installed Next.js documentation remains 24/514 completed.
 CI for this checkpoint is not yet known.
+
+## Imported engineering skills source checkpoint (2026-10-26)
+
+Twenty-four individual setup and shadcn reference/source items were
+inspected directly, covering tracker templates, skill bootstrap,
+interface metadata, showcase helpers, evaluation data, registry,
+CLI and component conventions. Per-file reports separate observed
+source from optional vendor recipes and untested external behavior.
+No independent subagents or runtime checks were executed for these
+individual source reviews. There are now 18 Pending project files,
+zero Pending project folders and 490 Pending Next.js documentation items.
+CI status for this commit remains separate from the source inspection.
 
 ## Execution
 
