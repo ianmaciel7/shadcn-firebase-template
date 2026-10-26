@@ -14,13 +14,13 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 789 |
+| Currently completed review reports | 804 |
 | Active report tasks | 0 |
-| Completed tasks | 789 |
-| Pending tasks (excluding active) | 421 |
+| Completed tasks | 804 |
+| Pending tasks (excluding active) | 406 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
-| Documentation coverage | 93 / 514 items (18.09%) |
+| Documentation coverage | 108 / 514 items (21.01%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
@@ -130,6 +130,17 @@ These direct inspections did not launch independent reviewer agents
 or run the application. The documentation inventory is now 93/514
 (18.09%) with 421 file items still Pending. Overall reports are
 789/1210 (65.21%); all project source items remain 695/695.
+
+## App Router operations and optional guides (2026-10-26)
+
+Fifteen further installed Next.js guide bodies were read at
+the immutable version 16.4.2 source revision. Reports distinguish
+build, debugging, analytics, CI, deployment and optional CMS,
+CSS-in-JS, JSON-LD and custom server features from configured
+app behavior. The index page has no runnable examples.
+Source reports now total 804/1210; documentation is 108/514
+(21.01%), with 406 independent documentation file items Pending.
+These direct reviews are not separate subagent executions.
 
 ## Execution
 
