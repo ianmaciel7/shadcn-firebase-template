@@ -79,11 +79,21 @@ describe("tool-usage eval runner", () => {
       },
       {
         type: "item.completed",
-        item: { type: "mcp_tool_call", server: "context7", tool: "query-docs", error: "denied" },
+        item: {
+          type: "mcp_tool_call",
+          server: "context7",
+          tool: "query-docs",
+          error: "denied",
+        },
       },
       {
         type: "item.completed",
-        item: { type: "mcp_tool_call", server: "context7", tool: "query-docs", status: "failed" },
+        item: {
+          type: "mcp_tool_call",
+          server: "context7",
+          tool: "query-docs",
+          status: "failed",
+        },
       },
     ];
     assert.deepEqual(findToolEvidence(failures), []);
