@@ -8,12 +8,12 @@ Source: installed `node_modules/next/dist/docs/`, Next.js **16.4.2**.
 | Documentation files inventoried | 474 |
 | Total documentary review items | 514 |
 | Folder reports completed | 40 |
-| File reports completed | 140 |
-| Items reviewed | 180 |
-| Coverage | 35.02% |
+| File reports completed | 152 |
+| Items reviewed | 192 |
+| Coverage | 37.35% |
 | Active reports | 0 |
 | Completed as not applicable to current application | 3 |
-| Pending items | 334 |
+| Pending items | 322 |
 
 ## Twelve version-matched App Router guides (2026-10-26)
 

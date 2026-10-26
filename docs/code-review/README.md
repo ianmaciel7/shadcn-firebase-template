@@ -14,13 +14,13 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 876 |
+| Currently completed review reports | 888 |
 | Active report tasks | 0 |
-| Completed tasks | 876 |
-| Pending tasks (excluding active) | 334 |
+| Completed tasks | 888 |
+| Pending tasks (excluding active) | 322 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
-| Documentation coverage | 180 / 514 items (35.02%) |
+| Documentation coverage | 192 / 514 items (37.35%) |
 | Project coverage | 695 / 695 items (100.00%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
@@ -194,6 +194,15 @@ global-not-found conventions, async params, error handling,
 instrumentation, loading and MDX requirements.
 These are source inspections, not independently executed subagent
 reviews or runtime tests. Documentation: 180/514; pending: 334.
+
+## Route conventions and cache functions checkpoint (2026-10-26)
+
+Twelve further individual documentation items were examined
+from the pinned Next.js 16.4.2 sources, covering Proxy,
+route groups, route handlers, parallel routes, template remounts,
+and caching API contracts. These are direct inspections without
+independent subagents or application runtime tests.
+Document items completed: 192/514; remaining: 322.
 
 ## Execution
 
