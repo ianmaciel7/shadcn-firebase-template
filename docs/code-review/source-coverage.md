@@ -5,12 +5,12 @@
 | Project folders inventoried | 119 |
 | Project files inventoried | 576 |
 | Total project review items | 695 |
-| Folder reports completed | 78 |
+| Folder reports completed | 119 |
 | File reports completed | 534 |
-| Items reviewed | 612 |
-| Coverage | 88.06% |
+| Items reviewed | 653 |
+| Coverage | 93.96% |
 | Active reports | 0 |
-| Pending items | 83 |
+| Pending items | 42 |
 
 ## Direct documentation and policy source reviews (2026-10-26)
 
@@ -27,6 +27,15 @@ directly against the installed skill entrypoint, skill lock and project
 runtime configuration. See the per-file reports for scope and two
 upstream naming observations. No independent subagents or CLI tests
 were executed. Current project source coverage is 612/695 (88.06%).
+
+## Final pending project folder boundary inspection (2026-10-26)
+
+Forty-one folder paths were inspected using a non-truncated recursive
+Git tree of the branch checkpoint. Each report lists exact immediate
+subdirectories, files and descendant counts; no independent subagent
+or runtime execution is asserted. All 119 project folder items now
+have individual structural reports. The 42 remaining project file
+items still require separate inspections.
 
 Completed folder reviews: repository root (`./`), `src/app/` and all 20 of its route/private subdirectories (`(protected)/` and its `_components/`, `_hooks/`, `_lib/`, and `profile/` subtree; `(public)/` and its `_hooks/`, `forgot-password/`, `register/`, and `sign-in/` subtrees; `_components/` and `_hooks/`), `src/components/`, `src/components/ui/`, `src/components/ui/extensions/`, `src/components/firebase/`, `src/components/ai-elements/`, `src/hooks/`, `src/i18n/`, and `src/lib/` (plus `firebase/`, `firebase/firestore/`, `usage/`, and `user/`).
 

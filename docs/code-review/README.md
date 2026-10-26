@@ -14,14 +14,14 @@ This began as an in-progress, read-only audit against the installed Next.js **16
 | Project files | 576 |
 | Coordinator | 1 |
 | Expected agents / primary items | 1210 |
-| Currently completed review reports | 637 |
+| Currently completed review reports | 678 |
 | Active report tasks | 0 |
-| Completed tasks | 637 |
-| Pending tasks (excluding active) | 573 |
+| Completed tasks | 678 |
+| Pending tasks (excluding active) | 532 |
 | Not applicable | 3 |
 | Consolidated findings from completed reports | 5 medium, 22 low, 0 high/critical |
 | Documentation coverage | 24 / 514 items (4.67%) |
-| Project coverage | 612 / 695 items (88.06%) |
+| Project coverage | 653 / 695 items (93.96%) |
 
 `Individual reports present` includes the coordinator's report. `Completed tasks` counts items with an individual report, including the coordinator. Each report has one primary item. Findings and coverage describe only completed reports and are provisional until all items are reviewed and cross-checked.
 
@@ -51,6 +51,19 @@ Android and Gemini CLI guidance. Neither vendor document was rewritten.
 Project coverage is now 612/695 (88.06%); 83 project items remain Pending.
 Documentation coverage remains 24/514 with 490 Pending.
 CI for the new commit remains to be verified.
+
+## Remaining project folder boundary review checkpoint (2026-10-26)
+
+All 41 previously Pending project folder items were inspected against
+the pinned tracked Git tree. Each folder now has an individual structural
+report with its actual immediate files, child directories, ownership scope
+and verification limits. These reviews do not count or replace reviews
+of descendant files, and they were conducted directly rather than by
+separate independent subagent processes.
+Project folder coverage is 119/119, while project file coverage is
+534/576. The complete project audit still has 42 Pending file items.
+Official installed Next.js documentation remains 24/514 completed.
+CI for this checkpoint is not yet known.
 
 ## Execution
 

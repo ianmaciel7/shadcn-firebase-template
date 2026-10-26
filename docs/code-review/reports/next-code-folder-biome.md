@@ -1,22 +1,48 @@
-# Individual folder review — `next-code-folder-biome`
+# Individual folder review — `.biome/`
 
 ## Identification
 
-- **Agent identity:** `next-code-folder-biome`
-- **Primary item:** `.biome/`
-- **Type:** CODE_FOLDER
-- **Source revision:** `0be7ee0f4c06a32bae63de7c4d0b8562b9350fb2`
-- **Next.js baseline:** 16.4.2
-- **Review state:** Source inspected; quality checks pending.
+- Review identity: `next-code-folder-biome`
+- Type: `CODE_FOLDER`
+- Primary path: `.biome/`
+- Source baseline: `d60580bad52e8e108951b0cbe7625fdd3da3ae31`
+- Framework reference: Next.js 16.4.2; project-specific folder rules
+- Status: Completed structural inspection; CI revalidation pending
 
-## Evidence
+## Scope and tree evidence
 
-Groups the current native quality policy rules, plugin and test helpers.
+This folder belongs to **biome lint preview and local rule assets**.
+The tracked Git tree contains 2 immediate subdirectories,
+0 immediate files, and 11 descendant
+tracked files within this specific path.
 
-## Verification boundaries
+Immediate child directories:
 
-The directory ownership was inspected; child file reviews are separately inventoried and must be completed independently. The branch review workflow provides TypeScript, native Biome and structural rule test evidence, plus spelling and Markdown verification. Production security checks and live Serena tooling remain separate responsibilities.
+- `plugins/`
+- `rules/`
+
+Immediate files:
+
+- None.
+
+## Boundary and ownership review
+
+- The exact folder path and all immediate child paths were verified
+  against the pinned repository tree, not inferred from older reports.
+- Child folders and files are separate primary review items and are not
+  counted as source-reviewed by this structural report.
+- The folder's scope is assessed as a repository organization boundary;
+  this does not establish the correctness of its runtime or documentation.
+
+## Findings and verification limits
+
+No untracked directory was assumed and no missing tracked immediate child
+was identified in this folder listing. Only structural membership was
+validated. Nested logic, external tool commands, CI suites, browsers and
+emulators were not executed. This direct inspection did not launch an
+independent subagent or attest to an independent reviewer.
 
 ## Conclusion
 
-This source item has an individual file or folder review and awaits successful branch quality validation.
+Folder boundary inspected and recorded as one inventory item. Separate
+reports are still required for its descendant files and folders.
