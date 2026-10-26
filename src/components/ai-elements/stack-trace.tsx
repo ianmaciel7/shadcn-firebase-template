@@ -355,6 +355,7 @@ const StackTraceCopyButton = memo(
     return (
       <Button
         className={cn("size-7", className)}
+        aria-label={isCopied ? "Copied stack trace" : "Copy stack trace"}
         onClick={copyToClipboard}
         size="icon"
         variant="ghost"

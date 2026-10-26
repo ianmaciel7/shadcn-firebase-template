@@ -339,6 +339,13 @@ const SpeechInput = ({
             : "bg-primary text-primary-foreground hover:bg-primary/80 hover:text-primary-foreground",
           className,
         )}
+        aria-label={
+          isProcessing
+            ? "Processing recording"
+            : isListening
+              ? "Stop recording"
+              : "Start recording"
+        }
         disabled={isDisabled}
         onClick={toggleListening}
         {...props}

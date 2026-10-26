@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 type ImageProps = Experimental_GeneratedImage & {
   className?: string;
-  alt?: string;
+  alt: string;
 };
 
 const Image = ({
