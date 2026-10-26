@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - fix/react-review-findings
+      - fix/post-audit-open-findings
   workflow_dispatch:
 
 permissions:
