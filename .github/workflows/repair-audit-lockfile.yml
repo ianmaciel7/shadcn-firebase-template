@@ -27,7 +27,10 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Apply patched transitive resolutions
-        run: pnpm audit --fix=update
+        run: |
+          pnpm audit --fix=update || echo 'Trying targeted security overrides for remaining advisories.'
+          pnpm audit --fix || echo 'Final audit will reject any remaining advisories.'
+          pnpm install --lockfile-only
       - name: Verify lockfile and audit
         run: |
           pnpm install --frozen-lockfile
