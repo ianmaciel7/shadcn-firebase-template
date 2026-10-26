@@ -60,6 +60,10 @@ describe("reviewed primitive compositions", () => {
 
 
   it.each([
+    ["<div>Text<", "<div>Text</div>"],
+    ["<div>Text</", "<div>Text</div>"],
+    ["<div>{/* don't */}<span>Text</span></div>", "<div>{/* don't */}<span>Text</span></div>"],
+    ["<div>{/* don't <Foo /> */}<span>Text</span></div>", "<div>{/* don't <Foo /> */}<span>Text</span></div>"],
     ["<div><span>Text</div>", "<div><span>Text</span></div>"],
     ['<div>{"<Fake>"}</div>', '<div>{"<Fake>"}</div>'],
     ["<div><!-- <Ignored> --><span>Text", "<div><!-- <Ignored> --><span>Text</span></div>"],

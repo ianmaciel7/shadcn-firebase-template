@@ -41,6 +41,15 @@ The full CI matrix passed for the merged head `09d7cd7` at
 This verifies the configured build, unit, browser, emulator and security suites,
 not every possible production usage.
 
+## JSX streaming review corrections (2026-10-26)
+
+The PR reviewer identified two additional streaming parser edge cases:
+dangling bare `<` or `</` delimiters, and JavaScript block comments with
+apostrophes inside expressions. The repair now removes incomplete bare
+delimiters and skips expression comments before interpreting quote characters.
+Regression cases cover both behaviors. The reviewed source is not a complete
+ECMAScript lexer, but it preserves the confirmed chunk-boundary examples.
+
 ## Request-time Firebase verification (2026-10-26)
 
 The protected server session validates ID tokens after `await connection()`,

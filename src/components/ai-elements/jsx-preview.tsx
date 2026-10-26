@@ -84,6 +84,18 @@ const matchJsxTag = (code: string) => {
       index = end + 2;
       continue;
     }
+    if (expressionDepth > 0 && code.startsWith("/*", index)) {
+      const commentEnd = code.indexOf("*/", index + 2);
+      if (commentEnd < 0) return null;
+      index = commentEnd + 1;
+      continue;
+    }
+    if (expressionDepth > 0 && code.startsWith("//", index)) {
+      const lineEnd = code.indexOf("\n", index + 2);
+      if (lineEnd < 0) return null;
+      index = lineEnd;
+      continue;
+    }
     if (expressionDepth > 0 && (character === '"' || character === "'" || character === "`")) {
       quote = character;
       continue;
@@ -127,7 +139,7 @@ const stripIncompleteTag = (text: string) => {
   if (openComment >= 0 && text.indexOf("-->", openComment) < 0) {
     return text.slice(0, openComment);
   }
-  return text.replace(/<\/?[a-zA-Z][a-zA-Z0-9.:-]*(?:\s[^<>]*)?$/, "");
+  return text.replace(/<\/?(?:[a-zA-Z][a-zA-Z0-9.:-]*(?:\s[^<>]*)?)?$/, "");
 };
 
 const completeJsxTag = (code: string) => {
