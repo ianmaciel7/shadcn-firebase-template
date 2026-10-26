@@ -176,7 +176,9 @@ Reviewing `docs/quality-enforcement.md` identified a contradiction with the curr
 - **FIREBASE-ROLE-001:** The role callable now requires both the decoded
   caller role and the current server-side admin claim from Firebase Admin.
   Disabled or demoted accounts cannot use a stale administrator ID token for
-  role mutation. Node regressions cover demotion and disabled-account cases.
+  role mutation. The callable also re-verifies the request ID token with
+  `checkRevoked=true` before authorization. Node regressions cover demotion,
+  disabled accounts, missing credentials and revoked sessions.
 - **FIREBASE-SW-001:** Token-refresh rejection now forwards the original
   navigation request without injected auth headers. A Vitest Service Worker
   harness covers successful header injection and the original-request fallback.

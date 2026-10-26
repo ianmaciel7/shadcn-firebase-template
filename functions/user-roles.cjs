@@ -27,18 +27,38 @@ function createSetUserRoleHandler({ auth, HttpsError }) {
     if (!isRoleRequest(data)) {
       throw new HttpsError("invalid-argument", "Unsupported role request.");
     }
-    // Callable token claims may outlive an admin demotion. Check the latest
-    // server-owned claims and disabled state before changing any user's role.
-    const caller = await auth.getUser(request.auth.uid);
-    if (caller.disabled || caller.customClaims?.role !== "admin") {
-      throw new HttpsError("permission-denied", "Administrator role required.");
-    }
     // Prevents the last administrator from locking everyone out.
     if (data.uid === request.auth.uid && data.role !== "admin") {
       throw new HttpsError(
         "failed-precondition",
         "Administrators cannot remove their own role.",
       );
+    }
+
+    // Callable authentication validates signatures, not token revocation.
+    const authorization = request.rawRequest?.headers?.authorization;
+    if (
+      typeof authorization !== "string" ||
+      !authorization.startsWith("Bearer ")
+    ) {
+      throw new HttpsError("unauthenticated", "Authentication required.");
+    }
+    let verified;
+    try {
+      verified = await auth.verifyIdToken(
+        authorization.slice("Bearer ".length),
+        true,
+      );
+    } catch {
+      throw new HttpsError("permission-denied", "Administrator session revoked.");
+    }
+    if (verified.uid !== request.auth.uid || verified.role !== "admin") {
+      throw new HttpsError("permission-denied", "Administrator role required.");
+    }
+    // Token claims may outlive demotion. Also check the current server state.
+    const caller = await auth.getUser(request.auth.uid);
+    if (caller.disabled || caller.customClaims?.role !== "admin") {
+      throw new HttpsError("permission-denied", "Administrator role required.");
     }
 
     const user = await auth.getUser(data.uid);
