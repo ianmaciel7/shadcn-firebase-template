@@ -1,5 +1,7 @@
 # Post-audit recommendations
 
+<!-- cspell:ignore DOCSTART DOCUPGRADE -->
+
 The active inventory has **1,212 completed individual source/documentation
 reports** (514 installed Next.js documentation items, 697 project items,
 and one coordinator). Completion means a static report exists and passed
