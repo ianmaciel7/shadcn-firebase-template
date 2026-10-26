@@ -19,11 +19,11 @@ function readBearerToken(requestHeaders: Headers) {
 }
 
 async function verifyIdToken(authIdToken: string) {
+  // Dynamic rendering errors must not be interpreted as invalid user tokens.
+  await connection();
   try {
     // checkRevoked rejects tokens of disabled users and revoked sessions, so a
     // demoted role stops working as soon as its refresh tokens are revoked.
-    // Firebase Admin performs time-sensitive verification only per request.
-    await connection();
     const claims = await getAdminAuth().verifyIdToken(authIdToken, true);
     return { role: readUserRole(claims), userId: claims.uid };
   } catch {
