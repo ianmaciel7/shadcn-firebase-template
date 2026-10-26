@@ -15,7 +15,7 @@ Direct visual inspection showed a dark home hero with NEXT mark, introductory he
 
 ## Evidence and limitations
 
-This is a stored PNG fixture, not a newly rendered browser screenshot; the current app was not compared pixelwise against it in this review.
+This is a stored PNG fixture, not a newly rendered browser screenshot; the current app was not compared pixel by pixel against it in this review.
 This image was decoded and visually inspected directly from the
 GitHub branch. No separate subagent or browser run is claimed.
 
