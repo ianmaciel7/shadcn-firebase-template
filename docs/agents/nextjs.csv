@@ -1,0 +1,475 @@
+installed_document,title,local_owner_or_reference,coverage_scope
+01-app/01-getting-started/01-installation.md,Installation,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/01-getting-started/02-project-structure.md,Project structure and organization,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/01-getting-started/03-layouts-and-pages.md,Layouts and Pages,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/01-getting-started/04-linking-and-navigating.md,Linking and Navigating,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/01-getting-started/05-server-and-client-components.md,Server and Client Components,.agents/rules/boundaries.md,Existing project guidance
+01-app/01-getting-started/06-fetching-data.md,Fetching Data,.agents/rules/data.md; .agents/rules/cache.md,Existing project guidance
+01-app/01-getting-started/07-mutating-data.md,Mutating Data,.agents/rules/forms.md; .agents/rules/data.md; .agents/rules/auth.md,Existing project guidance
+01-app/01-getting-started/08-caching.md,Caching,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/01-getting-started/09-revalidating.md,Revalidating,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/01-getting-started/10-error-handling.md,Error Handling,.agents/rules/rendering.md; .agents/rules/effects.md,Existing rendering context; optional features require compatibility checks
+01-app/01-getting-started/11-css.md,CSS,DESIGN.md; TOOLING.md; .agents/skills/shadcn/rules/styling.md,Existing design and tooling owners; alternatives conditional
+01-app/01-getting-started/12-images.md,Image Optimization,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/01-getting-started/13-fonts.md,Font Optimization,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/01-getting-started/14-metadata-and-og-images.md,Metadata and OG images,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/01-getting-started/15-route-handlers.md,Route Handlers,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/01-getting-started/16-proxy.md,Proxy,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/01-getting-started/17-deploying.md,Deploying,README.md; TOOLING.md; SECURITY.md,Consult before adopting/changing deployment or architecture
+01-app/01-getting-started/18-upgrading.md,Upgrading,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/01-getting-started/index.md,Getting Started,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/02-guides/adopting-partial-prefetching.md,Adopting Partial Prefetching,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/02-guides/ai-agents.md,How Next.js supports AI coding agents,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/02-guides/analytics.md,How to add analytics to your Next.js application,ARCHITECTURE.md; TOOLING.md; TESTING.md,Existing observability owners; verify integration before use
+01-app/02-guides/authentication-with-cache-components.md,How to implement authentication with Cache Components,.agents/rules/auth.md; SECURITY.md,Existing project guidance
+01-app/02-guides/authentication.md,How to implement authentication in Next.js,.agents/rules/auth.md; SECURITY.md,Existing project guidance
+01-app/02-guides/backend-for-frontend.md,How to use Next.js as a backend for your frontend,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/02-guides/building.md,Building your application,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/02-guides/caching-without-cache-components.md,Caching and Revalidating (Previous Model),.agents/rules/cache.md,Existing project context; verify installed API
+01-app/02-guides/cdn-caching.md,Using a CDN with Next.js,README.md; TOOLING.md; SECURITY.md,Consult before adopting/changing deployment or architecture
+01-app/02-guides/ci-build-caching.md,How to configure Continuous Integration (CI) build caching,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/02-guides/client-side-data-fetching/index.md,Client-side data fetching,.agents/rules/data.md; .agents/rules/cache.md,Existing project guidance
+01-app/02-guides/client-side-data-fetching/swr.md,How to fetch client-side data with SWR,.agents/rules/data.md; .agents/rules/cache.md,Existing project guidance
+01-app/02-guides/client-side-data-fetching/tanstack-query.md,How to fetch client-side data with TanStack Query,.agents/rules/data.md; .agents/rules/cache.md,Existing project guidance
+01-app/02-guides/content-security-policy.md,How to set a Content Security Policy (CSP) for your Next.js application,SECURITY.md; TOOLING.md; .agents/rules/boundaries.md,Existing security/configuration owners
+01-app/02-guides/css-in-js.md,How to use CSS-in-JS libraries,DESIGN.md; TOOLING.md; .agents/skills/shadcn/rules/styling.md,Existing design and tooling owners; alternatives conditional
+01-app/02-guides/custom-server.md,How to set up a custom server in Next.js,README.md; TOOLING.md; SECURITY.md,Consult before adopting/changing deployment or architecture
+01-app/02-guides/data-security.md,How to think about data security in Next.js,SECURITY.md; TOOLING.md; .agents/rules/boundaries.md,Existing security/configuration owners
+01-app/02-guides/debugging.md,How to use debugging tools with Next.js,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/02-guides/deploying-to-platforms.md,Deploying Next.js to different platforms,README.md; TOOLING.md; SECURITY.md,Consult before adopting/changing deployment or architecture
+01-app/02-guides/draft-mode.md,How to preview content with Draft Mode in Next.js,Upstream topic; TOOLING.md; ARCHITECTURE.md,Conditional feature; no matching implementation claimed
+01-app/02-guides/environment-variables.md,How to use environment variables in Next.js,SECURITY.md; TOOLING.md; .agents/rules/boundaries.md,Existing security/configuration owners
+01-app/02-guides/forms.md,How to create forms with Server Actions,.agents/rules/forms.md; .agents/rules/data.md; .agents/rules/auth.md,Existing project guidance
+01-app/02-guides/how-revalidation-works.md,How revalidation works in Next.js,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/02-guides/incremental-static-regeneration-cache-components.md,Incremental Static Regeneration with Cache Components,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/02-guides/incremental-static-regeneration.md,How to implement Incremental Static Regeneration (ISR),docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/02-guides/index.md,Guides,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/02-guides/instant-navigation.md,Ensuring instant navigations,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/02-guides/instrumentation.md,How to set up instrumentation,ARCHITECTURE.md; TOOLING.md; TESTING.md,Existing observability owners; verify integration before use
+01-app/02-guides/interactive-apps.md,Building interactive apps,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/02-guides/internationalization.md,Internationalization,ARCHITECTURE.md; CODING_STANDARDS.md,Existing cookie-only locale policy; preserve accepted decision
+01-app/02-guides/json-ld.md,How to implement JSON-LD in your Next.js application,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/02-guides/keeping-pages-static.md,Keeping pages static,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/02-guides/lazy-loading.md,How to lazy load Client Components and libraries,.agents/rules/rendering.md; .agents/rules/effects.md,Existing rendering context; optional features require compatibility checks
+01-app/02-guides/local-development.md,How to optimize your local development environment,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/02-guides/mcp.md,Connecting coding agents to the Next.js MCP server,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/02-guides/mdx.md,How to use markdown and MDX in Next.js,Upstream topic; TOOLING.md; ARCHITECTURE.md,Conditional feature; no matching implementation claimed
+01-app/02-guides/memory-usage.md,How to optimize memory usage,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/02-guides/migrating/app-router-migration.md,How to migrate from Pages to the App Router,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/02-guides/migrating/from-create-react-app.md,How to migrate from Create React App to Next.js,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/02-guides/migrating/from-vite.md,How to migrate from Vite to Next.js,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/02-guides/migrating/index.md,Migrating,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/02-guides/migrating-to-cache-components.md,Migrating to Cache Components,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/02-guides/multi-tenant.md,How to build multi-tenant apps in Next.js,README.md; TOOLING.md; SECURITY.md,Consult before adopting/changing deployment or architecture
+01-app/02-guides/multi-zones.md,How to build micro-frontends using multi-zones and Next.js,README.md; TOOLING.md; SECURITY.md,Consult before adopting/changing deployment or architecture
+01-app/02-guides/offline-support.md,Handling connectivity drops,Upstream topic; TOOLING.md; ARCHITECTURE.md,Conditional feature; no matching implementation claimed
+01-app/02-guides/open-telemetry.md,How to set up instrumentation with OpenTelemetry,ARCHITECTURE.md; TOOLING.md; TESTING.md,Existing observability owners; verify integration before use
+01-app/02-guides/optimizing-prefetching.md,Optimizing prefetching,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/02-guides/optimizing-the-static-shell.md,Optimizing the static shell,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/02-guides/package-bundling.md,Optimizing package bundling,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/02-guides/ppr-platform-guide.md,Implementing Partial Prerendering on your platform,README.md; TOOLING.md; SECURITY.md,Consult before adopting/changing deployment or architecture
+01-app/02-guides/prefetching.md,Prefetching,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/02-guides/preserving-ui-state.md,How Next.js preserves UI state with Activity,.agents/rules/rendering.md; .agents/rules/effects.md,Existing rendering context; optional features require compatibility checks
+01-app/02-guides/preventing-flash-before-hydration.md,How to prevent flash before hydration,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/02-guides/production-checklist.md,How to optimize your Next.js application for production,README.md; TOOLING.md; SECURITY.md,Consult before adopting/changing deployment or architecture
+01-app/02-guides/progressive-web-apps.md,How to build a Progressive Web Application (PWA) with Next.js,Upstream topic; TOOLING.md; ARCHITECTURE.md,Conditional feature; no matching implementation claimed
+01-app/02-guides/public-static-pages.md,Building public pages,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/02-guides/redirecting.md,How to handle redirects in Next.js,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/02-guides/rendering-philosophy.md,Next.js Rendering Philosophy,.agents/rules/rendering.md; .agents/rules/effects.md,Existing rendering context; optional features require compatibility checks
+01-app/02-guides/sass.md,How to use Sass,DESIGN.md; TOOLING.md; .agents/skills/shadcn/rules/styling.md,Existing design and tooling owners; alternatives conditional
+01-app/02-guides/scripts.md,How to load and optimize scripts,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/02-guides/self-hosting.md,How to self-host your Next.js application,README.md; TOOLING.md; SECURITY.md,Consult before adopting/changing deployment or architecture
+01-app/02-guides/server-actions.md,Server Actions and Mutations,.agents/rules/forms.md; .agents/rules/data.md; .agents/rules/auth.md,Existing project guidance
+01-app/02-guides/server-and-client-boundary.md,The Server and Client Boundary,.agents/rules/boundaries.md,Existing project guidance
+01-app/02-guides/single-page-applications.md,How to build single-page applications with Next.js,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/02-guides/static-exports.md,How to create a static export of your Next.js application,README.md; TOOLING.md; SECURITY.md,Consult before adopting/changing deployment or architecture
+01-app/02-guides/streaming.md,Streaming,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/02-guides/tailwind-v3-css.md,How to install Tailwind CSS v3 in your Next.js application,DESIGN.md; TOOLING.md; .agents/skills/shadcn/rules/styling.md,Existing design and tooling owners; alternatives conditional
+01-app/02-guides/testing/cypress.md,How to set up Cypress with Next.js,TESTING.md,Existing verification owner; choose installed tools
+01-app/02-guides/testing/index.md,Testing,TESTING.md,Existing verification owner; choose installed tools
+01-app/02-guides/testing/jest.md,How to set up Jest with Next.js,TESTING.md,Existing verification owner; choose installed tools
+01-app/02-guides/testing/playwright.md,How to set up Playwright with Next.js,TESTING.md,Existing verification owner; choose installed tools
+01-app/02-guides/testing/vitest.md,How to set up Vitest with Next.js,TESTING.md,Existing verification owner; choose installed tools
+01-app/02-guides/third-party-libraries.md,How to optimize third-party libraries,Upstream topic; TOOLING.md; ARCHITECTURE.md,Conditional feature; no matching implementation claimed
+01-app/02-guides/upgrading/agent-upgrade.md,Upgrade with a coding agent,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/02-guides/upgrading/codemods.md,Codemods,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/02-guides/upgrading/index.md,Upgrade Guides,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/02-guides/upgrading/version-14.md,How to upgrade to version 14,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/02-guides/upgrading/version-15.md,How to upgrade to version 15,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/02-guides/upgrading/version-16.md,How to upgrade to version 16,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/02-guides/videos.md,How to use and optimize videos,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/02-guides/view-transitions.md,Designing view transitions,.agents/rules/rendering.md; .agents/rules/effects.md,Existing rendering context; optional features require compatibility checks
+01-app/03-api-reference/01-directives/index.md,Directives,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/01-directives/use-cache-private.md,'use cache: private',.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/01-directives/use-cache-remote.md,'use cache: remote',.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/01-directives/use-cache.md,use cache,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/01-directives/use-client.md,use client,.agents/rules/boundaries.md,Existing project guidance
+01-app/03-api-reference/01-directives/use-server.md,use server,.agents/rules/boundaries.md,Existing project guidance
+01-app/03-api-reference/02-components/font.md,Font Module,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/03-api-reference/02-components/form.md,Form Component,.agents/rules/forms.md; .agents/rules/data.md; .agents/rules/auth.md,Existing project guidance
+01-app/03-api-reference/02-components/image.md,Image Component,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/03-api-reference/02-components/index.md,Components,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/02-components/link.md,Link Component,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/02-components/script.md,Script Component,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/03-api-reference/03-file-conventions/01-metadata/app-icons.md,"favicon, icon, and apple-icon",.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/03-file-conventions/01-metadata/index.md,Metadata Files API Reference,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/03-file-conventions/01-metadata/manifest.md,manifest.json,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/03-file-conventions/01-metadata/opengraph-image.md,opengraph-image and twitter-image,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/03-api-reference/03-file-conventions/01-metadata/robots.md,robots.txt,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/03-file-conventions/01-metadata/sitemap.md,sitemap.xml,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/03-file-conventions/02-route-segment-config/dynamicParams.md,dynamicParams,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/03-file-conventions/02-route-segment-config/ensureStatic.md,ensureStatic,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/03-file-conventions/02-route-segment-config/index.md,Route Segment Config,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/03-file-conventions/02-route-segment-config/instant.md,instant,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/03-file-conventions/02-route-segment-config/maxDuration.md,maxDuration,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/03-file-conventions/02-route-segment-config/preferredRegion.md,preferredRegion (deprecated),TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/03-file-conventions/02-route-segment-config/prefetch.md,prefetch,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/03-file-conventions/02-route-segment-config/runtime.md,runtime,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/03-file-conventions/default.md,default.js,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/03-file-conventions/dynamic-routes.md,Dynamic Route Segments,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/03-file-conventions/error.md,error.js,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/03-file-conventions/forbidden.md,forbidden.js,.agents/rules/auth.md; SECURITY.md,Existing project guidance
+01-app/03-api-reference/03-file-conventions/index.md,File-system conventions,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/03-file-conventions/instrumentation-client.md,instrumentation-client.js,ARCHITECTURE.md; TOOLING.md; TESTING.md,Existing observability owners; verify integration before use
+01-app/03-api-reference/03-file-conventions/instrumentation.md,instrumentation.js,ARCHITECTURE.md; TOOLING.md; TESTING.md,Existing observability owners; verify integration before use
+01-app/03-api-reference/03-file-conventions/intercepting-routes.md,Intercepting Routes,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/03-file-conventions/layout.md,layout.js,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/03-file-conventions/loading.md,loading.js,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/03-file-conventions/mdx-components.md,mdx-components.js,Upstream topic; TOOLING.md; ARCHITECTURE.md,Conditional feature; no matching implementation claimed
+01-app/03-api-reference/03-file-conventions/middleware.md,middleware.js,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/03-file-conventions/not-found.md,not-found.js,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/03-file-conventions/page.md,page.js,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/03-file-conventions/parallel-routes.md,Parallel Routes,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/03-file-conventions/proxy.md,proxy.js,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/03-file-conventions/public-folder.md,public Folder,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/03-file-conventions/route-groups.md,Route Groups,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/03-file-conventions/route.md,route.js,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/03-file-conventions/src-folder.md,src Folder,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/03-file-conventions/template.md,template.js,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/03-file-conventions/unauthorized.md,unauthorized.js,.agents/rules/auth.md; SECURITY.md,Existing project guidance
+01-app/03-api-reference/04-functions/after.md,after,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/04-functions/cacheLife.md,cacheLife,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/04-functions/cacheTag.md,cacheTag,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/04-functions/catchError.md,catchError,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/connection.md,connection,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/04-functions/cookies.md,cookies,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/draft-mode.md,draftMode,Upstream topic; TOOLING.md; ARCHITECTURE.md,Conditional feature; no matching implementation claimed
+01-app/03-api-reference/04-functions/fetch.md,fetch,.agents/rules/data.md; .agents/rules/cache.md,Existing project guidance
+01-app/03-api-reference/04-functions/forbidden.md,forbidden,.agents/rules/auth.md; SECURITY.md,Existing project guidance
+01-app/03-api-reference/04-functions/generate-image-metadata.md,generateImageMetadata,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/03-api-reference/04-functions/generate-metadata.md,generateMetadata,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/04-functions/generate-sitemaps.md,generateSitemaps,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/generate-static-params.md,generateStaticParams,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/generate-viewport.md,generateViewport,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/headers.md,headers,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/image-response.md,ImageResponse,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/03-api-reference/04-functions/index.md,Functions,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/io.md,io,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/navigation.md,navigation,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/04-functions/next-request.md,NextRequest,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/next-response.md,NextResponse,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/next-root-params.md,next/root-params,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/not-found.md,notFound,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/permanentRedirect.md,permanentRedirect,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/04-functions/prefetch.md,prefetch,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/04-functions/redirect.md,redirect,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/04-functions/refresh.md,refresh,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/revalidatePath.md,revalidatePath,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/04-functions/revalidateTag.md,revalidateTag,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/04-functions/unauthorized.md,unauthorized,.agents/rules/auth.md; SECURITY.md,Existing project guidance
+01-app/03-api-reference/04-functions/unstable_cache.md,unstable_cache,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/04-functions/unstable_noStore.md,unstable_noStore,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/unstable_rethrow.md,unstable_rethrow,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/updateTag.md,updateTag,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/use-link-status.md,useLinkStatus,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/use-offline.md,useOffline,Upstream topic; TOOLING.md; ARCHITECTURE.md,Conditional feature; no matching implementation claimed
+01-app/03-api-reference/04-functions/use-params.md,useParams,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/use-pathname.md,usePathname,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/use-report-web-vitals.md,useReportWebVitals,ARCHITECTURE.md; TOOLING.md; TESTING.md,Existing observability owners; verify integration before use
+01-app/03-api-reference/04-functions/use-router.md,useRouter,.agents/rules/routes.md; SECURITY.md,Existing route context; optional route conventions consulted on demand
+01-app/03-api-reference/04-functions/use-search-params.md,useSearchParams,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/use-selected-layout-segment.md,useSelectedLayoutSegment,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/use-selected-layout-segments.md,useSelectedLayoutSegments,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/04-functions/userAgent.md,userAgent,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/05-config/01-next-config-js/adapterPath.md,adapterPath,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/agentFeedback.md,agentFeedback,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/agentRules.md,agentRules,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/agentUpgrade.md,agentUpgrade,TOOLING.md; CONTRIBUTING.md,Conditional migration reference; no migration authorized by this audit
+01-app/03-api-reference/05-config/01-next-config-js/allowedDevOrigins.md,allowedDevOrigins,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/appDir.md,appDir,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/assetPrefix.md,assetPrefix,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/authInterrupts.md,authInterrupts,.agents/rules/auth.md; SECURITY.md,Existing project guidance
+01-app/03-api-reference/05-config/01-next-config-js/basePath.md,basePath,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/cacheComponents.md,cacheComponents,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/05-config/01-next-config-js/cacheHandlers.md,cacheHandlers,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/05-config/01-next-config-js/cacheLife.md,cacheLife,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/05-config/01-next-config-js/cacheMaxMemorySize.md,cacheMaxMemorySize,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/05-config/01-next-config-js/compress.md,compress,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/crossOrigin.md,crossOrigin,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/cssChunking.md,cssChunking,DESIGN.md; TOOLING.md; .agents/skills/shadcn/rules/styling.md,Existing design and tooling owners; alternatives conditional
+01-app/03-api-reference/05-config/01-next-config-js/deploymentId.md,deploymentId,README.md; TOOLING.md; SECURITY.md,Consult before adopting/changing deployment or architecture
+01-app/03-api-reference/05-config/01-next-config-js/devIndicators.md,devIndicators,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/distDir.md,distDir,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/enablePrerenderSourceMaps.md,enablePrerenderSourceMaps,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/env.md,env,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/expireTime.md,expireTime,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/exportPathMap.md,exportPathMap,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/exposeTestingApiInProductionBuild.md,exposeTestingApiInProductionBuild,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/generateBuildId.md,generateBuildId,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/generateEtags.md,generateEtags,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/headers.md,headers,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/htmlLimitedBots.md,htmlLimitedBots,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/httpAgentOptions.md,httpAgentOptions,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/images.md,images,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/03-api-reference/05-config/01-next-config-js/incrementalCacheHandlerPath.md,Custom Next.js Cache Handler,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/05-config/01-next-config-js/index.md,next.config.js,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/inlineCss.md,inlineCss,DESIGN.md; TOOLING.md; .agents/skills/shadcn/rules/styling.md,Existing design and tooling owners; alternatives conditional
+01-app/03-api-reference/05-config/01-next-config-js/instrumentationClientInject.md,instrumentationClientInject,ARCHITECTURE.md; TOOLING.md; TESTING.md,Existing observability owners; verify integration before use
+01-app/03-api-reference/05-config/01-next-config-js/logging.md,logging,ARCHITECTURE.md; TOOLING.md; TESTING.md,Existing observability owners; verify integration before use
+01-app/03-api-reference/05-config/01-next-config-js/mdxRs.md,mdxRs,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/onDemandEntries.md,onDemandEntries,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/optimizePackageImports.md,optimizePackageImports,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/output.md,output,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/outputHashSalt.md,outputHashSalt,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/pageExtensions.md,pageExtensions,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/partialPrefetching.md,partialPrefetching,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/05-config/01-next-config-js/poweredByHeader.md,poweredByHeader,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/prefetchInlining.md,prefetchInlining,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/05-config/01-next-config-js/productionBrowserSourceMaps.md,productionBrowserSourceMaps,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/proxyClientMaxBodySize.md,proxyClientMaxBodySize,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/reactCompiler.md,reactCompiler,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/reactMaxHeadersLength.md,reactMaxHeadersLength,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/reactStrictMode.md,reactStrictMode,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/redirects.md,redirects,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/rewrites.md,rewrites,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/sassOptions.md,sassOptions,DESIGN.md; TOOLING.md; .agents/skills/shadcn/rules/styling.md,Existing design and tooling owners; alternatives conditional
+01-app/03-api-reference/05-config/01-next-config-js/serverActions.md,serverActions,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/serverComponentsHmrCache.md,serverComponentsHmrCache,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/05-config/01-next-config-js/serverExternalPackages.md,serverExternalPackages,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/skipProxyUrlNormalize.md,skipProxyUrlNormalize,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/skipTrailingSlashRedirect.md,skipTrailingSlashRedirect,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/staleTimes.md,staleTimes,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/staticGeneration.md,staticGeneration*,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/supportsImmutableAssets.md,supportsImmutableAssets,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/taint.md,taint,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/trailingSlash.md,trailingSlash,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/transpilePackages.md,transpilePackages,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/turbopack.md,turbopack,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/turbopackChunking.md,turbopackChunking,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/turbopackFileSystemCache.md,Turbopack FileSystem Caching,.agents/rules/cache.md,Existing project context; verify installed API
+01-app/03-api-reference/05-config/01-next-config-js/turbopackGc.md,turbopackGc,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/turbopackIgnoreIssue.md,turbopack.ignoreIssue,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/turbopackLazyDynamicImports.md,turbopackLazyDynamicImports,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/turbopackLazyDynamicImportsSSR.md,turbopackLazyDynamicImportsSSR,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/turbopackLocalPostcssConfig.md,turbopackLocalPostcssConfig,DESIGN.md; TOOLING.md; .agents/skills/shadcn/rules/styling.md,Existing design and tooling owners; alternatives conditional
+01-app/03-api-reference/05-config/01-next-config-js/turbopackMemoryEviction.md,Turbopack Memory Eviction,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/turbopackPluginRuntimeStrategy.md,turbopackPluginRuntimeStrategy,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/turbopackRustReactCompiler.md,turbopackRustReactCompiler,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/typedRoutes.md,typedRoutes,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/typescript.md,typescript,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/03-api-reference/05-config/01-next-config-js/urlImports.md,urlImports,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/useLightningcss.md,useLightningcss,DESIGN.md; TOOLING.md; .agents/skills/shadcn/rules/styling.md,Existing design and tooling owners; alternatives conditional
+01-app/03-api-reference/05-config/01-next-config-js/useOffline.md,useOffline,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/useTypeScriptCli.md,useTypeScriptCli,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/03-api-reference/05-config/01-next-config-js/webVitalsAttribution.md,webVitalsAttribution,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/01-next-config-js/webpack.md,Custom Webpack Config,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/02-typescript.md,TypeScript,.agents/rules/assets.md; DESIGN.md,Existing assets context; some APIs conditional on use
+01-app/03-api-reference/05-config/03-eslint.md,ESLint Plugin,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/05-config/index.md,Configuration,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/06-cli/create-next-app.md,create-next-app,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/06-cli/index.md,CLI,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/06-cli/next.md,next CLI,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-adapters/01-configuration.md,Configuration,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/07-adapters/02-creating-an-adapter.md,Creating an Adapter,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-adapters/03-api-reference.md,API Reference,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-adapters/04-testing-adapters.md,Testing Adapters,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-adapters/05-routing-with-next-routing.md,Routing with @next/routing,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-adapters/06-implementing-ppr-in-an-adapter.md,Implementing PPR in an Adapter,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-adapters/07-runtime-integration.md,Runtime Integration,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-adapters/08-invoking-entrypoints.md,Invoking Entrypoints,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-adapters/09-output-types.md,Output Types,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-adapters/10-routing-information.md,Routing Information,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-adapters/11-use-cases.md,Use Cases,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-adapters/12-immutable-static-assets.md,Supporting Immutable Static Assets,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-adapters/index.md,Adapters,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/07-edge.md,Edge Runtime,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/03-api-reference/08-turbopack.md,Turbopack,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+01-app/03-api-reference/index.md,API Reference,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/04-glossary.md,Next.js Glossary,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+01-app/index.md,App Router,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+02-pages/01-getting-started/01-installation.md,Create a new Next.js application,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/01-getting-started/02-project-structure.md,Project Structure and Organization,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/01-getting-started/04-images.md,Image Optimization,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/01-getting-started/05-fonts.md,How to use fonts,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/01-getting-started/06-css.md,How to use CSS in your application,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/01-getting-started/11-deploying.md,How to deploy your Next.js application,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/01-getting-started/index.md,Getting Started - Pages Router,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/analytics.md,How to set up analytics,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/authentication.md,How to implement authentication in Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/babel.md,How to configure Babel in Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/ci-build-caching.md,How to configure Continuous Integration (CI) build caching,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/content-security-policy.md,How to set a Content Security Policy (CSP) for your Next.js application,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/css-in-js.md,How to use CSS-in-JS libraries,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/custom-server.md,How to set up a custom server in Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/debugging.md,How to use debugging tools with Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/draft-mode.md,How to preview content with Draft Mode in Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/environment-variables.md,How to use environment variables in Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/forms.md,How to create forms with API Routes,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/incremental-static-regeneration.md,How to implement Incremental Static Regeneration (ISR),TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/index.md,Guides,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/instrumentation.md,How to set up instrumentation,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/internationalization.md,How to implement internationalization in Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/lazy-loading.md,How to lazy load Client Components and libraries,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/mdx.md,How to use markdown and MDX in Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/migrating/app-router-migration.md,How to migrate from Pages to the App Router,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/migrating/from-create-react-app.md,How to migrate from Create React App to Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/migrating/from-vite.md,How to migrate from Vite to Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/migrating/index.md,Migrating,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/multi-zones.md,How to build micro-frontends using multi-zones and Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/open-telemetry.md,How to instrument your Next.js app with OpenTelemetry,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/package-bundling.md,How to optimize package bundling,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/post-css.md,How to configure PostCSS in Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/preview-mode.md,How to preview content with Preview Mode in Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/production-checklist.md,How to optimize your Next.js application for production,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/redirecting.md,How to handle redirects in Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/sass.md,How to use Sass in Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/scripts.md,How to load and optimize scripts,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/self-hosting.md,How to self-host your Next.js application,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/static-exports.md,How to create a static export of your Next.js application,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/tailwind-v3-css.md,Tailwind CSS,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/testing/cypress.md,How to set up Cypress with Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/testing/index.md,Testing,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/testing/jest.md,How to set up Jest with Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/testing/playwright.md,How to set up Playwright with Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/testing/vitest.md,How to set up Vitest with Next.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/third-party-libraries.md,How to optimize third-party libraries,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/upgrading/codemods.md,Codemods,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/upgrading/index.md,Upgrading,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/upgrading/version-10.md,How to upgrade to version 10,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/upgrading/version-11.md,How to upgrade to version 11,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/upgrading/version-12.md,How to upgrade to version 12,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/upgrading/version-13.md,How to upgrade to version 13,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/upgrading/version-14.md,How to upgrade to version 14,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/upgrading/version-15.md,How to upgrade to version 15,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/upgrading/version-16.md,How to upgrade to version 16,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/02-guides/upgrading/version-9.md,How to upgrade to version 9,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/01-routing/01-pages-and-layouts.md,Pages and Layouts,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/01-routing/02-dynamic-routes.md,Dynamic Routes,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/01-routing/03-linking-and-navigating.md,Linking and Navigating,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/01-routing/05-custom-app.md,Custom App,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/01-routing/06-custom-document.md,Custom Document,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/01-routing/07-api-routes.md,API Routes,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/01-routing/08-custom-error.md,Custom Errors,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/01-routing/index.md,Routing,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/02-rendering/01-server-side-rendering.md,Server-side Rendering (SSR),TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/02-rendering/02-static-site-generation.md,Static Site Generation (SSG),TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/02-rendering/04-automatic-static-optimization.md,Automatic Static Optimization,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/02-rendering/05-client-side-rendering.md,Client-side Rendering (CSR),TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/02-rendering/index.md,Rendering,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/03-data-fetching/01-get-static-props.md,getStaticProps,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/03-data-fetching/02-get-static-paths.md,getStaticPaths,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/03-data-fetching/03-get-server-side-props.md,getServerSideProps,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/03-data-fetching/05-client-side.md,Client-side Fetching,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/03-data-fetching/index.md,Data Fetching,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/06-configuring/12-error-handling.md,Error Handling,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/06-configuring/index.md,Configuring,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/03-building-your-application/index.md,Building Your Application,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/01-components/font.md,Font Module,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/01-components/form.md,Form,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/01-components/head.md,Head,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/01-components/image-legacy.md,Image (Legacy),TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/01-components/image.md,Image,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/01-components/index.md,Components,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/01-components/link.md,Link,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/01-components/script.md,Script,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/02-file-conventions/index.md,File-system conventions,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/02-file-conventions/instrumentation.md,instrumentation.js,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/02-file-conventions/proxy.md,Proxy,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/02-file-conventions/public-folder.md,public Folder,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/02-file-conventions/src-folder.md,src Directory,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/catchError.md,catchError,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/get-initial-props.md,getInitialProps,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/get-server-side-props.md,getServerSideProps,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/get-static-paths.md,getStaticPaths,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/get-static-props.md,getStaticProps,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/index.md,Functions,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/next-request.md,NextRequest,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/next-response.md,NextResponse,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/use-params.md,useParams,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/use-report-web-vitals.md,useReportWebVitals,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/use-router.md,useRouter,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/use-search-params.md,useSearchParams,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/03-functions/userAgent.md,userAgent,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/adapterPath.md,adapterPath,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/allowedDevOrigins.md,allowedDevOrigins,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/assetPrefix.md,assetPrefix,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/basePath.md,basePath,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/bundlePagesRouterDependencies.md,bundlePagesRouterDependencies,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/compress.md,compress,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/crossOrigin.md,crossOrigin,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/deploymentId.md,deploymentId,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/devIndicators.md,devIndicators,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/distDir.md,distDir,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/enablePrerenderSourceMaps.md,enablePrerenderSourceMaps,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/env.md,env,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/exportPathMap.md,exportPathMap,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/generateBuildId.md,generateBuildId,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/generateEtags.md,generateEtags,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/headers.md,headers,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/httpAgentOptions.md,httpAgentOptions,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/images.md,images,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/index.md,next.config.js Options,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/logging.md,logging,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/onDemandEntries.md,onDemandEntries,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/optimizePackageImports.md,optimizePackageImports,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/output.md,output,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/pageExtensions.md,pageExtensions,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/poweredByHeader.md,poweredByHeader,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/productionBrowserSourceMaps.md,productionBrowserSourceMaps,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/proxyClientMaxBodySize.md,experimental.proxyClientMaxBodySize,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/reactStrictMode.md,reactStrictMode,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/redirects.md,redirects,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/rewrites.md,rewrites,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/serverExternalPackages.md,serverExternalPackages,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/skipProxyUrlNormalize.md,skipProxyUrlNormalize,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/skipTrailingSlashRedirect.md,skipTrailingSlashRedirect,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/trailingSlash.md,trailingSlash,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/transpilePackages.md,transpilePackages,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/turbopack.md,turbopack,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/turbopackChunking.md,turbopackChunking,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/typescript.md,typescript,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/urlImports.md,urlImports,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/useLightningcss.md,useLightningcss,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/useTypeScriptCli.md,useTypeScriptCli,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/webVitalsAttribution.md,webVitalsAttribution,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-next-config-js/webpack.md,Custom Webpack Config,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/01-typescript.md,TypeScript,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/02-eslint.md,ESLint,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/04-config/index.md,Configuration,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/05-cli/create-next-app.md,create-next-app CLI,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/05-cli/index.md,CLI,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/05-cli/next.md,next CLI,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/06-adapters/01-configuration.md,Configuration,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/06-adapters/02-creating-an-adapter.md,Creating an Adapter,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/06-adapters/03-api-reference.md,API Reference,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/06-adapters/04-testing-adapters.md,Testing Adapters,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/06-adapters/05-routing-with-next-routing.md,Routing with @next/routing,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/06-adapters/06-runtime-integration.md,Runtime Integration,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/06-adapters/07-invoking-entrypoints.md,Invoking Entrypoints,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/06-adapters/08-output-types.md,Output Types,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/06-adapters/09-routing-information.md,Routing Information,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/06-adapters/10-use-cases.md,Use Cases,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/06-adapters/index.md,Adapters,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/06-edge.md,Edge Runtime,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/08-turbopack.md,Turbopack,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/04-api-reference/index.md,API Reference,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+02-pages/index.md,Pages Router,TOOLING.md; CODING_STANDARDS.md,Alternative router; consult only for requested migration or maintenance
+03-architecture/accessibility.md,Accessibility,DESIGN.md; TESTING.md; .agents/rules/dom.md,Existing project guidance
+03-architecture/fast-refresh.md,Fast Refresh,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+03-architecture/index.md,Architecture,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+03-architecture/nextjs-compiler.md,Next.js Compiler,TOOLING.md; AGENTS.md,Existing tool/configuration owner; inspect actual configuration
+03-architecture/supported-browsers.md,Supported Browsers,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
+04-community/01-contribution-guide.md,Docs Contribution Guide,Upstream documentation,Upstream/community reference; no project rule needed
+04-community/02-rspack.md,Rspack Integration,Upstream documentation,Upstream/community reference; no project rule needed
+04-community/index.md,Next.js Community,Upstream documentation,Upstream/community reference; no project rule needed
+index.md,Next.js Docs,docs/agents/coverage.md; installed documentation index,Reference navigation; no implementation or API verification implied
