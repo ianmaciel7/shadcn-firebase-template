@@ -1,7 +1,8 @@
 ---
 name: project-verify
 description: Run the smallest repository verification tier that covers the current git diff and report failures with their owning command. Use when the user asks to verify, validate, or check changes before a commit or pull request.
-disable-model-invocation: true
+metadata:
+  disable-model-invocation: true
 ---
 
 # Verify the current diff
