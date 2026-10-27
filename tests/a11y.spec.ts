@@ -6,21 +6,28 @@ import { expect, test } from "@playwright/test";
 // of issues; keyboard and screen-reader behavior still need manual review.
 const standards = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
-for (const colorScheme of ["light", "dark"] as const) {
-  test.describe(`@a11y home page in ${colorScheme} mode`, () => {
-    test.use({ colorScheme });
+const viewports = [
+  { name: "desktop", viewport: { width: 1280, height: 800 } },
+  { name: "mobile", viewport: { width: 390, height: 844 } },
+];
 
-    test("has no automatically detectable WCAG A/AA violations", async ({
-      page,
-    }) => {
-      await page.goto("/");
-      await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+for (const { name: viewportName, viewport } of viewports) {
+  for (const colorScheme of ["light", "dark"] as const) {
+    test.describe(`@a11y home page in ${colorScheme} mode (${viewportName})`, () => {
+      test.use({ colorScheme, viewport });
 
-      const results = await new AxeBuilder({ page })
-        .withTags(standards)
-        .analyze();
+      test("has no automatically detectable WCAG A/AA violations", async ({
+        page,
+      }) => {
+        await page.goto("/");
+        await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 
-      expect(results.violations).toEqual([]);
+        const results = await new AxeBuilder({ page })
+          .withTags(standards)
+          .analyze();
+
+        expect(results.violations).toEqual([]);
+      });
     });
-  });
+  }
 }

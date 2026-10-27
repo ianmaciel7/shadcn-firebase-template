@@ -4,13 +4,18 @@
     "src/components/**/*.{ts,tsx}",
     "src/hooks/**/*.{ts,tsx}",
     "src/lib/**/*.{ts,tsx}",
-    "src/i18n/**/*.ts"
+    "src/i18n/**/*.ts",
+    "src/app/**/_hooks/**/*.{ts,tsx}",
+    "src/app/**/_lib/**/*.{ts,tsx}"
   ],
-  "ignorePatterns": [".ladle/**"],
+  "ignorePatterns": [".ladle/**", ".biome/**"],
   "health": {
     "ignore": [
       "src/components/ai-elements/**",
-      "src/components/ui/*.tsx",
+      "src/components/firebase/**",
+      "src/components/ui/**/*.tsx",
+      "scripts/emulator/seed.mjs",
+      "scripts/emulator/clear.mjs",
       "**/*.stories.tsx"
     ]
   }

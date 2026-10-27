@@ -93,6 +93,10 @@ Key architectural choices:
     - Disables Biome formatter and import assist (`formatter.enabled: false`, `assist.enabled: false`) for vendored components to prevent churn during registry updates.
     - Excludes custom application extensions (`!src/components/ui/extensions/**`) from these overrides, ensuring project-owned code maintains full strict linting and formatting.
 
+12. **Consolidated Shared Component Placement (`src/components/ui/extensions/`)**:
+    - Shared application components (such as `LabeledSpinner`, `RouteLoading`, `ThemeProviderClient`, `IntlProviderServer`, `AuthProviderClient`, and `FirebaseAuthSessionBridgeClient`) reside in `src/components/ui/extensions/`, while route-private components stay in `src/app/**/_components/`. Do not create parallel top-level application component folders under `src/components/` (such as `src/components/loading/`).
+    - `pnpm check:components` rejects JavaScript and TypeScript files (including colocated tests and barrel files) under `src/components/` outside the `ui`, `firebase`, and `ai-elements` registry trees. Registry-source exclusions from application conventions remain unchanged.
+
 ## Consequences
 
 - **Positive**:
@@ -102,6 +106,7 @@ Key architectural choices:
   - Global tooltip coordination ready out-of-the-box via root `<TooltipProvider>`.
   - Seamless coexistence between strict Biome standards and upstream component registries through targeted `biome.json` overrides.
   - Comprehensive generative UI capabilities backed by 15 AI SDK Elements dependencies and Base UI primitives.
+  - Application-owned shared components share one reusable boundary (`src/components/ui/extensions/`), while route-specific UI stays local and `check:components` enforces placement in fast and static CI checks.
 - **Negative / Trade-offs**:
   - Vendored components in `src/components/ui/` and `src/components/ai-elements/` require manual maintenance when upstream registries release updates.
   - AI SDK Elements introduce 15 specialized dependencies that must be tracked for security and compatibility.

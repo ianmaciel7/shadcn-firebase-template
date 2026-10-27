@@ -1,9 +1,11 @@
+import { fileURLToPath } from "node:url";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     tsconfigPaths: true,
   },
@@ -23,6 +25,7 @@ export default defineConfig({
       exclude: [
         "src/**/*.{test,browser.test,stories}.{ts,tsx}",
         "src/components/ai-elements/**",
+        "src/components/firebase/**",
         "src/components/ui/*.tsx",
         "src/types/**",
       ],
@@ -31,8 +34,22 @@ export default defineConfig({
       {
         test: {
           name: "unit",
+          // Match the server graph's marker resolution only in unit tests.
+          alias: {
+            "server-only": fileURLToPath(
+              new URL(
+                "./node_modules/next/dist/compiled/server-only/empty.js",
+                import.meta.url,
+              ),
+            ),
+          },
           environment: "jsdom",
-          include: ["src/**/*.test.{ts,tsx}", ".biome/**/*.test.ts"],
+          testTimeout: 30000,
+          include: [
+            "src/**/*.test.{ts,tsx}",
+            ".biome/**/*.test.ts",
+            ".ast-grep/**/*.test.ts",
+          ],
           exclude: ["src/**/*.browser.test.{ts,tsx}"],
         },
       },
@@ -40,6 +57,10 @@ export default defineConfig({
         test: {
           name: "browser",
           include: ["src/**/*.browser.test.{ts,tsx}"],
+          api: {
+            host: "127.0.0.1",
+            port: 62315,
+          },
           browser: {
             enabled: true,
             provider: playwright(),
