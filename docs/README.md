@@ -14,20 +14,20 @@ language, as defined in `.agents/rules/rules.md#7-language-policy`.
 | [Coding standards](../CODING_STANDARDS.md) | Source and test conventions | Biome, TypeScript, accepted decisions |
 | [Tooling](../TOOLING.md) | Tools, commands, configuration ownership | `package.json`, configuration, workflows |
 | [Testing](../TESTING.md) | Test layers, required Firebase Emulator E2E, CI limitations | Vitest, Playwright, Firebase, Stryker, workflows |
-| [Quality](quality.md) | Which tool owns each rule, coverage limits, regressions | Biome, ast-grep, TypeScript AST, Playwright, CI |
 | [Contributing](../CONTRIBUTING.md) | Branch, commit, and PR conventions | Commitlint, hooks, CI |
 | [Security](../SECURITY.md) | Reporting policy and accepted dependency risk | Audit configuration and security workflow |
 | [Glossary](../GLOSSARY.md) | Agreed product vocabulary; currently pending | Adopted product terminology |
 | [Entity-relationship diagram](../DER.md) | Pending product model and existing technical Firebase stores | Current SDK modules, Security Rules, and adopted domain constraints |
 | [Agent instructions](../AGENTS.md) | Repository-wide contributor guidance | Current guides and agent configuration |
-| [React reference](agents/react.md) | Official content inventory, runtime error catalog, applicability review, and all 20 supplied topics with 15 examples | Installed React/DOM/Compiler, official source revision, and lint config |
-| [Next.js reference](agents/nextjs.md) | Complete stable/current docs and error-message inventory, compatibility, and lookup workflow | Official source revisions, installed Next.js, current config |
-| [shadcn/ui reference](agents/shadcn.md) | Official documentation coverage, source inventory, and lookup workflow | Official source revision and current local configuration |
+| [React rules](../.agents/rules/rules.md#9-react-core-hooks-component-primitives-and-core-apis) | Implementation, review, and Compiler guidance across 20 topics | Installed React/DOM/Compiler, native Biome diagnostics |
+| [Next.js rules](../.agents/rules/rules.md#8-nextjs-maintenance) | Installed version-matched App Router and diagnostic rules | Installed Next.js, Context7, current config |
+| [shadcn/ui rules](../.agents/rules/rules.md#14-shadcnui-maintenance) | Base UI boundaries, component contracts, composition | Installed CLI, current component registry |
 
 ## Application operations
 
-- [Observability](observability.md): Next.js server errors, authenticated Firebase usage
-  events, Cloud Logging queries, and deployment requirements.
+- Observability and runtime logging: structured Firebase usage events, server error
+  boundaries, and deployment requirements are detailed in [Architecture](../ARCHITECTURE.md)
+  and verified in `functions/usage-logs.test.cjs`.
 
 ## Review snapshots
 
@@ -52,14 +52,14 @@ language, as defined in `.agents/rules/rules.md#7-language-policy`.
   rather than application configuration.
 - [Domain workflow](agents/domain.md) and
   [issue tracker](agents/issue-tracker.md): repository-specific skill context.
-- [Agent evaluations](agents/evals.md): scenarios and scoring rubric for
-  outcome, scope, safety, evidence, efficiency, and tool selection.
+- Tool evaluations: regression scenarios and assertions are exercised via
+  `scripts/evals/run-tool-usage-evals.test.mjs` (`pnpm test:evals`).
 
 ## Updating documentation
 
 Update the guide that owns a changed practice in the same change as its
 implementation. When changing an architectural rule, update
-[quality](quality.md), the executable fixtures, the
+[Testing](../TESTING.md), the executable fixtures, the
 [tool inventory](../TOOLING.md), and the relevant agent rule in the same PR.
 Never document planned behavior as a passing CI check. Check cross-references when renaming paths, adding scripts,
 changing locale behavior, or upgrading tools. Preserve accepted ADRs without

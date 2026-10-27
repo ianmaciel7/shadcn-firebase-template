@@ -27,8 +27,8 @@ The repository contains nine skills: `ask-matt`, `context7-cli`,
 Persistent rules are consolidated in [rules/rules.md](rules/rules.md), covering language,
 ADR history, component contracts, component composition, compound forms,
 data modules, route entrypoints, Next.js maintenance, React implementation,
-shadcn/ui maintenance, and Serena external-research memory. The
-[shadcn/ui reference](../docs/agents/shadcn.md) records upstream coverage.
+shadcn/ui maintenance, and Serena external-research memory. Section 14 of
+[rules/rules.md](rules/rules.md#14-shadcnui-maintenance) records upstream coverage and Base UI boundaries.
 
 ## Source and local files
 
@@ -57,7 +57,7 @@ selected integrations and sync mode determine the materialized outputs; use
 `agents status` instead of assuming every supported output exists.
 
 The [Next.js maintenance rule](rules/rules.md#8-nextjs-maintenance) connects the version-matched
-installed docs to the [complete source review](../docs/agents/nextjs.md).
+installed docs in `node_modules/next/dist/docs/` to the consolidated rules.
 Use that reference for App Router, Cache Components, and framework diagnostic
 ownership; existing route and component rules retain their stricter scope.
 

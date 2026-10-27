@@ -34,7 +34,7 @@ Each section preserves the original guardrails, conventions, and architectural b
   - Kept concise and machine-actionable to conserve prompt context.
 - **`docs/` (Human and domain documentation & system operations)**:
   - Contains **descriptive reference documentation, operational guides, and history**.
-  - Maps system architecture ([`docs/README.md`](../../docs/README.md)), verification ownership ([`docs/quality.md`](../../docs/quality.md)), operational services ([`docs/observability.md`](../../docs/observability.md)), immutable decisions ([`docs/adr/`](../../docs/adr/)), upstream inventories ([`docs/agents/`](../../docs/agents/)), and review snapshots ([`docs/reviews/`](../../docs/reviews/)).
+  - Maps system architecture ([`docs/README.md`](../../docs/README.md)), verification ownership ([`TESTING.md`](../../TESTING.md)), tooling configuration ([`TOOLING.md`](../../TOOLING.md)), immutable decisions ([`docs/adr/`](../../docs/adr/)), skill tracker configuration ([`docs/agents/`](../../docs/agents/)), and historical review snapshots ([`docs/code-review/`](../../docs/code-review/)).
   - Intended for human engineers, onboarding, production operations, and authoritative reference.
 
 ### Rule Catalog
