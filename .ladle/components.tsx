@@ -1,6 +1,6 @@
 import type { GlobalProvider } from "@ladle/react";
 import { NextIntlClientProvider } from "next-intl";
-import { ThemeProvider } from "@/components/ui/extensions/theme-provider";
+import { ThemeProviderClient } from "@/components/ui/extensions/theme-provider-client";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import messages from "@/messages/en.json";
 import "./ladle.css";
@@ -9,7 +9,7 @@ import "./ladle.css";
 // drives next-themes so the `.dark` class matches what the application uses.
 export const Provider: GlobalProvider = ({ children, globalState }) => (
   <NextIntlClientProvider locale="en" messages={messages}>
-    <ThemeProvider
+    <ThemeProviderClient
       attribute="class"
       defaultTheme="system"
       enableSystem
@@ -21,6 +21,6 @@ export const Provider: GlobalProvider = ({ children, globalState }) => (
           {children}
         </div>
       </TooltipProvider>
-    </ThemeProvider>
+    </ThemeProviderClient>
   </NextIntlClientProvider>
 );

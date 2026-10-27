@@ -75,6 +75,11 @@ Key architectural choices and core platform requirements:
 4. **Linting and Formatting**:
    - Biome replaces ESLint and Prettier for unified, sub-second linting and formatting.
 
+5. **Server Request Error Instrumentation (`src/instrumentation.ts`)**:
+   - Use Next.js native `onRequestError` instrumentation hook in `src/instrumentation.ts` to emit structured JSON on `stderr` when Next.js captures a server request error.
+   - Include `ERROR` severity, a stable event name (`next_request_error`), framework route metadata (route template, route type, router kind), and a numeric error digest when available.
+   - Exclude raw error messages, stacks, request headers, URLs, cookies, and bodies from the custom entry. Expected framework navigation control flow (`redirect()`, `notFound()`) is excluded by Next.js.
+
 ## Consequences
 
 - **Positive**:
@@ -84,14 +89,18 @@ Key architectural choices and core platform requirements:
   - Automatic component render optimization via the React Compiler without manual hook boilerplate.
   - Seamless internationalization compilation hook via `withNextIntl`.
   - Guaranteed engine consistency across development and CI using pinned `pnpm@12.11.2` and Node `^22.19.0 || ^24.5.0`.
+  - Cloud Run can collect structured `stderr` request error entries into Cloud Logging without an extra logging SDK or credentials, keeping provider-level request logs, application server errors, and authenticated Firebase usage events as distinct event sources.
 - **Negative / Trade-offs**:
   - Type checking requires running `next typegen` before `tsc --noEmit` to ensure generated type definitions exist.
   - Some third-party ESLint plugins lack direct Biome equivalents (mitigated by custom GritQL plugins and Semgrep).
   - React Compiler requires strictly adhering to the Rules of React without mutable workarounds.
+  - Non-Cloud Run hosts require log forwarding to Cloud Logging; the `onRequestError` hook does not replace Next.js diagnostic output, catch arbitrary background failures or browser errors, or guarantee durable log ingestion, and no host, IAM policy, retention policy, or exporter is provisioned by this template.
 
 ## References
 
 - [next.config.ts](../../next.config.ts)
 - [package.json](../../package.json)
+- [src/instrumentation.ts](../../src/instrumentation.ts)
+- [docs/logging.md](../logging.md)
 - [ADR 0004: Configure Internationalization](0004-configure-internationalization.md)
 - [ADR 0005: Document Project Standards](0005-document-project-standards.md)

@@ -1,9 +1,13 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
-import { IntlProvider } from "@/components/ui/extensions/intl-provider";
-import { ThemeProvider } from "@/components/ui/extensions/theme-provider";
+import { FirebaseAuthSessionBridgeClient } from "@/components/ui/extensions/firebase-auth-session-bridge-client";
+import { IntlDocumentServer } from "@/components/ui/extensions/intl-document-server";
+import { IntlProviderServer } from "@/components/ui/extensions/intl-provider-server";
+import { ThemeProviderClient } from "@/components/ui/extensions/theme-provider-client";
+import { Spinner } from "@/components/ui/spinner";
+import { Toaster } from "@/components/ui/toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import "./globals.css";
 
@@ -17,6 +21,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "white" },
+    { media: "(prefers-color-scheme: dark)", color: "black" },
+  ],
+  width: "device-width",
+  initialScale: 1,
+};
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Metadata");
 
@@ -27,26 +40,34 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  const fontClassName = `${geist.variable} ${geistMono.variable} h-full antialiased`;
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${geist.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
-        <Suspense fallback={null}>
-          <IntlProvider>
-            <ThemeProvider
+    <Suspense fallback={null}>
+      <IntlDocumentServer className={fontClassName}>
+        <Suspense
+          fallback={
+            <div className="flex min-h-svh items-center justify-center">
+              <Spinner
+                className="size-8 text-muted-foreground"
+                aria-hidden="true"
+              />
+            </div>
+          }
+        >
+          <IntlProviderServer>
+            <FirebaseAuthSessionBridgeClient />
+            <ThemeProviderClient
               attribute="class"
               defaultTheme="system"
               enableSystem
               disableTransitionOnChange
             >
               <TooltipProvider>{children}</TooltipProvider>
-            </ThemeProvider>
-          </IntlProvider>
+              <Toaster />
+            </ThemeProviderClient>
+          </IntlProviderServer>
         </Suspense>
-      </body>
-    </html>
+      </IntlDocumentServer>
+    </Suspense>
   );
 }

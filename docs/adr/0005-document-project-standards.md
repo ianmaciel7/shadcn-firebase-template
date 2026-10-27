@@ -86,10 +86,63 @@ documentation entrypoints, except for the domain records described below:
    and cataloging design system primitives and UI extensions through colocated
    `*.stories.tsx` files, completely independent of the Next.js App Router
    runtime.
+14. **Cross-route vs. route-private code placement**:
+   - Following the Next.js project-structure strategy of splitting by feature or
+     route, underscore-prefixed private folders (`_components`, `_hooks`, `_lib`)
+     colocate non-routable code strictly with the route segment or route group
+     that owns it (for example, home-page modules in `src/app/_components/` and
+     `src/app/_hooks/`).
+   - Code consumed by more than one route tree is placed outside `src/app/` in
+     the canonical shared directories: shared components in
+     `src/components/ui/extensions/` (per [ADR 0002](0002-configure-shadcn-ui.md)),
+     shared hooks in `src/hooks/`, and non-UI helpers in `src/lib/` (such as
+     `RouteLoading`, `AuthProviderClient`, `FirebaseAuthSessionBridgeClient`,
+     their orchestration hooks, and `src/lib/locale.ts`).
+   - Layouts and `loading.tsx` files import shared modules through `@/` aliases
+     rather than reaching into `src/app/_*`.
+   - `pnpm check:components` and the `no-module-support-in-hooks` ast-grep rules
+     enforce hook conventions across both `src/app/**/_hooks/` and `src/hooks/`
+     (excluding the shadcn-registry `src/hooks/use-mobile.ts`).
+15. **Owned component integration suffixes and exact export naming**:
+   - Application-owned components in `src/components/ui/extensions/` and
+     `src/app/**/_components/` use filename suffixes based on integration
+     responsibility rather than raw React runtime directives (evolving from and
+     superseding an earlier runtime-suffix-for-all-client-components rule and an
+     earlier suffix-free semantic export rule):
+     - Reserve `-client.tsx` (declaring `"use client"`) for browser integrations
+       (e.g., session, persistence, navigation, browser file/URL APIs, theme),
+       including integration work delegated to local hooks or helpers.
+     - Reserve `-server.tsx` (importing `"server-only"`) for server integrations.
+     - Keep presentation components without a runtime suffix, including interactive
+       UI and form-context presentation (such as profile fields and save-state
+       buttons) that use state, events, or `useFormContext` and therefore declare
+       `"use client"`, as well as shared presentation compatible with either graph
+       (such as `LabeledSpinner`). Composing an integration child does not make the
+       parent an integration, and `fetch` alone does not determine the execution
+       environment. The convention combines Container/Presentational separation
+       with React module boundaries.
+   - Owned component exports, their `<ComponentName>Props` types, and their
+     component-named orchestration hooks (`use<ComponentName>`) must match the
+     complete filename stem 1:1, including `Client` or `Server` on integration
+     modules (for example, `home-section-client.tsx` exports `HomeSectionClient`,
+     `HomeSectionClientProps`, and uses `useHomeSectionClient`;
+     `profile-form-client.tsx` exports `ProfileFormClient` with compound parts
+     sharing the same root). Colocated tests and stories use the full filename
+     stem.
+   - Private hook modules in `src/app/**/_hooks/` and shared hooks in `src/hooks/`
+     enforce exact file and export name parity. Native presentation hooks (`useId`,
+     `useTranslations`, `useFormContext`, `useWatch`) may be composed directly in
+     components without custom wrapper hooks.
+   - `pnpm check:components` enforces component placement, conservative static
+     integration-evidence tracing through local `.ts` helpers, boundary directives,
+     composition contracts, and exact filename-stem term parity (`checkStemComponentTermParity`)
+     in `verify:fast` and `verify:static`. Framework-mandated route files and
+     registry output (`src/components/ui/`, `src/components/firebase/`,
+     `src/components/ai-elements/`) retain their exclusions.
 
 Lasting architectural choices continue to be recorded as sequential ADRs in
 `docs/adr/`. Future ADRs follow the filename and title convention in
-`.agents/rules/adr-naming.md`. Accepted ADRs remain immutable: a changed
+`.agents/rules/adr-conventions.md`. Accepted ADRs remain immutable: a changed
 decision is captured in a new record that supersedes the earlier one, rather
 than by renaming, renumbering, or rewriting it.
 

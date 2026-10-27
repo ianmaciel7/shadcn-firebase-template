@@ -22,7 +22,8 @@
       "!.agents",
       "!.claude",
       "!.serena",
-      "!tests/semgrep",
+      "!.semgrep",
+      "!src/components/firebase",
       "!public/*.svg"
     ]
   },
@@ -39,6 +40,14 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": {
+            "maxAllowedComplexity": 15
+          }
+        }
+      },
       "suspicious": {
         "noReactForwardRef": "error"
       },
@@ -69,9 +78,14 @@
       "includes": [
         "src/components/ai-elements/**",
         "src/components/ui/**",
-        "!src/components/ui/extensions/**",
-        "src/lib/highlighter.tsx"
+        "!src/components/ui/extensions/**"
       ],
+      "formatter": {
+        "enabled": false
+      },
+      "assist": {
+        "enabled": false
+      },
       "linter": {
         "rules": {
           "a11y": {
@@ -97,6 +111,9 @@
             "useExhaustiveDependencies": "off",
             "noUnusedImports": "off"
           },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
+          },
           "performance": {
             "noImgElement": "off"
           },
@@ -107,19 +124,6 @@
             "useExportsLast": "error"
           }
         }
-      }
-    },
-    {
-      "includes": [
-        "src/components/ai-elements/**",
-        "src/components/ui/**",
-        "!src/components/ui/extensions/**"
-      ],
-      "formatter": {
-        "enabled": false
-      },
-      "assist": {
-        "enabled": false
       }
     },
     {
@@ -135,6 +139,112 @@
           "style": {
             "noDefaultExport": "off",
             "useExportsLast": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "src/app/**",
+        "src/components/**",
+        "src/hooks/**",
+        "!src/components/ui/*.tsx",
+        "!src/components/ai-elements/**",
+        "!src/components/firebase/**"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "next/router": "Use next/navigation in App Router code.",
+                  "next/head": "Use the App Router Metadata API.",
+                  "next/document": "Use the App Router root layout.",
+                  "next/app": "Use App Router layouts and providers."
+                }
+              }
+            }
+          },
+          "correctness": {
+            "noNestedComponentDefinitions": "error",
+            "noReactPropAssignments": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "src/app/**/page.tsx",
+        "src/app/**/layout.tsx",
+        "src/app/**/template.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "next/router": "Use next/navigation in App Router code.",
+                  "next/head": "Use the App Router Metadata API.",
+                  "next/document": "Use the App Router root layout.",
+                  "next/app": "Use App Router layouts and providers.",
+                  "firebase": "Route entrypoints must access Firebase through a data layer.",
+                  "firebase-admin": "Route entrypoints must access Firebase through a data layer.",
+                  "@/lib/firebase/client": "Use a server data module or a dedicated client component."
+                },
+                "patterns": [
+                  {
+                    "group": ["firebase/*", "firebase-admin/*"],
+                    "message": "Route entrypoints must access Firebase through a data layer."
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "src/**",
+        "!src/components/ai-elements/**",
+        "!src/components/firebase/**",
+        "!src/components/ui/*.tsx",
+        "!src/**/*.test.ts",
+        "!src/**/*.test.tsx",
+        "!src/**/*.spec.ts",
+        "!src/**/*.spec.tsx",
+        "!src/**/*.stories.ts",
+        "!src/**/*.stories.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": {
+              "level": "error",
+              "options": {
+                "maxAllowedComplexity": 8
+              }
+            },
+            "noExcessiveLinesPerFunction": {
+              "level": "error",
+              "options": {
+                "maxLines": 40,
+                "skipBlankLines": true,
+                "skipIifes": false
+              }
+            }
+          },
+          "nursery": {
+            "noExcessiveNestedCallbacks": {
+              "level": "error",
+              "options": {
+                "max": 2
+              }
+            }
           }
         }
       }

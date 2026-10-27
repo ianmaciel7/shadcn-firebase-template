@@ -35,7 +35,15 @@ test.describe("home page smoke tests", () => {
       const response = await page.goto("/");
       expect(response?.ok()).toBe(true);
       await expect(page.locator("main")).toBeVisible();
+      await expect(page.locator("html")).toHaveAttribute("lang", locale);
       await expect(page).toHaveTitle(project.name);
+      // Verify the original server HTML, not a client-side attribute patch.
+      const initialResponse = await context.request.get("/");
+      expect(initialResponse.ok()).toBe(true);
+      const initialHtml = await initialResponse.text();
+      expect(initialHtml.match(/<html[^>]*\slang="([^"]+)"/)?.[1]).toBe(locale);
+      const htmlTagCount = [...initialHtml.matchAll(/<html\b[^>]*>/g)].length;
+      expect(htmlTagCount).toBe(1);
     });
   }
 
