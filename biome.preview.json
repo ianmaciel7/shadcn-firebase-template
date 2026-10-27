@@ -6,7 +6,7 @@
       "includes": [
         "src/app/**/_components/**/*.tsx",
         "src/components/ui/extensions/**/*.tsx",
-        "tests/biome-preview/fixtures/**/*.tsx"
+        ".biome/plugins/fixtures/**/*.tsx"
       ]
     }
   ],
