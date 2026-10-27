@@ -591,14 +591,13 @@ project and removes automatic upstream CSS updates.
 
 No shadcn MCP server or custom registry publisher is configured. The only
 explicit additional registry is `@firebase`. See
-[the source review](docs/agents/shadcn.md) for the full upstream inventory and
+[.agents/skills/shadcn/SKILL.md](.agents/skills/shadcn/SKILL.md) for the full upstream guidance and
 [the persistent rule](.agents/rules/rules.md#14-shadcnui-maintenance) for the project workflow.
 
 ## Next.js documentation and CLI workflow
 
 `package.json` pins Next.js 16.4.2. The
-[complete source inventory](docs/agents/nextjs-sources.json) records the official
-stable and current documentation revisions, including `errors/` messages.
+[Next.js maintenance rule](.agents/rules/rules.md#8-nextjs-maintenance) governs framework guidance.
 The installed `node_modules/next/dist/docs/` bundle contains version-matched
 Markdown generated from upstream MDX; its filenames and bytes can differ from
 the repository sources. Do not compare generated `.md` bodies with source
@@ -660,16 +659,13 @@ The Pages Router import restriction includes owned `src/app`, `src/components`,
 their existing exclusions. It uses a native rule with project configuration;
 no new custom parser or framework diagnostic is introduced.
 
-CSpell excludes the generated `docs/agents/nextjs-sources.json` evidence file,
-whose upstream paths include historical API spellings and error identifiers.
 The explanatory Next.js reference and canonical Markdown guides remain checked.
 
 ## React documentation and diagnostic workflow
 
 `package.json` pins React and React DOM 19.3.1 and React Compiler 1.0.0.
-The [official-source review](docs/agents/react.md) and
-[complete source inventory](docs/agents/react-sources.json) record the exact
-React documentation revision, current release, and runtime error catalog.
+The [React rules](.agents/rules/rules.md#9-react-core-hooks-component-primitives-and-core-apis)
+record the exact React APIs, component contracts, and runtime catalog.
 Documentation is maintained within a major version, so a live page is not
 proof that its newest API exists in every React 19 installation.
 

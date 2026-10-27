@@ -46,6 +46,7 @@ Use this matrix to identify the canonical destination file for any given piece o
 | **Persistent agent rules** | Standalone, machine-actionable behavioral constraints for AI agents (e.g., naming, language, thin routes, components) | `.agents/rules/rules.md` | **Update** |
 | **Reusable agent skills** | Multi-step interactive agent workflows, tool guides, reusable recipes | `.agents/skills/<name>/SKILL.md` | **Create** |
 | **Architecture Decision Records (ADRs)** | Architectural choices, trade-offs, tech evaluations, paradigm changes | `docs/adr/NNNN-<phrase>.md` | **Create** (Immutable) |
+| **External research results, upstream API/doc lookup caches, transient exploratory findings** | Operational research cache; keeps canonical Markdown repository documentation focused on stable, agreed-upon standards. | Serena Memory (`write_memory`) under `research/*` | **Write / Cache** |
 | **Retro: Navigation pointers** | Navigation aids to eliminate exploration friction surfaced in `/retro` | `AGENTS.md` (or domain index docs) | **Update** |
 | **Retro: Mechanical safeguards** | Deterministic checks for mechanical errors caught during `/retro` | `TOOLING.md` (## Custom rule registry / Commands) | **Update** |
 | **Retro: Reviewer standards** | Review-time heuristics and judgement rules for the reviewer agent (`code-review`) | `CODING_STANDARDS.md` | **Update** |
@@ -156,11 +157,15 @@ Run the new check against the whole repository before wiring it in. If it alread
 Before persisting a rule, convention, or architectural decision, verify whether the rule reflects current repository code and upstream library reality. Use the following specialized tools:
 
 ### 1. Serena (Semantic Symbol Analysis MCP)
-Serena provides project-local semantic symbol indexing and code navigation. Use it to inspect codebase symbols, verify whether conventions or patterns are already in use, locate relevant components, and validate symbols before saving rules or standards:
-- `find_symbol`: Verify whether an interface, class, component, or helper function already exists in `src/` (e.g., checking if `ButtonProps` or `ThemeToggle` follows the proposed naming convention).
-- `get_symbols_overview`: Inspect the top-level symbols of a file or module before drafting coding standards for that file type.
-- `find_referencing_symbols`: Determine how widely a symbol or convention is used across the codebase before establishing a deprecation or replacement rule.
-- `find_implementations`: Discover all implementations of a base interface or type (e.g., exploring existing layout props or route handlers).
+Serena provides project-local semantic symbol indexing, code navigation, and project-scoped research memory caching. Use it to inspect codebase symbols, verify whether conventions or patterns are already in use, locate relevant components, and manage research caches before saving rules or standards:
+- **Code symbol navigation**:
+  - `find_symbol`: Verify whether an interface, class, component, or helper function already exists in `src/` (e.g., checking if `ButtonProps` or `ThemeToggle` follows the proposed naming convention).
+  - `get_symbols_overview`: Inspect the top-level symbols of a file or module before drafting coding standards for that file type.
+  - `find_referencing_symbols`: Determine how widely a symbol or convention is used across the codebase before establishing a deprecation or replacement rule.
+  - `find_implementations`: Discover all implementations of a base interface or type (e.g., exploring existing layout props or route handlers).
+- **Project-scoped research memory caching**:
+  - `read_memory` / `list_memories`: Retrieve and inspect existing operational research caches under `research/*` before issuing redundant external queries or saving duplicate rules.
+  - `write_memory` / `edit_memory`: Cache upstream API lookups, compatibility notes, and transient research scratchpads without cluttering canonical Markdown documents.
 
 ### 2. Context7 (`context7-cli`)
 When the user's rule touches external dependencies or framework capabilities (Next.js 16, React 19, Tailwind CSS v4, shadcn/ui, `next-intl`), check authoritative upstream documentation instead of relying on outdated training data:

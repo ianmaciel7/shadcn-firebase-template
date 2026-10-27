@@ -261,7 +261,7 @@ The October 2026 upstream AI Elements patterns build on `Trace`, `CodeBlock`,
 `MessageScroller`, `Message`, `Bubble`, `Marker`, and `Attachment`. Existing
 copied AI Elements remain local source; the presence of these primitives does
 not prove every older wrapper was migrated. Audit exports and behavior before
-planning a migration. See [the official source review](docs/agents/shadcn.md).
+planning a migration. See [the shadcn/ui rules](.agents/rules/rules.md#14-shadcnui-maintenance).
 
 ## Review boundaries
 
@@ -288,7 +288,7 @@ Navigation can preserve component state with Cache Components. Review retained
 form values, dialogs, pending indicators, and effect cleanup across navigation
 and back/forward. Runtime rules and cache choices are owned by
 [Coding standards](CODING_STANDARDS.md#nextjs-request-data-and-caching); the
-[upstream review](docs/agents/nextjs.md) records the matching official guides.
+[Next.js maintenance rule](.agents/rules/rules.md#8-nextjs-maintenance) records the matching official guides.
 
 ## React identity, refs, and lifecycle presentation
 

@@ -62,8 +62,6 @@ Use that reference for App Router, Cache Components, and framework diagnostic
 ownership; existing route and component rules retain their stricter scope.
 
 The [React maintenance rules](rules/rules.md#9-react-core-hooks-component-primitives-and-core-apis) link current official sources to
-installed runtime/Compiler support and canonical guidance. The
-[React review](../docs/agents/react.md) records complete content coverage and
-the separate versioned error catalog. Its detailed reference preserves all
-20 user-supplied topics and 15 examples; the rule contains matching
-implementation/review guidance for each topic.
+installed runtime/Compiler support and canonical guidance. The rules contain
+implementation and review guidance covering all 20 topics across React Core,
+React DOM, and React Quality.

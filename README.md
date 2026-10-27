@@ -80,9 +80,7 @@ and the distinction between current guidance and historical decisions.
 - [Entity-relationship diagram](DER.md)
 - [Architecture decision records](docs/adr/README.md)
 - [Agent integrations and skills](.agents/README.md)
-- [shadcn/ui documentation workflow and source inventory](docs/agents/shadcn.md)
-- [Next.js documentation workflow and source inventory](docs/agents/nextjs.md)
-- [React documentation workflow and source inventory](docs/agents/react.md)
+- [Consolidated agent rules](.agents/rules/rules.md)
 
 ## Validation
 

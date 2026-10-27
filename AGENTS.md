@@ -117,8 +117,8 @@ the API of another primitive family. Current CLI commands belong in
 `TOOLING.md`; component contracts belong in `CODING_STANDARDS.md`; theme and
 composition details belong in `DESIGN.md`.
 
-`docs/agents/shadcn.md` records the official documentation review, complete
-source inventory, and applicability boundaries. Use the installed CLI and
+The installed `.agents/skills/shadcn/SKILL.md` skill and [.agents/rules/rules.md](.agents/rules/rules.md#14-shadcnui-maintenance)
+record official shadcn/ui guidance, component contracts, and Base UI boundaries. Use the installed CLI and
 current component documentation before changing copied source. Report
 unavailable network lookups or host tools without claiming they passed.
 
@@ -137,9 +137,8 @@ with regression cases for both boundary and directive-free modules.
 ## Next.js documentation workflow
 
 Before Next.js changes, read [.agents/rules/rules.md](.agents/rules/rules.md#8-nextjs-maintenance)
-and the relevant installed `node_modules/next/dist/docs/` guide. The complete
-[Next.js source review](docs/agents/nextjs.md) records the stable and current
-upstream revisions, including error guides. Match guidance to installed
+and the relevant installed `node_modules/next/dist/docs/` guide, consulting Context7 (`/vercel/next.js`)
+for verified upstream documentation. Match guidance to installed
 Next.js 16.4.2, App Router, Cache Components, and Partial Prefetching.
 
 Use native Next.js, TypeScript, and Biome diagnostics before adding custom
@@ -151,8 +150,7 @@ skills, hosting configuration, or migration to another rendering model.
 ## React documentation workflow
 
 For React changes, read [.agents/rules/rules.md](.agents/rules/rules.md)
-(sections 9–11 covering React Core, React DOM, and React Quality) and
-[the complete official-source review](docs/agents/react.md). Verify installed
+(sections 9–11 covering React Core, React DOM, and React Quality). Verify installed
 React/React DOM 19.3.1 and Compiler 1.0.0 support before adopting live examples.
 Keep React's rules distinct from stricter repository orchestration conventions.
 Use native Biome diagnostics, the existing guards, and appropriate lifecycle /
@@ -160,10 +158,8 @@ browser tests; do not claim coverage of every upstream ESLint or Compiler rule.
 Persist verified findings with the [save skill](.agents/skills/project-save/SKILL.md)
 in their canonical guide, preserving accepted ADRs and local changes.
 
-The [detailed React reference](docs/agents/react.md#user-supplied-react-1931-reference)
-preserves all 20 topics from the supplied catalog, including its 15 examples.
-The [React implementation and review rules](.agents/rules/rules.md#9-react-core-hooks-component-primitives-and-core-apis) cover the
-same 20 topics as actionable guidance. Consult both for hooks, components,
-React DOM rendering, forms, server boundaries, Compiler, lint, identity,
-legacy APIs, Fragment refs, experiments, version context, feature selection,
-and the implementation checklist.
+The [React implementation and review rules](.agents/rules/rules.md#9-react-core-hooks-component-primitives-and-core-apis)
+cover all 20 topics as actionable guidance: hooks, components, React DOM
+rendering, forms, server boundaries, Compiler, lint, identity, legacy APIs,
+Fragment refs, experiments, version context, feature selection, and the
+implementation checklist. Official documentation is indexed in section 19 of the rules.

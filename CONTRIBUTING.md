@@ -75,7 +75,7 @@ settings must be configured separately to enforce this policy.
 
 ## shadcn/ui documentation and source changes
 
-Use [the documentation workflow](docs/agents/shadcn.md) to identify the correct
+Use [the shadcn/ui rules](.agents/rules/rules.md#14-shadcnui-maintenance) to identify the correct
 primitive family and source revision. Keep upstream findings in their canonical
 guide, update the source inventory when refreshing the full reference, and
 distinguish official APIs from project-specific guards. Do not rewrite accepted
@@ -89,7 +89,7 @@ files or hunks.
 
 ## Next.js documentation and framework changes
 
-Use [the versioned Next.js review](docs/agents/nextjs.md) before changing
+Use [the Next.js maintenance rule](.agents/rules/rules.md#8-nextjs-maintenance) before changing
 routing, cache scopes, metadata, or server boundaries. Report the installed
 version and source revision, the applicable rendering model, and the checks
 actually run. Keep framework requirements distinct from repository policies.
@@ -102,7 +102,7 @@ focused change. Preserve accepted ADRs and unrelated working-tree changes.
 
 ## React documentation and runtime changes
 
-Use [the React source review](docs/agents/react.md) to distinguish current
+Use [the React rules](.agents/rules/rules.md#9-react-core-hooks-component-primitives-and-core-apis) to distinguish current
 reference material, installed React/React DOM APIs, Compiler support, and
 optional/experimental features. Document the source revision and actual
 verification when refreshing guidance or changing behavior.

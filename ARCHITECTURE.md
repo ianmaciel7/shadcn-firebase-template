@@ -211,7 +211,7 @@ files in `src/components/ui`, `src/components/ai-elements`, or
 The repository consumes registries; it does not publish a custom registry.
 Monorepo, package-import, React Aria, Radix, alternative form-library, and
 server-action examples in upstream documentation are available references,
-not adopted architecture. See [the upstream applicability map](docs/agents/shadcn.md).
+not adopted architecture. See [the shadcn/ui rules](.agents/rules/rules.md#14-shadcnui-maintenance).
 
 ## Compound APIs and runtime graphs
 
@@ -230,7 +230,7 @@ The installed Next.js 16.4.2 configuration explicitly enables both
 `cacheComponents` and `partialPrefetching`. The applicable model combines a
 prerendered shell, cached work, and request-time streamed content. Guidance for
 caching without Cache Components and Pages Router APIs remains migration
-reference material. See [the versioned review](docs/agents/nextjs.md).
+reference material. See [the Next.js maintenance rule](.agents/rules/rules.md#8-nextjs-maintenance).
 
 `src/i18n/request.ts` awaits `cookies()` to resolve request-specific messages.
 The async `IntlProvider` renders within the root layout's `Suspense` boundary;
@@ -275,7 +275,7 @@ cleanup may occur when content hides or is replaced, not only on permanent
 unmount; ownership must tolerate setup/cleanup/setup. Keep this independent of
 Server/Client import-graph membership and of compound-component anatomy.
 [Coding standards](CODING_STANDARDS.md#react-rendering-hooks-and-identity) own
-the behavioral rules; [the React review](docs/agents/react.md) records sources
+the behavioral rules; the [React rules](.agents/rules/rules.md#9-react-core-hooks-component-primitives-and-core-apis) record sources
 and stable/experimental boundaries.
 
 ## Owned component placement

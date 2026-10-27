@@ -1,6 +1,6 @@
 # Consolidated Agent Rules
 
-<!-- cspell:words preinit Pipeable unobserve Rects -->
+<!-- cspell:words preinit Pipeable unobserve Rects nativeButton -->
 
 This document consolidates all persistent agent rules from `.agents/rules/` into a single authoritative reference.
 Each section preserves the original guardrails, conventions, and architectural boundaries governing agent behavior across this repository.
@@ -227,6 +227,11 @@ Use `src/components/ui/card.tsx`, `button.tsx` and `field.tsx` as reference impl
   entire profile controller as a `profile` prop.
 - `FieldGroup`, `FieldSet`, `Field` and `Controller` are real primitives/API integrations; do not introduce arbitrary *Fields wrapper components solely for visual grouping.
 - The family-root and root-prefixed-part convention applies to every owned module, including Server and Client Components. The profile Card and Form retain exact-part guards on top of the general contract. Upstream shadcn/ui files also export related primitives together; generated registries remain unchanged.
+- **Base UI trigger composition**: Base UI uses `render` rather than Radix's `asChild` (e.g., `<DialogTrigger render={<Button />}>`). When replacing a trigger with a non-button element (`<a>`, `<span>`), provide `nativeButton={false}`. For standard navigation links, prefer semantic Next.js `<Link className={buttonVariants(...)}>` over `<Button render={<Link>}>` as established in [ADR 0002](../../docs/adr/0002-configure-shadcn-ui.md).
+- **Button loading and icon composition**: `Button` has no `isLoading` or `isPending` prop. Compose loading states with `<Spinner data-icon="inline-start" />` and `disabled`. Position icons with `data-icon="inline-start"` or `data-icon="inline-end"`. Never apply sizing utility classes (`size-4`, `w-4 h-4`) to icons inside buttons or primitives; components handle icon sizing via CSS (`[&_svg]:size-4`). Pass icons as component objects (`icon={CheckIcon}`), not string identifiers.
+- **Tailwind v4 layout and sizing rules**: Never use `space-x-*` or `space-y-*`; use `flex gap-*` or `flex flex-col gap-*`. Use `size-*` instead of `w-* h-*` when width and height are equal. Use `truncate` shorthand instead of manual `overflow-hidden text-ellipsis whitespace-nowrap`. Use semantic color tokens (`bg-background`, `text-muted-foreground`) without manual `dark:` overrides or raw palette colors (`text-emerald-600`). Overlay primitives (`Dialog`, `Sheet`, `Popover`) manage their own stacking; avoid manual `z-index`.
+- **Accessibility and containment**: `Dialog`, `Sheet`, `Drawer`, and `AlertDialog` always require a Title (`DialogTitle`, `SheetTitle`, `DrawerTitle`), visually hidden with `className="sr-only"` if unstyled. `Avatar` always requires `AvatarFallback`. Item primitives must stay inside their owning group (`SelectItem` in `SelectGroup`, `DropdownMenuItem` in `DropdownMenuGroup`, `CommandItem` in `CommandGroup`, `TabsTrigger` in `TabsList`).
+- **Chat and AI Elements**: Chat interfaces in `src/components/ai-elements/` compose `MessageScroller`, `Message`, and `Bubble`. `MessageScroller` owns scroll anchoring and streaming follow. Assistant activity and tool calls compose `TraceLine` items inside a `Trace`.
 
 The TypeScript AST guard checks literal Controller names against owned `*-field.tsx` filenames and prevents whole-controller `profile` props on the profile components listed above. These checks cannot judge all component responsibilities and do not inspect dynamic Controller names.
 
@@ -451,6 +456,8 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
   `ProfileFormClient` owns `FormProvider` and one native `<form>`;
   the form uses `--card-spacing` to preserve the Card layout.
 - UI primitives already provided by shadcn/ui (`FieldGroup`, `FieldSet`, `FieldLegend`) are preferable to splitting basic fields into arbitrary grouping components without a semantic responsibility.
+- `InputGroup` requires `InputGroupInput` or `InputGroupTextarea`, never raw `Input` or `Textarea`. Interactive buttons or text inside inputs use `InputGroupAddon`.
+- Option sets containing 2 to 7 choices use `ToggleGroup` + `ToggleGroupItem` rather than multiple `Button` elements with manual active state.
 
 ### Profile behavior ownership
 
@@ -495,7 +502,7 @@ These are project conventions aligned with the current shadcn/ui and React Hook 
 
 ### Accessibility and Next.js
 
-- For `Controller`-bound fields, set `data-invalid={fieldState.invalid}` on `Field`, `aria-invalid={fieldState.invalid}` on the input or Select trigger, and show `FieldError` for errors. Associate `FieldLabel` with the control.
+- For `Controller`-bound fields, set `data-invalid={fieldState.invalid}` on `Field`, `aria-invalid={fieldState.invalid}` on the input or Select trigger, and show `FieldError` for errors. Associate `FieldLabel` with the control. When a field or form is disabled, set `data-disabled` on `Field` and `disabled` on the input control.
 - Preserve the `"use client"` entry boundary for the Firebase client-side workflow. Imported field files need no additional directive solely because they are imported by this client subtree.
 - Do not replace the Firebase SDK submit handler with `next/form`, which serves different navigation/Server Action use cases.
 
@@ -531,7 +538,7 @@ they change the intended slot layout.
 
 ### React Form Actions are not a migration
 
-Preserve the React Hook Form and Firebase profile architecture. The React `<form action>` example in the [React reference](../../docs/agents/react.md#user-supplied-react-1931-reference) is explanatory, not a request to migrate. Preserve controlled and React Hook Form-owned values when using `requestFormReset`.
+Preserve the React Hook Form and Firebase profile architecture. Upstream React `<form action>` examples are explanatory, not a request to migrate. Preserve controlled and React Hook Form-owned values when using `requestFormReset`.
 
 ### Official references
 
@@ -565,33 +572,83 @@ Intentional non-English lines outside `src/messages/` carry a
 
 This project uses Next.js 16.4.2 App Router with Cache Components and Partial
 Prefetching. Read the relevant installed `node_modules/next/dist/docs/` guide
-before implementation, then consult the immutable
-[complete source review](../../docs/agents/nextjs.md). Current canary documents
-are references until the installed version supports their APIs.
+before implementation, and query Context7 (`/vercel/next.js`) for the latest
+verified upstream documentation. Current canary documents are references until
+the installed version supports their APIs.
 
-- Keep rendering and cache rules in
-  [CODING_STANDARDS.md](../../CODING_STANDARDS.md#nextjs-request-data-and-caching),
-  implemented boundaries in [ARCHITECTURE.md](../../ARCHITECTURE.md#nextjs-rendering-and-cache-model),
-  and diagnostic/command ownership in
-  [TOOLING.md](../../TOOLING.md#nextjs-documentation-and-cli-workflow).
-- Use native Next.js, TypeScript, and Biome diagnostics first. Check the
-  existing rule registry before adding custom guards; document scope and test
-  invalid and valid cases for a new project policy.
-- Preserve the stricter [thin-route policy](#12-nextjs-route-special-files-logic),
-  [component contracts](#3-component-architecture-dimensions-and-file-contracts), cookie-driven unprefixed locale
-  architecture, Firebase authorization boundary, and generated-source exclusions.
-  Read [the current locale decision](../../ARCHITECTURE.md#internationalization)
-  before i18n changes: [ADR 0004](../../docs/adr/0004-configure-internationalization.md)
-  requires direct cookie-only locale resolution. Internal locale rewrites
-  do not satisfy the maintainer's cookie-only requirement.
-- Apply [security guidance](../../SECURITY.md#nextjs-server-and-environment-boundaries)
-  when introducing server data, cache scopes, environment values, or endpoints.
-  Syntax guards are not authorization or complete import-graph proofs.
-- Do not turn an upstream recipe into an automatic dependency, runtime,
-  provider, agent-skill, or hosting migration. Preserve accepted ADRs and local
-  changes. Follow the [verification strategy](../../TESTING.md#nextjs-documentation-and-framework-verification)
-  and report unavailable tools accurately.
-- Next.js owns application roots, hydration, compilation and partial prerendering; do not replace them with isolated React DOM recipes. React `cache()` does not establish Next.js cache invalidation policy.
+### Core rendering, caching, and lifecycle contracts
+
+- **Cache Components (`use cache`)**:
+  - With `cacheComponents: true` enabled in `next.config.ts`, legacy segment
+    configs (`dynamic`, `revalidate`, `fetchCache`) are prohibited. Use
+    `"use cache"` (at file, component, or function scope) to cache data reads
+    and server component rendering.
+  - Define cache lifetime using `cacheLife(...)` (e.g., `'hours'`, `'max'`)
+    and attach invalidation tags with `cacheTag(...)` from `next/cache`.
+  - For route segments requiring opt-out of instant navigation validation during
+    incremental adoption, export `const instant = false`.
+  - Invalidate tagged cache using `revalidateTag(tag, "max")` (stale-while-revalidate)
+    or `revalidateTag(tag, { expire: 0 })` in Route Handlers and Server Functions.
+    Use `updateTag(tag)` for immediate read-your-own-writes inside Server Actions.
+    Single-argument `revalidateTag(tag)` is deprecated.
+- **Partial Prefetching (PPR) & Streaming**:
+  - With `partialPrefetching: true`, wrap dynamic or uncached data reads beneath
+    meaningful `<Suspense>` boundaries so Next.js can stream the static shell
+    instantly.
+  - Understand that `loading.tsx` only wraps `page.tsx` within its segment, not
+    its layout's data reads or ancestor layouts.
+- **Server Request & Lifecycle APIs**:
+  - In Next.js 15+, dynamic request APIs (`cookies()`, `headers()`, `draftMode()`)
+    are asynchronous and must be awaited before reading properties.
+  - Use `await connection()` from `next/server` to explicitly signal runtime
+    request execution before accessing uncached dynamic data.
+  - Use `after()` from `next/server` for post-response non-blocking operations
+    (audit logging, metrics, background notifications) after the stream or action closes.
+- **Forms and Mutations**:
+  - Use `<Form action="...">` from `next/form` for URL-driven search and filter
+    navigation with prefetching. Preserve native `<form>` with React Hook Form for
+    client-side mutations (such as Firebase auth/profile updates).
+- **Route Handlers (`route.ts`) & Caching**:
+  - With `cacheComponents: true`, `'use cache'` cannot be applied directly to
+    the `export async function GET()` declaration. Move cached data retrieval into
+    an internal helper function marked with `'use cache'` or scope it at module level.
+- **Media and Font Optimization**:
+  - Use `next/font/google` with CSS variables (e.g., `--font-geist`, `--font-geist-mono`)
+    and font subsets to eliminate layout shifts during font loading.
+  - Require explicit `width`/`height` or `fill` with responsive `sizes` on `next/image`
+    primitives to prevent Cumulative Layout Shift (CLS). Declare external image hosts
+    under `images.remotePatterns` in `next.config.ts`.
+- **App Router Import Restrictions**:
+  - Prohibit legacy Pages Router imports (`next/router`, `next/head`, `next/document`,
+    `next/app`) across all owned application code (enforced by Biome `noRestrictedImports`).
+  - Use `next/navigation` (`useRouter`, `usePathname`, `useSearchParams`, `redirect`, `notFound`),
+    `next/link`, and the Metadata API.
+- **Architecture and Diagnostics**:
+  - Keep rendering and cache rules in
+    [CODING_STANDARDS.md](../../CODING_STANDARDS.md#nextjs-request-data-and-caching),
+    implemented boundaries in [ARCHITECTURE.md](../../ARCHITECTURE.md#nextjs-rendering-and-cache-model),
+    and diagnostic/command ownership in
+    [TOOLING.md](../../TOOLING.md#nextjs-documentation-and-cli-workflow).
+  - Use native Next.js, TypeScript, and Biome diagnostics first. Check the
+    existing rule registry before adding custom guards; document scope and test
+    invalid and valid cases for a new project policy.
+  - Preserve the stricter [thin-route policy](#12-nextjs-route-special-files-logic),
+    [component contracts](#3-component-architecture-dimensions-and-file-contracts),
+    cookie-driven unprefixed locale architecture, Firebase authorization boundary,
+    and generated-source exclusions. Read [the current locale decision](../../ARCHITECTURE.md#internationalization)
+    before i18n changes: [ADR 0004](../../docs/adr/0004-configure-internationalization.md)
+    requires direct cookie-only locale resolution. Internal locale rewrites
+    do not satisfy the maintainer's cookie-only requirement.
+  - Apply [security guidance](../../SECURITY.md#nextjs-server-and-environment-boundaries)
+    when introducing server data, cache scopes, environment values, or endpoints.
+    Syntax guards are not authorization or complete import-graph proofs.
+  - Do not turn an upstream recipe into an automatic dependency, runtime,
+    provider, agent-skill, or hosting migration. Preserve accepted ADRs and local
+    changes. Follow the [verification strategy](../../TESTING.md#nextjs-documentation-and-framework-verification)
+    and report unavailable tools accurately.
+  - Next.js owns application roots, hydration, compilation and partial prerendering;
+    do not replace them with isolated React DOM recipes. React `cache()` does not
+    establish Next.js cache invalidation policy.
 
 ### Official references
 
@@ -602,14 +659,16 @@ are references until the installed version supports their APIs.
 - [Next.js adopting Partial Prefetching](https://nextjs.org/docs/app/guides/adopting-partial-prefetching) (`node_modules/next/dist/docs/01-app/02-guides/adopting-partial-prefetching.md`)
 - [Next.js migrating to Cache Components](https://nextjs.org/docs/app/guides/migrating-to-cache-components) (`node_modules/next/dist/docs/01-app/02-guides/migrating-to-cache-components.md`)
 - [Next.js internationalization](https://nextjs.org/docs/app/guides/internationalization) (`node_modules/next/dist/docs/01-app/02-guides/internationalization.md`)
+- [Next.js Form component](https://nextjs.org/docs/app/api-reference/components/form) (`node_modules/next/dist/docs/01-app/03-api-reference/02-components/form.md`)
+- [Next.js after function](https://nextjs.org/docs/app/api-reference/functions/after) (`node_modules/next/dist/docs/01-app/03-api-reference/04-functions/after.md`)
 
 ---
 
 ## 9. React Core: Hooks, Component Primitives, and Core APIs
 
 Apply this rule to React implementation, review, and reference maintenance.
-Read the [detailed reference and examples](../../docs/agents/react.md#user-supplied-react-1931-reference)
-for full explanations, 15 examples, API tables, and evidence boundaries.
+Verify installed React/React DOM 19.3.1 and Compiler 1.0.0 support before
+adopting APIs or examples from [official React documentation](https://react.dev/reference/react).
 
 Keep the broader [coding standards](../../CODING_STANDARDS.md#react-rendering-hooks-and-identity),
 [component policy](#3-component-architecture-dimensions-and-file-contracts), [route policy](#12-nextjs-route-special-files-logic),
@@ -649,7 +708,7 @@ section 4. Apply these purpose-specific rules to all 19 hooks:
 | `useState` | Prefer it for independent local state; use pure functional updaters for changes based on the previous value. |
 | `useReducer` | Use a pure reducer for related transitions; return a new state rather than mutating the previous one. |
 | `useContext` | Consume an intentional shared context; do not move every local value into Context or use it as authorization. |
-| `useActionState` | Model the Action result and pending state; handle validation/failure and preserve the Action's calling contract. |
+| `useActionState` | Model the Action result and pending state; handle validation/failure and preserve the Action's calling contract. Replaces deprecated `useFormState` from `react-dom`. |
 | `useOptimistic` | Base temporary feedback on confirmed state and an in-flight Action; provide failure recovery. |
 | `useEffect` | Synchronize with an external system; declare dependencies, clean up, and invalidate obsolete async work. Do not use it to mirror derived values or event-handler work. |
 | `useLayoutEffect` | Reserve it for measurement/positioning that must precede repaint; prefer `useEffect` otherwise. |
@@ -719,7 +778,13 @@ Neither establishes authorization or durable server-side cache invalidation poli
 Use `key` to identify siblings and intentional reset boundaries, `children` for
 nested composition, and props as component inputs. Keep controlled inputs
 controlled throughout their lifetime; let uncontrolled fields retain DOM
-ownership. Callback refs can own setup and cleanup. Hydration must match the
+ownership. Callback refs can own setup and cleanup. In React 19, a ref callback
+may return a cleanup function that runs when the element unmounts or before the
+ref is called again with a new node. Avoid returning non-function values from
+ref callbacks: arrow functions with implicit returns (such as
+`ref={node => map.set(id, node)}`) can trigger runtime errors because React
+attempts to invoke the return value as a cleanup function. Always use an
+explicit block body when not returning a cleanup. Hydration must match the
 initial server output. Custom hooks share behavior, not a single state instance.
 
 There is no stable native hook for a full Error Boundary. Class boundaries can
@@ -734,8 +799,7 @@ visual changes. None substitutes for the others.
 ## 10. React DOM: DOM, Forms, and Server Architecture
 
 Apply this rule to React rendering boundaries, DOM integration, form workflows, and Server Component contracts.
-Read the [detailed reference and examples](../../docs/agents/react.md#user-supplied-react-1931-reference)
-for full explanations, 15 examples, API tables, and evidence boundaries.
+Verify installed React/React DOM 19.3.1 capabilities against [official React DOM documentation](https://react.dev/reference/react-dom).
 
 ### 5. React DOM and rendering APIs
 
@@ -764,18 +828,24 @@ structure (`div`, `section`, `main`, `article`), navigation (`nav`, `a`), text
 and labels (`label`, `fieldset`, `legend`), and native UI (`dialog`, `details`,
 `summary`) according to their accessibility and behavior contracts.
 
-Treat `title`, `meta`, and `link` as metadata/resource integrations owned with
-the framework. Preserve proper handling of `script`, `style`, and `img` and
-SVG elements such as `svg`, `path`, and `circle`. React escaping does not make
-arbitrary HTML or URLs safe. Review labels, keyboard behavior, native props,
-focus, and controlled-input semantics at the actual usage boundary.
+React 19 supports rendering `<title>`, `<meta>`, and `<link rel="stylesheet">`
+within components, hoisting them automatically into the document `<head>`.
+Stylesheets accept a `precedence` attribute to manage cascade ordering.
+Scripts with the `async` prop are also hoisted and deduplicated.
+Treat these capabilities as native React 19 features while coordinating document
+heads and layouts with Next.js framework conventions. Preserve proper handling
+of `script`, `style`, and `img` and SVG elements such as `svg`, `path`, and
+`circle`. React escaping does not make arbitrary HTML or URLs safe. Review
+labels, keyboard behavior, native props, focus, and controlled-input semantics
+at the actual usage boundary.
 
 ### 7. Forms and Actions
 
 Understand `<form action={fn}>`, submit-button `formAction`, `useActionState`,
-`useFormStatus`, and `useOptimistic` as related but distinct tools. An Action
-may execute on the client; only a properly marked/integrated Server Function
-crosses that server boundary.
+`useFormStatus`, and `useOptimistic` as related but distinct tools. Note that
+`useFormState` from `react-dom` is deprecated in React 19 and replaced by
+`useActionState` from `react`. An Action may execute on the client; only a
+properly marked/integrated Server Function crosses that server boundary.
 
 Validate input, handle failures/pending state, prevent inappropriate duplicate
 submissions, and authenticate/authorize server operations. Choose controlled
@@ -836,8 +906,7 @@ simply because a live reference describes it.
 ## 11. React Quality: Compiler, Lint, and Review
 
 Apply this rule to React Compiler optimization, Rules of React, lint diagnostics, legacy migration, feature selection, and verification workflows.
-Read the [detailed reference and examples](../../docs/agents/react.md#user-supplied-react-1931-reference)
-for full explanations, 15 examples, API tables, and evidence boundaries.
+Follow [Rules of React](https://react.dev/reference/rules) and [React Compiler guidance](https://react.dev/learn/react-compiler).
 
 ### 9. React Compiler
 
@@ -926,13 +995,11 @@ features; 19.3 describes ViewTransition, `addTransitionType`, Fragment refs,
 `browser`, Trusted Types, and server Context improvements; 19.3.1 describes RSC
 transport changes.
 
-Use section 16 of the detailed reference for the evidence distinction. Local
-exports/types/renderer checks establish named API availability, not every
-historical statement. Recheck release/security notes, exact server Context
-behavior, Trusted Types integration, and framework compatibility before an
-implementation or upgrade. Do not infer a broader Context capability or a
-transport fix from this table alone. Preserve the original source inventory's
-retrieval date unless it is actually refreshed.
+Local exports, types, and renderer checks establish named API availability,
+not every historical statement. Recheck release and security notes, exact
+server Context behavior, Trusted Types integration, and framework
+compatibility before an implementation or upgrade. Do not infer a broader
+Context capability or a transport fix from a version summary alone.
 
 ### 17. Feature selection
 
@@ -992,13 +1059,14 @@ alternative adds no concrete benefit.
 
 ### 19. Documentation, evidence, and tooling
 
-Use the [official documentation directory](../../docs/agents/react.md#19-official-documentation)
-for React APIs/hooks/components, React DOM and HTML/SVG, Server Components,
-Compiler, Rules of React, hook lint rules, legacy APIs, the React 19.3 release,
-and the official source repositories. Resolve the correct topic and installed
-version before copying an example. Use immutable revisions for reproducible
-source review.
+Consult official React documentation for authoritative reference:
+- [React Reference](https://react.dev/reference/react) (hooks, components, and APIs)
+- [React DOM Reference](https://react.dev/reference/react-dom) (DOM components, client/server rendering)
+- [Rules of React](https://react.dev/reference/rules) (purity, immutability, and hook rules)
+- [React Compiler](https://react.dev/learn/react-compiler) (compiler architecture and directives)
+- [Server Components and Server Functions](https://react.dev/reference/rsc/server-components)
 
+Resolve the correct topic and installed version before copying an example.
 Match [lifecycle verification](../../TESTING.md#react-rules-and-lifecycle-verification)
 to real resources, hydration, and hide/reveal behavior. A source lookup,
 configuration regression, or lint success is not complete behavior coverage
@@ -1014,9 +1082,9 @@ legacy APIs, Fragment refs, experiments, version context, feature selection,
 and accessibility/security/testing practices. Apply those explanations to the
 concrete code instead of requiring every listed feature in every project.
 
-When refreshing this rule, preserve topic coverage, keep examples and evidence
-in the detailed reference, and update both files when a verified capability
-or applicability constraint changes.
+When refreshing this rule, preserve topic coverage, verify runtime exports,
+and ensure prescriptive guidance remains self-contained and aligned with
+installed package capabilities.
 
 ---
 
@@ -1026,23 +1094,53 @@ Repository policy: `page.tsx`, `layout.tsx`, and `template.tsx` stay as
 thin **Server Component** entrypoints. This is stricter than the Next.js API,
 which permits data access in pages/layouts and Client Components in templates.
 
-- Allow route parameter and search parameter reads, server-side data
-  orchestration, Next.js generators (`generateMetadata`,
+### Thin entrypoint guardrails
+
+- **Allowed responsibilities**: Route parameter and search parameter resolution,
+  server-side data orchestration, Next.js generators (`generateMetadata`,
   `generateViewport`, `generateStaticParams`), static route exports, root
   document setup, and composition of providers and UI.
-- Reject `"use client"`, React and third-party hooks (`useState`,
-  `useTranslations`, `useRouter`, etc.), direct Firebase SDK imports,
+- **Async Route Parameters & Props**: In Next.js 15+, `params` and `searchParams`
+  are `Promise<T>` and **must be awaited** before reading properties:
+  - In `page.tsx`, declare `{ params, searchParams }` with promise types when consumed;
+    when unconsumed, use empty parentheses `()` (e.g., `export default function ProfilePage()`)
+    so unit tests can render the component without required prop mocks.
+  - In `layout.tsx`, `params` is a promise, while `children` is received directly.
+  - Use generated framework parameter types (`PageProps<Route>`, `LayoutProps<Route>`,
+    `RouteContext<Route>`) produced by `next typegen` rather than hand-written prop signatures.
+- **Metadata and Viewport Separation**:
+  - Viewport properties (`themeColor`, `width`, `initialScale`, `maximumScale`) must
+    not be defined inside `export const metadata: Metadata` or `generateMetadata()`.
+  - Export viewport configuration separately via `export const viewport: Viewport = { ... }`
+    or `generateViewport()`. Root layout must specify `width: "device-width"` and `initialScale: 1`
+    without zoom-disabling constraints (`userScalable: false`).
+- **Rejected responsibilities**: Reject `"use client"`, React and third-party hooks
+  (`useState`, `useTranslations`, `useRouter`, etc.), direct Firebase SDK imports,
   browser APIs, JSX event handlers, local mutation, conditional control flow,
   loops, exception handling, and inline helper/callback functions.
-- Extract UI to colocated `_components/`, client behavior to `_hooks/`,
-  and domain operations to dedicated `src/lib/` modules. Server-side data
-  reads through those modules are allowed in route entrypoints.
-- The mandatory `pnpm check:routes` command scans **all** matching files,
-  including the route-group root and future `template.tsx` files. It runs
+- **Extraction policy**: Extract UI to colocated `_components/`, client behavior
+  to `_hooks/`, and domain operations to dedicated `src/lib/` modules. Server-side
+  data reads through those modules are allowed in route entrypoints.
+- **CI enforcement**: The mandatory `pnpm check:routes` command scans **all** matching
+  files, including the route-group root and future `template.tsx` files. It runs
   self-tests and fails CI on violations; `ast-grep` also marks hook violations
   as errors through `review-route-special-files-logic`.
-- `loading.tsx`, `error.tsx`, and `not-found.tsx` retain their individual
-  Next.js conventions and are outside this three-file enforcement.
+
+### Route special files, boundaries, and handlers
+
+- `loading.tsx`, `error.tsx`, and `not-found.tsx` retain their individual Next.js
+  conventions and are outside the three-file thin entrypoint check.
+- `global-error.tsx` acts as the root error boundary for unhandled errors in root
+  `layout.tsx`; it must render its own `<html>` and `<body>` tags.
+- `forbidden.tsx` and `unauthorized.tsx` handle 403 and 401 exceptions triggered by
+  `forbidden()` and `unauthorized()`.
+- `default.tsx` provides fallback rendering for unmatched parallel route slots (`@slot`).
+- **Route Handlers (`route.ts`)**:
+  - Export HTTP verb functions (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`) as thin
+    server endpoints returning standard Web `Response` or `Response.json()`.
+  - Route Handlers must not contain inline database queries or raw persistence SDK
+    calls; delegate authentication and authorization to `dal.ts` and operations to
+    `src/lib/` or feature `_lib/` modules.
 
 ### Official references
 
@@ -1050,29 +1148,77 @@ which permits data access in pages/layouts and Client Components in templates.
 - [Next.js page](https://nextjs.org/docs/app/api-reference/file-conventions/page) (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/page.md`)
 - [Next.js layout](https://nextjs.org/docs/app/api-reference/file-conventions/layout) (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/layout.md`)
 - [Next.js template](https://nextjs.org/docs/app/api-reference/file-conventions/template) (`node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/template.md`)
+- [Next.js route handlers](https://nextjs.org/docs/app/getting-started/route-handlers) (`node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md`)
+- [Next.js error handling](https://nextjs.org/docs/app/getting-started/error-handling) (`node_modules/next/dist/docs/01-app/01-getting-started/10-error-handling.md`)
 
 ---
 
 ## 13. Serena External-Research Memory
 
-Apply this rule before performing an external information query, including web
-searches, upstream documentation lookups, external API queries, and connected
-service searches.
+Apply this rule before and during external research queries, including web searches, upstream documentation lookups, external API queries, and framework compatibility investigations.
 
-1. Read Serena's instructions and activate the project when the current
-   session has not already done so.
-2. Search the relevant Serena memory topic before issuing the external query.
-   Reuse a current, sufficiently specific finding when one exists.
-3. Query the external source only when the memory is absent, insufficient, or
-   potentially stale. Prefer the source required by the repository's existing
-   documentation workflows.
-4. Record the durable, reusable result in a project-scoped Serena memory after
-   the query. Use a meaningful topic/name, include the source and retrieval
-   date, and state any version or freshness boundary.
+### Tool inventory and project activation prerequisite
 
-Do not store secrets, credentials, personal data, full copyrighted source
-content, or transient/raw responses. Do not treat a memory as authoritative
-when its recorded version or retrieval date makes it unsuitable for the task.
+Serena memory operations are scoped to the active project workspace. Before invoking any memory or symbol tools, ensure the project is active:
+- Call `activate_project(project="shadcn-firebase-template")` if not already activated in the current session.
+- Once activated, use Serena's dedicated memory MCP tools:
+  - `list_memories`: List existing project memories.
+  - `read_memory`: Retrieve the full content of a specified memory.
+  - `write_memory`: Persist new structured research findings or session scratchpads.
+  - `edit_memory`: Update existing memory entries with refreshed findings or supersession notes.
+  - `delete_memory`: Remove obsolete, invalidated, or graduated memories.
+
+### Boundary and criteria: Serena memory vs. canonical Markdown documentation
+
+Maintain a strict boundary between dynamic runtime research caching and permanent repository documentation:
+
+1. **When to store in Serena Memory (`write_memory`)**:
+   - **External research caching**: Durable, reusable results from upstream doc lookups, web searches, external API specifications, and third-party library compatibility quirks.
+   - **Session scratchpads**: Ephemeral or exploratory investigation notes and hypotheses that should not pollute permanent repository documentation.
+   - **Key naming**: Organize research findings under `research/<topic>` (e.g., `research/nextjs-cache`, `research/tailwind-v4-theme`).
+
+2. **When to store in Canonical Markdown Documentation (via `/save` / `project-save` skill)**:
+   - **Architectural decisions & trade-offs**: Persist in `docs/adr/` (e.g., `docs/adr/NNNN-<phrase>.md`, immutable once accepted).
+   - **Component & API conventions**: Persist in `CODING_STANDARDS.md`.
+   - **Design tokens, themes, visual patterns**: Persist in `DESIGN.md`.
+   - **Commands, scripts, tooling workflows**: Persist in `TOOLING.md`.
+   - **Agent behavioral boundaries & persistent rules**: Persist in `.agents/rules/rules.md`.
+   - **Test strategy & practices**: Persist in `TESTING.md`.
+
+3. **Strict prohibitions**:
+   - Never store API keys, secrets, authentication tokens, credentials, personal data, or raw uncurated dumps in Serena memory.
+
+### Research workflow, Context7 interaction, and cache-first lookup
+
+External queries must follow a cache-first workflow to conserve context and eliminate redundant network operations:
+
+1. **Check local memory first**:
+   - Execute `list_memories` or `read_memory` for the target topic before running external queries.
+   - Reuse a current, sufficiently specific finding when one exists.
+2. **Targeted external research**:
+   - Query external sources only when memory is missing, insufficient, or potentially stale.
+   - For libraries, frameworks, SDKs, or APIs (Next.js, React, Tailwind, Base UI, Firebase), use the native Context7 MCP tool (`resolve-library-id` followed by `query-docs`) or the `context7-cli` skill as the primary source of truth.
+   - Use web search only to complement Context7 or for material outside its corpus.
+3. **Cache reusable findings**:
+   - Store non-trivial, reusable findings into Serena memory under `research/<topic>` using `write_memory`.
+   - Always record: topic name, retrieval date, source URL or library ID, and applicable version bounds (e.g., Next.js 16.4.2, React 19.3.1).
+
+### Promotion and graduation to canonical documentation
+
+When an external research finding stabilizes into an agreed project-wide convention, architectural choice, or standard developer workflow:
+- Promote the knowledge to canonical Markdown documentation using the `/save` command or `project-save` skill into its authoritative destination (`CODING_STANDARDS.md`, `TOOLING.md`, or a new ADR).
+- Update or retire the corresponding Serena memory using `edit_memory` or `delete_memory` to record the promotion or avoid duplicate divergence.
+
+### Invalidation and memory maintenance
+
+Memories are living caches that degrade as upstream software evolves:
+- Every memory entry must specify topic, retrieval date, canonical source, and version bounds.
+- When upstream libraries upgrade or findings become obsolete, invalidate or prune them using `delete_memory` or `edit_memory`.
+- Never treat a memory as authoritative when its recorded version or retrieval date makes it incompatible with the repository's current stack.
+
+### Git and working tree policy
+
+Dynamic agent memories generated at runtime in `.serena/memories/` are local session cache and excluded from git tracking to prevent dirty working trees and CI noise. All persistent research policies and agent guardrails reside exclusively in `.agents/rules/rules.md#13-serena-external-research-memory`.
 
 ---
 
@@ -1085,13 +1231,18 @@ context; it does not replace or duplicate the upstream rule examples.
 ### Establish project context
 
 - Inspect `components.json`, `package.json`, the target local source, and the
-  CLI's project information. This project uses `base-nova` with Base UI,
+  CLI's project information. This project uses `base-nova` with Base UI (`@base-ui/react`),
   Tailwind v4, Lucide, TypeScript, and the `@/*` aliases.
 - Run the installed CLI through pnpm. Obtain and read component docs before
   advising on or changing an API. Follow [TOOLING.md](../../TOOLING.md#shadcnui-cli-workflow).
-- Read the Base UI variant. Do not infer `asChild`, Radix state attributes,
-  Sonner, or React Aria props from a generic example. Installed component
-  source and primitive types define the API available to this project.
+- **Base UI Primitive Differences (Strict)**: Do not infer `asChild`, Radix state attributes,
+  Sonner, or React Aria props from generic examples. Installed component source and Base UI types define the project API:
+  - **Triggers & composition (`render` vs `asChild`)**: Use `render={<Button />}` instead of `asChild`. When replacing a trigger with a non-button element (`<a>`, `<span>`), provide `nativeButton={false}`. For standard navigation links, prefer semantic `<Link className={buttonVariants(...)}>` ([ADR 0002](../../docs/adr/0002-configure-shadcn-ui.md)).
+  - **`<Select>`**: Requires an `items` prop on the root component (`<Select items={items}>`), unlike Radix inline JSX children.
+  - **`ToggleGroup` & `Accordion`**: Uses a boolean `multiple` prop rather than `type="single" | "multiple"`.
+  - **`Slider`**: Uses a scalar `value: number` rather than an array `value: number[]`.
+  - **Toast**: Use the installed Base UI toast (`@/components/ui/toast`), not `sonner`.
+- **Default Presets**: Recognized CLI presets include `nova`, `vega`, `maia`, `lyra`, `mira`, `luma`, `sera`, and `rhea`.
 - When a lookup fails, report it and use accessible official documentation or
   the installed source. Do not claim an unavailable CLI or network check passed.
 
@@ -1100,10 +1251,12 @@ context; it does not replace or duplicate the upstream rule examples.
 - Reuse installed primitives and named parts before creating custom UI.
   Keep application adapters in owned component directories and preserve their
   native props, children, refs, slots, and semantics.
-- Preview source updates with `add --dry-run`, `--diff`, or `--view`. Review
-  imports, dependency changes, CSS, and each resolved file; preserve local
-  adaptations. Do not fetch raw upstream component files to bypass CLI
-  transforms or silently use `--overwrite`.
+- Preview source updates with `pnpm exec shadcn add <component> --dry-run`,
+  `--diff <file>`, or `--view <file>`. Review imports, dependency changes, CSS,
+  and each resolved file; preserve local adaptations. Do not fetch raw upstream
+  component files to bypass CLI transforms or silently use `--overwrite`.
+- For preset adjustments, inspect state via `pnpm exec shadcn preset resolve --json`
+  and use selective updates such as `apply <code> --only theme,font` (`icon` is intentionally not supported).
 - Treat preset, primitive-family, icon, RTL, and AI Elements migrations as
   separate scoped implementation work. A request to refresh documentation does
   not perform these migrations or install a new MCP server.
@@ -1113,8 +1266,9 @@ context; it does not replace or duplicate the upstream rule examples.
 - `DESIGN.md` owns theme and visual composition; `CODING_STANDARDS.md` owns
   component/API conventions; `TOOLING.md` owns commands; `TESTING.md` and
   `SECURITY.md` own their validation and trust boundaries.
-- `docs/agents/shadcn.md` owns the upstream applicability map and source
-  inventory. Record a revision and retrieval date when refreshing it.
+- Consult the installed shadcn CLI skill (`.agents/skills/shadcn/SKILL.md`)
+  and official documentation (`ui.shadcn.com`) for the upstream applicability map
+  and source inventory.
 - Label repository guards as repository policy. Upstream examples do not
   require our filenames, one primary export, profile hook layout, or every
   compound form's Provider boundary.

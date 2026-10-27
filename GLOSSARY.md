@@ -18,6 +18,6 @@ Do not add framework or implementation terms (for example, Next.js, React, or
 component) unless the project assigns them a domain-specific meaning.
 
 Upstream UI terms and primitive-family differences are indexed in
-[the shadcn/ui reference](docs/agents/shadcn.md). Keep those technical details
+[the shadcn/ui rules](.agents/rules/rules.md#14-shadcnui-maintenance). Keep those technical details
 in the design, coding, and tooling guides; a documentation refresh does not
 resolve this glossary's pending product terminology.

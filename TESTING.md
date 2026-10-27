@@ -36,7 +36,7 @@ sandbox. The runner checks both trace tool calls and the schema-constrained
 final receipt, so a tool merely named in prose does not pass. Its unit tests
 are `scripts/evals/run-tool-usage-evals.test.mjs`; run them with
 `node --test scripts/evals/run-tool-usage-evals.test.mjs` when changing the
-runner or cases. See [agent evaluations](docs/agents/evals.md) for the general
+runner or cases. The test suite verifies the general
 rubric, manual review, and failure follow-up.
 
 ## Test layers
@@ -443,7 +443,7 @@ both upstream `docs/` and `errors/`, pin source revisions, retrieve every body,
 and verify Git blob hashes. Compare the installed stable version with the
 current documentation before adopting changed APIs. Record failures explicitly;
 a URL index or a successful Context7 query alone is not complete coverage.
-See [the review record](docs/agents/nextjs.md).
+See [the Next.js maintenance rule](.agents/rules/rules.md#8-nextjs-maintenance).
 
 The App Router import policy uses native Biome diagnostics. Its colocated
 configuration regression suite tests invalid imports, valid App Router APIs,
@@ -503,7 +503,7 @@ For a complete React reference refresh, inventory all Markdown/MDX beneath
 verify blob hashes. The versioned runtime error catalog is a separate source
 from the narrative error guides. Record source scope, installed API support,
 and actual behavior-test results separately, following
-[the review workflow](docs/agents/react.md).
+[the React rules](.agents/rules/rules.md#9-react-core-hooks-component-primitives-and-core-apis).
 
 ## Integration naming regressions
 

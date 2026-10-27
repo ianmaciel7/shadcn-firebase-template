@@ -450,8 +450,7 @@ Components throughout the application—regardless of whether they are Server Co
 ## Next.js request data and caching
 
 Use the installed-version guide before copying an example. This application
-uses App Router with Cache Components and Partial Prefetching enabled. The
-[complete upstream reference](docs/agents/nextjs.md) separates versioned APIs,
+uses App Router with Cache Components and Partial Prefetching enabled. The [Next.js maintenance rule](.agents/rules/rules.md#8-nextjs-maintenance) separates versioned APIs,
 newer documentation, and optional deployment recipes.
 
 ### Async request APIs and streaming
@@ -604,7 +603,7 @@ review. Fallow's cyclomatic/coverage metrics remain a separate health check.
 ## React rendering, hooks, and identity
 
 The project pins React and React DOM 19.3.1 and uses React Compiler 1.0.0 in
-Next.js. [The official-source review](docs/agents/react.md) covers React,
+Next.js. The [React rules](.agents/rules/rules.md#9-react-core-hooks-component-primitives-and-core-apis) cover React,
 React DOM, Compiler, lint references, warnings, and release material. Match new
 APIs to installed exports; the live docs are updated within a major version
 and also contain experimental sections.

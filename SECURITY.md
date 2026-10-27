@@ -144,7 +144,7 @@ For new external image sources, use narrow `remotePatterns`; validate external
 URLs and proxy destinations to prevent unintended server requests. A dynamic
 nonce-based CSP, instrumentation exporter, or hosting adapter needs a deployment
 and rendering review. None is enabled by this documentation update. See the
-[official data-security and environment sources](docs/agents/nextjs.md).
+[Next.js maintenance rule](.agents/rules/rules.md#8-nextjs-maintenance).
 
 ## React rendering and input boundaries
 
@@ -167,5 +167,5 @@ profiling artifacts, or broad cache entries. Framework-managed RSC transport
 and hydration are not reasons to add custom serialization or HTML injection.
 React and React DOM versions, framework integration, and server-component
 security advisories must be reviewed together during an authorized upgrade.
-The [React source inventory](docs/agents/react.md) records a snapshot, not a
+The [React rules](.agents/rules/rules.md#9-react-core-hooks-component-primitives-and-core-apis) record architectural guardrails, not a
 continuing vulnerability audit.

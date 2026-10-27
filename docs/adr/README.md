@@ -138,7 +138,7 @@ identify the superseded record and scope, preserving the accepted content.
 ## shadcn/ui documentation review
 
 The official documentation inventory and applicability review live in
-[docs/agents/shadcn.md](../agents/shadcn.md). CLI maintenance guidance, current
+[.agents/rules/rules.md](../../.agents/rules/rules.md#14-shadcnui-maintenance). CLI maintenance guidance, current
 component contracts, and theme details belong in `TOOLING.md`,
 `CODING_STANDARDS.md`, and `DESIGN.md`. Refreshing these references does not
 change the accepted records above or imply a preset, primitive-family, or
