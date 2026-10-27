@@ -1,6 +1,6 @@
 # Project skills
 
-This directory contains eleven installed skills. `skills-lock.json` at the
+This directory contains twelve installed skills. `skills-lock.json` at the
 repository root records upstream sources, paths, and computed hashes for external
 skills.
 
@@ -11,6 +11,7 @@ skills.
 | context7-cli | [SKILL.md](context7-cli/SKILL.md) | `upstash/context7` | Resolve a library and query current documentation |
 | firebase-basics | [SKILL.md](firebase-basics/SKILL.md) | `firebase/agent-skills` | Firebase CLI setup, project selection, and app configuration downloads |
 | firebase-auth-basics | [SKILL.md](firebase-auth-basics/SKILL.md) | `firebase/agent-skills` | Firebase Authentication concepts, integration, and security rules |
+| impeccable | [SKILL.md](impeccable/SKILL.md) | `pbakaus/impeccable` | Design, audit, critique, shape, and polish frontend UI/UX |
 | project-new-component | [SKILL.md](project-new-component/SKILL.md) | Project-local | Scaffold components that follow the naming and boundary contracts |
 | project-save | [SKILL.md](project-save/SKILL.md) | Project-local | Persist knowledge, rules, decisions, and conventions to canonical documentation |
 | retro | [SKILL.md](retro/SKILL.md) | Not recorded in lock metadata | Review completed work and capture improvements |
