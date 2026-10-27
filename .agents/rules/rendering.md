@@ -31,14 +31,9 @@ transition examples; these are optional capabilities, not mandatory UI features.
 Use `key` to identify siblings and intentional reset boundaries, `children` for
 nested composition, and props as component inputs. Keep controlled inputs
 controlled throughout their lifetime; let uncontrolled fields retain DOM
-ownership. Callback refs can own setup and cleanup. In React 19, a ref callback
-may return a cleanup function that runs when the element unmounts or before the
-ref is called again with a new node. Avoid returning non-function values from
-ref callbacks: arrow functions with implicit returns (such as
-`ref={node => map.set(id, node)}`) can trigger runtime errors because React
-attempts to invoke the return value as a cleanup function. Always use an
-explicit block body when not returning a cleanup. Hydration must match the
-initial server output. Custom hooks share behavior, not a single state instance.
+ownership. Callback refs can own setup and cleanup; follow the React 19 cleanup and
+block-body requirements in [dom.md](dom.md). Hydration must match the initial server output.
+Custom hooks share behavior, not a single state instance.
 
 There is no stable native hook for a full Error Boundary. Class boundaries can
 use `static getDerivedStateFromError()` and `componentDidCatch()`; preserve valid

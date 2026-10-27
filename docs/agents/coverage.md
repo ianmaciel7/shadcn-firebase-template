@@ -50,9 +50,8 @@ root index. These counts describe document inventory, including section indexes.
 | Pages Router and previous cache model | Installed alternative-router/model docs | Reference for requested migrations, not current App Router policy |
 | Architecture and Community material | Installed documentation indexes | Reference; does not create extra project constraints |
 
-The [Next.js inventory](nextjs.csv) lists every installed Next.js document with its proposed
-owner and scope. Assigning an owner is navigation coverage, not verification of
-every statement on that page. Do not load that inventory for ordinary edits.
+Assigning an owner in the table above provides navigation coverage, not verification
+of every statement on that page. Consult installed guides on demand.
 
 ## React
 

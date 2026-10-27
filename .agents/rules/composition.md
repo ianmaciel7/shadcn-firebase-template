@@ -19,10 +19,8 @@ Use `src/components/ui/card.tsx`, `button.tsx` and `field.tsx` as reference impl
 - Forward applicable `className` and `...props` to the underlying component; use `cn(..., className)` for application-specific styles. Do not blindly spread HTML attributes into `useForm`.
 - Use `children` for genuine component composition, as in `Card` and `FieldGroup`. The compound `ProfileFormClient` accepts independent fields as
   `children` under one `FormProvider` context.
-- Keep application-owned Card adapters **composable**: `ProfileCard`, `ProfileCardHeader`, `ProfileCardTitle`, `ProfileCardDescription` and `ProfileCardContent` each forward native Card primitive props and `children`; `ProfileSectionClient` assembles data-backed form content and renders
-  status branches. `ProfileFormClientContent` provides exactly one
-  `FieldGroup`, not a second `CardContent` or nested field group. The form content/footer remain children of the same native `<form>`. Do not confuse an application view that renders a Card with a Card primitive wrapper.
-- Fields connected via `Controller name="displayName"` must use the semantically matching component/file name `ProfileDisplayNameField` / `profile-display-name-field.tsx`. The component may expose a friendly display label without renaming the Firebase field.
+- Keep application-owned Card adapters **composable**: `ProfileCard`, `ProfileCardHeader`, `ProfileCardTitle`, `ProfileCardDescription` and `ProfileCardContent` each forward native Card primitive props and `children`; see [forms.md](forms.md#profile-form-action-safety-repository-guard) for the profile form hierarchy and slot invariants. The form content and footer remain children of the same native `<form>`. Do not confuse an application view that renders a Card with a Card primitive wrapper.
+- Fields connected via `Controller name="displayName"` must use the semantically matching component/file name `ProfileDisplayNameField` / `profile-display-name-field.tsx` (see [forms.md](forms.md#compound-forms)). The component may expose a friendly display label without renaming the Firebase field.
 - Prefer narrow component props; do not hand `ProfileFormClient` or `ProfileAvatarFieldClient` the
   entire profile controller as a `profile` prop.
 - `FieldGroup`, `FieldSet`, `Field` and `Controller` are real primitives/API integrations; do not introduce arbitrary *Fields wrapper components solely for visual grouping.

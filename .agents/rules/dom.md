@@ -51,7 +51,12 @@ browser behavior test.
 
 Preserve portal event/focus semantics. Use `flushSync` only for necessary external
 integration. Refs hold non-rendering values; writes do not trigger renders.
-Ref callbacks may return cleanup, so use explicit block bodies when returning no cleanup.
+In React 19, a ref callback may return a cleanup function that runs when the
+element unmounts or before the ref is called again with a new node. Avoid returning
+non-function values from ref callbacks: arrow functions with implicit returns (such
+as `ref={node => map.set(id, node)}`) can trigger runtime errors because React
+attempts to invoke the return value as a cleanup function. Always use an explicit
+block body when not returning a cleanup.
 Follow [DESIGN.md](../../DESIGN.md) and [TESTING.md](../../TESTING.md) for accessibility
 and responsive behavior. Coordinate document head behavior with route metadata.
 The framework owns client roots and hydration; do not create parallel application roots.

@@ -22,8 +22,7 @@
     "src/components/ai-elements",
     "src/components/firebase",
     "src/components/ui",
-    "src/messages",
-    "docs/agents/nextjs.csv"
+    "src/messages"
   ],
   "words": [
     "actionlint",
