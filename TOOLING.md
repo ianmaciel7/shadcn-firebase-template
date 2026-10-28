@@ -213,7 +213,7 @@ theming decision is recorded in ADR 0003.
 | `.husky/`, `commitlint.config.mjs`, `.pre-commit-config.yaml` | Git hooks and commit validation. |
 | `.github/workflows/ci.yml` | Continuous integration. |
 | `.github/workflows/visual-baselines.yml` | Manual workflow that regenerates the visual baselines in CI. |
-| `.github/rulesets/default-branch.json` | Branch protection rules applied by `pnpm setup:github`, including squash as the only allowed merge method. |
+| `.github/rulesets/default-branch.json` | Branch protection rules applied by `pnpm setup:github`, including squash as the only allowed merge method and CodeQL code scanning results. |
 | `.gitattributes` | Enforces LF line endings so Biome and hooks behave the same on Windows. |
 | `.agents/agents.json` | Agent and MCP configuration. |
 
