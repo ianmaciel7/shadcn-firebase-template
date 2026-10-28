@@ -49,6 +49,9 @@ coordinate disclosure and remediation with the reporter.
   vulnerable dependency is gone. Never assume this acceptance covers new uses.
   Removing the suppression without remediating the dependency will make
   `pnpm audit` fail; do not hide that failure with broad audit exclusions.
+- **Second accepted risk:** `GHSA-gcqx-w48m-w2h4` for `deepmerge` (low severity, no
+  patched release) is suppressed because it is reached only through the shadcn CLI
+  at development time. Apply the same re-check rules as for `braces`.
 - Workflows use least-privilege permissions, full-SHA-pinned actions, and no
   deployment credentials. Keep it that way.
 - Treat generated and third-party code as untrusted until reviewed. Vendored
