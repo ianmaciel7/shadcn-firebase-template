@@ -9,13 +9,8 @@ Security fixes are applied to the current default branch of this template.
 ## Reporting a vulnerability
 
 Please do not open a public issue for a suspected vulnerability. Report it
-through the repository's private vulnerability-reporting channel when one is
-published. This repository does not currently publish a dedicated private
-reporting channel. Until one is configured, contact the repository maintainers
-through an established private channel before sharing vulnerability details.
-
-Maintainers must enable GitHub private vulnerability reporting or add a direct
-private contact here before inviting public security reports.
+privately through GitHub private vulnerability reporting: open the repository's
+**Security** tab and choose **Report a vulnerability**.
 
 Include a clear description, affected files or versions, reproduction steps,
 impact, and any suggested mitigation. Do not include credentials, access

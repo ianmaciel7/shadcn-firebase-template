@@ -207,13 +207,13 @@ theming decision is recorded in ADR 0003.
 | `knip.jsonc`, `.dependency-cruiser.cjs`, `.jscpd.json`, `.fallowrc.json`, `doctor.config.json` | Analysis tool configuration. |
 | `cspell.json`, `.markdownlint-cli2.jsonc` | Documentation quality. |
 | `.semgrep/` | Semgrep rules and their annotated test fixture. |
-| `.github/dependabot.yml` | Weekly grouped npm, GitHub Actions, and mirror-file updates. |
+| `.github/dependabot.yml` | Weekly grouped npm, GitHub Actions, and mirror-file updates, each with a `cooldown` that delays new releases (npm: 3 days default, 30 major, 7 minor, 3 patch; other ecosystems: 7 days). |
 | `.github/dependabot-mirror/` | Dockerfile and `requirements.txt` that let Dependabot bump the Playwright image and the pip-installed CI tools. |
 | `.github/workflows/scheduled-quality.yml` | Weekly Lighthouse; Stryker by manual dispatch only until hosted CI is verified. |
 | `.husky/`, `commitlint.config.mjs`, `.pre-commit-config.yaml` | Git hooks and commit validation. |
 | `.github/workflows/ci.yml` | Continuous integration. |
 | `.github/workflows/visual-baselines.yml` | Manual workflow that regenerates the visual baselines in CI. |
-| `.github/rulesets/default-branch.json` | Branch protection rules applied by `pnpm setup:github`. |
+| `.github/rulesets/default-branch.json` | Branch protection rules applied by `pnpm setup:github`, including squash as the only allowed merge method. |
 | `.gitattributes` | Enforces LF line endings so Biome and hooks behave the same on Windows. |
 | `.agents/agents.json` | Agent and MCP configuration. |
 
