@@ -25,7 +25,12 @@ auto-updates as you edit the file.
 
 ## After creating a repository from this template
 
-1. Run `pnpm setup:github` locally with a `gh` CLI session authenticated
+1. Enable CodeQL in **Settings → Code security → Code scanning → Set up → Default**
+   and confirm that its first analysis succeeds. Code scanning must be available
+   for the repository (private repositories may require GitHub Code Security).
+   The ruleset requires CodeQL results; applying it without an active scanner
+   blocks pull request merges.
+2. Run `pnpm setup:github` locally with a `gh` CLI session authenticated
    as a repository administrator. This configures Squash-only merges,
    auto-merge, and protection of the default branch (required `CI result`
    check, strict linear history, and review-conversation resolution). GitHub
@@ -34,12 +39,12 @@ auto-updates as you edit the file.
    Actions: the default `GITHUB_TOKEN` lacks permission to modify rulesets,
    and privileged repository secrets must not be exposed to branch-selectable
    workflows. Re-run the local command when repository policies change.
-2. Rename the package in `package.json`, update the application metadata and
+3. Rename the package in `package.json`, update the application metadata and
    replace the starter home page. Update the README and domain documentation.
-3. Keep the generic Playwright smoke, localization-request, and new-tab safety
+4. Keep the generic Playwright smoke, localization-request, and new-tab safety
    checks; adjust the `/` route assertions if your app does not expose a home
    page or primary heading. Add behavior-specific E2E tests for your own pages.
-4. The visual baselines still capture the **starter UI**, not a reusable design
+5. The visual baselines still capture the **starter UI**, not a reusable design
    contract. Once you replace the page, run the manual **Update visual baselines**
    workflow, review its PNG artifacts, and commit the new baseline images.
 5. Reassess the documented `braces` audit exception in `pnpm-workspace.yaml`
