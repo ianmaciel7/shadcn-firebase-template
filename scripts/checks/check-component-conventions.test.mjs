@@ -1028,7 +1028,7 @@ describe("component integration naming", () => {
       new Map([["src/components/_lib/require-access.ts", helper]]);
     assert.equal(
       messages(
-        component.replace("../_lib", "../_lib"),
+        component,
         "account-server",
         modules(
           'import "server-only"; import { getAuth } from "firebase/auth";',
