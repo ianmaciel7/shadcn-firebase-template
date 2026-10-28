@@ -47,13 +47,13 @@ auto-updates as you edit the file.
 5. The visual baselines still capture the **starter UI**, not a reusable design
    contract. Once you replace the page, run the manual **Update visual baselines**
    workflow, review its PNG artifacts, and commit the new baseline images.
-5. Reassess the documented `braces` audit exception in `pnpm-workspace.yaml`
+6. Reassess the documented `braces` audit exception in `pnpm-workspace.yaml`
    against the **new** dependency tree. Do not treat the original template's
    risk assessment as applicable to a different app.
-6. Run `pnpm verify:fast`, `pnpm verify:full`, and `pnpm verify:e2e` before
+7. Run `pnpm verify:fast`, `pnpm verify:full`, and `pnpm verify:e2e` before
    merging changes. Review the 70% coverage floor for code owned by your app;
    do not lower it merely to make CI green.
-7. Keep CI provider-independent. Add staging, deployment and credentials only
+8. Keep CI provider-independent. Add staging, deployment and credentials only
    when the derived application has selected its hosting platform.
 
 See [Testing](TESTING.md) and [Security](SECURITY.md) for details.
