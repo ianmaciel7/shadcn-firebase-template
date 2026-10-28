@@ -426,6 +426,16 @@ these regressions specifically guard the observed failures.
   glob patterns. Remove the exception if the advisory is withdrawn or the chain
   drops `braces`; a local `pnpm patch` is not worth maintaining for this
   exposure.
+- **Second dependency audit exception.** `deepmerge` (GHSA-gcqx-w48m-w2h4, low
+  severity, prototype poisoning in `mergeObject()`) has no patched release. It is
+  reached only through `shadcn > @shadcn/registry`, the shadcn CLI, and is ignored in
+  `auditConfig`. Recheck `pnpm why deepmerge` after dependency changes, remove the
+  exception once a patched release exists, and do not carry it into a derived project
+  without re-evaluating its exposure.
+- **Dependabot pull request titles are not validated.** The `pr-title` job in `ci.yml` is
+  skipped for `dependabot[bot]` because its generated titles use a capitalized
+  "Bump", which `subject-case` rejects. `CI result` treats the skipped job as success.
+  Every other author still needs a Conventional Commit title.
 - **Fallow has both blocking and advisory results.** Configured complexity
   thresholds can fail `verify:static`; scores, hotspots, and unused
   dependency suggestions also require review. Do not call a failed Fallow
